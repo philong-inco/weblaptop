@@ -3,21 +3,21 @@ package com.dantn.weblaptop.entity.sanpham;
 
 import com.dantn.weblaptop.entity.base.BaseEntity;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 
 import java.util.HashSet;
 import java.util.Set;
 
+/**
+ * @since 06/3/2024
+ * Github: https://github.com/philong-inco
+ */
+
 @Entity
 @Table(name = "thuong_hieu")
-@Setter
-@Getter
-@NoArgsConstructor
-@AllArgsConstructor
+@Data
+@EqualsAndHashCode(callSuper = false)
 public class ThuongHieu extends BaseEntity {
 
     @Column(name = "ten_thuong_hieu")
@@ -29,14 +29,16 @@ public class ThuongHieu extends BaseEntity {
     @Column(name = "trang_thai")
     private Integer trangThai;
 
-    @OneToMany( mappedBy = "thuongHieu",
-                cascade = {CascadeType.DETACH, CascadeType.PERSIST,
+    @OneToMany(mappedBy = "thuongHieu",
+            cascade = {CascadeType.DETACH, CascadeType.PERSIST,
                     CascadeType.MERGE, CascadeType.REFRESH},
-                fetch = FetchType.EAGER)
+            fetch = FetchType.EAGER)
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
     private Set<SanPham> sanPhams;
 
-    public void addSanPham(SanPham sanPham){
-        if (sanPhams == null){
+    public void addSanPham(SanPham sanPham) {
+        if (sanPhams == null) {
             sanPhams = new HashSet<>();
         }
         sanPhams.add(sanPham);

@@ -6,6 +6,11 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 
+/**
+ * @since 06/3/2024
+ * Github: https://github.com/philong-inco
+ */
+
 @MappedSuperclass
 @Getter
 @Setter
