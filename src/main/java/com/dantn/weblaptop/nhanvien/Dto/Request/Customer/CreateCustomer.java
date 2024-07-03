@@ -17,25 +17,22 @@ import lombok.experimental.FieldDefaults;
 public class CreateCustomer {
     @NotEmpty(message = "Name cannot is blank")
     @Pattern(regexp = "^[a-zA-Z\\p{L}\\s]+$", message = "Xảy ra lỗi với tên của khách hàng !.")
-    String name;
+    String ho;
     @NotEmpty(message = "Số điện thoại không được để trống.")
-    String phone;
+    String sdt;
     @NotEmpty(message = "email không được để trống.")
     @Email(message = "Email chưa được nhập đúng cách.")
     String email;
 
     @NotEmpty(message = "password không được để trống.")
-    String password;
+    String matKhau;
 
     @NotEmpty(message = "password comfirm không được để trống.")
-    String passwordComfirm;
+    String confirmMatKhau;
 
     @NotEmpty(message = "Image không được để trống.")
-    String image;
-
-    @NotEmpty(message = "address không được để trống.")
-    String address;
+    String hinhAnh;
 
     @NotNull(message = "Status không được để trống.")
-    Integer status;
+    Integer trangThai;
 }

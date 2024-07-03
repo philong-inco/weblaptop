@@ -15,26 +15,26 @@ import lombok.experimental.FieldDefaults;
 @ToString
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class UpdateCustomer {
+    @NotEmpty(message = "First Name cannot is blank")
+    @Pattern(regexp = "^[a-zA-Z\\p{L}\\s]+$", message = "Xảy ra lỗi với tên của khách hàng !.")
+    String ho;
     @NotEmpty(message = "Name cannot is blank")
     @Pattern(regexp = "^[a-zA-Z\\p{L}\\s]+$", message = "Xảy ra lỗi với tên của khách hàng !.")
-    String name;
+    String ten;
     @NotEmpty(message = "Số điện thoại không được để trống.")
-    String phone;
+    String sdt;
     @NotEmpty(message = "email không được để trống.")
     @Email(message = "Email chưa được nhập đúng cách.")
     String email;
 
     @NotEmpty(message = "password không được để trống.")
-    String password;
+    String matKhau;
 
     @NotEmpty(message = "password comfirm không được để trống.")
-    String passwordComfirm;
-
-    @NotEmpty(message = "address không được để trống.")
-    String address;
+    String confirmMatKhau;
 
     @NotEmpty(message = "Image không được để trống.")
-    String image;
+    String hinhAnh;
     @NotNull(message = "Status không được để trống.")
-    Integer status;
+    Integer trangThai;
 }
