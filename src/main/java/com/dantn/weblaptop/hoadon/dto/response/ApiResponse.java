@@ -15,6 +15,7 @@ import lombok.experimental.FieldDefaults;
 public class ApiResponse<T> {
     @JsonProperty("status_code")
     Integer statusCode;
-    String message;
+    String error;
+    Object message;
     T data;
 }

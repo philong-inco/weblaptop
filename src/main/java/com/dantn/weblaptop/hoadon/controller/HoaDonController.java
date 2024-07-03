@@ -1,8 +1,10 @@
 package com.dantn.weblaptop.hoadon.controller;
 
+import com.dantn.weblaptop.hoadon.dto.request.HoaDonRequest;
 import com.dantn.weblaptop.hoadon.dto.response.ApiResponse;
 import com.dantn.weblaptop.hoadon.dto.response.ResultPaginationResponse;
 import com.dantn.weblaptop.hoadon.service.LichSuHoaDonService;
+import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -18,6 +20,16 @@ import java.util.Optional;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class HoaDonController {
     LichSuHoaDonService lichSuHoaDonService;
+
+    @PostMapping("create")
+    public ResponseEntity<ApiResponse> createBill(@Valid @RequestBody HoaDonRequest request) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(null);
+    }
+
+    @PostMapping("update/{id}")
+    public ResponseEntity<ApiResponse> updateBillById(@Valid @RequestBody HoaDonRequest request) {
+        return ResponseEntity.status(HttpStatus.OK).body(null);
+    }
 
     @GetMapping("/bill-history/{billId}")
     public ResponseEntity<ApiResponse> getBillHistoryByBillId(

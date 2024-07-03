@@ -1,18 +1,14 @@
 package com.dantn.weblaptop.hoadon.dto.response;
-import com.dantn.weblaptop.entity.hoadon.HoaDon;
-import com.dantn.weblaptop.entity.khachhang.KhachHang;
-import com.dantn.weblaptop.entity.nhanvien.NhanVien;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
-import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 @Getter
 @Setter
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class LichSuHoaDonResponse {
     Long id;
@@ -20,18 +16,29 @@ public class LichSuHoaDonResponse {
     @JsonProperty("trang_thai")
     Integer trangThai;
 
-    @JsonProperty( "ghi_chu_cho_khach_hang")
+    @JsonProperty("ghi_chu_cho_khach_hang")
     String ghiChuChoKhachHang;
 
-    @JsonProperty(  "ghi_chu_cho_cua_hang")
+    @JsonProperty("ghi_chu_cho_cua_hang")
     String ghiChuChoCuaHang;
 
-    @JsonProperty( "khach_hang_id")
-    Long khachHangId;
+    @JsonProperty("khach_hang_id")
+    Long idKhachHanh;
 
-    @JsonProperty(  "nhan_vien_id")
-    Long nhanVienId;
+    @JsonProperty("ma_khach_hang")
+    String maKhachHang;
 
-    @JsonProperty(  "hoa_don_id")
+    @JsonProperty("nhan_vien_id")
+    Long idNhanVien;
+
+    @JsonProperty("ma_nhan_vien")
+    String maNhanVien;
+
+    @JsonProperty("hoa_don_id")
     Long hoaDon;
+
+    @JsonProperty("ma_hoa_don")
+    String maHoaDon;
+
+    // ng tao
 }
