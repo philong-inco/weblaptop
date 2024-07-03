@@ -19,12 +19,6 @@ import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDateTime;
 import java.util.Set;
-
-/**
- * @since 06/3/2024
- * Github: https://github.com/philong-inco
- */
-
 @Entity
 @Table(name = "nhan_vien")
 @NoArgsConstructor
@@ -38,8 +32,9 @@ public class NhanVien extends BaseEntity {
     String ma;
     @Column(name = "trang_thai")
     Integer trangThai;
+    @Column(name = "cccd")
     String cccd;
-    @Column(name = "ho")
+    @Column(name = "ten")
     String ten;
     @Column(name = "email")
     String email;
