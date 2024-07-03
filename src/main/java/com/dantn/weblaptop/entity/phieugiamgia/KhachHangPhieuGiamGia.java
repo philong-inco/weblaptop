@@ -23,7 +23,7 @@ import lombok.experimental.FieldDefaults;
  */
 
 @Entity
-@Table(name = "phieu_giam_gia")
+@Table(name = "khach_hang_phieu_giam_gia")
 @NoArgsConstructor
 @AllArgsConstructor
 @Setter

@@ -23,7 +23,7 @@ import java.util.Set;
  */
 
 @Entity
-@Table(name = "phieu_giam_gia")
+@Table(name = "hinh_thuc_thanh_toan")
 @NoArgsConstructor
 @AllArgsConstructor
 @Setter

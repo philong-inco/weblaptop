@@ -24,7 +24,7 @@ import lombok.experimental.FieldDefaults;
  */
 
 @Entity
-@Table(name = "ram")
+@Table(name = "lich_su_hoa_don")
 @NoArgsConstructor
 @AllArgsConstructor
 @Setter

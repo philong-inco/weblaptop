@@ -16,7 +16,7 @@ import lombok.ToString;
 import lombok.experimental.FieldDefaults;
 
 @Entity
-@Table(name = "cpu")
+@Table(name = "nhan_vien_vai_tro")
 @NoArgsConstructor
 @AllArgsConstructor
 @Setter

@@ -18,7 +18,7 @@ import lombok.ToString;
 import lombok.experimental.FieldDefaults;
 
 @Entity
-@Table(name = "dot_giam_gia")
+@Table(name = "dot_giam_gia_san_pham_chi_tiet")
 @NoArgsConstructor
 @AllArgsConstructor
 @Setter
