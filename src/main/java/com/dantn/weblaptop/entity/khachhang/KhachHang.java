@@ -1,8 +1,9 @@
-package com.dantn.weblaptop.entity.nhanvien;
+package com.dantn.weblaptop.entity.khachhang;
 
 import com.dantn.weblaptop.entity.base.BaseEntity;
-import com.dantn.weblaptop.entity.hoadon.HoaDon;
+import com.dantn.weblaptop.entity.danhgia.DanhGia;
 import com.dantn.weblaptop.entity.hoadon.LichSuHoaDon;
+import com.dantn.weblaptop.entity.phieugiamgia.KhachHangPhieuGiamGia;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -20,32 +21,28 @@ import lombok.experimental.FieldDefaults;
 import java.time.LocalDateTime;
 import java.util.Set;
 
+
 /**
  * @since 06/3/2024
  * Github: https://github.com/philong-inco
  */
 
 @Entity
-@Table(name = "nhan_vien")
+@Table(name = "khach_hang")
 @NoArgsConstructor
 @AllArgsConstructor
 @Setter
 @Getter
 @ToString
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class NhanVien extends BaseEntity {
+public class KhachHang extends BaseEntity {
 
     String ma;
     @Column(name = "trang_thai")
     Integer trangThai;
-    String cccd;
-    @Column(name = "ho")
+    String ho;
     String ten;
-    @Column(name = "email")
     String email;
-    @Column(name = "mat_khau")
-    String matKhau;
-    @Column(name = "sdt")
     String sdt;
     @Column(name = "ngay_sinh")
     LocalDateTime ngaySinh;
@@ -53,29 +50,36 @@ public class NhanVien extends BaseEntity {
     Integer gioiTinh;
     @Column(name = "hinh_anh")
     String hinhAnh;
-    @Column(name = "tai_khoan_ngan_hang")
-    String taiKhoanNganHang;
-    @Column(name = "ngay_bat_dau_lam_viet")
-    LocalDateTime ngayBatDauLamViec;
-    @Column(name = "ngay_thoi_viet")
-    LocalDateTime ngayThoiViec;
-    @OneToMany(mappedBy = "nhanVien",
+    @Column(name = "session_id")
+    String sessionId;
+    @OneToMany(mappedBy = "khachHang",
             cascade = {CascadeType.DETACH, CascadeType.PERSIST,
                     CascadeType.MERGE, CascadeType.REFRESH},
             fetch = FetchType.EAGER)
     @ToString.Exclude
-    Set<NhanVienVaiTro> nhanVienVaiTros;
-    @OneToMany(mappedBy = "nhanVien",
+    Set<DiaChi> diaChis;
+    @OneToMany(mappedBy = "khachHang",
+            cascade = {CascadeType.DETACH, CascadeType.PERSIST,
+                    CascadeType.MERGE, CascadeType.REFRESH},
+            fetch = FetchType.EAGER)
+    @ToString.Exclude
+    Set<ThongBaoKhachHang> thongBaoKhachHangs;
+    @OneToMany(mappedBy = "khachHang",
+            cascade = {CascadeType.DETACH, CascadeType.PERSIST,
+                    CascadeType.MERGE, CascadeType.REFRESH},
+            fetch = FetchType.EAGER)
+    @ToString.Exclude
+    Set<DanhGia> danhGias;
+    @OneToMany(mappedBy = "khachHang",
+            cascade = {CascadeType.DETACH, CascadeType.PERSIST,
+                    CascadeType.MERGE, CascadeType.REFRESH},
+            fetch = FetchType.EAGER)
+    @ToString.Exclude
+    Set<KhachHangPhieuGiamGia> khachHangPhieuGiamGias;
+    @OneToMany(mappedBy = "khachHang",
             cascade = {CascadeType.DETACH, CascadeType.PERSIST,
                     CascadeType.MERGE, CascadeType.REFRESH},
             fetch = FetchType.EAGER)
     @ToString.Exclude
     Set<LichSuHoaDon> lichSuHoaDons;
-    @OneToMany(mappedBy = "nhanVien",
-            cascade = {CascadeType.DETACH, CascadeType.PERSIST,
-                    CascadeType.MERGE, CascadeType.REFRESH},
-            fetch = FetchType.EAGER)
-    @ToString.Exclude
-    Set<HoaDon> hoaDons;
-
 }

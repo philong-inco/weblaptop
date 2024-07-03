@@ -1,15 +1,36 @@
 package com.dantn.weblaptop.entity.sanpham;
 
 import com.dantn.weblaptop.entity.base.BaseEntity;
-import com.dantn.weblaptop.entity.coso.TonKho;
-import com.dantn.weblaptop.entity.giohang.GioHangChiTiet;
-import com.dantn.weblaptop.entity.hoadon.HoaDonChiTiet;
-import jakarta.persistence.*;
-import lombok.*;
+import com.dantn.weblaptop.entity.danhgia.DanhGia;
+import com.dantn.weblaptop.entity.dotgiamgia.DotGiamGiaSanPhamChiTiet;
+import com.dantn.weblaptop.entity.sanpham.thuoctinh.BanPhim;
+import com.dantn.weblaptop.entity.sanpham.thuoctinh.CPU;
+import com.dantn.weblaptop.entity.sanpham.thuoctinh.HeDieuHanh;
+import com.dantn.weblaptop.entity.sanpham.thuoctinh.ManHinh;
+import com.dantn.weblaptop.entity.sanpham.thuoctinh.MauSac;
+import com.dantn.weblaptop.entity.sanpham.thuoctinh.OCung;
+import com.dantn.weblaptop.entity.sanpham.thuoctinh.RAM;
+import com.dantn.weblaptop.entity.sanpham.thuoctinh.VGA;
+import com.dantn.weblaptop.entity.sanpham.thuoctinh.Webcam;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
+import lombok.experimental.FieldDefaults;
 
 import java.math.BigDecimal;
-import java.util.HashSet;
 import java.util.Set;
+
 
 /**
  * @since 06/3/2024
@@ -18,117 +39,101 @@ import java.util.Set;
 
 @Entity
 @Table(name = "san_pham_chi_tiet")
-@Data
-@EqualsAndHashCode(callSuper = false)
+@NoArgsConstructor
+@AllArgsConstructor
+@Setter
+@Getter
+@ToString
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class SanPhamChiTiet extends BaseEntity {
 
-    @Column(name = "so_luong")
-    private Integer soLuong;
-
-    @Column(name = "gia_san_pham")
-    private BigDecimal giaSanPham;
-
-    @Column(name = "main_image")
-    private String mainImage;
-
+    String ma;
     @Column(name = "trang_thai")
-    private Integer trangThai;
-
+    Integer trangThai;
+    @Column(name = "gia_ban")
+    BigDecimal giaBan;
     @ManyToOne(cascade = {CascadeType.DETACH, CascadeType.PERSIST,
             CascadeType.MERGE, CascadeType.REFRESH},
             fetch = FetchType.EAGER)
-    @JoinColumn(name = "id_san_pham")
-    @EqualsAndHashCode.Exclude
+    @JoinColumn(name = "ram_id")
     @ToString.Exclude
-    private SanPham sanPham;
-
+    RAM ram;
     @ManyToOne(cascade = {CascadeType.DETACH, CascadeType.PERSIST,
             CascadeType.MERGE, CascadeType.REFRESH},
             fetch = FetchType.EAGER)
-    @JoinColumn(name = "id_ram")
-    @EqualsAndHashCode.Exclude
+    @JoinColumn(name = "cpu_id")
     @ToString.Exclude
-    private RAM ram;
-
+    CPU cpu;
     @ManyToOne(cascade = {CascadeType.DETACH, CascadeType.PERSIST,
             CascadeType.MERGE, CascadeType.REFRESH},
             fetch = FetchType.EAGER)
-    @JoinColumn(name = "id_cpu")
-    @EqualsAndHashCode.Exclude
+    @JoinColumn(name = "vga_id")
     @ToString.Exclude
-    private CPU cpu;
-
+    VGA vga;
     @ManyToOne(cascade = {CascadeType.DETACH, CascadeType.PERSIST,
             CascadeType.MERGE, CascadeType.REFRESH},
             fetch = FetchType.EAGER)
-    @JoinColumn(name = "id_vga")
-    @EqualsAndHashCode.Exclude
+    @JoinColumn(name = "man_hinh_id")
     @ToString.Exclude
-    private VGACard vga;
-
+    ManHinh manHinh;
     @ManyToOne(cascade = {CascadeType.DETACH, CascadeType.PERSIST,
             CascadeType.MERGE, CascadeType.REFRESH},
             fetch = FetchType.EAGER)
-    @JoinColumn(name = "id_man_hinh")
-    @EqualsAndHashCode.Exclude
+    @JoinColumn(name = "o_cung_id")
     @ToString.Exclude
-    private ManHinh manHinh;
-
+    OCung oCung;
     @ManyToOne(cascade = {CascadeType.DETACH, CascadeType.PERSIST,
             CascadeType.MERGE, CascadeType.REFRESH},
             fetch = FetchType.EAGER)
-    @JoinColumn(name = "id_loai_bao_hanh")
-    @EqualsAndHashCode.Exclude
+    @JoinColumn(name = "mau_sac_id")
     @ToString.Exclude
-    private LoaiBaoHanh loaiBaoHanh;
-
+    MauSac mauSac;
+    @ManyToOne(cascade = {CascadeType.DETACH, CascadeType.PERSIST,
+            CascadeType.MERGE, CascadeType.REFRESH},
+            fetch = FetchType.EAGER)
+    @JoinColumn(name = "ban_phim_id")
+    @ToString.Exclude
+    BanPhim banPhim;
+    @ManyToOne(cascade = {CascadeType.DETACH, CascadeType.PERSIST,
+            CascadeType.MERGE, CascadeType.REFRESH},
+            fetch = FetchType.EAGER)
+    @JoinColumn(name = "he_dieu_hanh_id")
+    @ToString.Exclude
+    HeDieuHanh heDieuHanh;
+    @ManyToOne(cascade = {CascadeType.DETACH, CascadeType.PERSIST,
+            CascadeType.MERGE, CascadeType.REFRESH},
+            fetch = FetchType.EAGER)
+    @JoinColumn(name = "webcam")
+    @ToString.Exclude
+    Webcam webcam;
+    @ManyToOne(cascade = {CascadeType.DETACH, CascadeType.PERSIST,
+            CascadeType.MERGE, CascadeType.REFRESH},
+            fetch = FetchType.EAGER)
+    @JoinColumn(name = "san_pham_id")
+    @ToString.Exclude
+    SanPham sanPham;
     @OneToMany(mappedBy = "sanPhamChiTiet",
             cascade = {CascadeType.DETACH, CascadeType.PERSIST,
                     CascadeType.MERGE, CascadeType.REFRESH},
             fetch = FetchType.EAGER)
-    @EqualsAndHashCode.Exclude
     @ToString.Exclude
-    private Set<HoaDonChiTiet> hoaDonChiTiets;
-
+    Set<AnhSanPham> anhSanPhams;
     @OneToMany(mappedBy = "sanPhamChiTiet",
-            cascade = {CascadeType.DETACH, CascadeType.PERSIST,
-                    CascadeType.MERGE, CascadeType.REFRESH, CascadeType.REMOVE},
-            fetch = FetchType.EAGER)
-    @EqualsAndHashCode.Exclude
-    @ToString.Exclude
-    private Set<GioHangChiTiet> gioHangChiTiets;
-
-    /* chua can thiet lam :D
-    @OneToMany( mappedBy = "coSo",
             cascade = {CascadeType.DETACH, CascadeType.PERSIST,
                     CascadeType.MERGE, CascadeType.REFRESH},
             fetch = FetchType.EAGER)
-    @EqualsAndHashCode.Exclude
     @ToString.Exclude
-    private Set<TonKho> tonKhos;
-
-    public void addTonKho(TonKho tonKho){
-        if (tonKhos == null){
-            tonKhos = new HashSet<>();
-        }
-        tonKhos.add(tonKho);
-    }
-    **/
-
-
-    public void addGioHangChiTiet(GioHangChiTiet gioHangChiTiet) {
-        if (gioHangChiTiets == null) {
-            gioHangChiTiets = new HashSet<>();
-        }
-        gioHangChiTiets.add(gioHangChiTiet);
-    }
-
-    public void addHoaDonChiTiet(HoaDonChiTiet hoaDonChiTiet) {
-        if (hoaDonChiTiets == null) {
-            hoaDonChiTiets = new HashSet<>();
-        }
-        hoaDonChiTiets.add(hoaDonChiTiet);
-    }
-
-
+    Set<DanhGia> danhGias;
+    @OneToMany(mappedBy = "sanPhamChiTiet",
+            cascade = {CascadeType.DETACH, CascadeType.PERSIST,
+                    CascadeType.MERGE, CascadeType.REFRESH},
+            fetch = FetchType.EAGER)
+    @ToString.Exclude
+    Set<SerialNumber> serialNumbers;
+    @OneToMany(mappedBy = "sanPhamChiTiet",
+            cascade = {CascadeType.DETACH, CascadeType.PERSIST,
+                    CascadeType.MERGE, CascadeType.REFRESH},
+            fetch = FetchType.EAGER)
+    @ToString.Exclude
+    Set<DotGiamGiaSanPhamChiTiet> dotGiamGiaSanPhamChiTiets;
 }

@@ -1,12 +1,12 @@
-package com.dantn.weblaptop.entity.sanpham;
+package com.dantn.weblaptop.entity.sanpham.thuoctinh;
 
 import com.dantn.weblaptop.entity.base.BaseEntity;
+import com.dantn.weblaptop.entity.sanpham.SanPhamChiTiet;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -16,30 +16,26 @@ import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.FieldDefaults;
 
-
-/**
- * @since 06/3/2024
- * Github: https://github.com/philong-inco
- */
+import java.util.Set;
 
 @Entity
-@Table(name = "anh_san_pham")
+@Table(name = "ban_phim")
 @NoArgsConstructor
 @AllArgsConstructor
 @Setter
 @Getter
 @ToString
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class AnhSanPham extends BaseEntity {
+public class BanPhim extends BaseEntity {
 
+    String ma;
     @Column(name = "trang_thai")
     Integer trangThai;
-    String url;
-
-    @ManyToOne(cascade = {CascadeType.DETACH, CascadeType.PERSIST,
-            CascadeType.MERGE, CascadeType.REFRESH},
+    String ten;
+    @OneToMany(mappedBy = "banPhim",
+            cascade = {CascadeType.DETACH, CascadeType.PERSIST,
+                    CascadeType.MERGE, CascadeType.REFRESH},
             fetch = FetchType.EAGER)
-    @JoinColumn(name = "san_pham_chi_tiet_id")
     @ToString.Exclude
-    SanPhamChiTiet sanPhamChiTiet;
+    Set<SanPhamChiTiet> sanPhamChiTiets;
 }

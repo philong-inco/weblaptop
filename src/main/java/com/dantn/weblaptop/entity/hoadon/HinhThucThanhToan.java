@@ -1,12 +1,11 @@
-package com.dantn.weblaptop.entity.sanpham;
+package com.dantn.weblaptop.entity.hoadon;
 
 import com.dantn.weblaptop.entity.base.BaseEntity;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -16,6 +15,7 @@ import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.FieldDefaults;
 
+import java.util.Set;
 
 /**
  * @since 06/3/2024
@@ -23,23 +23,25 @@ import lombok.experimental.FieldDefaults;
  */
 
 @Entity
-@Table(name = "anh_san_pham")
+@Table(name = "phieu_giam_gia")
 @NoArgsConstructor
 @AllArgsConstructor
 @Setter
 @Getter
 @ToString
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class AnhSanPham extends BaseEntity {
+public class HinhThucThanhToan extends BaseEntity {
 
+    String ma;
     @Column(name = "trang_thai")
     Integer trangThai;
-    String url;
-
-    @ManyToOne(cascade = {CascadeType.DETACH, CascadeType.PERSIST,
-            CascadeType.MERGE, CascadeType.REFRESH},
+    String ten;
+    @Column(name = "mo_ta")
+    Integer moTa;
+    @OneToMany(mappedBy = "hinhThucThanhToan",
+            cascade = {CascadeType.DETACH, CascadeType.PERSIST,
+                    CascadeType.MERGE, CascadeType.REFRESH},
             fetch = FetchType.EAGER)
-    @JoinColumn(name = "san_pham_chi_tiet_id")
     @ToString.Exclude
-    SanPhamChiTiet sanPhamChiTiet;
+    Set<HoaDonHinhThucThanhToan> hoaDonHinhThucThanhToans;
 }

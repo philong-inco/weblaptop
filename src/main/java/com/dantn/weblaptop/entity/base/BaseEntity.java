@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.FieldDefaults;
 
 /**
  * @since 06/3/2024
@@ -15,23 +16,24 @@ import lombok.Setter;
 @Getter
 @Setter
 @EntityListeners(AutoSetTime.class)
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public abstract class BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Setter(AccessLevel.NONE)
     @Column(name = "id", updatable = false)
-    private Long id;
+    Long id;
 
-    @Column(name = "create_at", updatable = false, insertable = false)
-    private Long createAt;
+    @Column(name = "ngay_tao", updatable = false)
+    Long ngayTao;
 
-    @Column(name = "modify_at")
-    private Long modifyAt;
+    @Column(name = "ngay_sua")
+    Long ngaySua;
 
-    @Column(name = "create_at")
-    private String createBy;
+    @Column(name = "nguoi_tao")
+    String nguoiTao;
 
-    @Column(name = "modify_by")
-    private Long modifyBy;
+    @Column(name = "nguoiSua")
+    String nguoiSua;
 }

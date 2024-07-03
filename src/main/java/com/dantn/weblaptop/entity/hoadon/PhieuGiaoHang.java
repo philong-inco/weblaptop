@@ -1,5 +1,4 @@
-package com.dantn.weblaptop.entity.sanpham;
-
+package com.dantn.weblaptop.entity.hoadon;
 
 import com.dantn.weblaptop.entity.base.BaseEntity;
 import jakarta.persistence.CascadeType;
@@ -16,35 +15,37 @@ import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.FieldDefaults;
 
+import java.math.BigDecimal;
 import java.util.Set;
 
-/**
- * @since 06/3/2024
- * Github: https://github.com/philong-inco
- */
-
 @Entity
-@Table(name = "thuong_hieu")
+@Table(name = "phieu_giao_hang")
 @NoArgsConstructor
 @AllArgsConstructor
 @Setter
 @Getter
 @ToString
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class ThuongHieu extends BaseEntity {
+public class PhieuGiaoHang extends BaseEntity {
 
     String ma;
     @Column(name = "trang_thai")
     Integer trangThai;
-    String ten;
-    @Column(name = "mo_ta")
-    String moTa;
-    @OneToMany(mappedBy = "thuongHieu",
-            cascade = {CascadeType.DETACH, CascadeType.PERSIST,
-                    CascadeType.MERGE, CascadeType.REFRESH},
+    @Column(name = "ten_nguoi_nhan")
+    String tenNguoiNhan;
+    @Column(name = "sdt_nguoi_nhan")
+    String sdtNguoiNhan;
+    @Column(name = "dia_chi_nhan_hang")
+    String diaChiNhanHang;
+    @Column(name = "ghi_chu")
+    String ghiChu;
+    @Column(name = "cho_xem_hang")
+    Boolean choXemHang;
+    @Column(name = "tien_thu_ho")
+    BigDecimal tienThuHo;
+    @OneToMany(mappedBy = "phieuGiaoHang",
+            cascade = {CascadeType.DETACH, CascadeType.MERGE,
+                    CascadeType.REFRESH, CascadeType.PERSIST},
             fetch = FetchType.EAGER)
-    @ToString.Exclude
-    Set<SanPham> sanPhams;
-
-
+    Set<SerialNumberDaBan> serialNumberDaBans;
 }

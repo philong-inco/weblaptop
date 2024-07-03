@@ -1,21 +1,30 @@
 package com.dantn.weblaptop.entity.hoadon;
 
+import com.dantn.weblaptop.constant.HoaDonStatus;
 import com.dantn.weblaptop.entity.base.BaseEntity;
-import com.dantn.weblaptop.entity.coso.CoSo;
-import com.dantn.weblaptop.entity.khuyenmai.ChuongTrinhKhuyenMai;
-import com.dantn.weblaptop.entity.nguoidung.NguoiDung;
-import com.dantn.weblaptop.entity.nguoidung.ThongTinNguoiDung;
+import com.dantn.weblaptop.entity.khachhang.KhachHang;
 import com.dantn.weblaptop.entity.nhanvien.NhanVien;
-import com.dantn.weblaptop.entity.nhanvien.PhanQuyen;
-import com.dantn.weblaptop.entity.thanhtoan.PhuongThucThanhToan;
-import com.dantn.weblaptop.entity.voucher.Voucher;
-import jakarta.persistence.*;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import com.dantn.weblaptop.entity.phieugiamgia.PhieuGiamGia;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.ToString;
+import lombok.experimental.FieldDefaults;
 
 import java.math.BigDecimal;
-import java.util.HashSet;
+import java.time.LocalDateTime;
 import java.util.Set;
 
 /**
@@ -25,97 +34,66 @@ import java.util.Set;
 
 @Entity
 @Table(name = "hoa_don")
-@Data
-@EqualsAndHashCode(callSuper = false)
+@NoArgsConstructor
+@AllArgsConstructor
+@Setter
+@Getter
+@ToString
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class HoaDon extends BaseEntity {
 
-    @Column(name = "ma_hoa_don")
-    private String maHoaDon;
-
-    @Column(name = "ghi_chu")
-    private String ghiChu;
-
-    @Column(name = "tong_tien_hoa_don")
-    private BigDecimal tongTienHoaDon;
-
-    @Column(name = "giam_gia_voucher")
-    private BigDecimal giamGiaVoucher;
-
-    @Column(name = "giam_gia_khuyen_mai")
-    private BigDecimal giamGiaKhuyenMai;
-
-    @Column(name = "tong_tien_phai_tra")
-    private BigDecimal tongTienPhaiTra;
-
-    @Column(name = "tong_san_pham")
-    private Integer tongSanPham;
-
+    @Column(name = "ma")
+    String ma;
     @Column(name = "trang_thai")
-    private Integer trangThai;
-
+    @Enumerated(EnumType.ORDINAL)
+    HoaDonStatus trangThai;
+    @Column(name = "loai_hoa_don")
+    Integer loaiHoaDon;
+    @Column(name = "tong_tien_ban_dau")
+    BigDecimal tongTienBanDau;
+    @Column(name = "tong_tien_phai_tra")
+    BigDecimal tongTienPhaiTra;
+    @Column(name = "ngay_nhan_hang_mong_muon")
+    LocalDateTime ngayNhanHangMongMuon;
+    @Column(name = "sdt")
+    String sdt;
+    @Column(name = "email")
+    String email;
+    @Column(name = "dia_chi")
+    String diaChi;
+    @Column(name = "ghi_chu")
+    String ghiChu;
     @ManyToOne(cascade = {CascadeType.DETACH, CascadeType.PERSIST,
             CascadeType.MERGE, CascadeType.REFRESH},
             fetch = FetchType.EAGER)
-    @JoinColumn(name = "nhanvien_id")
-    @EqualsAndHashCode.Exclude
+    @JoinColumn(name = "nhan_vien_id")
     @ToString.Exclude
-    private NhanVien nhanVien;
-
+    NhanVien nhanVien;
     @ManyToOne(cascade = {CascadeType.DETACH, CascadeType.PERSIST,
             CascadeType.MERGE, CascadeType.REFRESH},
             fetch = FetchType.EAGER)
-    @JoinColumn(name = "phuong_thuc_thanh_toan_id")
-    @EqualsAndHashCode.Exclude
+    @JoinColumn(name = "phieu_giam_gia_id")
     @ToString.Exclude
-    private PhuongThucThanhToan phuongThucThanhToan;
-
-
+    PhieuGiamGia phieuGiamGia;
     @ManyToOne(cascade = {CascadeType.DETACH, CascadeType.PERSIST,
             CascadeType.MERGE, CascadeType.REFRESH},
             fetch = FetchType.EAGER)
-    @JoinColumn(name = "thong_tin_nguoi_dung_id")
-    @EqualsAndHashCode.Exclude
+    @JoinColumn(name = "khach_hang_id")
     @ToString.Exclude
-    private ThongTinNguoiDung thongTinNguoiDung;
-
-    @ManyToOne(cascade = {CascadeType.DETACH, CascadeType.PERSIST,
-            CascadeType.MERGE, CascadeType.REFRESH},
-            fetch = FetchType.EAGER)
-    @JoinColumn(name = "nguoi_dung_id")
-    @EqualsAndHashCode.Exclude
-    @ToString.Exclude
-    private NguoiDung nguoiDung;
-
-    @ManyToOne(cascade = {CascadeType.DETACH, CascadeType.PERSIST,
-            CascadeType.MERGE, CascadeType.REFRESH},
-            fetch = FetchType.EAGER)
-    @JoinColumn(name = "coso_id")
-    @EqualsAndHashCode.Exclude
-    @ToString.Exclude
-    private CoSo coSo;
-
+    KhachHang khachHang;
     @OneToMany(mappedBy = "hoaDon",
             cascade = {CascadeType.DETACH, CascadeType.PERSIST,
                     CascadeType.MERGE, CascadeType.REFRESH},
-            fetch = FetchType.LAZY)
-    @EqualsAndHashCode.Exclude
-    @ToString.Exclude
-    private Set<HoaDonChiTiet> hoaDonChiTiets;
-
-    @ManyToMany(mappedBy = "hoaDons",
-            cascade = CascadeType.ALL,
-            fetch = FetchType.LAZY)
-    private Set<ChuongTrinhKhuyenMai> khuyenMais;
-
-    @ManyToMany(mappedBy = "hoaDons", cascade = {CascadeType.DETACH, CascadeType.PERSIST,
-            CascadeType.MERGE, CascadeType.REFRESH},
-            fetch = FetchType.LAZY)
-    private Set<Voucher> vouchers;
-
-    public void addHoaDonChiTiet(HoaDonChiTiet hoaDonChiTiet) {
-        if (hoaDonChiTiets == null) {
-            hoaDonChiTiets = new HashSet<>();
-        }
-        hoaDonChiTiets.add(hoaDonChiTiet);
-    }
+            fetch = FetchType.EAGER)
+    Set<SerialNumberDaBan> serialNumberDaBans;
+    @OneToMany(mappedBy = "hoaDon",
+            cascade = {CascadeType.DETACH, CascadeType.PERSIST,
+                    CascadeType.MERGE, CascadeType.REFRESH},
+            fetch = FetchType.EAGER)
+    Set<HoaDonHinhThucThanhToan> hoaDonHinhThucThanhToans;
+    @OneToMany(mappedBy = "hoaDon",
+            cascade = {CascadeType.DETACH, CascadeType.PERSIST,
+                    CascadeType.MERGE, CascadeType.REFRESH},
+            fetch = FetchType.EAGER)
+    Set<LichSuHoaDon> lichSuHoaDons;
 }

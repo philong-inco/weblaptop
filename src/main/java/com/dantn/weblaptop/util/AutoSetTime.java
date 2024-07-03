@@ -15,13 +15,13 @@ public class AutoSetTime {
 
     @PrePersist
     public void onCreate(BaseEntity entity) {
-        entity.setCreateAt(getCurrentTimes());
-        entity.setModifyAt(getCurrentTimes());
+        entity.setNgayTao(getCurrentTimes());
+        entity.setNgaySua(getCurrentTimes());
     }
 
     @PreUpdate
     public void onUpdate(BaseEntity entity) {
-        entity.setModifyAt(getCurrentTimes());
+        entity.setNgaySua(getCurrentTimes());
     }
 
     public Long getCurrentTimes() {

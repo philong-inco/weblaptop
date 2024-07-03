@@ -1,6 +1,7 @@
-package com.dantn.weblaptop.entity.sanpham;
+package com.dantn.weblaptop.entity.baohanh;
 
 import com.dantn.weblaptop.entity.base.BaseEntity;
+import com.dantn.weblaptop.entity.sanpham.SanPham;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -16,30 +17,28 @@ import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.FieldDefaults;
 
-
-/**
- * @since 06/3/2024
- * Github: https://github.com/philong-inco
- */
+import java.math.BigDecimal;
 
 @Entity
-@Table(name = "anh_san_pham")
+@Table(name = "san_pham_bao_hanh")
 @NoArgsConstructor
 @AllArgsConstructor
 @Setter
 @Getter
 @ToString
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class AnhSanPham extends BaseEntity {
-
-    @Column(name = "trang_thai")
-    Integer trangThai;
-    String url;
-
-    @ManyToOne(cascade = {CascadeType.DETACH, CascadeType.PERSIST,
-            CascadeType.MERGE, CascadeType.REFRESH},
+public class SanPhamBaoHanh extends BaseEntity {
+    @Column(name = "gia_goi_bao_hanh")
+    BigDecimal giaGoiBaoHanh;
+    @ManyToOne(cascade = {CascadeType.DETACH, CascadeType.MERGE,
+            CascadeType.REFRESH, CascadeType.PERSIST},
             fetch = FetchType.EAGER)
-    @JoinColumn(name = "san_pham_chi_tiet_id")
-    @ToString.Exclude
-    SanPhamChiTiet sanPhamChiTiet;
+    @JoinColumn(name = "san_pham_id")
+    SanPham sanPham;
+    @ManyToOne(cascade = {CascadeType.DETACH, CascadeType.MERGE,
+            CascadeType.REFRESH, CascadeType.PERSIST},
+            fetch = FetchType.EAGER)
+    @JoinColumn(name = "bao_hanh_id")
+    BaoHanh baoHanh;
+
 }
