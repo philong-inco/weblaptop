@@ -2,6 +2,8 @@ package com.dantn.weblaptop.entity.dotgiamgia;
 
 import com.dantn.weblaptop.entity.base.BaseEntity;
 import com.dantn.weblaptop.entity.sanpham.SanPhamChiTiet;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -18,7 +20,7 @@ import lombok.ToString;
 import lombok.experimental.FieldDefaults;
 
 @Entity
-@Table(name = "dot_giam_gia")
+@Table(name = "dot_giam_gia_san_pham_chi_tiet")
 @NoArgsConstructor
 @AllArgsConstructor
 @Setter
@@ -33,10 +35,12 @@ public class DotGiamGiaSanPhamChiTiet extends BaseEntity {
             CascadeType.MERGE, CascadeType.REFRESH},
             fetch = FetchType.EAGER)
     @JoinColumn(name = "san_pham_chi_tiet_id")
+    @JsonBackReference // Tránh vòng lặp vô hạn khi tuần tự hóa JSON
     SanPhamChiTiet sanPhamChiTiet;
     @ManyToOne(cascade = {CascadeType.DETACH, CascadeType.PERSIST,
             CascadeType.MERGE, CascadeType.REFRESH},
             fetch = FetchType.EAGER)
     @JoinColumn(name = "dot_giam_gia_id")
+    @JsonBackReference // Tránh vòng lặp vô hạn khi tuần tự hóa JSON
     DotGiamGia dotGiamGia;
 }
