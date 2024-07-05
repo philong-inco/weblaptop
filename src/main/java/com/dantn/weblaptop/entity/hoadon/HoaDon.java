@@ -84,16 +84,16 @@ public class HoaDon extends BaseEntity {
     @OneToMany(mappedBy = "hoaDon",
             cascade = {CascadeType.DETACH, CascadeType.PERSIST,
                     CascadeType.MERGE, CascadeType.REFRESH},
-            fetch = FetchType.EAGER)
+            fetch = FetchType.LAZY)
     Set<SerialNumberDaBan> serialNumberDaBans;
     @OneToMany(mappedBy = "hoaDon",
             cascade = {CascadeType.DETACH, CascadeType.PERSIST,
                     CascadeType.MERGE, CascadeType.REFRESH},
-            fetch = FetchType.EAGER)
+            fetch = FetchType.LAZY)
     Set<HoaDonHinhThucThanhToan> hoaDonHinhThucThanhToans;
     @OneToMany(mappedBy = "hoaDon",
             cascade = {CascadeType.DETACH, CascadeType.PERSIST,
                     CascadeType.MERGE, CascadeType.REFRESH},
-            fetch = FetchType.EAGER)
+            fetch = FetchType.LAZY)
     Set<LichSuHoaDon> lichSuHoaDons;
 }

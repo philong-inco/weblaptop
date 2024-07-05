@@ -29,14 +29,10 @@ public class DotGiamGiaSanPhamChiTiet extends BaseEntity {
 
     @Column(name = "trang_thai")
     Integer trangThai;
-    @ManyToOne(cascade = {CascadeType.DETACH, CascadeType.PERSIST,
-            CascadeType.MERGE, CascadeType.REFRESH},
-            fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "san_pham_chi_tiet_id")
     SanPhamChiTiet sanPhamChiTiet;
-    @ManyToOne(cascade = {CascadeType.DETACH, CascadeType.PERSIST,
-            CascadeType.MERGE, CascadeType.REFRESH},
-            fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "dot_giam_gia_id")
     DotGiamGia dotGiamGia;
 }

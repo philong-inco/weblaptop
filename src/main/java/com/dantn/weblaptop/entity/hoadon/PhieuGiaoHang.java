@@ -46,6 +46,6 @@ public class PhieuGiaoHang extends BaseEntity {
     @OneToMany(mappedBy = "phieuGiaoHang",
             cascade = {CascadeType.DETACH, CascadeType.MERGE,
                     CascadeType.REFRESH, CascadeType.PERSIST},
-            fetch = FetchType.EAGER)
+            fetch = FetchType.LAZY)
     Set<SerialNumberDaBan> serialNumberDaBans;
 }

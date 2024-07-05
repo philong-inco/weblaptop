@@ -12,6 +12,7 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -32,6 +33,7 @@ import java.util.Set;
 @Setter
 @Getter
 @ToString
+@Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class SanPham extends BaseEntity {
 
@@ -56,13 +58,13 @@ public class SanPham extends BaseEntity {
     @OneToMany(mappedBy = "sanPham",
             cascade = {CascadeType.DETACH, CascadeType.PERSIST,
                     CascadeType.MERGE, CascadeType.REFRESH},
-            fetch = FetchType.EAGER)
+            fetch = FetchType.LAZY)
     @ToString.Exclude
     Set<SanPhamChiTiet> sanPhamChiTiets;
     @OneToMany(mappedBy = "sanPham",
             cascade = {CascadeType.DETACH, CascadeType.PERSIST,
                     CascadeType.MERGE, CascadeType.REFRESH},
-            fetch = FetchType.EAGER)
+            fetch = FetchType.LAZY)
     @ToString.Exclude
     Set<SanPhamBaoHanh> sanPhamBaoHanhs;
 

@@ -50,36 +50,38 @@ public class KhachHang extends BaseEntity {
     Integer gioiTinh;
     @Column(name = "hinh_anh")
     String hinhAnh;
+    @Column(name = "hang_khach_hang")
+    Integer hangKhachHang;
     @Column(name = "session_id")
     String sessionId;
     @OneToMany(mappedBy = "khachHang",
             cascade = {CascadeType.DETACH, CascadeType.PERSIST,
                     CascadeType.MERGE, CascadeType.REFRESH},
-            fetch = FetchType.EAGER)
+            fetch = FetchType.LAZY)
     @ToString.Exclude
     Set<DiaChi> diaChis;
     @OneToMany(mappedBy = "khachHang",
             cascade = {CascadeType.DETACH, CascadeType.PERSIST,
                     CascadeType.MERGE, CascadeType.REFRESH},
-            fetch = FetchType.EAGER)
+            fetch = FetchType.LAZY)
     @ToString.Exclude
     Set<ThongBaoKhachHang> thongBaoKhachHangs;
     @OneToMany(mappedBy = "khachHang",
             cascade = {CascadeType.DETACH, CascadeType.PERSIST,
                     CascadeType.MERGE, CascadeType.REFRESH},
-            fetch = FetchType.EAGER)
+            fetch = FetchType.LAZY)
     @ToString.Exclude
     Set<DanhGia> danhGias;
     @OneToMany(mappedBy = "khachHang",
             cascade = {CascadeType.DETACH, CascadeType.PERSIST,
                     CascadeType.MERGE, CascadeType.REFRESH},
-            fetch = FetchType.EAGER)
+            fetch = FetchType.LAZY)
     @ToString.Exclude
     Set<KhachHangPhieuGiamGia> khachHangPhieuGiamGias;
     @OneToMany(mappedBy = "khachHang",
             cascade = {CascadeType.DETACH, CascadeType.PERSIST,
                     CascadeType.MERGE, CascadeType.REFRESH},
-            fetch = FetchType.EAGER)
+            fetch = FetchType.LAZY)
     @ToString.Exclude
     Set<LichSuHoaDon> lichSuHoaDons;
 }
