@@ -7,12 +7,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.util.Set;
@@ -23,6 +18,7 @@ import java.util.Set;
 @Setter
 @Getter
 @ToString
+@Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class VaiTro extends BaseEntity {
 
