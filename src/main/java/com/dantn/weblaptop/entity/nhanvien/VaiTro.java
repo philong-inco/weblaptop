@@ -16,12 +16,6 @@ import lombok.ToString;
 import lombok.experimental.FieldDefaults;
 
 import java.util.Set;
-
-/**
- * @since 06/3/2024
- * Github: https://github.com/philong-inco
- */
-
 @Entity
 @Table(name = "vai_tro")
 @NoArgsConstructor
