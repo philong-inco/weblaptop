@@ -9,16 +9,12 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDateTime;
 import java.util.Set;
+
 @Entity
 @Table(name = "nhan_vien")
 @NoArgsConstructor
@@ -26,6 +22,7 @@ import java.util.Set;
 @Setter
 @Getter
 @ToString
+@Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class NhanVien extends BaseEntity {
 
