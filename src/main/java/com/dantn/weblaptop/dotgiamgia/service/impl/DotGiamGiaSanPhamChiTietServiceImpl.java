@@ -8,6 +8,7 @@ import com.dantn.weblaptop.dotgiamgia.repository.DotGiamGiaChiTietSanPhamReposit
 import com.dantn.weblaptop.dotgiamgia.repository.DotGiamGiaRepository;
 import com.dantn.weblaptop.dotgiamgia.service.DotGiamGiaSanPhamChiTietService;
 import com.dantn.weblaptop.dotgiamgia.service.DotGiamGiaService;
+import com.dantn.weblaptop.entity.dotgiamgia.DotGiamGia;
 import com.dantn.weblaptop.entity.dotgiamgia.DotGiamGiaSanPhamChiTiet;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -19,10 +20,7 @@ public class DotGiamGiaSanPhamChiTietServiceImpl implements DotGiamGiaSanPhamChi
     @Autowired
     private DotGiamGiaChiTietSanPhamRepository dotGiamGiaChiTietSanPhamRepository;
     @Autowired
-    private DotGiamGiaService dotGiamGiaService;
     private final DotGiamGiaChiTietSanPhamMapper dotGiamGiaChiTietSanPhamMapper;
-    @Autowired
-    private DotGiamGiaRepository dotGiamGiaRepository;
 
     @Autowired
     public DotGiamGiaSanPhamChiTietServiceImpl(DotGiamGiaChiTietSanPhamMapper dotGiamGiaChiTietSanPhamMapper) {
@@ -40,7 +38,7 @@ public class DotGiamGiaSanPhamChiTietServiceImpl implements DotGiamGiaSanPhamChi
     public DotGiamGiaSanPhamChiTietDTO findById(Long id) {
         DotGiamGiaSanPhamChiTiet dotGiamGiaSanPhamChiTiet = dotGiamGiaChiTietSanPhamRepository.findById(id)
                 .orElseThrow(() -> {
-                    throw new NullPointerException("ID not found");
+                    throw new RuntimeException("ID not found");
                 });
         DotGiamGiaSanPhamChiTietDTO dotGiamGiaSanPhamChiTietDTO = dotGiamGiaChiTietSanPhamMapper.dotGiamGiaSanPhamChiTietTodotGiamGiaSanPhamChiTietDTO(dotGiamGiaSanPhamChiTiet);
         return dotGiamGiaSanPhamChiTietDTO;
@@ -52,7 +50,6 @@ public class DotGiamGiaSanPhamChiTietServiceImpl implements DotGiamGiaSanPhamChi
             throw new RuntimeException("Thêm Đợt Giảm Giá Chi Tiết Sản Phẩm Không Thành Công !");
         }
         DotGiamGiaSanPhamChiTiet giamGiaSanPhamChiTiet = dotGiamGiaChiTietSanPhamMapper.createDotGiamGiaChiTietSanPham(request);
-        System.out.println("DGD-SPCT : " + giamGiaSanPhamChiTiet.toString());
         dotGiamGiaChiTietSanPhamRepository.save(giamGiaSanPhamChiTiet);
     }
 

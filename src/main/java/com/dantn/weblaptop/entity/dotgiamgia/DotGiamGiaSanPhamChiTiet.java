@@ -1,5 +1,6 @@
 package com.dantn.weblaptop.entity.dotgiamgia;
 
+import com.dantn.weblaptop.dotgiamgia.model.request.CreateDotGiamGiaRequest;
 import com.dantn.weblaptop.entity.base.BaseEntity;
 import com.dantn.weblaptop.entity.sanpham.SanPhamChiTiet;
 import com.fasterxml.jackson.annotation.JsonBackReference;
@@ -31,16 +32,13 @@ public class DotGiamGiaSanPhamChiTiet extends BaseEntity {
 
     @Column(name = "trang_thai")
     Integer trangThai;
-    @ManyToOne(cascade = {CascadeType.DETACH, CascadeType.PERSIST,
-            CascadeType.MERGE, CascadeType.REFRESH},
-            fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "san_pham_chi_tiet_id")
-    @JsonBackReference // Tránh vòng lặp vô hạn khi tuần tự hóa JSON
+    @JsonBackReference("sanPhamChiTiet")
     SanPhamChiTiet sanPhamChiTiet;
-    @ManyToOne(cascade = {CascadeType.DETACH, CascadeType.PERSIST,
-            CascadeType.MERGE, CascadeType.REFRESH},
-            fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "dot_giam_gia_id")
-    @JsonBackReference // Tránh vòng lặp vô hạn khi tuần tự hóa JSON
+    @JsonBackReference("dotGiamGia")
     DotGiamGia dotGiamGia;
+
 }

@@ -6,6 +6,7 @@ import com.dantn.weblaptop.entity.dotgiamgia.DotGiamGia;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+
 @Service
 public interface DotGiamGiaService {
     List<DotGiamGia> findAll();
@@ -17,4 +18,5 @@ public interface DotGiamGiaService {
     void update(Long id, UpdateDotGiamGiaRequest request);
 
     void delete(Long id);
+//    void saveDotGiamGia(DotGiamGia dotGiamGia);
 }

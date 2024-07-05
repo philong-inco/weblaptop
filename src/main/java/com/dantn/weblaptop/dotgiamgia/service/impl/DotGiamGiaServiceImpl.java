@@ -11,13 +11,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
-import java.util.NoSuchElementException;
 
 @Component
 public class DotGiamGiaServiceImpl implements DotGiamGiaService {
     @Autowired
     private DotGiamGiaRepository dotGiamGiaRepository;
-    // anh add them thu vien mapstruct thi moi doc dc beans cua component mapper
     private DotGiamGiaMapper dotGiamGiaMapper = new DotGiamGiaMapperImpl();
 
     @Override
@@ -28,7 +26,7 @@ public class DotGiamGiaServiceImpl implements DotGiamGiaService {
     @Override
     public DotGiamGia findById(Long id) {
         return dotGiamGiaRepository.findById(id).orElseThrow(() -> {
-            throw new NoSuchElementException("Dot Giam gia id " + id + " not found");
+            throw new RuntimeException("Dot Giam gia id " + id + " not found");
         });
     }
 
@@ -38,21 +36,20 @@ public class DotGiamGiaServiceImpl implements DotGiamGiaService {
             throw new RuntimeException("Thêm Đợt Giảm Giá Không Thành Công !");
         }
         DotGiamGia dotGiamGia = dotGiamGiaMapper.createDotGiamGia(request);
+        System.out.println(" dotGiamGia :" + dotGiamGia.toString());
         dotGiamGiaRepository.save(dotGiamGia);
     }
 
     @Override
     public void update(Long id, UpdateDotGiamGiaRequest request) {
-        DotGiamGia dotGiamGia = dotGiamGiaRepository.findById(id).orElseThrow(
-                () -> new RuntimeException("id not found"));
-        dotGiamGiaMapper.updateDotGiamGia(dotGiamGia, request);
+        DotGiamGia dotGiamGia = dotGiamGiaRepository.findById(id).orElseThrow(() -> new RuntimeException("ID not found"));
+        dotGiamGia = dotGiamGiaMapper.updateDotGiamGia(dotGiamGia, request);
         dotGiamGiaRepository.save(dotGiamGia);
     }
 
     @Override
     public void delete(Long id) {
-        DotGiamGia dotGiamGiaDB = dotGiamGiaRepository.findById(id).orElseThrow(
-                () -> new RuntimeException("id not found"));
+        DotGiamGia dotGiamGiaDB = dotGiamGiaRepository.findById(id).orElseThrow(() -> new RuntimeException("id not found"));
         if (dotGiamGiaDB.getId() != null) {
             dotGiamGiaRepository.deleteById(id);
         }

@@ -35,23 +35,16 @@ public class DotGiamGiaChiTietSanPhamMapperImpl implements DotGiamGiaChiTietSanP
     public List<DotGiamGiaSanPhamChiTietDTO> listDotGiamGiaSanPhamChiTietToListDotGiamGiaSanPhamChiTietDTO(List<DotGiamGiaSanPhamChiTiet> dotGiamGiaSanPhamChiTietList) {
         List<DotGiamGiaSanPhamChiTietDTO> listDTO = new ArrayList<>();
         for (DotGiamGiaSanPhamChiTiet dotGiamGiaSanPhamChiTiet : dotGiamGiaSanPhamChiTietList) {
-            // set San pham chi to San Pham chi tiet DTO
             SanPhamChiTietDTO sanPhamChiTietDTO = new SanPhamChiTietDTO();
-            // find sanr pham chi tiet ra
             SanPhamChiTiet spct = this.dotGiamGiaChiTietSanPhamRepository.findSanPhamChiTietById(dotGiamGiaSanPhamChiTiet.getSanPhamChiTiet().getId());
             sanPhamChiTietDTO.setId(spct.getId());
             sanPhamChiTietDTO.setGiaBan(spct.getGiaBan());
             sanPhamChiTietDTO.setTrangThai(spct.getTrangThai());
-
-            // set DotGiamGia
-
-            // find dot giam ra
             DotGiamGia dotGiamGia = dotGiamGiaService.findById(dotGiamGiaSanPhamChiTiet.getDotGiamGia().getId());
             DotGiamGiaDTO dotGiamGiaDTO = new DotGiamGiaDTO();
             dotGiamGiaDTO.setId(dotGiamGia.getId());
             dotGiamGiaDTO.setMa(dotGiamGia.getMa());
             dotGiamGiaDTO.setLoaiChietKhau(dotGiamGia.getLoaiChietKhau());
-            // setDotGiamGiaSanPhamChiTiet
             DotGiamGiaSanPhamChiTietDTO dotGiamGiaSanPhamChiTietDTO = new DotGiamGiaSanPhamChiTietDTO();
             dotGiamGiaSanPhamChiTietDTO.setId(dotGiamGiaSanPhamChiTiet.getId());
             dotGiamGiaSanPhamChiTietDTO.setDotGiamGia(dotGiamGiaDTO);

@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @AllArgsConstructor
@@ -13,7 +14,13 @@ import java.time.LocalDateTime;
 @Setter
 public class DotGiamGiaDTO {
     private Long id;
-    private String ma;
-    private Integer loaiChietKhau;
+    String ma;
+    Integer trangThai;
+    String ten;
+    String moTa;
+    Integer loaiChietKhau;
+    LocalDateTime thoiGianBatDau;
+    LocalDateTime thoiGianKetthuc;
+    BigDecimal giamToiDa;
 
 }

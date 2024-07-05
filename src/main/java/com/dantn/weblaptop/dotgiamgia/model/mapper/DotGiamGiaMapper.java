@@ -7,5 +7,5 @@ import com.dantn.weblaptop.entity.dotgiamgia.DotGiamGia;
 public interface DotGiamGiaMapper {
     DotGiamGia createDotGiamGia(CreateDotGiamGiaRequest request);
 
-    void updateDotGiamGia(DotGiamGia dotGiamGia, UpdateDotGiamGiaRequest request);
+    DotGiamGia updateDotGiamGia(DotGiamGia dotGiamGia, UpdateDotGiamGiaRequest request);
 }

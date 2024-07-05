@@ -5,6 +5,10 @@ import com.dantn.weblaptop.dotgiamgia.service.DotGiamGiaService;
 import com.dantn.weblaptop.dotgiamgia.model.request.UpdateDotGiamGiaRequest;
 import com.dantn.weblaptop.entity.dotgiamgia.DotGiamGia;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.ObjectError;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -23,21 +27,20 @@ public class DotGiamGiaController {
 
     @GetMapping("/sales/{id}")
     public DotGiamGia getOneDotGiamGia(@PathVariable Long id) {
-        System.out.println("Run ham get by id Bị Sai lllll : " + id);
         return dotGiamGiaService.findById(id);
     }
 
-    @PostMapping(value = "/sales", consumes = "application/json")
-    public void themDotGiamGia(@RequestBody CreateDotGiamGiaRequest request) {
+    @PostMapping("/create/sales")
+    public void add(@RequestBody CreateDotGiamGiaRequest request) {
         dotGiamGiaService.save(request);
     }
 
-    @PutMapping("/sales/{id}")
+    @PutMapping("/update/sales/{id}")
     public void suaDotGiamGia(@RequestBody UpdateDotGiamGiaRequest request, @PathVariable Long id) {
         dotGiamGiaService.update(id, request);
     }
 
-    @DeleteMapping("/sales/{id}")
+    @DeleteMapping("/delete/sales/{id}")
     public void deleteDotGiamGia(@PathVariable Long id) {
         dotGiamGiaService.delete(id);
     }

@@ -5,7 +5,9 @@ import com.dantn.weblaptop.dotgiamgia.model.request.CreateDotGiamGiaRequest;
 import com.dantn.weblaptop.dotgiamgia.model.request.UpdateDotGiamGiaRequest;
 import com.dantn.weblaptop.entity.dotgiamgia.DotGiamGia;
 import com.dantn.weblaptop.util.AutoSetTime;
+import org.springframework.stereotype.Component;
 
+@Component
 public class DotGiamGiaMapperImpl implements DotGiamGiaMapper {
     private final AutoSetTime autoSetTime = new AutoSetTime();
 
@@ -14,7 +16,6 @@ public class DotGiamGiaMapperImpl implements DotGiamGiaMapper {
         if (request == null) {
             throw new IllegalArgumentException("Request cannot be null");
         }
-
         DotGiamGia dotGiamGia = new DotGiamGia();
         dotGiamGia.setMa(request.getMa());
         dotGiamGia.setTrangThai(request.getTrangThai());
@@ -30,7 +31,7 @@ public class DotGiamGiaMapperImpl implements DotGiamGiaMapper {
     }
 
     @Override
-    public void updateDotGiamGia(DotGiamGia dotGiamGia, UpdateDotGiamGiaRequest request) {
+    public DotGiamGia updateDotGiamGia(DotGiamGia dotGiamGia, UpdateDotGiamGiaRequest request) {
         if (request == null) {
             throw new IllegalArgumentException("Request cannot be null");
         }
@@ -46,5 +47,6 @@ public class DotGiamGiaMapperImpl implements DotGiamGiaMapper {
         dotGiamGia.setSerialNumberDaBans(request.getSerialNumberDaBans());
         dotGiamGia.setNgayTao(autoSetTime.getCurrentTimes());
         dotGiamGia.setNgaySua(autoSetTime.getCurrentTimes());
+        return dotGiamGia;
     }
 }

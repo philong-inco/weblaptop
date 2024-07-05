@@ -28,7 +28,7 @@ public class DotGiamGiaChiTietSanPhamController {
         dotGiamGiaSanPhamChiTietService.save(request);
     }
 
-    @PutMapping("/sales/product-detail/{id}")
+    @PutMapping("/update/salesl/{id}")
     public void updateDotGiamGiaChiTietSanPham(@PathVariable("id") Long id, @RequestBody UpdateDotGiamGiaSanPhamChiTietRequest request) {
         dotGiamGiaSanPhamChiTietService.update(id, request);
     }

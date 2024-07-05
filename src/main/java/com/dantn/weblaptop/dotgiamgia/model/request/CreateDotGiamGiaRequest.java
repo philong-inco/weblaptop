@@ -2,6 +2,7 @@ package com.dantn.weblaptop.dotgiamgia.model.request;
 
 import com.dantn.weblaptop.entity.dotgiamgia.DotGiamGiaSanPhamChiTiet;
 import com.dantn.weblaptop.entity.hoadon.SerialNumberDaBan;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -20,6 +21,7 @@ public class CreateDotGiamGiaRequest {
     String ma;
 
     Integer trangThai;
+
     String ten;
 
     String moTa;
@@ -31,7 +33,6 @@ public class CreateDotGiamGiaRequest {
     LocalDateTime thoiGianKetthuc;
 
     BigDecimal giamToiDa;
-
     Set<DotGiamGiaSanPhamChiTiet> dotGiamGiaSanPhamChiTiets;
     Set<SerialNumberDaBan> serialNumberDaBans;
 }
