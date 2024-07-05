@@ -16,6 +16,15 @@ import java.util.List;
 @RestControllerAdvice
 public class GlobalException {
 
+    @ExceptionHandler(value = Exception.class)
+    public ResponseEntity<ApiResponse<Object>> handleAllException(Exception exception) {
+        ApiResponse<Object> apiResponse = new ApiResponse<>();
+        apiResponse.setStatusCode(HttpStatus.BAD_REQUEST.value());
+        apiResponse.setError(exception.getMessage());
+        apiResponse.setMessage("Exception : ");
+        return ResponseEntity.badRequest().body(apiResponse);
+    }
+
     @ExceptionHandler(value = AppException.class)
     public ResponseEntity<ApiResponse<Object>> handleAppException(AppException exception) {
         ApiResponse<Object> apiResponse = new ApiResponse<>();

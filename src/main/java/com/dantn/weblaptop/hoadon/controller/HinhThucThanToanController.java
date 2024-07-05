@@ -21,7 +21,6 @@ import java.util.Optional;
 public class HinhThucThanToanController {
     HinhThucThanhToanService paymentMethodService;
 
-
     @GetMapping
     public ResponseEntity<ApiResponse> getPaymentMethodPage(
             @RequestParam(name = "page", defaultValue = "0") Optional<String> page,
