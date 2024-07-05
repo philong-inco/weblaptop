@@ -1,11 +1,8 @@
 package com.dantn.weblaptop.entity.dotgiamgia;
 
-import com.dantn.weblaptop.dotgiamgia.model.request.CreateDotGiamGiaRequest;
 import com.dantn.weblaptop.entity.base.BaseEntity;
 import com.dantn.weblaptop.entity.sanpham.SanPhamChiTiet;
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
