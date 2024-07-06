@@ -2,7 +2,7 @@ package com.dantn.weblaptop.entity.dotgiamgia;
 
 import com.dantn.weblaptop.entity.base.BaseEntity;
 import com.dantn.weblaptop.entity.sanpham.SanPhamChiTiet;
-import com.fasterxml.jackson.annotation.JsonBackReference;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -29,13 +29,14 @@ public class DotGiamGiaSanPhamChiTiet extends BaseEntity {
 
     @Column(name = "trang_thai")
     Integer trangThai;
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(cascade = {CascadeType.DETACH, CascadeType.PERSIST,
+            CascadeType.MERGE, CascadeType.REFRESH},
+            fetch = FetchType.EAGER)
     @JoinColumn(name = "san_pham_chi_tiet_id")
-    @JsonBackReference("sanPhamChiTiet")
     SanPhamChiTiet sanPhamChiTiet;
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(cascade = {CascadeType.DETACH, CascadeType.PERSIST,
+            CascadeType.MERGE, CascadeType.REFRESH},
+            fetch = FetchType.EAGER)
     @JoinColumn(name = "dot_giam_gia_id")
-    @JsonBackReference("dotGiamGia")
     DotGiamGia dotGiamGia;
-
 }

@@ -10,7 +10,6 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -26,7 +25,6 @@ import java.util.Set;
 @Setter
 @Getter
 @ToString
-@Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class OCung extends BaseEntity {
 
@@ -39,7 +37,7 @@ public class OCung extends BaseEntity {
     @OneToMany(mappedBy = "oCung",
             cascade = {CascadeType.DETACH, CascadeType.PERSIST,
                     CascadeType.MERGE, CascadeType.REFRESH},
-            fetch = FetchType.LAZY)
+            fetch = FetchType.EAGER)
     @ToString.Exclude
     Set<SanPhamChiTiet> sanPhamChiTiets;
 }

@@ -2,6 +2,7 @@ package com.dantn.weblaptop.entity.dotgiamgia;
 
 import com.dantn.weblaptop.entity.base.BaseEntity;
 import com.dantn.weblaptop.entity.hoadon.SerialNumberDaBan;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -43,9 +44,15 @@ public class DotGiamGia extends BaseEntity {
     LocalDateTime thoiGianKetthuc;
     @Column(name = "giam_toi_da")
     BigDecimal giamToiDa;
-    @OneToMany(mappedBy = "dotGiamGia", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "dotGiamGia",
+            cascade = {CascadeType.DETACH, CascadeType.PERSIST,
+                    CascadeType.MERGE, CascadeType.REFRESH},
+            fetch = FetchType.EAGER)
     Set<DotGiamGiaSanPhamChiTiet> dotGiamGiaSanPhamChiTiets;
-    @OneToMany(mappedBy = "dotGiamGia", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "dotGiamGia",
+            cascade = {CascadeType.DETACH, CascadeType.PERSIST,
+                    CascadeType.MERGE, CascadeType.REFRESH},
+            fetch = FetchType.EAGER)
     Set<SerialNumberDaBan> serialNumberDaBans;
 }
 
