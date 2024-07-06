@@ -1,13 +1,10 @@
-package com.dantn.weblaptop.dotgiamgia.model.request;
+package com.dantn.weblaptop.dotgiamgia.model.response;
 
-import com.dantn.weblaptop.entity.dotgiamgia.DotGiamGiaSanPhamChiTiet;
-import com.dantn.weblaptop.entity.hoadon.SerialNumberDaBan;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.Set;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -15,16 +12,14 @@ import java.util.Set;
 @Getter
 @ToString
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class UpdateDotGiamGiaRequest {
+public class DotGiamGiaResponse {
     Long id;
     String ma;
-    Integer trangThai;
     String ten;
+    Integer trangThai;
     String moTa;
     Integer loaiChietKhau;
     LocalDateTime thoiGianBatDau;
     LocalDateTime thoiGianKetthuc;
     BigDecimal giamToiDa;
-    Set<DotGiamGiaSanPhamChiTiet> dotGiamGiaSanPhamChiTiets;
-    Set<SerialNumberDaBan> serialNumberDaBans;
 }

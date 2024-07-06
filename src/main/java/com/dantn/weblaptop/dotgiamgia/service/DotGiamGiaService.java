@@ -1,22 +1,27 @@
 package com.dantn.weblaptop.dotgiamgia.service;
 
-import com.dantn.weblaptop.dotgiamgia.model.request.CreateDotGiamGiaRequest;
-import com.dantn.weblaptop.dotgiamgia.model.request.UpdateDotGiamGiaRequest;
+
+import com.dantn.weblaptop.dotgiamgia.model.request.create_request.CreateDotGiamGiaRequest;
+import com.dantn.weblaptop.dotgiamgia.model.request.update_request.UpdateGotGiamGiaRequest;
+import com.dantn.weblaptop.dotgiamgia.model.response.DotGiamGiaResponse;
 import com.dantn.weblaptop.entity.dotgiamgia.DotGiamGia;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+
 @Service
 public interface DotGiamGiaService {
-    List<DotGiamGia> findAll();
+    Page<DotGiamGiaResponse> findAll(int page, int size);
 
-    DotGiamGia findById(Long id);
+    DotGiamGiaResponse findById(Long id);
 
-    void save(CreateDotGiamGiaRequest request);
+    DotGiamGiaResponse save(CreateDotGiamGiaRequest request);
 
-    void update(Long id, UpdateDotGiamGiaRequest request);
+    DotGiamGiaResponse update(Long id, UpdateGotGiamGiaRequest request);
 
-    void delete(Long id);
+//    void delete(Long id);
 //    void saveDotGiamGia(DotGiamGia dotGiamGia);
 }
