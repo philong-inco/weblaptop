@@ -19,15 +19,15 @@ import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
-@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
+@FieldDefaults(level = AccessLevel.PRIVATE)
 @Slf4j
 public class GiaoHangNhanhServiceImpl implements GiaoHangThanhService {
 
-    static String GHN_BASE_URL = "https://online-gateway.ghn.vn/shiip/public-api/";
-    @Value("${api.ghn.token}")
-    static String TOKEN;
-    @Value("${api.ghn.shop-id}")
-    static String SHOP_ID;
+     String GHN_BASE_URL = "https://online-gateway.ghn.vn/shiip/public-api/";
+//    @Value("${api.ghn.token}")
+    String TOKEN="0292ba75-34b6-11ef-89ca-1aad91406dac";
+//    @Value("${api.ghn.shop-id}")
+     String SHOP_ID="5160967 - 0397962849";
     HttpClient client = HttpClient.newHttpClient();
     ObjectMapper objectMapper = new ObjectMapper();
 
