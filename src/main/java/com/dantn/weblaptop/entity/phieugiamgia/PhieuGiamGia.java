@@ -32,7 +32,6 @@ import java.util.Set;
 @ToString
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class PhieuGiamGia extends BaseEntity {
-
     String ma;
     @Column(name = "trang_thai")
     Integer trangThai;
