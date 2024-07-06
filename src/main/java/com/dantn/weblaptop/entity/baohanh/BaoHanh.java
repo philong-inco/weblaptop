@@ -39,13 +39,13 @@ public class BaoHanh extends BaseEntity {
     @OneToMany(mappedBy = "baoHanh",
             cascade = {CascadeType.DETACH, CascadeType.PERSIST,
                     CascadeType.MERGE, CascadeType.REFRESH},
-            fetch = FetchType.EAGER)
+            fetch = FetchType.LAZY)
     @ToString.Exclude
     Set<SanPhamBaoHanh> sanPhamBaoHanhs;
     @OneToMany(mappedBy = "baoHanh",
             cascade = {CascadeType.DETACH, CascadeType.PERSIST,
                     CascadeType.MERGE, CascadeType.REFRESH},
-            fetch = FetchType.EAGER)
+            fetch = FetchType.LAZY)
     @ToString.Exclude
     Set<SerialNumberBaoHanh> serialNumberBaoHanhs;
 }

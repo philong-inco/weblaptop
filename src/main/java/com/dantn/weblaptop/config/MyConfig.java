@@ -1,5 +1,5 @@
 package com.dantn.weblaptop.config;
 
 public class MyConfig {
-    // Long làm
+    // Long làm abc
 }

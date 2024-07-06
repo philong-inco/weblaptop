@@ -52,14 +52,16 @@ public class PhieuGiamGia extends BaseEntity {
     BigDecimal giaTriDonToiThieu;
     @Column(name = "giam_toi_da")
     BigDecimal giamToiGia;
+    @Column(name = "pham_vi_ap_dung")
+    Integer phamViApDung;
     @OneToMany(mappedBy = "phieuGiamGia",
             cascade = {CascadeType.DETACH, CascadeType.PERSIST,
                     CascadeType.MERGE, CascadeType.REFRESH},
-            fetch = FetchType.EAGER)
+            fetch = FetchType.LAZY)
     Set<HoaDon> hoaDon;
     @OneToMany(mappedBy = "phieuGiamGia",
             cascade = {CascadeType.DETACH, CascadeType.PERSIST,
                     CascadeType.MERGE, CascadeType.REFRESH},
-            fetch = FetchType.EAGER)
+            fetch = FetchType.LAZY)
     Set<KhachHangPhieuGiamGia> khachHangPhieuGiamGias;
 }

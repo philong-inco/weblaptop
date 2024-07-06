@@ -9,21 +9,11 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDateTime;
 import java.util.Set;
-
-/**
- * @since 06/3/2024
- * Github: https://github.com/philong-inco
- */
 
 @Entity
 @Table(name = "nhan_vien")
@@ -32,14 +22,16 @@ import java.util.Set;
 @Setter
 @Getter
 @ToString
+@Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class NhanVien extends BaseEntity {
 
     String ma;
     @Column(name = "trang_thai")
     Integer trangThai;
+    @Column(name = "cccd")
     String cccd;
-    @Column(name = "ho")
+    @Column(name = "ten")
     String ten;
     @Column(name = "email")
     String email;
@@ -62,19 +54,19 @@ public class NhanVien extends BaseEntity {
     @OneToMany(mappedBy = "nhanVien",
             cascade = {CascadeType.DETACH, CascadeType.PERSIST,
                     CascadeType.MERGE, CascadeType.REFRESH},
-            fetch = FetchType.EAGER)
+            fetch = FetchType.LAZY)
     @ToString.Exclude
     Set<NhanVienVaiTro> nhanVienVaiTros;
     @OneToMany(mappedBy = "nhanVien",
             cascade = {CascadeType.DETACH, CascadeType.PERSIST,
                     CascadeType.MERGE, CascadeType.REFRESH},
-            fetch = FetchType.EAGER)
+            fetch = FetchType.LAZY)
     @ToString.Exclude
     Set<LichSuHoaDon> lichSuHoaDons;
     @OneToMany(mappedBy = "nhanVien",
             cascade = {CascadeType.DETACH, CascadeType.PERSIST,
                     CascadeType.MERGE, CascadeType.REFRESH},
-            fetch = FetchType.EAGER)
+            fetch = FetchType.LAZY)
     @ToString.Exclude
     Set<HoaDon> hoaDons;
 

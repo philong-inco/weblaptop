@@ -7,21 +7,10 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.util.Set;
-
-/**
- * @since 06/3/2024
- * Github: https://github.com/philong-inco
- */
-
 @Entity
 @Table(name = "vai_tro")
 @NoArgsConstructor
@@ -29,6 +18,7 @@ import java.util.Set;
 @Setter
 @Getter
 @ToString
+@Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class VaiTro extends BaseEntity {
 
@@ -42,7 +32,7 @@ public class VaiTro extends BaseEntity {
     @OneToMany(mappedBy = "vaiTro",
             cascade = {CascadeType.DETACH, CascadeType.PERSIST,
                     CascadeType.MERGE, CascadeType.REFRESH},
-            fetch = FetchType.EAGER)
+            fetch = FetchType.LAZY)
     @ToString.Exclude
     private Set<NhanVienVaiTro> nhanVienVaiTros;
 
