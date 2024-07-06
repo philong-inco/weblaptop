@@ -37,7 +37,7 @@ public class HinhThucThanhToan extends BaseEntity {
     Integer trangThai;
     String ten;
     @Column(name = "mo_ta")
-    Integer moTa;
+    String moTa;
     @OneToMany(mappedBy = "hinhThucThanhToan",
             cascade = {CascadeType.DETACH, CascadeType.PERSIST,
                     CascadeType.MERGE, CascadeType.REFRESH},
