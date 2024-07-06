@@ -6,6 +6,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class CreateHinhThucThanhToanRequest {
+//    NguyenTienManh
     String ten;
     String moTa;
 }
