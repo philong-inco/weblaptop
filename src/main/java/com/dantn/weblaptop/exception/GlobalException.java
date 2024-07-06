@@ -4,11 +4,8 @@ package com.dantn.weblaptop.exception;
 import com.dantn.weblaptop.dto.response.ApiResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-<<<<<<< HEAD:src/main/java/com/dantn/weblaptop/hoadon/exception/GlobalException.java
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
-=======
->>>>>>> main:src/main/java/com/dantn/weblaptop/exception/GlobalException.java
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -55,7 +52,6 @@ public class GlobalException {
         return ResponseEntity.badRequest().body(apiResponse);
     }
 
-<<<<<<< HEAD:src/main/java/com/dantn/weblaptop/hoadon/exception/GlobalException.java
     @ExceptionHandler(value = MethodArgumentNotValidException.class)
     public ResponseEntity<ApiResponse<Object>> handleValidationError(MethodArgumentNotValidException exception) {
         BindingResult result = exception.getBindingResult();
@@ -69,17 +65,10 @@ public class GlobalException {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(apiResponse);
     }
 
-=======
     @ExceptionHandler(value = RuntimeException.class)
     ResponseEntity<String> runtimeExceptionHandler(RuntimeException e) {
         return ResponseEntity.badRequest().body(e.getMessage());
     }
 
-    @ExceptionHandler(value = MethodArgumentNotValidException.class)
-    ResponseEntity<String> methodArgumentNotValidExceptionHandler(MethodArgumentNotValidException e) {
-        // Trích xuất thông tin lỗi chi tiết từ FieldError
-        String errorMessage = e.getBindingResult().getFieldError().getDefaultMessage();
-        return ResponseEntity.badRequest().body(errorMessage);
-    }
->>>>>>> main:src/main/java/com/dantn/weblaptop/exception/GlobalException.java
+
 }

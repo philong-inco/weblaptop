@@ -7,21 +7,6 @@ import java.util.Random;
 @Component
 public class GenerateCode {
     public static final String CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-<<<<<<< HEAD
-    public static final String SIZE_PREFIX = "SZ";
-    public static final String COLOR_PREFIX = "CL";
-    public static final String STAFF_PREFIX = "NV";
-    public static final String CUSTOMER_PREFIX = "CS";
-    public static final String PRODUCT_PREFIX = "PR";
-    public static final String CATEGORY_PREFIX = "CA";
-    public static final String BILL_PREFIX = "BL";
-    public static final String PAYMENT_METHOD_PREFIX = "PAY_";
-    public static final Random random = new Random();
-
-    public static final int SUFFIXES_LENGTH = 5;
-
-    public String generateCode(String prefix) {
-=======
     public static final String RAM_PREFIX = "RAM";
     public static final String VGA_PREFIX = "GVA";
     public static final String CPU_PREFIX = "CPU";
@@ -44,7 +29,7 @@ public class GenerateCode {
     private static final int NUMBER_LENGTH = 4;
 
     public static String generateCode(String prefix) {
->>>>>>> main
+
         StringBuilder result = new StringBuilder();
         result.append(prefix);
         for (int i = 0; i < SUFFIXES_LENGTH; i++) {
@@ -52,8 +37,7 @@ public class GenerateCode {
         }
         return result.toString();
     }
-<<<<<<< HEAD
-=======
+
 
     public static String generateNhanVienCode() {
         Random random = new Random();
@@ -82,5 +66,4 @@ public class GenerateCode {
         String formattedNumber = String.format("%0" + NUMBER_LENGTH + "d", randomNumber);
         return PAYMENT_METHOD_PREFIX + formattedNumber;
     }
->>>>>>> main
 }
