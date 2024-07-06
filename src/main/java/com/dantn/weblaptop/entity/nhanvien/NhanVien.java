@@ -54,19 +54,19 @@ public class NhanVien extends BaseEntity {
     @OneToMany(mappedBy = "nhanVien",
             cascade = {CascadeType.DETACH, CascadeType.PERSIST,
                     CascadeType.MERGE, CascadeType.REFRESH},
-            fetch = FetchType.LAZY)
+            fetch = FetchType.EAGER)
     @ToString.Exclude
     Set<NhanVienVaiTro> nhanVienVaiTros;
     @OneToMany(mappedBy = "nhanVien",
             cascade = {CascadeType.DETACH, CascadeType.PERSIST,
                     CascadeType.MERGE, CascadeType.REFRESH},
-            fetch = FetchType.LAZY)
+            fetch = FetchType.EAGER)
     @ToString.Exclude
     Set<LichSuHoaDon> lichSuHoaDons;
     @OneToMany(mappedBy = "nhanVien",
             cascade = {CascadeType.DETACH, CascadeType.PERSIST,
                     CascadeType.MERGE, CascadeType.REFRESH},
-            fetch = FetchType.LAZY)
+            fetch = FetchType.EAGER)
     @ToString.Exclude
     Set<HoaDon> hoaDons;
 

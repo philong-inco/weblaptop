@@ -13,7 +13,6 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -35,7 +34,6 @@ import java.util.Set;
 @Setter
 @Getter
 @ToString
-@Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class SerialNumber extends BaseEntity {
     @Column(name = "ma", unique = true, nullable = false)
@@ -52,11 +50,11 @@ public class SerialNumber extends BaseEntity {
     @OneToMany(mappedBy = "serialNumber",
             cascade = {CascadeType.DETACH, CascadeType.MERGE,
                     CascadeType.REFRESH, CascadeType.PERSIST},
-            fetch = FetchType.LAZY)
+            fetch = FetchType.EAGER)
     Set<SerialNumberBaoHanh> serialNumberBaoHanhs;
     @OneToMany(mappedBy = "serialNumber",
             cascade = {CascadeType.DETACH, CascadeType.MERGE,
                     CascadeType.REFRESH, CascadeType.PERSIST},
-            fetch = FetchType.LAZY)
+            fetch = FetchType.EAGER)
     Set<SerialNumberDaBan> serialNumberDaBans;
 }

@@ -32,7 +32,7 @@ public class VaiTro extends BaseEntity {
     @OneToMany(mappedBy = "vaiTro",
             cascade = {CascadeType.DETACH, CascadeType.PERSIST,
                     CascadeType.MERGE, CascadeType.REFRESH},
-            fetch = FetchType.LAZY)
+            fetch = FetchType.EAGER)
     @ToString.Exclude
     private Set<NhanVienVaiTro> nhanVienVaiTros;
 

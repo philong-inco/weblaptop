@@ -41,7 +41,7 @@ public class HinhThucThanhToan extends BaseEntity {
     @OneToMany(mappedBy = "hinhThucThanhToan",
             cascade = {CascadeType.DETACH, CascadeType.PERSIST,
                     CascadeType.MERGE, CascadeType.REFRESH},
-            fetch = FetchType.LAZY)
+            fetch = FetchType.EAGER)
     @ToString.Exclude
     Set<HoaDonHinhThucThanhToan> hoaDonHinhThucThanhToans;
 }
