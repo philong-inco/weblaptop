@@ -1,47 +1,45 @@
 package com.dantn.weblaptop.service.impl;
 
-import com.dantn.weblaptop.constant.AccountStatus;
 import com.dantn.weblaptop.constant.EmailSender;
+import com.dantn.weblaptop.dto.ChangeEmail_Dto;
 import com.dantn.weblaptop.dto.request.create_request.CreateNhanVien;
 import com.dantn.weblaptop.dto.request.update_request.UpdateNhanVien;
 import com.dantn.weblaptop.dto.response.NhanVienResponse;
 import com.dantn.weblaptop.entity.nhanvien.NhanVien;
 import com.dantn.weblaptop.entity.nhanvien.NhanVienVaiTro;
 import com.dantn.weblaptop.entity.nhanvien.VaiTro;
-import com.dantn.weblaptop.exception.GlobalException;
 import com.dantn.weblaptop.mapper.NhanVien_Mapper;
-import com.dantn.weblaptop.mapper.VaiTro_Mapper;
 import com.dantn.weblaptop.repository.NhanVienVaiTroRepository;
 import com.dantn.weblaptop.repository.NhanVien_Repositoy;
 import com.dantn.weblaptop.repository.VaiTro_Repository;
 import com.dantn.weblaptop.service.NhanVien_Service;
-import com.dantn.weblaptop.util.ConvertTime;
 import com.dantn.weblaptop.util.GenerateCode;
-import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
-
 import java.util.List;
+import java.util.Optional;
 
-
-@AllArgsConstructor
+@Component
 public class NhanVienService_Implement implements NhanVien_Service {
-    private final NhanVien_Repositoy nhanVienRepositoy;
-    private final NhanVien_Mapper nhanVienMapper;
-    private final VaiTro_Mapper vaiTroMapper;
-    private final VaiTro_Repository vaiTroRepository;
-    private final EmailSender emailSender;
-    private final NhanVienVaiTroRepository nhanVienVaiTroRepository;
+    @Autowired
+    NhanVien_Repositoy nhanVienRepositoy;
+    @Autowired
+    NhanVien_Mapper nhanVienMapper;
+    @Autowired
+    VaiTro_Repository vaiTroRepository;
+    @Autowired
+    EmailSender emailSender;
+    @Autowired
+    NhanVienVaiTroRepository nhanVienVaiTroRepository;
+
 
     @Override
     public Page<NhanVienResponse> pageNhanVien(Integer pageNo, Integer size) {
@@ -59,7 +57,7 @@ public class NhanVienService_Implement implements NhanVien_Service {
 
     @Override
     public List<NhanVienResponse> listNhanVienResponse() {
-        return nhanVienMapper.listNhanVienEntityToNhanVienResponse(nhanVienRepositoy.getNhanVienByTrangThai(AccountStatus.DANG_LAM_VIEC));
+        return nhanVienMapper.listNhanVienEntityToNhanVienResponse(nhanVienRepositoy.getNhanVienByTrangThai(1));
     }
 
     @Override
@@ -73,7 +71,8 @@ public class NhanVienService_Implement implements NhanVien_Service {
             NhanVien nhanVien = nhanVienMapper.CreateToEntity(createNhanVienRequest);
             nhanVien.setMa(GenerateCode.generateNhanVienCode());
             nhanVien.setNgayTao(LocalDateTime.now().toInstant(ZoneOffset.UTC).toEpochMilli());
-            nhanVien.setTrangThai(AccountStatus.DANG_LAM_VIEC.ordinal());
+            nhanVien.setNgayBatDauLamViec(LocalDateTime.now());
+            nhanVien.setTrangThai(1);
             if (nhanVienRepositoy.findByEmail(createNhanVienRequest.getEmail()) != null) {
                 throw new RuntimeException("Email đã được sử dụng trước đó.");
             }
@@ -86,7 +85,7 @@ public class NhanVienService_Implement implements NhanVien_Service {
                 }
             }
             String passwordNhanVien = GenerateCode.generateNhanVienCode();
-            emailSender.signupNhanVienSendEmail(nhanVien, passwordNhanVien);
+
             nhanVien.setMatKhau(passwordNhanVien);
             nhanVienRepositoy.save(nhanVien);
 
@@ -95,7 +94,8 @@ public class NhanVienService_Implement implements NhanVien_Service {
             VaiTro vaiTro = vaiTroRepository.findById(createNhanVienRequest.getIdVaiTro()).orElseThrow(() -> new RuntimeException("Không tìm thấy vai trò."));
             nhanVienVaiTro.setVaiTro(vaiTro);
             nhanVienVaiTroRepository.save(nhanVienVaiTro);
-
+            String vaiTroNhanVien = nhanVienVaiTroRepository.findNhanVienVaiTroByIdNhanVien(nhanVien.getId()).getVaiTro().getTen();
+            emailSender.signupNhanVienSendEmail(nhanVien, passwordNhanVien, vaiTroNhanVien);
         } catch (Exception ex) {
             throw new RuntimeException("Tạo mới nhân viên không thành công.");
         }
@@ -103,50 +103,81 @@ public class NhanVienService_Implement implements NhanVien_Service {
     }
 
     @Override
-    public NhanVienResponse update(UpdateNhanVien updateNhanVienRequest, Integer id) {
+    public NhanVienResponse update(UpdateNhanVien updateNhanVienRequest, Long id) {
         try {
-            NhanVien nhanVien = nhanVienRepositoy.findById(id).orElseThrow(() -> new RuntimeException("Không tìm thấy nhân viên với ID: " + id));
+            // Tìm kiếm nhân viên theo ID
+            Optional<NhanVien> optionalNhanVien = nhanVienRepositoy.getNhanVienById(id);
+            if (optionalNhanVien.isPresent()) {
+                NhanVien nhanVien = optionalNhanVien.get();
 
-            NhanVienVaiTro nhanVienVaiTro = nhanVienVaiTroRepository.findNhanVienVaiTroByIdNhanVien(nhanVien.getId());
+                // Mapping DTO to Entity
+                NhanVien updateNhanVien = nhanVienMapper.UpdateToEntity(updateNhanVienRequest);
 
-            VaiTro vaiTro = nhanVienVaiTro.getVaiTro();
-            if (vaiTro == null || vaiTro.getId() == null) {
-                throw new RuntimeException("Không tìm thấy vai trò với ID: " + id);
-            }
+                // Kiểm tra email trùng lặp
+                nhanVienRepositoy.findAll().stream()
+                        .filter(kh -> kh.getEmail().equals(updateNhanVien.getEmail()) && !kh.getId().equals(nhanVien.getId()))
+                        .findFirst()
+                        .ifPresent(kh -> {
+                            throw new RuntimeException("Email này đã tồn tại " + kh.getEmail());
+                        });
 
-            NhanVien updateNhanVien = nhanVienMapper.UpdateToEntity(updateNhanVienRequest);
+                // Kiểm tra căn cước công dân trùng lặp
+                nhanVienRepositoy.findAll().stream()
+                        .filter(kh -> kh.getCccd().equals(updateNhanVien.getCccd()) && !kh.getId().equals(nhanVien.getId()))
+                        .findFirst()
+                        .ifPresent(kh -> {
+                            throw new RuntimeException("Số căn cước công dân này đã tồn tại " + kh.getCccd());
+                        });
 
-            for (NhanVien kh : nhanVienRepositoy.findAll()) {
-                if (kh.getEmail().equals(updateNhanVien.getEmail()) && kh.getId() != nhanVien.getId()) {
-                    throw new RuntimeException("Email này đã tồn tại " + kh.getEmail());
+                // Kiểm tra số điện thoại trùng lặp
+                nhanVienRepositoy.findAll().stream()
+                        .filter(kh -> kh.getSdt().equals(updateNhanVien.getSdt()) && !kh.getId().equals(nhanVien.getId()))
+                        .findFirst()
+                        .ifPresent(kh -> {
+                            throw new RuntimeException("Số điện thoại này đã tồn tại " + kh.getSdt());
+                        });
+
+                // Cập nhật các trường của nhân viên
+                nhanVien.setTrangThai(updateNhanVien.getTrangThai());
+                nhanVien.setTen(updateNhanVien.getTen());
+                nhanVien.setHinhAnh(updateNhanVien.getHinhAnh());
+                nhanVien.setGioiTinh(updateNhanVien.getGioiTinh());
+                nhanVien.setNgaySinh(updateNhanVien.getNgaySinh());
+                nhanVien.setCccd(updateNhanVien.getCccd());
+                nhanVien.setEmail(updateNhanVien.getEmail());
+                nhanVien.setSdt(updateNhanVien.getSdt());
+                nhanVien.setNgaySua(LocalDateTime.now().toInstant(ZoneOffset.UTC).toEpochMilli());
+
+                // Lưu nhân viên
+                NhanVien updatedNhanVien = nhanVienRepositoy.save(nhanVien);
+
+                // Cập nhật vai trò của nhân viên
+                if (updateNhanVienRequest.getIdVaiTro() != null) {
+                    VaiTro vaiTro = vaiTroRepository.findById(updateNhanVienRequest.getIdVaiTro())
+                            .orElseThrow(() -> new RuntimeException("Vai trò không tồn tại với ID: " + updateNhanVienRequest.getIdVaiTro()));
+
+                    // Kiểm tra xem nhân viên đã có vai trò này chưa
+                    boolean hasRole = nhanVien.getNhanVienVaiTros().stream()
+                            .anyMatch(nvvt -> nvvt.getVaiTro().getId().equals(vaiTro.getId()));
+
+                    if (!hasRole) {
+                        NhanVienVaiTro nhanVienVaiTro = new NhanVienVaiTro();
+                        nhanVienVaiTro.setNhanVien(nhanVien);
+                        nhanVienVaiTro.setVaiTro(vaiTro);
+
+                        nhanVienVaiTroRepository.save(nhanVienVaiTro);
+                    }
                 }
+                // Trả về phản hồi
+                return nhanVienMapper.EntiyToResponse(updatedNhanVien);
+
+            } else {
+                throw new RuntimeException("Nhân viên không tồn tại với ID: " + id);
             }
 
-            for (NhanVien kh : nhanVienRepositoy.findAll()) {
-                if (kh.getCccd().equals(updateNhanVien.getCccd()) && kh.getId() != nhanVien.getId()) {
-                    throw new RuntimeException("Số căn cước công dân này đã tồn tại " + kh.getCccd());
-                }
-            }
-
-            for (NhanVien kh : nhanVienRepositoy.findAll()) {
-                if (kh.getSdt().equals(updateNhanVien.getSdt()) && kh.getId() != nhanVien.getId()) {
-                    throw new RuntimeException("Số điện thoại này đã tồn tại " + kh.getSdt());
-                }
-            }
-            nhanVien.setTen(updateNhanVien.getTen());
-            nhanVien.setHinhAnh(updateNhanVien.getHinhAnh());
-            nhanVien.setGioiTinh(updateNhanVien.getGioiTinh());
-            nhanVien.setNgaySinh(updateNhanVien.getNgaySinh());
-            nhanVien.setCccd(updateNhanVien.getCccd());
-            nhanVien.setEmail(updateNhanVien.getEmail());
-            nhanVien.setSdt(updateNhanVien.getSdt());
-            nhanVien.setNgaySua(LocalDateTime.now().toInstant(ZoneOffset.UTC).toEpochMilli());
-
-            return nhanVienMapper.EntiyToResponse(nhanVienRepositoy.save(nhanVien));
         } catch (DataIntegrityViolationException ex) {
-            throw new RuntimeException("Failed to update nhan vien. Possibly duplicate record." + ex);
+            throw new RuntimeException("Failed to update nhân viên. Possibly duplicate record." + ex.getMessage(), ex);
         }
-
     }
 
 
@@ -158,13 +189,13 @@ public class NhanVienService_Implement implements NhanVien_Service {
 
 
     @Override
-    public void removeOrRevert(AccountStatus accountStatus, Long id) {
-        nhanVienRepositoy.revertStatus(accountStatus.DA_THOI_VIEC, id);
+    public void removeOrRevert(Long id) {
+        nhanVienRepositoy.updateTrangThaiById(0, id);
     }
 
     @Override
-    public boolean changeEmail(NhanVienResponse nhanVienDto, String newEmailNv) {
-        NhanVien nhanVien = nhanVienRepositoy.findByEmail(nhanVienDto.getEmail());
+    public boolean changeEmail(ChangeEmail_Dto changeEmailDto, String newEmailNv) {
+        NhanVien nhanVien = nhanVienRepositoy.findByEmail(changeEmailDto.getEmail());
         if (nhanVien == null) {
             return false;
         }

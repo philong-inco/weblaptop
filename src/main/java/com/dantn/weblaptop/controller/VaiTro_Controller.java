@@ -32,7 +32,7 @@ public class VaiTro_Controller {
 
     @PutMapping("/update/{id}")
     public ResponseEntity<VaiTro_Response> updateVaiTro(@PathVariable Long id, @Valid @RequestBody UpdateVaiTro_Request request) {
-        VaiTro_Response response = vaiTroService.update(request);
+        VaiTro_Response response = vaiTroService.update(request, id);
         return ResponseEntity.ok(response);
     }
 

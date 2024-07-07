@@ -1,18 +1,25 @@
 package com.dantn.weblaptop.constant;
 
 import com.dantn.weblaptop.entity.nhanvien.NhanVien;
+import com.dantn.weblaptop.repository.VaiTro_Repository;
 import lombok.AllArgsConstructor;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.stereotype.Component;
 
 
-
-@AllArgsConstructor
+@Component
 public class EmailSender {
     private final JavaMailSender javaMailSender;
 
-    public void signupNhanVienSendEmail(NhanVien nhanVien, String genPassWord){
+    @Autowired
+    public EmailSender(JavaMailSender javaMailSender) {
+        this.javaMailSender = javaMailSender;
+    }
+
+    public void signupNhanVienSendEmail(NhanVien nhanVien, String genPassWord, String vaiTro) {
         SimpleMailMessage message = new SimpleMailMessage();
         message.setTo(nhanVien.getEmail());
         message.setSubject("Chào mừng bạn đến với Cửa hàng bán Laptop ComNoOne.");
@@ -32,21 +39,22 @@ public class EmailSender {
                 nhanVien.getTen(),
                 nhanVien.getEmail(),
                 genPassWord,
-                nhanVien.getNhanVienVaiTros()
+                vaiTro
+
         );
 
         message.setText(emailContent);
         javaMailSender.send(message);
     }
 
-    public void sendForgotPasswordEmailForNhanVien(NhanVien nhanVien, String newPlainTextPassword){
+    public void sendForgotPasswordEmailForNhanVien(NhanVien nhanVien, String newPlainTextPassword) {
         SimpleMailMessage message = new SimpleMailMessage();
         message.setTo(nhanVien.getEmail());
         message.setSubject("Thực hiện thay đổi mật khẩu \"ComNoOne\"");
         message.setText("Chào anh/chị, " +
                 "Dưới đậy là mật khẩu mới của bạn" +
                 "Mật khẩu: " + newPlainTextPassword + "\n" +
-                "Vui lòng dùng mật khẩu này để đăng nhập lại tài khoản của bạn" + "\n"+
+                "Vui lòng dùng mật khẩu này để đăng nhập lại tài khoản của bạn" + "\n" +
                 "Trân trọng" + "\n" +
                 "Của hàng bán áo đấu thể thao PSG");
         javaMailSender.send(message);

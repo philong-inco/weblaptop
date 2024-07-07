@@ -46,6 +46,7 @@ public class VaiTroMapper_Implement implements VaiTro_Mapper {
         response.setTen(entity.getTen());
         response.setMoTa(entity.getMoTa());
         response.setMa(entity.getMa());
+        response.setTrang_thai(entity.getTrangThai());
         return response;
     }
 }

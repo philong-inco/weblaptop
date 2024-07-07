@@ -22,7 +22,7 @@ public class NhanVienMapper_Implement implements NhanVien_Mapper {
         }
         NhanVien nhanVien = new NhanVien();
         nhanVien.setMa(dto.getMa());
-        nhanVien.setTrangThai(dto.getTrangThai());
+        nhanVien.setTrangThai(dto.getTrang_thai());
         nhanVien.setCccd(dto.getCccd());
         nhanVien.setTen(dto.getTen());
         nhanVien.setEmail(dto.getEmail());
@@ -32,7 +32,6 @@ public class NhanVienMapper_Implement implements NhanVien_Mapper {
         nhanVien.setGioiTinh(dto.getGioiTinh());
         nhanVien.setHinhAnh(dto.getHinhAnh());
         nhanVien.setTaiKhoanNganHang(dto.getTaiKhoanNganHang());
-        nhanVien.setNgayBatDauLamViec(dto.getNgayBatDauLamViec());
         nhanVien.setNgayThoiViec(dto.getNgayThoiViec());
         return nhanVien;
     }
@@ -44,7 +43,7 @@ public class NhanVienMapper_Implement implements NhanVien_Mapper {
         }
         NhanVien nhanVien = new NhanVien();
         nhanVien.setMa(dto.getMa());
-        nhanVien.setTrangThai(dto.getTrangThai());
+        nhanVien.setTrangThai(dto.getTrang_thai());
         nhanVien.setCccd(dto.getCccd());
         nhanVien.setTen(dto.getTen());
         nhanVien.setEmail(dto.getEmail());
@@ -54,8 +53,6 @@ public class NhanVienMapper_Implement implements NhanVien_Mapper {
         nhanVien.setGioiTinh(dto.getGioiTinh());
         nhanVien.setHinhAnh(dto.getHinhAnh());
         nhanVien.setTaiKhoanNganHang(dto.getTaiKhoanNganHang());
-        nhanVien.setNgayBatDauLamViec(dto.getNgayBatDauLamViec());
-        nhanVien.setNgayThoiViec(dto.getNgayThoiViec());
         return nhanVien;
     }
 

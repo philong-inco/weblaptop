@@ -13,7 +13,7 @@ import java.util.List;
 @Service
 public interface VaiTro_Service {
     VaiTro_Response create(CreateVaiTro_Request dto);
-    VaiTro_Response update(UpdateVaiTro_Request dto);
+    VaiTro_Response update(UpdateVaiTro_Request dto, Long id);
     VaiTro_Response getById(Long id);
     List<VaiTro_Response> getAll();
     Page<VaiTro> pageAllVaiTro(Pageable pageable);

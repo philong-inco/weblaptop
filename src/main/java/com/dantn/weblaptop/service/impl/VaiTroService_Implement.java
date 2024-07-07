@@ -41,8 +41,8 @@ public class VaiTroService_Implement implements VaiTro_Service {
 
     @Override
     @Transactional
-    public VaiTro_Response update(UpdateVaiTro_Request dto) {
-        VaiTro existingVaiTro = vaiTroRepository.findById(dto.getId())
+    public VaiTro_Response update(UpdateVaiTro_Request dto, Long id) {
+        VaiTro existingVaiTro = vaiTroRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("VaiTro not found"));
         if(existingVaiTro != null){
             existingVaiTro.setTen(dto.getTen());

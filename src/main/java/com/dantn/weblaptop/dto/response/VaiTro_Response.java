@@ -12,7 +12,7 @@ import lombok.experimental.FieldDefaults;
 public class VaiTro_Response {
     Long id;
     String ma;
-    Integer trangThai;
+    Integer trang_thai;
     String ten;
     String moTa;
 }
