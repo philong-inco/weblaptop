@@ -1,22 +1,30 @@
 package com.dantn.weblaptop.controller;
 
+import com.dantn.weblaptop.dto.response.ApiResponse;
 import com.dantn.weblaptop.entity.phieugiamgia.PhieuGiamGia;
 import com.dantn.weblaptop.service.impl.PhieuGiamGiaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/v1/coupons")
+@CrossOrigin("*")
 public class PhieuGiamGiaController {
     @Autowired
     private PhieuGiamGiaService phieuGiamGiaService;
 
     @GetMapping
-    public Page<PhieuGiamGia> getAllPhieuGiamGia(
+    public ResponseEntity<ApiResponse> getAllPhieuGiamGia(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "5") int size) {
-        return phieuGiamGiaService.getAll(page, size);
+        ApiResponse apiResponse = new ApiResponse();
+        apiResponse.setStatusCode(HttpStatus.OK.value());
+        apiResponse.setMessage("Call api success");
+        apiResponse.setData(phieuGiamGiaService.getAll(page, size));
+        return ResponseEntity.ok(apiResponse);
     }
 
     @PostMapping("/add")
