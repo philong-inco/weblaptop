@@ -43,8 +43,12 @@ public class PhieuGiamGiaController {
     }
 
     @GetMapping("/detail/{id}")
-    public PhieuGiamGia detailPhieuGiamGia(@PathVariable Long id){
-        return phieuGiamGiaService.detail(id);
+    public ResponseEntity<ApiResponse> detailPhieuGiamGia(@PathVariable Long id){
+        ApiResponse apiResponse = new ApiResponse();
+        apiResponse.setStatusCode(HttpStatus.OK.value());
+        apiResponse.setMessage("Call Api by id");
+        apiResponse.setData(phieuGiamGiaService.detail(id));
+        return ResponseEntity.ok(apiResponse) ;
     }
 
 }

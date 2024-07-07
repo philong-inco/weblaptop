@@ -80,9 +80,12 @@ public class PhieuGiamGiaService {
         }).orElse(null);
     }
 
-    public PhieuGiamGia detail(Long id) {
+    public PhieuGiamGiaResponse detail(Long id) {
         Optional<PhieuGiamGia> optional = phieuGiamGiaRepo.findById(id);
-        return optional.orElse(null);
+        if(optional.isPresent()){
+          return   PhieuGiamGiaMapper.toPhieuGiamGiaResponse(optional.get());
+        }
+        return null;
     }
 
 }
