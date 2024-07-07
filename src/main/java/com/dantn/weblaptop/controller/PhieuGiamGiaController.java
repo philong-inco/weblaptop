@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/v1/coupons")
-@CrossOrigin("*")
 public class PhieuGiamGiaController {
     @Autowired
     private PhieuGiamGiaService phieuGiamGiaService;
