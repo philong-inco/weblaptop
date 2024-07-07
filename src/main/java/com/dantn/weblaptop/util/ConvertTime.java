@@ -1,6 +1,7 @@
 package com.dantn.weblaptop.util;
 
 import java.time.Instant;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
@@ -14,8 +15,4 @@ public class ConvertTime {
         return localDateTime.format(formatter);
     }
 
-//    public static void main(String[] args) {
-//        // Test
-//        System.out.println(convert("1716359511951"));
-//    }
 }

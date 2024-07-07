@@ -67,5 +67,5 @@ public class CreateNhanVien {
 
     LocalDateTime ngayThoiViec;
 
-    List<VaiTro> vaiTroList;
+    Long idVaiTro;
 }

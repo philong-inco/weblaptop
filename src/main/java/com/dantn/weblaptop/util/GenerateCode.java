@@ -27,6 +27,16 @@ public class GenerateCode {
     public static final Random random = new Random();
     public static final int SUFFIXES_LENGTH = 5;
     private static final int NUMBER_LENGTH = 4;
+    private static final int NUMBER_LENGTH_Khach_Hang_And_NhanVien = 11;
+    private static  final String passWordNhanVien="ComNoOne";
+
+
+    public static String generatePassWordNhanVien() {
+        Random random = new Random();
+        int randomNumber = random.nextInt((int) Math.pow(10, 9));
+        String formattedNumber = String.format("%0" + NUMBER_LENGTH_Khach_Hang_And_NhanVien + "d", randomNumber);
+        return passWordNhanVien + formattedNumber;
+    }
 
     public static String generateCode(String prefix) {
 

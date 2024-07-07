@@ -66,5 +66,5 @@ public class UpdateNhanVien {
 
     LocalDateTime ngayThoiViec;
 
-    List<VaiTro> vaiTroList;
+    Long idVaiTro;
 }
