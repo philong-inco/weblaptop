@@ -35,11 +35,17 @@ public class LichSuHoaDonServiceImpl implements LichSuHoaDonService {
     HoaDonRepository billRepository;
     KhachHangRepository customerRepository;
     NhanVienRepository employeeRepository;
+
     @Override
     public LichSuHoaDonResponse create(CreateLichSuHoaDonRequest request) throws AppException {
         NhanVien existingEmployee = employeeRepository.findById(request.getIdNhanVien()).orElseThrow(
                 () -> new AppException("Cant not find employee with ID : " + request.getIdNhanVien()));
-        KhachHang existingCustomer = customerRepository.findById(request.getIdKhachHang()).orElse(null);
+
+        KhachHang existingCustomer = new KhachHang();
+        if (request.getIdKhachHang() != null) {
+            existingCustomer = customerRepository.findById(request.getIdKhachHang()).orElseThrow(
+                    () -> new AppException("Cant not find customer with ID : " + request.getIdKhachHang()));
+        }
         HoaDon existingBill = billRepository.findById(request.getIdHoaDon()).orElseThrow(
                 () -> new AppException("Cant not find bill with ID : " + request.getIdHoaDon()));
         LichSuHoaDon newBillHistory = LichSuHoaDonMapper.createBillHistory(request);
