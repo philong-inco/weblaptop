@@ -6,6 +6,7 @@ import com.dantn.weblaptop.dto.response.KhachHangResponse;
 import com.dantn.weblaptop.entity.khachhang.KhachHang;
 
 import java.util.List;
+
 public interface KhachHang_Mapper {
 
     KhachHang createToEntityKhachHang(CreateKhachHang createKhachHang);

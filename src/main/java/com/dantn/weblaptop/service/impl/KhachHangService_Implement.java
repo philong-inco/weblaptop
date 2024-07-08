@@ -116,7 +116,7 @@ public class KhachHangService_Implement implements KhachHang_Service {
     public KhachHangResponse update(UpdateKhachHang updateKhachHangRequest, Long id) {
         try {
             KhachHang khachHang = khachHangRepository.findKhachHangById(id);
-            if (khachHang == null) {
+            if (khachHang != null) {
                 KhachHang updateKhachHang = khachHangMapper.updateToEntityKhachHang(updateKhachHangRequest);
 
                 for (KhachHang kh : khachHangRepository.findAll()) {
