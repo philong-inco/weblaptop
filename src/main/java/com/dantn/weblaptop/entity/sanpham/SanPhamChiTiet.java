@@ -12,6 +12,7 @@ import com.dantn.weblaptop.entity.sanpham.thuoctinh.OCung;
 import com.dantn.weblaptop.entity.sanpham.thuoctinh.RAM;
 import com.dantn.weblaptop.entity.sanpham.thuoctinh.VGA;
 import com.dantn.weblaptop.entity.sanpham.thuoctinh.Webcam;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

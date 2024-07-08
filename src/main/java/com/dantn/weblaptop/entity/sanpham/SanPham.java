@@ -2,6 +2,8 @@ package com.dantn.weblaptop.entity.sanpham;
 
 import com.dantn.weblaptop.entity.baohanh.SanPhamBaoHanh;
 import com.dantn.weblaptop.entity.base.BaseEntity;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
