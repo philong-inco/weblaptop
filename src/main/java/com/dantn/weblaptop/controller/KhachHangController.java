@@ -1,0 +1,151 @@
+package com.dantn.weblaptop.controller;
+
+import com.dantn.weblaptop.dto.InfomationKhachHang;
+import com.dantn.weblaptop.dto.request.create_request.CreateKhachHang;
+import com.dantn.weblaptop.dto.request.update_request.UpdateKhachHang;
+import com.dantn.weblaptop.service.KhachHang_Service;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
+import jakarta.validation.Valid;
+import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Component;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.ObjectError;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+@RestController
+@RequestMapping("/api/khach-hang")
+@Component
+@AllArgsConstructor
+public class KhachHangController {
+    @Qualifier("khachHang_Service")
+    private final KhachHang_Service khachHangService;
+
+    @GetMapping("")
+    public ResponseEntity<?> getAll(@RequestParam(defaultValue = "0", name = "pageNo", required = false) Integer pageNo,
+                                    @RequestParam(defaultValue = "5", name = "pageSize", required = false) Integer pageSize) {
+        return ResponseEntity.ok(khachHangService.pageKhachHang(pageNo, pageSize));
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<?> search(@RequestParam(name = "search", required = false) String search,
+                                    @RequestParam(defaultValue = "0", name = "pageNo", required = false) Integer pageNo,
+                                    @RequestParam(defaultValue = "5", name = "pageSize", required = false) Integer pageSize) {
+        return ResponseEntity.ok(khachHangService.pageSearchKhachHang(pageNo, pageSize, search));
+    }
+
+    @GetMapping("/list")
+    public ResponseEntity<?> listKhachHangAcitve() {
+        return ResponseEntity.ok(khachHangService.listKhachHangResponse());
+    }
+
+    @GetMapping("/list-email-sdt")
+    public ResponseEntity<?> listEmailAndSdtKhachHang() {
+        return ResponseEntity.ok(khachHangService.listKhachHangInfo());
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getKhachHangId(@PathVariable("id") Long id) {
+        return ResponseEntity.ok(khachHangService.getOne(id));
+    }
+
+    @GetMapping("/email/{email}")
+    public ResponseEntity<?> getKhachHangEmail(@PathVariable String email) {
+        return ResponseEntity.ok(khachHangService.findKhachHangByEmail(email));
+    }
+
+    @PostMapping("/create")
+    public ResponseEntity<?> createKhachHang(@Valid @RequestBody CreateKhachHang createKhachHangRequest, BindingResult result, HttpServletRequest request) {
+        if (result.hasErrors()) {
+            List<ObjectError> list = result.getAllErrors();
+            return ResponseEntity.ok(list);
+        }
+        return ResponseEntity.ok(khachHangService.create(createKhachHangRequest, request));
+    }
+
+    @PutMapping("/update/{id}")
+    public ResponseEntity<?> updateKhachHang(@Valid @RequestBody UpdateKhachHang updateKhachHangRequest, BindingResult result, @PathVariable("id") Long id) {
+        if (result.hasErrors()) {
+            List<ObjectError> list = result.getAllErrors();
+            return ResponseEntity.ok(list);
+        }
+        return ResponseEntity.ok(khachHangService.update(updateKhachHangRequest, id));
+    }
+
+
+    @PutMapping("/revert/{id}")
+    public ResponseEntity<?> revertKhachHang(@PathVariable("id") Long id) {
+        khachHangService.removeOrRevert(1, id);
+        return ResponseEntity.ok("Revert Success");
+    }
+
+
+    @PutMapping("/remove/{id}")
+    public ResponseEntity<?> removeKhachHang(@PathVariable("id") Long id) {
+        khachHangService.removeOrRevert(0, id);
+        return ResponseEntity.ok("Remove Success");
+    }
+
+    @PutMapping("/update-info")
+    public ResponseEntity<String> updatePersonalInfo(HttpSession session, @RequestBody InfomationKhachHang khachHangDto, @RequestHeader("Authorization") String authorization) {
+        try {
+            Long khachHangID;
+            if (session.getAttribute("khachHangID") != null) {
+                khachHangID = (Long) session.getAttribute("khachHangID");
+            } else {
+                khachHangID = Long.valueOf(authorization.substring(7));
+                session.setAttribute("khachHangID", khachHangID);
+            }
+            boolean success = khachHangService.suaThongTin(khachHangDto, khachHangID);
+            if (success) {
+                return new ResponseEntity<>("Thông tin khách hàng đã được cập nhật thành công.", HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>("Không thể cập nhật thông tin khách hàng. Người dùng không tồn tại.", HttpStatus.NOT_FOUND);
+            }
+        } catch (NumberFormatException e) {
+            return new ResponseEntity<>("Không thể xác định người dùng hiện tại.", HttpStatus.UNAUTHORIZED);
+        }
+    }
+
+    @GetMapping("/check-email")
+    public ResponseEntity<Map<String, Boolean>> checkEmailExit(@RequestParam String email) {
+        try {
+            boolean emailExists = khachHangService.checkMail(email);
+            Map<String, Boolean> response = new HashMap<>();
+            response.put("exists", emailExists);
+            return ResponseEntity.ok(response);
+        } catch (IllegalArgumentException e) {
+            Map<String, Boolean> errorResponse = new HashMap<>();
+            errorResponse.put("error", true);
+            return ResponseEntity.badRequest().body(errorResponse);
+        } catch (Exception e) {
+            Map<String, Boolean> errorResponse = new HashMap<>();
+            errorResponse.put("error", true);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
+        }
+    }
+
+    @PostMapping("/change-email")
+    public ResponseEntity<String> changeEmail(@RequestBody InfomationKhachHang khachHangDto, @RequestParam String newEmail) {
+        boolean isChanged = khachHangService.changeEmail(khachHangDto, newEmail);
+        if (isChanged) {
+            return ResponseEntity.ok("Thay đổi email thành công!");
+        } else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Vui lòng nhập lại mật khẩu của mình");
+        }
+    }
+
+    @PutMapping("/update-image/{email}")
+    public ResponseEntity<?> updateImage(@PathVariable("email") String email, @RequestParam("image") String image) {
+        this.khachHangService.updateImage(image, email);
+        return ResponseEntity.ok("Updated image");
+    }
+
+}

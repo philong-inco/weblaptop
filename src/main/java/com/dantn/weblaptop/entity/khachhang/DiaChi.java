@@ -53,7 +53,4 @@ public class DiaChi extends BaseEntity {
     @JoinColumn(name = "khach_hang_id")
     @ToString.Exclude
     private KhachHang khachHang;
-
-
-
 }

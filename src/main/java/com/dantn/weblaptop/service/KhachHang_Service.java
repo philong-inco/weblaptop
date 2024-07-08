@@ -5,12 +5,13 @@ import com.dantn.weblaptop.dto.request.create_request.CreateKhachHang;
 import com.dantn.weblaptop.dto.request.update_request.UpdateKhachHang;
 import com.dantn.weblaptop.dto.response.KhachHangResponse;
 import com.dantn.weblaptop.entity.khachhang.KhachHang;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-@Service
+@Service("khachHang_Service")
 public interface KhachHang_Service {
     Page<KhachHangResponse> pageKhachHang(Integer pageNo, Integer size);
 
@@ -20,7 +21,7 @@ public interface KhachHang_Service {
 
     List<InfomationKhachHang> listKhachHangInfo();
 
-    KhachHangResponse create(CreateKhachHang createKhachHangRequest);
+    KhachHangResponse create(CreateKhachHang createKhachHangRequest, HttpServletRequest request);
 
     KhachHangResponse findKhachHangByEmail(String email);
 

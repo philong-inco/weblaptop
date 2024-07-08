@@ -10,17 +10,15 @@ import com.dantn.weblaptop.repository.DiaChi_Repository;
 import com.dantn.weblaptop.repository.KhachHang_Repository;
 import com.dantn.weblaptop.service.KhachHang_Service;
 import com.dantn.weblaptop.util.GenerateCode;
-import lombok.AllArgsConstructor;
+import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
-import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
@@ -28,28 +26,29 @@ import java.util.List;
 import java.util.Optional;
 
 @Component
-@AllArgsConstructor
 public class KhachHangService_Implement implements KhachHang_Service {
 
-    private final KhachHang_Repository khachHangRepository;
+    @Autowired
+    KhachHang_Repository khachHangRepository;
 
-    private final KhachHang_Mapper khachHangMapper;
+    @Autowired
+    DiaChi_Repository diaChiRepository;
 
-    private final DiaChi_Repository diaChiRepository;
-
+    @Autowired
+    KhachHang_Mapper khachHangMapper;
 
     @Override
     public Page<KhachHangResponse> pageKhachHang(Integer pageNo, Integer size) {
         Pageable pageable = PageRequest.of(pageNo, size, Sort.by(Sort.Direction.DESC, "id"));
         Page<KhachHang> khachHangPage = khachHangRepository.findAll(pageable);
-        return khachHangPage.map(khachHangMapper::entityToResponse);
+        return khachHangPage.map(khachHangMapper::entityToResponseKhachHang);
     }
 
     @Override
     public Page<KhachHangResponse> pageSearchKhachHang(Integer pageNo, Integer size, String search) {
         Pageable pageable = PageRequest.of(pageNo, size, Sort.by(Sort.Direction.DESC, "id"));
         Page<KhachHang> khachHangPage = khachHangRepository.pageSearch(pageable, search);
-        return khachHangPage.map(khachHangMapper::entityToResponse);
+        return khachHangPage.map(khachHangMapper::entityToResponseKhachHang);
     }
 
     @Override
@@ -75,13 +74,15 @@ public class KhachHangService_Implement implements KhachHang_Service {
     }
 
     @Override
-    public KhachHangResponse create(CreateKhachHang createKhachHangRequest) {
+    public KhachHangResponse create(CreateKhachHang createKhachHangRequest, HttpServletRequest request) {
         try {
-            KhachHang khachHang = khachHangMapper.createToEntity(createKhachHangRequest);
+            KhachHang khachHang = khachHangMapper.createToEntityKhachHang(createKhachHangRequest);
             khachHang.setMa(GenerateCode.generateKhachHangCode());
             khachHang.setNgayTao(LocalDateTime.now().toInstant(ZoneOffset.UTC).toEpochMilli());
             khachHang.setTrangThai(1);
-
+            // Lấy session ID từ request
+            String sessionId = request.getSession().getId();
+            khachHang.setSessionId(sessionId);
             // Mã hóa mật khẩu trước khi lưu vào cơ sở dữ liệu
             if (khachHangRepository.findKhachHangBySdt(khachHang.getSdt()) != null) {
                 throw new RuntimeException("Số điện thoại này đã tồn tại " + khachHang.getSdt());
@@ -91,7 +92,7 @@ public class KhachHangService_Implement implements KhachHang_Service {
                 throw new RuntimeException("Email này đã tồn tại " + khachHang.getEmail());
             }
             KhachHang khSave = khachHangRepository.save(khachHang);
-            return khachHangMapper.entityToResponse(khSave);
+            return khachHangMapper.entityToResponseKhachHang(khSave);
         } catch (Exception ex) {
             throw new RuntimeException("Failed to create khach hang. Possibly duplicate record." + ex);
         }
@@ -100,7 +101,7 @@ public class KhachHangService_Implement implements KhachHang_Service {
     @Override
     public KhachHangResponse findKhachHangByEmail(String email) {
         KhachHang khachHang = khachHangRepository.findKhachHangByEmail(email);
-        return khachHangMapper.entityToResponse(khachHang);
+        return khachHangMapper.entityToResponseKhachHang(khachHang);
     }
 
     @Override
@@ -116,7 +117,7 @@ public class KhachHangService_Implement implements KhachHang_Service {
         try {
             KhachHang khachHang = khachHangRepository.findKhachHangById(id);
             if (khachHang == null) {
-                KhachHang updateKhachHang = khachHangMapper.updateToEntity(updateKhachHangRequest);
+                KhachHang updateKhachHang = khachHangMapper.updateToEntityKhachHang(updateKhachHangRequest);
 
                 for (KhachHang kh : khachHangRepository.findAll()) {
                     if (kh.getEmail().equals(updateKhachHang.getEmail()) && kh.getId() != khachHang.getId()) {
@@ -138,7 +139,7 @@ public class KhachHangService_Implement implements KhachHang_Service {
                 khachHang.setSdt(updateKhachHang.getSdt());
                 khachHang.setNgaySua(LocalDateTime.now().toInstant(ZoneOffset.UTC).toEpochMilli());
 
-                return khachHangMapper.entityToResponse(khachHangRepository.save(khachHang));
+                return khachHangMapper.entityToResponseKhachHang(khachHangRepository.save(khachHang));
             }
 
         } catch (DataIntegrityViolationException ex) {
@@ -150,7 +151,7 @@ public class KhachHangService_Implement implements KhachHang_Service {
     @Override
     public KhachHangResponse getOne(Long id) {
         KhachHang khachHang = khachHangRepository.findKhachHangById(id);
-        return khachHangMapper.entityToResponse(khachHang);
+        return khachHangMapper.entityToResponseKhachHang(khachHang);
     }
 
     @Override
