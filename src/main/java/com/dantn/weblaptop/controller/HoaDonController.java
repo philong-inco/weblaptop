@@ -1,12 +1,10 @@
 package com.dantn.weblaptop.controller;
 
-import com.dantn.weblaptop.constant.HoaDonStatus;
 import com.dantn.weblaptop.dto.response.ApiResponse;
 import com.dantn.weblaptop.dto.response.ResultPaginationResponse;
 import com.dantn.weblaptop.exception.AppException;
 import com.dantn.weblaptop.service.HoaDonService;
 import com.dantn.weblaptop.service.LichSuHoaDonService;
-import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -14,7 +12,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -84,7 +81,7 @@ public class HoaDonController {
     public ResponseEntity<ApiResponse> updateStatus(
             @PathVariable(name = "id") Long id,
             @RequestParam(name = "status") String status
-    ) {
+    ) throws AppException {
         billService.updateStatus(id, status);
         ApiResponse<Object> apiResponse = ApiResponse
                 .builder()

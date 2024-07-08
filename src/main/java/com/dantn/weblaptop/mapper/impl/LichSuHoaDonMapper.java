@@ -15,6 +15,7 @@ public class LichSuHoaDonMapper {
         response.setTrangThai(lichSuHoaDon.getTrangThai());
         response.setGhiChuChoCuaHang(lichSuHoaDon.getGhiChuChoCuaHang());
         response.setGhiChuChoKhachHang(lichSuHoaDon.getGhiChuChoKhachHang());
+        /// Lỗi đoan này
         if (lichSuHoaDon.getKhachHang() != null) {
             response.setIdKhachHanh(lichSuHoaDon.getKhachHang().getId());
             response.setMaKhachHang(lichSuHoaDon.getKhachHang().getMa());

@@ -1,52 +1,37 @@
-package com.dantn.weblaptop.dto.response;
+package com.dantn.weblaptop.dto.request.create_request;
 
-import com.dantn.weblaptop.entity.khachhang.KhachHang;
-import com.dantn.weblaptop.entity.phieugiamgia.KhachHangPhieuGiamGia;
+import jakarta.persistence.Column;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.Set;
+import java.util.List;
 
-@Getter
 @Setter
+@Getter
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class PhieuGiamGiaResponse {
-
-    Long id;
+public class CreatePhieuGiamGiaRequest {
 
     String ma;
-
-    Integer trangThai;
-
+//    Integer trangThai;
     String ten;
-
     String moTa;
-
     LocalDateTime ngayBatDau;
-
     LocalDateTime ngayHetHan;
-
     Integer loaiGiamGia;
-
     BigDecimal giaTriGiamGia;
-
     BigDecimal giaTriDonToiThieu;
-
     BigDecimal giamToiGia;
-
     Integer phamViApDung;
-
-    String ngayTao;
-
-    String ngaySua;
-
+    Integer soLuong;
+    Long ngayTao;
+    Long ngaySua;
     String nguoiTao;
-
     String nguoiSua;
 
-    Set<KhachHangPhieuGiamGia> khachHangPhieuGiamGias;
+    List<Long> listKhachHang;
 }

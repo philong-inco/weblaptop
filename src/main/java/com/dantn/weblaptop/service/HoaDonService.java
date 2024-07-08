@@ -19,5 +19,5 @@ public interface HoaDonService {
 
     List<HoaDonResponse> listBillByStatusAndType (String status , Integer type);
 
-    void updateStatus(Long id , String status);
+    void updateStatus(Long id , String status) throws AppException;
 }

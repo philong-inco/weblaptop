@@ -1,13 +1,18 @@
 package com.dantn.weblaptop.controller;
 
+import com.dantn.weblaptop.dto.request.create_request.CreatePhieuGiamGiaRequest;
 import com.dantn.weblaptop.dto.response.ApiResponse;
 import com.dantn.weblaptop.entity.phieugiamgia.PhieuGiamGia;
+import com.dantn.weblaptop.exception.AppException;
 import com.dantn.weblaptop.service.impl.PhieuGiamGiaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/v1/coupons")
@@ -27,8 +32,12 @@ public class PhieuGiamGiaController {
     }
 
     @PostMapping("/add")
-    public PhieuGiamGia addPhieuGiamGia(@RequestBody PhieuGiamGia phieuGiamGia) {
-        return phieuGiamGiaService.add(phieuGiamGia);
+    public ResponseEntity<ApiResponse> addPhieuGiamGia(@RequestBody CreatePhieuGiamGiaRequest request) {
+        ApiResponse apiResponse = new ApiResponse();
+        apiResponse.setStatusCode(HttpStatus.OK.value());
+        apiResponse.setMessage("Create ok");
+        apiResponse.setData(phieuGiamGiaService.add(request));
+        return ResponseEntity.status(HttpStatus.CREATED).body(apiResponse);
     }
 
     @PutMapping("/update/{id}")
@@ -42,12 +51,35 @@ public class PhieuGiamGiaController {
     }
 
     @GetMapping("/detail/{id}")
-    public ResponseEntity<ApiResponse> detailPhieuGiamGia(@PathVariable Long id){
+    public ResponseEntity<ApiResponse> detailPhieuGiamGia(@PathVariable Long id) {
         ApiResponse apiResponse = new ApiResponse();
         apiResponse.setStatusCode(HttpStatus.OK.value());
         apiResponse.setMessage("Call Api by id");
         apiResponse.setData(phieuGiamGiaService.detail(id));
-        return ResponseEntity.ok(apiResponse) ;
+        return ResponseEntity.ok(apiResponse);
+    }
+
+    @GetMapping("customer-coupons/{id}")
+    public ResponseEntity<ApiResponse> getPageKhachHangPhieuGiamGia(
+            @PathVariable(name = "id") Long id,
+            @RequestParam Optional<String> page,
+            @RequestParam Optional<String> size
+    ) throws AppException {
+        ApiResponse apiResponse = new ApiResponse();
+        apiResponse.setStatusCode(HttpStatus.OK.value());
+        apiResponse.setMessage("Call Api ustomer-coupons by id");
+        apiResponse.setData(phieuGiamGiaService.getKhPGGById(id, page, size));
+        return ResponseEntity.ok(apiResponse);
+    }
+
+    @DeleteMapping("customer-coupons/del/{id}")
+    public ResponseEntity<Void> updateTrangThaiKHPGG(
+            @PathVariable(name = "id") Long id,
+            @RequestParam(name = "status") Integer status
+    ) throws AppException {
+        // 0 chưa dung 1 : dung : 2 : hết hạn
+        phieuGiamGiaService.updateStatusKhachHangPhieuGiamGia(id, status);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
 }

@@ -31,7 +31,7 @@ public class HoaDonResponse {
 
     BigDecimal tongTienPhaiTra;
 
-    LocalDate ngayMongMuonNhanHang;
+    String ngayMongMuonNhanHang;
 
     String sdt;
 

@@ -23,6 +23,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -41,7 +42,7 @@ public class HoaDonServiceImpl implements HoaDonService {
     public ResultPaginationResponse getBillPage(Optional<String> page, Optional<String> size) {
         String sPage = page.isPresent() ? page.get() : "0";
         String sSize = size.isPresent() ? size.get() : "5";
-        Pageable pageable = PageRequest.of(Integer.parseInt(sPage), Integer.parseInt(sSize));
+        Pageable pageable = PageRequest.of(Integer.parseInt(sPage), Integer.parseInt(sSize), Sort.by("id").descending());
         Page<HoaDon> billHistoryPage = billRepository.findAll(pageable);
         Page<HoaDonResponse> responses = billHistoryPage.map(bill -> HoaDonMapper.toHoaDonResponse(bill));
 
@@ -104,11 +105,18 @@ public class HoaDonServiceImpl implements HoaDonService {
     }
 
     @Override
-    public void updateStatus(Long id , String status) {
+    public void updateStatus(Long id , String status) throws AppException {
         Optional<HoaDon> optional = billRepository.findById(id);
         if(optional.isPresent()){
             HoaDon bill = optional.get();
             bill.setTrangThai(HoaDonStatus.getHoaDonStatusEnumByKey(status));
+            CreateLichSuHoaDonRequest billHistoryRequest = new CreateLichSuHoaDonRequest();
+            billHistoryRequest.setIdHoaDon(bill.getId());
+            billHistoryRequest.setTrangThai(8);
+            // sủa khi có security
+            billHistoryRequest.setIdNhanVien(1L);
+            // save
+            billHistoryService.create(billHistoryRequest);
             billRepository.save(bill);
         }
     }
