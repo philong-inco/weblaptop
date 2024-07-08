@@ -2,7 +2,6 @@ package com.dantn.weblaptop.mapper.impl;
 
 import com.dantn.weblaptop.dto.response.HoaDonResponse;
 import com.dantn.weblaptop.entity.hoadon.HoaDon;
-import com.dantn.weblaptop.util.ConvertTime;
 
 public class HoaDonMapper {
 
@@ -19,5 +18,10 @@ public class HoaDonMapper {
         response.setNguoiTao(hoaDon.getNguoiTao());
         response.setTrangThai(hoaDon.getTrangThai());
         return response;
+    }
+
+
+    public  static  void toUpdateHoaDon (HoaDon hoaDon){
+
     }
 }

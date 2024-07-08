@@ -7,7 +7,6 @@ import com.dantn.weblaptop.dto.response.HoaDonResponse;
 import com.dantn.weblaptop.dto.response.Meta;
 import com.dantn.weblaptop.dto.response.ResultPaginationResponse;
 import com.dantn.weblaptop.entity.hoadon.HoaDon;
-import com.dantn.weblaptop.entity.hoadon.LichSuHoaDon;
 import com.dantn.weblaptop.entity.nhanvien.NhanVien;
 import com.dantn.weblaptop.exception.AppException;
 import com.dantn.weblaptop.mapper.impl.HoaDonMapper;

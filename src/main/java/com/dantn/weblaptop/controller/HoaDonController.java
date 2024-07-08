@@ -1,5 +1,6 @@
 package com.dantn.weblaptop.controller;
 
+import com.dantn.weblaptop.dto.request.update_request.UpdateHoaDonRequest;
 import com.dantn.weblaptop.dto.response.ApiResponse;
 import com.dantn.weblaptop.dto.response.ResultPaginationResponse;
 import com.dantn.weblaptop.exception.AppException;
@@ -41,10 +42,10 @@ public class HoaDonController {
         return ResponseEntity.status(HttpStatus.CREATED).body(apiResponse);
     }
 
-//    @PostMapping("update/{id}")
-//    public ResponseEntity<ApiResponse> updateBillById(@Valid @RequestBody HoaDonRequest request) {
-//        return ResponseEntity.status(HttpStatus.OK).body(null);
-//    }
+    @PostMapping("update/{id}")
+    public ResponseEntity<ApiResponse> updateBillById( @RequestBody UpdateHoaDonRequest request) {
+        return ResponseEntity.status(HttpStatus.OK).body(null);
+    }
 
     @GetMapping("/bill-history/{billId}")
     public ResponseEntity<ApiResponse> getBillHistoryByBillId(
@@ -89,4 +90,7 @@ public class HoaDonController {
                 .build();
         return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
     }
+
+    // bill detail
+
 }
