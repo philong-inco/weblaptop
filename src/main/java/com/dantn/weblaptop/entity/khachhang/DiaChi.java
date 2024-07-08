@@ -45,6 +45,12 @@ public class DiaChi extends BaseEntity {
     String sdtNguoiNhan;
     @Column(name = "email_nguoi_nhan")
     String emailNguoiNhan;
+    @Column(name = "id_Phuong_Xa")
+    Integer idPhuongXa;
+    @Column(name = "id_Quan_Huyen")
+    Integer idQuanHuyen;
+    @Column(name = "id_Tinh_Thanh_Pho")
+    Integer idTinhThanhPho;
     @Column(name = "dia_chi_nhan_hang")
     String diaChiNhanHang;
     @ManyToOne(cascade = {CascadeType.DETACH, CascadeType.PERSIST,

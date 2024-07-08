@@ -26,7 +26,9 @@ public class DiaChiMapper_Implement implements DiaChi_Mapper {
         diaChi.setSdtNguoiNhan(dto.getSdtNguoiNhan());
         diaChi.setEmailNguoiNhan(dto.getEmailNguoiNhan());
         diaChi.setDiaChiNhanHang(dto.getDiaChiNhanHang());
-
+        diaChi.setIdPhuongXa(dto.getIdPhuongXa());
+        diaChi.setIdQuanHuyen(dto.getIdQuanHuyen());
+        diaChi.setIdTinhThanhPho(dto.getIdTinhThanhPho());
         return diaChi;
     }
 
@@ -43,7 +45,9 @@ public class DiaChiMapper_Implement implements DiaChi_Mapper {
         diaChi.setSdtNguoiNhan(dto.getSdtNguoiNhan());
         diaChi.setEmailNguoiNhan(dto.getEmailNguoiNhan());
         diaChi.setDiaChiNhanHang(dto.getDiaChiNhanHang());
-
+        diaChi.setIdPhuongXa(dto.getIdPhuongXa());
+        diaChi.setIdQuanHuyen(dto.getIdQuanHuyen());
+        diaChi.setIdTinhThanhPho(dto.getIdTinhThanhPho());
         return diaChi;
     }
 
@@ -61,6 +65,9 @@ public class DiaChiMapper_Implement implements DiaChi_Mapper {
                 .sdtNguoiNhan(entity.getSdtNguoiNhan())
                 .emailNguoiNhan(entity.getEmailNguoiNhan())
                 .diaChiNhanHang(entity.getDiaChiNhanHang())
+                .idPhuongXa(entity.getIdPhuongXa())
+                .idQuanHuyen(entity.getIdPhuongXa())
+                .idTinhThanhPho(entity.getIdTinhThanhPho())
                 .build();
     }
 

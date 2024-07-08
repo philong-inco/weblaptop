@@ -4,6 +4,7 @@ import com.dantn.weblaptop.dto.request.create_request.CreateDiaChi;
 import com.dantn.weblaptop.dto.request.update_request.UpdateDiaChi;
 import com.dantn.weblaptop.dto.response.DiaChi_Response;
 import com.dantn.weblaptop.entity.khachhang.DiaChi;
+import org.springframework.data.domain.Page;
 
 import java.util.List;
 
@@ -14,5 +15,4 @@ public interface DiaChi_Mapper {
 
     DiaChi_Response EntiyToResponse(DiaChi entity);
 
-    List<DiaChi_Response> listNhanVienEntityToNhanVienResponse(List<DiaChi> nhanVienList);
-}
+    Page<DiaChi_Response> getAllDiaChi(int page, int size);}
