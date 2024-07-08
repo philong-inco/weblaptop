@@ -4,6 +4,8 @@ import com.dantn.weblaptop.entity.sanpham.SanPham;
 import com.dantn.weblaptop.generics.IGenericsRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -11,7 +13,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface SanPhamRepository extends IGenericsRepository<SanPham, Long> {
+public interface SanPhamRepository extends IGenericsRepository<SanPham, Long>, JpaSpecificationExecutor<SanPham> {
 
     @Override
     @Query("SELECT r FROM SanPham r")
@@ -48,4 +50,6 @@ public interface SanPhamRepository extends IGenericsRepository<SanPham, Long> {
     @Override
     @Query("SELECT r FROM SanPham r WHERE LOWER(r.ten) = :name AND r.id <> :id")
     List<SanPham> isExistNameAndDifferentId(@Param("name") String name, @Param("id") Long id);
+
+//    List<SanPham> findWithFilter(Specification<SanPham> specification);
 }
