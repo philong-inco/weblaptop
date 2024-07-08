@@ -24,6 +24,7 @@ public class GenerateCode {
     private static final String KhachHang = "Cus0";
     private static final String VaiTro = "Role0";
     private static final String PAYMENT_METHOD_PREFIX ="PAY_";
+    private static final String BILL ="BILL";
     public static final Random random = new Random();
     public static final int SUFFIXES_LENGTH = 5;
     private static final int NUMBER_LENGTH = 4;
@@ -75,5 +76,12 @@ public class GenerateCode {
         int randomNumber = random.nextInt((int) Math.pow(10, NUMBER_LENGTH));
         String formattedNumber = String.format("%0" + NUMBER_LENGTH + "d", randomNumber);
         return PAYMENT_METHOD_PREFIX + formattedNumber;
+    }
+
+    public static String generateHoaDon() {
+        Random random = new Random();
+        int randomNumber = random.nextInt((int) Math.pow(10, NUMBER_LENGTH));
+        String formattedNumber = String.format("%0" + NUMBER_LENGTH + "d", randomNumber);
+        return BILL + formattedNumber;
     }
 }

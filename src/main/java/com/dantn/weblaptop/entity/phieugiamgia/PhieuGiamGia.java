@@ -54,6 +54,8 @@ public class PhieuGiamGia extends BaseEntity {
     BigDecimal giamToiGia;
     @Column(name = "pham_vi_ap_dung")
     Integer phamViApDung;
+    @Column(name = "so_luong")
+    Integer soLuong;
     @OneToMany(mappedBy = "phieuGiamGia",
             cascade = {CascadeType.DETACH, CascadeType.PERSIST,
                     CascadeType.MERGE, CascadeType.REFRESH},

@@ -1,16 +1,15 @@
 package com.dantn.weblaptop.constant;
 
-import lombok.Getter;
-import lombok.Setter;
-
-
 public enum HoaDonStatus {
+    DON_MOI("Đơn mới"),
     CHO_THANH_TOAN("Chờ thanh toán"),
     CHO_XAC_NHAN("Chờ xác nhận"),
     CHO_GIAO("Chờ giao"),
     DANG_GIAO("Đang giao"),
     TRA_HANG_HOAN_TIEN("Trả hàng hoàn tiền"),
-    HOAN_THANH("Hoàn thành")
+    HOAN_THANH("Hoàn thành"),
+    HUY("Hủy"),
+    XOA("Xóa")
     ;
 
     HoaDonStatus(String name) {
@@ -29,5 +28,14 @@ public enum HoaDonStatus {
                 return status;
         }
         throw new IllegalArgumentException("Không tìm thấy trạng thái hóa đơn với " + name);
+    }
+
+    public static HoaDonStatus getHoaDonStatusEnumByKey(String key) {
+        for (HoaDonStatus status : HoaDonStatus.values()) {
+            if (key.equalsIgnoreCase(status.name())) {
+                return status;
+            }
+        }
+        throw new IllegalArgumentException("Không tìm thấy trạng thái hóa đơn với key: " + key);
     }
 }

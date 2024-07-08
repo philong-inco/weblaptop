@@ -44,7 +44,7 @@ public class HoaDon extends BaseEntity {
 
     @Column(name = "ma")
     String ma;
-    @Column(name = "trang_thai")
+    @Column(name = "trang_thai", length = 100)
     @Enumerated(EnumType.ORDINAL)
     HoaDonStatus trangThai;
     @Column(name = "loai_hoa_don")
