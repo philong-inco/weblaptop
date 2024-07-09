@@ -27,7 +27,6 @@ public class CreateDotGiamGiaRequest {
     String ten;
 
     @NotBlank(message = "Trạng Thái Đợt Giảm Giá Trống !")
-    @Pattern(regexp = "^[0-9]\\d*$", message = "Trạng Thái Không Được Trống")
     String trangThai;
 
     @NotBlank(message = "Mô Tả Đợt Giảm Giá Trống !")
@@ -45,4 +44,8 @@ public class CreateDotGiamGiaRequest {
     @NotBlank(message = "Giảm Tối Đa không được để trống!")
     @Pattern(regexp = "^[1-9]\\d*$", message = "Giảm Tối Đa phải là số dương!")
     String giamToiDa;
+
+    @NotBlank(message = "giá Trị giảm không được để trống!")
+    @Pattern(regexp = "^[1-9]\\d*$", message = "giá Trị giảm  phải là số dương!")
+    String giaTriGiam;
 }
