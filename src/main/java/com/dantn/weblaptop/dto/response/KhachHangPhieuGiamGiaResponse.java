@@ -13,8 +13,10 @@ public class KhachHangPhieuGiamGiaResponse {
 
     Long id;
     Long idKhachHang;
+    String maKhachHang;
     String maPhieu;
     Integer trangThai;
     String email;
+    String sdt;
 
 }

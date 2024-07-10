@@ -1,6 +1,7 @@
 package com.dantn.weblaptop.service.impl;
 
 import com.dantn.weblaptop.dto.request.create_request.CreatePhieuGiamGiaRequest;
+import com.dantn.weblaptop.dto.request.update_request.UpdatePhieuGiamGiaRequest;
 import com.dantn.weblaptop.dto.response.KhachHangPhieuGiamGiaResponse;
 import com.dantn.weblaptop.dto.response.Meta;
 import com.dantn.weblaptop.dto.response.PhieuGiamGiaResponse;
@@ -68,7 +69,8 @@ public class PhieuGiamGiaService {
 
     public PhieuGiamGiaResponse add(CreatePhieuGiamGiaRequest request) {
         PhieuGiamGia newPhieuGiamGia = PhieuGiamGiaMapper.toCreatePGG(request);
-        newPhieuGiamGia.setMa(generateUniqueCode());
+        newPhieuGiamGia.setMa(request.getMa()==null? generateUniqueCode() : request.getMa());
+        // sau check mã trùng
         PhieuGiamGia savedPhieuGiamGia = phieuGiamGiaRepo.save(newPhieuGiamGia);
         request.getListKhachHang().forEach(id -> {
             KhachHang khachHang = khachHangRepository.findById(id).orElse(null);
@@ -84,28 +86,20 @@ public class PhieuGiamGiaService {
         return response;
     }
 
-    public PhieuGiamGia update(PhieuGiamGia phieuGiamGia, Long id) {
+    public PhieuGiamGiaResponse update(UpdatePhieuGiamGiaRequest request, Long id) {
         Optional<PhieuGiamGia> optional = phieuGiamGiaRepo.findById(id);
-        return optional.map(o -> {
-            o.setTen(phieuGiamGia.getTen());
-            o.setGiamToiGia(phieuGiamGia.getGiamToiGia());
-            o.setGiaTriGiamGia(phieuGiamGia.getGiaTriGiamGia());
-            o.setNgayBatDau(phieuGiamGia.getNgayBatDau());
-            o.setNgayHetHan(phieuGiamGia.getNgayHetHan());
-            o.setLoaiGiamGia(phieuGiamGia.getLoaiGiamGia());
-            o.setTrangThai(phieuGiamGia.getTrangThai());
-            o.setMoTa(phieuGiamGia.getMoTa());
-            o.setGiaTriDonToiThieu(phieuGiamGia.getGiaTriDonToiThieu());
-
-            return phieuGiamGiaRepo.save(o);
-        }).orElse(null);
+       if(optional.isPresent()){
+           PhieuGiamGiaMapper.toUpdatePGG(request, optional.get());
+           return   PhieuGiamGiaMapper.toPhieuGiamGiaResponse(   phieuGiamGiaRepo.save(optional.get()));
+       }
+       return null;
     }
 
 
     public PhieuGiamGia delete(Long id) {
         Optional<PhieuGiamGia> optional = phieuGiamGiaRepo.findById(id);
         return optional.map(o -> {
-            o.setTrangThai(0); // Giả sử trạng thái "Ngừng hoạt động" = 0
+            o.setTrangThai(3);   // 0 chưa dung : 1 đang áp dụng : 2 : hết hạn : 3 hủy
             return phieuGiamGiaRepo.save(o);
         }).orElse(null);
     }

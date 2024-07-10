@@ -2,6 +2,7 @@ package com.dantn.weblaptop.entity.phieugiamgia;
 
 import com.dantn.weblaptop.entity.base.BaseEntity;
 import com.dantn.weblaptop.entity.khachhang.KhachHang;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -38,10 +39,12 @@ public class KhachHangPhieuGiamGia extends BaseEntity {
             CascadeType.MERGE, CascadeType.REFRESH},
             fetch = FetchType.EAGER)
     @JoinColumn(name = "khach_hang_id")
+    @JsonBackReference
     KhachHang khachHang;
     @ManyToOne(cascade = {CascadeType.DETACH, CascadeType.PERSIST,
             CascadeType.MERGE, CascadeType.REFRESH},
             fetch = FetchType.EAGER)
     @JoinColumn(name = "phieu_giam_gia_id")
+    @JsonBackReference
     PhieuGiamGia phieuGiamGia;
 }

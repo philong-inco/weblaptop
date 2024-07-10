@@ -52,4 +52,16 @@ public class GlobalException {
         return ResponseEntity.badRequest().body(apiResponse);
     }
 
+    @ExceptionHandler(value = MethodArgumentNotValidException.class)
+    public ResponseEntity<ApiResponse<Object>> handleValidationError(MethodArgumentNotValidException exception) {
+        BindingResult result = exception.getBindingResult();
+        final List<FieldError> fieldErrors = result.getFieldErrors();
+        ApiResponse<Object> apiResponse = new ApiResponse<>();
+        apiResponse.setStatusCode(HttpStatus.BAD_REQUEST.value());
+        apiResponse.setError(exception.getBody().getDetail());
+        List<String> error = fieldErrors.stream().map(
+                f -> f.getDefaultMessage()).toList();
+        apiResponse.setMessage(error.size() > 1 ? error : error.get(0));
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(apiResponse);
+    }
 }

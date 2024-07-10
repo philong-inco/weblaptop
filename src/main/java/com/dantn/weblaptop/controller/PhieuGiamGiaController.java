@@ -1,6 +1,7 @@
 package com.dantn.weblaptop.controller;
 
 import com.dantn.weblaptop.dto.request.create_request.CreatePhieuGiamGiaRequest;
+import com.dantn.weblaptop.dto.request.update_request.UpdatePhieuGiamGiaRequest;
 import com.dantn.weblaptop.dto.response.ApiResponse;
 import com.dantn.weblaptop.entity.phieugiamgia.PhieuGiamGia;
 import com.dantn.weblaptop.exception.AppException;
@@ -41,8 +42,13 @@ public class PhieuGiamGiaController {
     }
 
     @PutMapping("/update/{id}")
-    public PhieuGiamGia updatePhieuGiamGia(@RequestBody PhieuGiamGia phieuGiamGia, @PathVariable Long id) {
-        return phieuGiamGiaService.update(phieuGiamGia, id);
+    public ResponseEntity<ApiResponse>  updatePhieuGiamGia(@RequestBody UpdatePhieuGiamGiaRequest request, @PathVariable Long id) {
+//        return phieuGiamGiaService.update(phieuGiamGia, id);
+        ApiResponse apiResponse = new ApiResponse();
+        apiResponse.setStatusCode(HttpStatus.OK.value());
+        apiResponse.setMessage("Create ok");
+        apiResponse.setData(phieuGiamGiaService.update(request, id));
+        return ResponseEntity.ok(apiResponse);
     }
 
     @DeleteMapping("/delete/{id}")

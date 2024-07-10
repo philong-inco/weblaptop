@@ -1,6 +1,7 @@
 package com.dantn.weblaptop.mapper.impl;
 
 import com.dantn.weblaptop.dto.request.create_request.CreatePhieuGiamGiaRequest;
+import com.dantn.weblaptop.dto.request.update_request.UpdatePhieuGiamGiaRequest;
 import com.dantn.weblaptop.dto.response.KhachHangPhieuGiamGiaResponse;
 import com.dantn.weblaptop.dto.response.PhieuGiamGiaResponse;
 import com.dantn.weblaptop.entity.phieugiamgia.KhachHangPhieuGiamGia;
@@ -33,6 +34,7 @@ public class PhieuGiamGiaMapper {
 
     public static PhieuGiamGia toCreatePGG(CreatePhieuGiamGiaRequest request) {
         PhieuGiamGia phieuGiamGia = new PhieuGiamGia();
+        // 0 chưa dung : 1 đang áp dụng : 2 : hết hạn : 3 hủy
         phieuGiamGia.setTrangThai(0);
         phieuGiamGia.setTen(request.getTen());
         phieuGiamGia.setMoTa(request.getMoTa());
@@ -51,6 +53,26 @@ public class PhieuGiamGiaMapper {
         return phieuGiamGia;
     }
 
+    public static PhieuGiamGia toUpdatePGG(UpdatePhieuGiamGiaRequest request , PhieuGiamGia phieuGiamGia) {
+        // 0 chưa dung : 1 đang áp dụng : 2 : hết hạn : 3 hủy
+
+        phieuGiamGia.setTen(request.getTen());
+        phieuGiamGia.setMoTa(request.getMoTa());
+        phieuGiamGia.setNgayBatDau(request.getNgayBatDau());
+        phieuGiamGia.setNgayHetHan(request.getNgayHetHan());
+        phieuGiamGia.setLoaiGiamGia(request.getLoaiGiamGia());
+        phieuGiamGia.setGiaTriGiamGia(request.getGiaTriGiamGia());
+        phieuGiamGia.setGiaTriDonToiThieu(request.getGiaTriDonToiThieu());
+        phieuGiamGia.setGiamToiGia(request.getGiamToiGia());
+        phieuGiamGia.setPhamViApDung(request.getPhamViApDung());
+        phieuGiamGia.setSoLuong(request.getSoLuong());
+//        phieuGiamGia.setNgayTao(request.getNgayTao());
+//        phieuGiamGia.setNgaySua(request.getNgaySua());
+//        phieuGiamGia.setNguoiTao(request.getNguoiTao());
+//        phieuGiamGia.setNguoiSua(request.getNguoiSua());
+        return phieuGiamGia;
+    }
+
     public static KhachHangPhieuGiamGiaResponse toKhachHangPhieuGiamGiaResponse(KhachHangPhieuGiamGia khachHangPhieuGiamGia) {
         KhachHangPhieuGiamGiaResponse response = new KhachHangPhieuGiamGiaResponse();
         response.setMaPhieu(khachHangPhieuGiamGia.getPhieuGiamGia().getMa());
@@ -58,6 +80,8 @@ public class PhieuGiamGiaMapper {
         response.setId(khachHangPhieuGiamGia.getId());
         response.setIdKhachHang(khachHangPhieuGiamGia.getKhachHang().getId());
         response.setTrangThai(khachHangPhieuGiamGia.getTrangThai());
+        response.setSdt(khachHangPhieuGiamGia.getKhachHang().getSdt());
+        response.setMaKhachHang(khachHangPhieuGiamGia.getKhachHang().getMa());
         return response;
     }
 }
