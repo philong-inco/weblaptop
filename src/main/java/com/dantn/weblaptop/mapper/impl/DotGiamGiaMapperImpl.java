@@ -28,7 +28,7 @@ public class DotGiamGiaMapperImpl implements DotGiamGiaMapper {
         dotGiamGia.setTrangThai(Integer.parseInt(request.getTrangThai()));
         dotGiamGia.setLoaiChietKhau(Integer.parseInt(request.getLoaiChietKhau()));
         dotGiamGia.setThoiGianBatDau(request.getThoiGianBatDau());
-        dotGiamGia.setThoiGianKetthuc(request.getThoiGianKetthuc());
+        dotGiamGia.setThoiGianKetthuc(request.getThoiGianKetThuc());
         dotGiamGia.setGiaTriGiam(Integer.parseInt(request.getGiaTriGiam()));
         // Ép kiểu từ String sang BigDecimal
         BigDecimal giamToiDa = new BigDecimal(request.getGiamToiDa());

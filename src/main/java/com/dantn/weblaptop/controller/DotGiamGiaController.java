@@ -1,6 +1,7 @@
 package com.dantn.weblaptop.controller;
 
 import com.dantn.weblaptop.dto.request.create_request.CreateDotGiamGiaRequest;
+import com.dantn.weblaptop.dto.request.create_request.FilterDotGiamGia;
 import com.dantn.weblaptop.dto.request.update_request.UpdateGotGiamGiaRequest;
 import com.dantn.weblaptop.dto.response.DotGiamGiaResponse;
 import com.dantn.weblaptop.service.DotGiamGiaService;
@@ -11,7 +12,6 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@CrossOrigin(origins = "*", maxAge = -1)
 @RequestMapping("/api/v1/discounts")
 public class DotGiamGiaController {
     @Autowired
@@ -47,4 +47,43 @@ public class DotGiamGiaController {
         return ResponseEntity.ok(response);
     }
 
+    @GetMapping("/filter")
+    public ResponseEntity<?> filterDotGiamGia(
+            @RequestParam(value = "ma", required = false, defaultValue = "") String ma,
+            @RequestParam(value = "ten", required = false, defaultValue = "") String ten,
+            @RequestParam(value = "trangThai", required = false, defaultValue = "") String trangThai,
+            @RequestParam(value = "thoiGianBatDauTruoc", required = false, defaultValue = "") String thoiGianBatDauTruoc,
+            @RequestParam(value = "thoiGianBatDauSau", required = false, defaultValue = "") String thoiGianBatDauSau,
+            @RequestParam(value = "thoiGianKetThucTruoc", required = false, defaultValue = "") String thoiGianKetThucTruoc,
+            @RequestParam(value = "thoiGianKetThucSau", required = false, defaultValue = "") String thoiGianKetThucSau,
+            @RequestParam(value = "giaTri", required = false, defaultValue = "") String giaTri,
+            @RequestParam(value = "giaTriNhoHon", required = false, defaultValue = "") String giaTriNhoHon,
+            @RequestParam(value = "giaTriLonHon", required = false, defaultValue = "") String giaTriLonHon,
+            @RequestParam(value = "page", required = false, defaultValue = "0") String pageStr,
+            @RequestParam(value = "size", required = false, defaultValue = "4") String sizeStr
+    ) {
+        FilterDotGiamGia filterDotGiamGia = FilterDotGiamGia.builder()
+                .ma(ma)
+                .ten(ten)
+                .trangThai(trangThai)
+                .giaTri(giaTri)
+                .giaTriNhoHon(giaTriNhoHon)
+                .giaTriLonHon(giaTriLonHon)
+                .thoiGianBatDauSau(thoiGianBatDauSau)
+                .thoiGianBatDauTruoc(thoiGianBatDauTruoc)
+                .thoiGianKetThucSau(thoiGianKetThucSau)
+                .thoiGianKetThucTruoc(thoiGianKetThucTruoc)
+                .giaTriLonHon(giaTriLonHon)
+                .giaTriNhoHon(giaTriNhoHon)
+                .build();
+        Integer page, size;
+        try {
+            page = Integer.valueOf(pageStr);
+            size = Integer.valueOf(sizeStr);
+        } catch (Exception e) {
+            page = 0;
+            size = 4;
+        }
+        return ResponseEntity.ok(dotGiamGiaService.filterDotGiamGia(filterDotGiamGia, page, size));
+    }
 }

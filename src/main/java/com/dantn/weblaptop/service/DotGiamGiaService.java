@@ -2,10 +2,13 @@ package com.dantn.weblaptop.service;
 
 
 import com.dantn.weblaptop.dto.request.create_request.CreateDotGiamGiaRequest;
+import com.dantn.weblaptop.dto.request.create_request.FilterDotGiamGia;
 import com.dantn.weblaptop.dto.request.update_request.UpdateGotGiamGiaRequest;
 import com.dantn.weblaptop.dto.response.DotGiamGiaResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
 
 
 @Service
@@ -18,6 +21,5 @@ public interface DotGiamGiaService {
 
     DotGiamGiaResponse update(Long id, UpdateGotGiamGiaRequest request);
 
-//    void delete(Long id);
-//    void saveDotGiamGia(DotGiamGia dotGiamGia);
+    Page<DotGiamGiaResponse> filterDotGiamGia(FilterDotGiamGia filterDotGiamGia, Integer page, Integer size);
 }
