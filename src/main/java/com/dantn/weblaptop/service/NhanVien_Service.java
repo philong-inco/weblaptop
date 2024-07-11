@@ -15,7 +15,7 @@ public interface NhanVien_Service {
 
     Page<NhanVienResponse> pageSearchNhanVien(Integer pageNo, Integer size, String search);
 
-    List<NhanVienResponse> listNhanVienResponse();
+    Page<NhanVienResponse> pageSearchTrangThaiNhanVien(Integer pageNo, Integer size, Integer trangThai);
 
     NhanVienResponse findByEmail(String email);
 
@@ -33,5 +33,5 @@ public interface NhanVien_Service {
 
     void updatePassword(String newPassword, String email);
 
-    void updateImageNV(String image, String email);
+    void updateImageNV(String image, Long id);
 }

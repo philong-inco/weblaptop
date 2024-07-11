@@ -16,15 +16,14 @@ import java.util.Optional;
 @Repository
 public interface NhanVien_Repositoy extends JpaRepository<NhanVien, Integer> {
     @Query("SELECT nv FROM NhanVien nv WHERE " +
-            "(:search is null or nv.ma LIKE %:search% or nv.ten LIKE %:search% or nv.email like %:search% or nv.sdt like %:search%) " +
-            "and (:trangThai is null or nv.trangThai = :trangThai)")
+            "(:search is null or nv.ma LIKE %:search% or nv.ten LIKE %:search% or nv.email like %:search% or nv.sdt like %:search%)")
     Page<NhanVien> pageSearch(
             Pageable pageable
             , @Param("search") String search
     );
 
     @Query(value = "SELECT nv FROM NhanVien nv WHERE nv.trangThai = :trangThai")
-    List<NhanVien> getNhanVienByTrangThai(Integer trangThai);
+    Page<NhanVien>  getNhanVienByTrangThai(Pageable pageable, Integer trangThai);
 
     @Query(value = "SELECT nv FROM NhanVien nv WHERE nv.email = :email")
     NhanVien findByEmail(@Param("email") String email);
@@ -44,9 +43,10 @@ public interface NhanVien_Repositoy extends JpaRepository<NhanVien, Integer> {
 
     @Modifying
     @Transactional
-    @Query(value = "UPDATE NhanVien nv SET nv.hinhAnh = :image WHERE nv.email = :email")
-    void updateImageEmployee(String image, String email);
+    @Query(value = "UPDATE NhanVien nv SET nv.hinhAnh = :image WHERE nv.id = :id")
+    void updateImageEmployee(@Param("image") String image, @Param("id") Long id);
 
     @Query(value = "SELECT nv FROM NhanVien nv WHERE nv.id = :id")
     Optional<NhanVien> getNhanVienById(@Param("id") Long id);
+
 }

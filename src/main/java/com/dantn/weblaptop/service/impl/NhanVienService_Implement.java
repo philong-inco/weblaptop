@@ -45,20 +45,62 @@ public class NhanVienService_Implement implements NhanVien_Service {
     public Page<NhanVienResponse> pageNhanVien(Integer pageNo, Integer size) {
         Pageable pageable = PageRequest.of(pageNo, size, Sort.by(Sort.Direction.DESC, "id"));
         Page<NhanVien> nhanVienPage = nhanVienRepositoy.findAll(pageable);
-        return nhanVienPage.map(nhanVienMapper::EntiyToResponse);
+
+        return nhanVienPage.map(nhanVien -> {
+            StringBuilder vaiTrosBuilder = new StringBuilder();
+            nhanVienVaiTroRepository.findByNhanVien(nhanVien).forEach(vaiTro -> vaiTrosBuilder.append(vaiTro.getTen()).append(", "));
+
+            // Remove the last comma and space if vaiTrosBuilder is not empty
+            if (vaiTrosBuilder.length() > 0) {
+                vaiTrosBuilder.setLength(vaiTrosBuilder.length() - 2);
+            }
+
+            NhanVienResponse response = nhanVienMapper.EntiyToResponse(nhanVien);
+            response.setVaiTro(vaiTrosBuilder.toString());
+            return response;
+        });
     }
+
 
     @Override
     public Page<NhanVienResponse> pageSearchNhanVien(Integer pageNo, Integer size, String search) {
         Pageable pageable = PageRequest.of(pageNo, size, Sort.by(Sort.Direction.DESC, "id"));
         Page<NhanVien> nhanVienPage = nhanVienRepositoy.pageSearch(pageable, search);
-        return nhanVienPage.map(nhanVienMapper::EntiyToResponse);
+        return nhanVienPage.map(nhanVien -> {
+            StringBuilder vaiTrosBuilder = new StringBuilder();
+            nhanVienVaiTroRepository.findByNhanVien(nhanVien).forEach(vaiTro -> vaiTrosBuilder.append(vaiTro.getTen()).append(", "));
+
+            // Remove the last comma and space if vaiTrosBuilder is not empty
+            if (vaiTrosBuilder.length() > 0) {
+                vaiTrosBuilder.setLength(vaiTrosBuilder.length() - 2);
+            }
+
+            NhanVienResponse response = nhanVienMapper.EntiyToResponse(nhanVien);
+            response.setVaiTro(vaiTrosBuilder.toString());
+            return response;
+        });
     }
 
     @Override
-    public List<NhanVienResponse> listNhanVienResponse() {
-        return nhanVienMapper.listNhanVienEntityToNhanVienResponse(nhanVienRepositoy.getNhanVienByTrangThai(1));
+    public Page<NhanVienResponse> pageSearchTrangThaiNhanVien(Integer pageNo, Integer size, Integer trangThai) {
+        Pageable pageable = PageRequest.of(pageNo, size, Sort.by(Sort.Direction.DESC, "id"));
+        Page<NhanVien> nhanVienPage = nhanVienRepositoy.getNhanVienByTrangThai(pageable, trangThai);
+
+        return nhanVienPage.map(nhanVien -> {
+            StringBuilder vaiTrosBuilder = new StringBuilder();
+            nhanVienVaiTroRepository.findByNhanVien(nhanVien).forEach(vaiTro -> vaiTrosBuilder.append(vaiTro.getTen()).append(", "));
+
+            // Remove the last comma and space if vaiTrosBuilder is not empty
+            if (vaiTrosBuilder.length() > 0) {
+                vaiTrosBuilder.setLength(vaiTrosBuilder.length() - 2);
+            }
+
+            NhanVienResponse response = nhanVienMapper.EntiyToResponse(nhanVien);
+            response.setVaiTro(vaiTrosBuilder.toString());
+            return response;
+        });
     }
+
 
     @Override
     public NhanVienResponse findByEmail(String email) {
@@ -223,7 +265,7 @@ public class NhanVienService_Implement implements NhanVien_Service {
     }
 
     @Override
-    public void updateImageNV(String image, String email) {
-        nhanVienRepositoy.updateImageEmployee(image, email);
+    public void updateImageNV(String image, Long id) {
+        nhanVienRepositoy.updateImageEmployee(image, id);
     }
 }

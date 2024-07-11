@@ -15,4 +15,5 @@ public interface DiaChi_Mapper {
 
     DiaChi_Response EntiyToResponse(DiaChi entity);
 
-    Page<DiaChi_Response> getAllDiaChi(int page, int size);}
+    List<DiaChi_Response> listNhanVienEntityToNhanVienResponse(List<DiaChi> diaChiList);
+}

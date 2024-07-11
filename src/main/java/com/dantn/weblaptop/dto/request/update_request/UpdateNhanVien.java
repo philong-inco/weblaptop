@@ -61,9 +61,6 @@ public class UpdateNhanVien {
     @Max(value = 1, message = "Giới tính phải là 0 hoặc 1")
     Integer gioiTinh;
 
-    @JsonProperty("hinh_anh")
-    @NotBlank(message = "Hình ảnh không được để trống")
-    @Size(max = 255, message = "Hình ảnh không được vượt quá 255 ký tự")
     String hinhAnh;
 
     @JsonProperty("tai_khoan_ngan_hang")
