@@ -23,6 +23,7 @@ import java.util.List;
 @RestController
 @Component
 @AllArgsConstructor
+@CrossOrigin("*")
 public class NhanVien_Controller {
 
     @Qualifier("nhanVien_Service")
@@ -42,9 +43,11 @@ public class NhanVien_Controller {
         return ResponseEntity.ok(nhanVienService.pageSearchNhanVien(pageNo, pageSize, search));
     }
 
-    @GetMapping("/list")
-    public ResponseEntity<?> listNhanVienAcitve() {
-        return ResponseEntity.ok(nhanVienService.listNhanVienResponse());
+    @GetMapping("/searchtrangthai")
+    public ResponseEntity<?> searchTrangThai(@RequestParam(name = "search", required = false) Integer trangThai,
+                                    @RequestParam(defaultValue = "0", name = "pageNo", required = false) Integer pageNo,
+                                    @RequestParam(defaultValue = "5", name = "pageSize", required = false) Integer pageSize) {
+        return ResponseEntity.ok(nhanVienService.pageSearchTrangThaiNhanVien(pageNo, pageSize, trangThai));
     }
 
     @GetMapping("/{id}")
@@ -102,9 +105,11 @@ public class NhanVien_Controller {
         return ResponseEntity.ok("Password was updated");
     }
 
-    @PutMapping("/updateimage/{email}")
-    public ResponseEntity<?> updateImage(@PathVariable("email") String email, @RequestParam("image") String image) {
-        this.nhanVienService.updateImageNV(image, email);
+    @PutMapping("/updateimage/{id}")
+    public ResponseEntity<?> updateImage(@PathVariable("id") Long id, @RequestParam("image") String image) {
+        this.nhanVienService.updateImageNV(image, id);
         return ResponseEntity.ok("Image was updated");
     }
+
+
 }

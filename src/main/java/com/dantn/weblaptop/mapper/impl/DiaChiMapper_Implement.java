@@ -26,7 +26,9 @@ public class DiaChiMapper_Implement implements DiaChi_Mapper {
         diaChi.setSdtNguoiNhan(dto.getSdtNguoiNhan());
         diaChi.setEmailNguoiNhan(dto.getEmailNguoiNhan());
         diaChi.setDiaChiNhanHang(dto.getDiaChiNhanHang());
-
+        diaChi.setIdPhuongXa(dto.getIdPhuongXa());
+        diaChi.setIdQuanHuyen(dto.getIdQuanHuyen());
+        diaChi.setIdTinhThanhPho(dto.getIdTinhThanhPho());
         return diaChi;
     }
 
@@ -43,7 +45,9 @@ public class DiaChiMapper_Implement implements DiaChi_Mapper {
         diaChi.setSdtNguoiNhan(dto.getSdtNguoiNhan());
         diaChi.setEmailNguoiNhan(dto.getEmailNguoiNhan());
         diaChi.setDiaChiNhanHang(dto.getDiaChiNhanHang());
-
+        diaChi.setIdPhuongXa(dto.getIdPhuongXa());
+        diaChi.setIdQuanHuyen(dto.getIdQuanHuyen());
+        diaChi.setIdTinhThanhPho(dto.getIdTinhThanhPho());
         return diaChi;
     }
 
@@ -61,16 +65,19 @@ public class DiaChiMapper_Implement implements DiaChi_Mapper {
                 .sdtNguoiNhan(entity.getSdtNguoiNhan())
                 .emailNguoiNhan(entity.getEmailNguoiNhan())
                 .diaChiNhanHang(entity.getDiaChiNhanHang())
+                .idPhuongXa(entity.getIdPhuongXa())
+                .idQuanHuyen(entity.getIdPhuongXa())
+                .idTinhThanhPho(entity.getIdTinhThanhPho())
                 .build();
     }
 
     @Override
-    public List<DiaChi_Response> listNhanVienEntityToNhanVienResponse(List<DiaChi> nhanVienList) {
-        if (nhanVienList == null || nhanVienList.isEmpty()) {
+    public List<DiaChi_Response> listNhanVienEntityToNhanVienResponse(List<DiaChi> diaChiList) {
+        if (diaChiList == null || diaChiList.isEmpty()) {
             return List.of();
         }
 
-        return nhanVienList.stream()
+        return diaChiList.stream()
                 .map(this::EntiyToResponse)
                 .collect(Collectors.toList());
     }
