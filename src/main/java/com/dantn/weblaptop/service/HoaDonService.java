@@ -1,5 +1,6 @@
 package com.dantn.weblaptop.service;
 
+import com.dantn.weblaptop.constant.HoaDonStatus;
 import com.dantn.weblaptop.dto.request.update_request.UpdateHoaDonRequest;
 import com.dantn.weblaptop.dto.response.HoaDonResponse;
 import com.dantn.weblaptop.dto.response.ResultPaginationResponse;
@@ -19,6 +20,8 @@ public interface HoaDonService {
     HoaDonResponse updateBill(Long id, UpdateHoaDonRequest request);
 
     HoaDonResponse getBillById (Long id) throws AppException;
+
+    HoaDonResponse getBillByIdAndStatus (Long id , String status);
 
     ResultPaginationResponse pageBillByStatusAndType (String status , Integer type, Optional<String> page, Optional<String> size);
 

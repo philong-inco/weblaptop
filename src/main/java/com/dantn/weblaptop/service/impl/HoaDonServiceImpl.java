@@ -103,6 +103,15 @@ public class HoaDonServiceImpl implements HoaDonService {
     }
 
     @Override
+    public HoaDonResponse getBillByIdAndStatus(Long id, String status) {
+        HoaDon bill = billRepository.findByIdAndTrangThai(id , HoaDonStatus.getHoaDonStatusEnum(status)).orElse(null);
+        if(bill!=null){
+            return  HoaDonMapper.toHoaDonResponse(bill);
+        }
+        return null;
+    }
+
+    @Override
     public ResultPaginationResponse pageBillByStatusAndType(String status, Integer type, Optional<String> page, Optional<String> size) {
         String sPage = page.isPresent() ? page.get() : "0";
         String sSize = size.isPresent() ? size.get() : "5";

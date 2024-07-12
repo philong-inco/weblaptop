@@ -10,6 +10,7 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface HoaDonRepository extends JpaRepository<HoaDon, Long>, JpaSpecificationExecutor<HoaDon> {
@@ -17,5 +18,7 @@ public interface HoaDonRepository extends JpaRepository<HoaDon, Long>, JpaSpecif
     List<HoaDon> findByTrangThaiAndLoaiHoaDon(HoaDonStatus status, Integer type);
 
     Page<HoaDon> findByTrangThaiAndLoaiHoaDon(HoaDonStatus status, Integer type, Pageable pageable);
+
+    Optional<HoaDon> findByIdAndTrangThai(Long id , HoaDonStatus status);
 
 }
