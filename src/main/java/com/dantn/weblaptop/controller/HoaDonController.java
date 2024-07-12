@@ -2,17 +2,24 @@ package com.dantn.weblaptop.controller;
 
 import com.dantn.weblaptop.dto.request.update_request.UpdateHoaDonRequest;
 import com.dantn.weblaptop.dto.response.ApiResponse;
+import com.dantn.weblaptop.dto.response.HoaDonResponse;
 import com.dantn.weblaptop.dto.response.ResultPaginationResponse;
+import com.dantn.weblaptop.entity.hoadon.HoaDon;
+import com.dantn.weblaptop.entity.hoadon.LichSuHoaDon;
 import com.dantn.weblaptop.exception.AppException;
 import com.dantn.weblaptop.service.HoaDonService;
 import com.dantn.weblaptop.service.LichSuHoaDonService;
+import com.turkraft.springfilter.boot.Filter;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -24,12 +31,27 @@ public class HoaDonController {
     LichSuHoaDonService billHistoryService;
     HoaDonService billService;
 
+
     @GetMapping("all")
-    public ResponseEntity<ApiResponse> getBillPage(Optional<String> page, Optional<String> size) {
+    public ResponseEntity<ApiResponse> filterBill(
+            @Filter Specification<HoaDon> specification,
+            Pageable pageable
+    ) {
         ApiResponse apiResponse = new ApiResponse();
         apiResponse.setStatusCode(HttpStatus.OK.value());
-        apiResponse.setMessage("Danh sách hóa đon");
-        apiResponse.setData(billService.getBillPage(page, size));
+        apiResponse.setMessage("Oke");
+        apiResponse.setData(billService.filterHoaDon(specification , pageable));
+        return ResponseEntity.ok(apiResponse);
+    }
+
+    @GetMapping("{id}")
+    public ResponseEntity<ApiResponse> getBillPage(
+            @PathVariable(name = "id") Long id
+    ) throws AppException {
+        ApiResponse apiResponse = new ApiResponse();
+        apiResponse.setStatusCode(HttpStatus.OK.value());
+        apiResponse.setMessage("Thông tin hóa đơn");
+        apiResponse.setData(billService.getBillById(id));
         return ResponseEntity.ok(apiResponse);
     }
 
@@ -43,22 +65,19 @@ public class HoaDonController {
     }
 
     @PostMapping("update/{id}")
-    public ResponseEntity<ApiResponse> updateBillById( @RequestBody UpdateHoaDonRequest request) {
+    public ResponseEntity<ApiResponse> updateBillById(@RequestBody UpdateHoaDonRequest request) {
         return ResponseEntity.status(HttpStatus.OK).body(null);
     }
 
     @GetMapping("/bill-history/{billId}")
     public ResponseEntity<ApiResponse> getBillHistoryByBillId(
-            @PathVariable Long billId,
-            @RequestParam(name = "page", defaultValue = "0") Optional<String> page,
-            @RequestParam(name = "size", defaultValue = "5") Optional<String> size
+            @PathVariable Long billId
     ) {
-        ResultPaginationResponse response = billHistoryService.getBillHistoryByBillId(billId, page, size);
         ApiResponse<Object> apiResponse = ApiResponse
                 .builder()
                 .statusCode(HttpStatus.OK.value())
                 .message("Call api success")
-                .data(response)
+                .data(billHistoryService.getBillHistoryByBillId(billId))
                 .build();
         return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
     }
@@ -66,13 +85,14 @@ public class HoaDonController {
     @GetMapping("")
     public ResponseEntity<ApiResponse> getBillByStatusAndType(
             @RequestParam(name = "status") String status,
-            @RequestParam(name = "type") Integer type
+            @RequestParam(name = "type") Integer type,
+            Optional<String> page, Optional<String> size
     ) {
         ApiResponse<Object> apiResponse = ApiResponse
                 .builder()
                 .statusCode(HttpStatus.OK.value())
                 .message("Call api success")
-                .data(billService.listBillByStatusAndType(status, type))
+                .data(billService.pageBillByStatusAndType(status, type, page, size))
                 .build();
         return ResponseEntity.ok(apiResponse);
     }

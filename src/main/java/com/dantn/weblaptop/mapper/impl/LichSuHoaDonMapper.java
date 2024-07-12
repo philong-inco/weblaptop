@@ -3,6 +3,7 @@ package com.dantn.weblaptop.mapper.impl;
 import com.dantn.weblaptop.dto.request.create_request.CreateLichSuHoaDonRequest;
 import com.dantn.weblaptop.dto.response.LichSuHoaDonResponse;
 import com.dantn.weblaptop.entity.hoadon.LichSuHoaDon;
+import com.dantn.weblaptop.util.ConvertTime;
 
 public class LichSuHoaDonMapper {
     public static LichSuHoaDonResponse toBillHistoryResponse(LichSuHoaDon lichSuHoaDon) {
@@ -24,7 +25,7 @@ public class LichSuHoaDonMapper {
         response.setMaNhanVien(lichSuHoaDon.getNhanVien().getMa());
 
         response.setNgaySua(lichSuHoaDon.getNgaySua());
-        response.setNgayTao(lichSuHoaDon.getNgayTao());
+        response.setNgayTao(ConvertTime.convert(lichSuHoaDon.getNgayTao()+""));
         response.setNguoiSua(lichSuHoaDon.getNguoiSua());
         response.setNguoiTao(lichSuHoaDon.getNguoiTao());
 
