@@ -14,26 +14,15 @@ import lombok.experimental.FieldDefaults;
 @Getter
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Builder
-public class FindSanPhamFilter {
-    String tenSanPham;
+public class FindRamFilter {
+
+    String name;
     String ma;
+    String dungLuong;
+    String tocDoBus;
     String trangThai;
-    String ngayTaoSau;
     String ngayTaoTruoc;
-    String ngaySuaSau;
     String ngaySuaTruoc;
-    String[] tenThuongHieu;
-    String[] tenNhuCau;
-    String[] tenMau;
-    String[] tenRam;
-    String[] tenCPU;
-    String[] tenVGA;
-    String[] tenWebcam;
-    String[] tenOCung;
-    String[] tenManHinh;
-    String[] tenHeDieuHanh;
-    String[] tenBanPhim;
-    String giaNhoHon;
-    String giaLonHon;
-    String coDotGiamGia;
+    String ngayTaoSau;
+    String ngaySuaSau;
 }

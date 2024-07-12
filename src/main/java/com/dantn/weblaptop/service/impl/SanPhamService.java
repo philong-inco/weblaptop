@@ -1,6 +1,6 @@
 package com.dantn.weblaptop.service.impl;
 
-import com.dantn.weblaptop.dto.request.create_request.FindSanPhamFilter;
+import com.dantn.weblaptop.dto.request.create_request.FindSanPhamFilterByName;
 import com.dantn.weblaptop.dto.request.create_request.NhuCauCreate;
 import com.dantn.weblaptop.dto.request.create_request.SanPhamCreate;
 import com.dantn.weblaptop.dto.request.create_request.ThuongHieuCreate;
@@ -27,6 +27,8 @@ import com.dantn.weblaptop.generics.IGenericsMapper;
 import com.dantn.weblaptop.generics.IGenericsRepository;
 import com.dantn.weblaptop.repository.SanPhamRepository;
 import com.dantn.weblaptop.util.GenerateCode;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
@@ -84,7 +86,7 @@ public class SanPhamService extends GenericsService<SanPham, Long, SanPhamCreate
             throw new RuntimeException("Tên đã tồn tại");
     }
 
-    public List<SanPham> findWithFilter(FindSanPhamFilter attribute) {
+    public Page<SanPhamResponse> findWithFilterByName(FindSanPhamFilterByName attribute, Pageable pageable) {
         Specification<SanPham> spec = Specification
                 .where(SanPhamSpecifications.hasTen(attribute.getTenSanPham()))
                 .and(SanPhamSpecifications.hasMa(attribute.getMa()))
@@ -105,8 +107,38 @@ public class SanPhamService extends GenericsService<SanPham, Long, SanPhamCreate
                 .and(SanPhamSpecifications.hasNameAttribute(MauSac.class, "mauSac", attribute.getTenMau()))
                 .and(SanPhamSpecifications.hasNameAttribute(Webcam.class, "webcam", attribute.getTenWebcam()))
                 .and(SanPhamSpecifications.hasNameAttribute(HeDieuHanh.class, "heDieuHanh", attribute.getTenHeDieuHanh()))
-                .and(SanPhamSpecifications.hasNameAttribute(OCung.class, "oCung", attribute.getTenOCung()));
+                .and(SanPhamSpecifications.hasNameAttribute(OCung.class, "oCung", attribute.getTenOCung()))
+                .and(SanPhamSpecifications.hasGiaNhoHon(attribute.getGiaNhoHon()))
+                .and(SanPhamSpecifications.hasGiaLonHon(attribute.getGiaLonHon()));
 
-        return sanPhamRepository.findAll(spec);
+        return genericsMapper.pageEntityToPageResponse(sanPhamRepository.findAll(spec, pageable));
+    }
+
+    public Page<SanPhamResponse> findWithFilterById(FindSanPhamFilterByName attribute, Pageable pageable) {
+        Specification<SanPham> spec = Specification
+                .where(SanPhamSpecifications.hasTen(attribute.getTenSanPham()))
+                .and(SanPhamSpecifications.hasMa(attribute.getMa()))
+                .and(SanPhamSpecifications.hasTrangThai(attribute.getTrangThai()))
+                .and(SanPhamSpecifications.ngayTaoTruoc(attribute.getNgayTaoTruoc()))
+                .and(SanPhamSpecifications.ngayTaoSau(attribute.getNgayTaoSau()))
+                .and(SanPhamSpecifications.ngaySuaTruoc(attribute.getNgaySuaTruoc()))
+                .and(SanPhamSpecifications.ngaySuaSau(attribute.getNgaySuaSau()))
+                // điều kiện các bảng cha của sản phẩm
+                .and(SanPhamSpecifications.hasNhuCauId(attribute.getTenNhuCau()))
+                .and(SanPhamSpecifications.hasThuongHieuId(attribute.getTenThuongHieu()))
+                // điều kiện các bảng thuộc tính sản phẩm chi tiết
+                .and(SanPhamSpecifications.hasIdAttribute(RAM.class, "ram", attribute.getTenRam()))
+                .and(SanPhamSpecifications.hasIdAttribute(CPU.class, "cpu", attribute.getTenCPU()))
+                .and(SanPhamSpecifications.hasIdAttribute(VGA.class, "vga", attribute.getTenVGA()))
+                .and(SanPhamSpecifications.hasIdAttribute(ManHinh.class, "manHinh", attribute.getTenManHinh()))
+                .and(SanPhamSpecifications.hasIdAttribute(BanPhim.class, "banPhim", attribute.getTenBanPhim()))
+                .and(SanPhamSpecifications.hasIdAttribute(MauSac.class, "mauSac", attribute.getTenMau()))
+                .and(SanPhamSpecifications.hasIdAttribute(Webcam.class, "webcam", attribute.getTenWebcam()))
+                .and(SanPhamSpecifications.hasIdAttribute(HeDieuHanh.class, "heDieuHanh", attribute.getTenHeDieuHanh()))
+                .and(SanPhamSpecifications.hasIdAttribute(OCung.class, "oCung", attribute.getTenOCung()))
+                .and(SanPhamSpecifications.hasGiaNhoHon(attribute.getGiaNhoHon()))
+                .and(SanPhamSpecifications.hasGiaLonHon(attribute.getGiaLonHon()));
+
+        return genericsMapper.pageEntityToPageResponse(sanPhamRepository.findAll(spec, pageable));
     }
 }
