@@ -24,7 +24,7 @@ public class GenericsSpecificationAttributeJoin<T> {
             Join<T, E> joinTable = root.join(nameTable, JoinType.LEFT);
             List<Predicate> predicates = new ArrayList<>();
             for (String value : listValue) {
-                predicates.add(builder.like(builder.lower(joinTable.get(nameAttribute)), value.toLowerCase()));
+                predicates.add(builder.like(builder.lower(joinTable.get(nameAttribute)), "%" + value.toLowerCase() + "%"));
             }
             return builder.or(predicates.toArray(new Predicate[0]));
         };
@@ -196,6 +196,20 @@ public class GenericsSpecificationAttributeJoin<T> {
             Join<T, E> joinTable = root.join(nameTable, JoinType.LEFT);
             LocalDateTime localDateTime = ConvertTime.convertStringToLocalDateTime(value);
             return builder.greaterThanOrEqualTo(joinTable.get(nameAttribute), localDateTime);
+        };
+    }
+
+    // Long
+    public <E> Specification<T> listLongEquals(Class<E> classJoin, String nameTable, String nameAttribute, String[] listValue) {
+        return (root, query, builder) -> {
+            if (listValue == null || listValue.length == 0)
+                return builder.conjunction();
+            Join<T, E> joinTable = root.join(nameTable, JoinType.LEFT);
+            List<Predicate> predicates = new ArrayList<>();
+            for (String value : listValue) {
+                predicates.add(builder.equal(joinTable.get(nameAttribute), Long.valueOf(value)));
+            }
+            return builder.or(predicates.toArray(new Predicate[0]));
         };
     }
 }

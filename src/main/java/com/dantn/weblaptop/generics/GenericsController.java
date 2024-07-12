@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.List;
+
 public abstract class GenericsController<E, ID, C, U, R> {
 
     protected final GenericsService<E, ID, C, U, R> genericsService;
@@ -22,26 +24,45 @@ public abstract class GenericsController<E, ID, C, U, R> {
     }
 
     @GetMapping("/all")
-    public ResponseEntity<ResponseLong<Page<R>>> getAll(@RequestParam(name = "page", required = false, defaultValue = "0") String page,
-                                                        @RequestParam(name = "size", required = false, defaultValue = "5") String size) {
+    public ResponseEntity<ResponseLong<List<R>>> getAllPage(@RequestParam(name = "page", required = false, defaultValue = "0") String page,
+                                                            @RequestParam(name = "size", required = false, defaultValue = "5") String size) {
         Pageable pageable;
         try {
             pageable = PageRequest.of(Integer.valueOf(page), Integer.valueOf(size));
         } catch (Exception e) {
             pageable = PageRequest.of(0, 5);
         }
-        ResponseLong<Page<R>> result = new ResponseLong<>(200,
-                "GET successfully", genericsService.getAllPage(pageable));
+        Page<R> pageResult = genericsService.getAllPage(pageable);
+        ResponseLong<List<R>> result = new ResponseLong<>(
+                200,
+                "GET successfully",
+                pageResult.getContent(),
+                String.valueOf(pageResult.getNumber()),
+                String.valueOf(pageResult.getSize()),
+                String.valueOf(pageResult.getTotalPages()),
+                String.valueOf(pageResult.getTotalElements())
+        );
+        return ResponseEntity.ok().body(result);
+    }
+
+    @GetMapping("/all-list")
+    public ResponseEntity<ResponseLong<List<R>>> getAllList() {
+
+        List<R> listResult = genericsService.getAllList();
+        ResponseLong<List<R>> result = new ResponseLong<>(
+                200, "GET successfully", listResult,
+                null, null, null, null
+        );
         return ResponseEntity.ok().body(result);
     }
 
     @PostMapping("/add")
     public ResponseEntity<ResponseLong<R>> add(@Valid @RequestBody C create) {
         try {
-            ResponseLong<R> result = new ResponseLong<>(200, "Add successfully", genericsService.add(create));
+            ResponseLong<R> result = new ResponseLong<>(200, "Add successfully", genericsService.add(create), null, null, null, null);
             return ResponseEntity.ok().body(result);
         } catch (Exception e) {
-            ResponseLong<R> result = new ResponseLong<>(999, "Add failed", null);
+            ResponseLong<R> result = new ResponseLong<>(999, "Add failed", null, null, null, null, null);
             return ResponseEntity.ok().body(result);
         }
     }
@@ -50,10 +71,10 @@ public abstract class GenericsController<E, ID, C, U, R> {
     public ResponseEntity<ResponseLong<R>> update(@Valid @RequestBody U update,
                                                   @PathVariable("id") ID id) {
         try {
-            ResponseLong<R> result = new ResponseLong<>(200, "Update successfully", genericsService.update(id, update));
+            ResponseLong<R> result = new ResponseLong<>(200, "Update successfully", genericsService.update(id, update), null, null, null, null);
             return ResponseEntity.ok().body(result);
         } catch (Exception e) {
-            ResponseLong<R> result = new ResponseLong<>(999, "Update failed: " + e.getMessage(), null);
+            ResponseLong<R> result = new ResponseLong<>(999, "Update failed: " + e.getMessage(), null, null, null, null, null);
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(result);
         }
     }
@@ -62,10 +83,10 @@ public abstract class GenericsController<E, ID, C, U, R> {
     public ResponseEntity<ResponseLong<String>> delete(@PathVariable("id") ID id) {
         try {
             genericsService.delete(id);
-            ResponseLong<String> result = new ResponseLong<>(200, "Delete successfully", null);
+            ResponseLong<String> result = new ResponseLong<>(200, "Delete successfully", null, null, null, null, null);
             return ResponseEntity.ok().body(result);
         } catch (Exception e) {
-            ResponseLong<String> result = new ResponseLong<>(200, "Delete successfully", null);
+            ResponseLong<String> result = new ResponseLong<>(200, "Delete successfully", null, null, null, null, null);
             return ResponseEntity.ok().body(result);
         }
     }
@@ -77,13 +98,67 @@ public abstract class GenericsController<E, ID, C, U, R> {
             if (result == null) {
                 throw new RuntimeException();
             }
-            ResponseLong<R> response = new ResponseLong<>(200, "Find successfully", result);
+            ResponseLong<R> response = new ResponseLong<>(200, "Find successfully", result, null, null, null, null);
             return ResponseEntity.ok().body(response);
         } catch (Exception e) {
-            ResponseLong<R> response = new ResponseLong<>(999, "Not have data", null);
+            ResponseLong<R> response = new ResponseLong<>(999, "Not have data", null, null, null, null, null);
             return ResponseEntity.ok().body(response);
         }
     }
 
-    // them get entity va get list va find by status findbycodeor name
+    @GetMapping("exist-code")
+    public ResponseEntity<ResponseLong<Boolean>> existByCode(@RequestParam("code") String code) {
+        Boolean result = genericsService.existByCode(code);
+        if (result)
+            return ResponseEntity.ok().body(new ResponseLong<>(200, "Code is existed", result, null, null, null, null));
+        return ResponseEntity.ok().body(new ResponseLong<>(200, "Code is unique", result, null, null, null, null));
+    }
+
+    @GetMapping("exist-name")
+    public ResponseEntity<ResponseLong<Boolean>> existByName(@RequestParam("name") String name) {
+        Boolean result = genericsService.existByName(name);
+        if (result)
+            return ResponseEntity.ok().body(new ResponseLong<>(200, "Name is existed", result, null, null, null, null));
+        return ResponseEntity.ok().body(new ResponseLong<>(200, "Name is unique", result, null, null, null, null));
+    }
+
+    @GetMapping("find-status-list")
+    public ResponseEntity<ResponseLong<List<R>>> findByStatusList(@RequestParam("status") String stt) {
+        try {
+            Integer status = Integer.valueOf(stt);
+        } catch (Exception e) {
+            throw new RuntimeException("Status invalid");
+        }
+        List<R> result = genericsService.findByStatusList(Integer.valueOf(stt));
+        return ResponseEntity.ok().body(new ResponseLong<>(200, "Find successfully", result, null, null, null, null));
+    }
+
+    @GetMapping("find-status-page")
+    public ResponseEntity<ResponseLong<List<R>>> findByStatusPage(@RequestParam("status") String stt,
+                                                                  @RequestParam(name = "page", required = false, defaultValue = "0") String page,
+                                                                  @RequestParam(name = "size", required = false, defaultValue = "5") String size) {
+        Pageable pageable;
+        try {
+            pageable = PageRequest.of(Integer.valueOf(page), Integer.valueOf(size));
+        } catch (Exception e) {
+            pageable = PageRequest.of(0, 5);
+        }
+        try {
+            Integer status = Integer.valueOf(stt);
+        } catch (Exception e) {
+            throw new RuntimeException("Status invalid");
+        }
+        Page<R> result = genericsService.findByStatusPage(Integer.valueOf(stt), pageable);
+        return ResponseEntity.ok().body(new ResponseLong<>(
+                200,
+                "Find successfully",
+                result.getContent(),
+                String.valueOf(result.getNumber()),
+                String.valueOf(result.getSize()),
+                String.valueOf(result.getTotalPages()),
+                String.valueOf(result.getTotalElements())));
+    }
+
 }
+// them get entity va get list va find by status findbycodeor name
+

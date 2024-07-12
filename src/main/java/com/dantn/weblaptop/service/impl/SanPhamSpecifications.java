@@ -125,6 +125,19 @@ public class SanPhamSpecifications {
         };
     }
 
+    public static Specification<SanPham> hasThuongHieuId(String[] thuongHieuId) {
+        return (root, query, builder) -> {
+            if (thuongHieuId == null || thuongHieuId.length == 0)
+                return builder.conjunction();
+            List<Predicate> predicates = new ArrayList<>();
+            Join<SanPham, ThuongHieu> thuongHieuJoin = root.join("thuongHieu", JoinType.LEFT);
+            for (String brand : thuongHieuId) {
+                predicates.add(builder.equal(thuongHieuJoin.get("id"), Long.valueOf(brand)));
+            }
+            return builder.or(predicates.toArray(new Predicate[0]));
+        };
+    }
+
     public static Specification<SanPham> hasNhuCau(String[] nhuCauName) {
         return (root, query, builder) -> {
             if (nhuCauName == null || nhuCauName.length == 0)
@@ -138,6 +151,39 @@ public class SanPhamSpecifications {
         };
     }
 
+    public static Specification<SanPham> hasNhuCauId(String[] nhuCauId) {
+        return (root, query, builder) -> {
+            if (nhuCauId == null || nhuCauId.length == 0)
+                return builder.conjunction();
+            List<Predicate> predicates = new ArrayList<>();
+            Join<SanPham, NhuCau> nhuCauJoin = root.join("nhuCau", JoinType.LEFT);
+            for (String demand : nhuCauId) {
+                predicates.add(builder.equal(nhuCauJoin.get("id"), Long.valueOf(demand)));
+            }
+            return builder.or(predicates.toArray(new Predicate[0]));
+        };
+    }
+
+    public static Specification<SanPham> hasGiaNhoHon(String gia) {
+        return (root, query, builder) -> {
+            if (gia == null || gia.isBlank())
+                return builder.conjunction();
+            Join<SanPham, SanPhamChiTiet> sanPhamChiTietJoin = root.join("sanPhamChiTiets", JoinType.LEFT);
+
+            return builder.lessThanOrEqualTo(sanPhamChiTietJoin.get("giaBan"), gia);
+        };
+    }
+
+    public static Specification<SanPham> hasGiaLonHon(String gia) {
+        return (root, query, builder) -> {
+            if (gia == null || gia.isBlank())
+                return builder.conjunction();
+            Join<SanPham, SanPhamChiTiet> sanPhamChiTietJoin = root.join("sanPhamChiTiets", JoinType.LEFT);
+
+            return builder.greaterThanOrEqualTo(sanPhamChiTietJoin.get("giaBan"), gia);
+        };
+    }
+
     public static <T> Specification<SanPham> hasNameAttribute(Class<T> attributeClass, String nameTable, String[] tens) {
         return (root, query, builder) -> {
             if (tens == null || tens.length == 0)
@@ -148,6 +194,22 @@ public class SanPhamSpecifications {
             List<Predicate> predicates = new ArrayList<>();
             for (String ten : tens) {
                 predicates.add(builder.like(builder.lower(attributeTableJoin.get("ten")), "%" + ten.toLowerCase() + "%"));
+            }
+
+            return builder.or(predicates.toArray(new Predicate[0]));
+        };
+    }
+
+    public static <T> Specification<SanPham> hasIdAttribute(Class<T> attributeClass, String nameTable, String[] ids) {
+        return (root, query, builder) -> {
+            if (ids == null || ids.length == 0)
+                return builder.conjunction();
+            Join<SanPham, SanPhamChiTiet> sanPhamChiTietJoin = root.join("sanPhamChiTiets", JoinType.LEFT);
+            Join<SanPhamChiTiet, T> attributeTableJoin = sanPhamChiTietJoin.join(nameTable, JoinType.LEFT);
+
+            List<Predicate> predicates = new ArrayList<>();
+            for (String id : ids) {
+                predicates.add(builder.equal(attributeTableJoin.get("id"), Long.valueOf(id)));
             }
 
             return builder.or(predicates.toArray(new Predicate[0]));

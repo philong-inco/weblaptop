@@ -2,6 +2,8 @@ package com.dantn.weblaptop.util;
 
 public class ConvertStringToArray {
     public static String[] toArray(String str) {
+        if (str.isBlank())
+            return null;
         String regex = "[,\\-\\.]";
         String[] array = str.split(regex);
         return trimArray(array);

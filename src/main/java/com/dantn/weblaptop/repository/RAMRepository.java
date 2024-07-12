@@ -4,6 +4,7 @@ import com.dantn.weblaptop.entity.sanpham.thuoctinh.RAM;
 import com.dantn.weblaptop.generics.IGenericsRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -11,7 +12,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface RAMRepository extends IGenericsRepository<RAM, Long> {
+public interface RAMRepository extends IGenericsRepository<RAM, Long>, JpaSpecificationExecutor<RAM> {
     @Override
     @Query("SELECT r FROM RAM r")
     Page<RAM> getAllPage(Pageable pageable);

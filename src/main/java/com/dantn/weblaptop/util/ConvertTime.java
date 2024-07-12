@@ -24,14 +24,14 @@ public class ConvertTime {
     }
 
     public static LocalDateTime convertStringToLocalDateTime(String time) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm");
         LocalDateTime localDateTime = LocalDateTime.parse(time, formatter);
         return localDateTime;
     }
 
     public static void main(String[] args) {
         // Test
-        System.out.println(convert("1716310800000"));
+        System.out.println(convertStringToLocalDateTime("1997-10-22T22:00"));
 //        System.out.println(convertStringToLong("22-05-2024"));
     }
 
