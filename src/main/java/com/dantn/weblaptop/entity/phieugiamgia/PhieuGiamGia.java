@@ -15,6 +15,7 @@ import lombok.ToString;
 import lombok.experimental.FieldDefaults;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Set;
 
@@ -41,9 +42,9 @@ public class PhieuGiamGia extends BaseEntity {
     @Column(name = "mo_ta")
     String moTa;
     @Column(name = "ngay_bat_dau")
-    LocalDateTime ngayBatDau;
+    LocalDate ngayBatDau;
     @Column(name = "ngay_het_han")
-    LocalDateTime ngayHetHan;
+    LocalDate ngayHetHan;
     @Column(name = "loai_giam_gia")
     Integer loaiGiamGia;
     @Column(name = "gia_tri_giam_gia")

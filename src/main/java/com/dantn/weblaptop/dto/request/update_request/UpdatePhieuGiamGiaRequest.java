@@ -1,4 +1,4 @@
-package com.dantn.weblaptop.dto.request.create_request;
+package com.dantn.weblaptop.dto.request.update_request;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -13,7 +13,7 @@ import java.util.List;
 @AllArgsConstructor
 @ToString
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class CreatePhieuGiamGiaRequest {
+public class UpdatePhieuGiamGiaRequest {
 
     String ma;
 //    Integer trangThai;

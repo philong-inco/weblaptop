@@ -4,9 +4,11 @@ import com.dantn.weblaptop.constant.HoaDonStatus;
 import com.dantn.weblaptop.dto.request.update_request.UpdateHoaDonRequest;
 import com.dantn.weblaptop.dto.response.HoaDonResponse;
 import com.dantn.weblaptop.dto.response.ResultPaginationResponse;
+import com.dantn.weblaptop.entity.hoadon.HoaDon;
 import com.dantn.weblaptop.exception.AppException;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 
-import java.util.List;
 import java.util.Optional;
 
 public interface HoaDonService {
@@ -17,7 +19,13 @@ public interface HoaDonService {
 
     HoaDonResponse updateBill(Long id, UpdateHoaDonRequest request);
 
-    List<HoaDonResponse> listBillByStatusAndType (String status , Integer type);
+    HoaDonResponse getBillById (Long id) throws AppException;
+
+    HoaDonResponse getBillByIdAndStatus (Long id , String status);
+
+    ResultPaginationResponse pageBillByStatusAndType (String status , Integer type, Optional<String> page, Optional<String> size);
 
     void updateStatus(Long id , String status) throws AppException;
+
+    ResultPaginationResponse filterHoaDon (Specification<HoaDon> specification, Pageable pageable);
 }

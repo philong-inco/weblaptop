@@ -11,7 +11,7 @@ import lombok.experimental.FieldDefaults;
 public class BaseResponse {
     Long id;
 
-    Long ngayTao;
+    String ngayTao;
 
     Long ngaySua;
 

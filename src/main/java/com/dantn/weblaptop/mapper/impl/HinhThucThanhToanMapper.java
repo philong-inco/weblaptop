@@ -4,6 +4,7 @@ import com.dantn.weblaptop.dto.request.create_request.CreateHinhThucThanhToanReq
 import com.dantn.weblaptop.dto.request.update_request.UpdateHinhThucThanhToanRequest;
 import com.dantn.weblaptop.dto.response.HinhThucThanhToanResponse;
 import com.dantn.weblaptop.entity.hoadon.HinhThucThanhToan;
+import com.dantn.weblaptop.util.ConvertTime;
 import com.dantn.weblaptop.util.GenerateCode;
 
 public class HinhThucThanhToanMapper {
@@ -17,7 +18,7 @@ public class HinhThucThanhToanMapper {
         response.setMoTa(hinhThucThanhToan.getMoTa());
         response.setNgaySua(hinhThucThanhToan.getNgaySua());
         response.setNguoiSua(hinhThucThanhToan.getNguoiSua());
-        response.setNgayTao(hinhThucThanhToan.getNgayTao());
+        response.setNgayTao(ConvertTime.convert(hinhThucThanhToan.getNgayTao()+""));
         response.setNguoiTao(response.getNguoiTao());
         return response;
     }

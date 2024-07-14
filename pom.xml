@@ -41,6 +41,13 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-mail</artifactId>
         </dependency>
+        <!-- Spring Filter -->
+        <!-- https://mvnrepository.com/artifact/com.turkraft.springfilter/jpa -->
+        <dependency>
+            <groupId>com.turkraft.springfilter</groupId>
+            <artifactId>jpa</artifactId>
+            <version>3.1.7</version>
+        </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-devtools</artifactId>

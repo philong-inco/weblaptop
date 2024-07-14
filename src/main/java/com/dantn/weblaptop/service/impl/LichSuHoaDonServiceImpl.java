@@ -1,6 +1,7 @@
 package com.dantn.weblaptop.service.impl;
 
 import com.dantn.weblaptop.dto.request.create_request.CreateLichSuHoaDonRequest;
+import com.dantn.weblaptop.dto.response.HoaDonResponse;
 import com.dantn.weblaptop.dto.response.LichSuHoaDonResponse;
 import com.dantn.weblaptop.dto.response.Meta;
 import com.dantn.weblaptop.dto.response.ResultPaginationResponse;
@@ -24,6 +25,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -41,7 +43,7 @@ public class LichSuHoaDonServiceImpl implements LichSuHoaDonService {
         NhanVien existingEmployee = employeeRepository.findById(request.getIdNhanVien()).orElseThrow(
                 () -> new AppException("Cant not find employee with ID : " + request.getIdNhanVien()));
 
-        KhachHang existingCustomer = new KhachHang();
+        KhachHang existingCustomer = null;
         if (request.getIdKhachHang() != null) {
             existingCustomer = customerRepository.findById(request.getIdKhachHang()).orElseThrow(
                     () -> new AppException("Cant not find customer with ID : " + request.getIdKhachHang()));
@@ -59,29 +61,10 @@ public class LichSuHoaDonServiceImpl implements LichSuHoaDonService {
     }
 
     @Override
-    public ResultPaginationResponse getBillHistoryByBillId(Long billId, Optional<String> page, Optional<String> size) {
-        String sPage = page.isPresent() ? page.get() : "0";
-        String sSize = size.isPresent() ? size.get() : "5";
-        Pageable pageable = PageRequest.of(Integer.parseInt(sPage), Integer.parseInt(sSize));
-        Page<LichSuHoaDon> billHistoryPage = billHistoryRepository.findAllByHoaDonId(billId, pageable);
-
-        // chuyển thanh response hay khong xem lại
-        Page<LichSuHoaDonResponse> billHistoryPageResponses = billHistoryPage.map(
-                billHistory -> LichSuHoaDonMapper.toBillHistoryResponse(billHistory));
-
-        Meta meta = Meta.builder()
-                .page(billHistoryPageResponses.getNumber())
-                .pageSize(billHistoryPageResponses.getSize())
-                .pages(billHistoryPageResponses.getTotalPages())
-                .total(billHistoryPageResponses.getTotalElements())
-                .build();
-
-        ResultPaginationResponse response = ResultPaginationResponse
-                .builder()
-                .meta(meta)
-                .result(billHistoryPageResponses.getContent())
-                .build();
-
-        return response;
+    public List<LichSuHoaDonResponse> getBillHistoryByBillId(Long billId) {
+        List<LichSuHoaDon> billHistoryList = billHistoryRepository.findAllByHoaDonId(billId);
+        return billHistoryList.stream().map(
+                billHistory -> LichSuHoaDonMapper.toBillHistoryResponse(billHistory)
+        ).toList();
     }
 }
