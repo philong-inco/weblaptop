@@ -19,6 +19,7 @@ import java.util.List;
 @RequestMapping("/api/vaitro")
 @AllArgsConstructor
 @Component
+@CrossOrigin(origins = "http://localhost:3000")
 public class VaiTro_Controller {
 
     @Qualifier("vaiTro_Service")

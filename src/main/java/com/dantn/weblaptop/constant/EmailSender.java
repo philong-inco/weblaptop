@@ -19,7 +19,7 @@ public class EmailSender {
         this.javaMailSender = javaMailSender;
     }
 
-    public void signupNhanVienSendEmail(NhanVien nhanVien, String genPassWord, String vaiTro) {
+    public void signupNhanVienSendEmail(NhanVien nhanVien, String genPassWord, String tenVaiTro) {
         SimpleMailMessage message = new SimpleMailMessage();
         message.setTo(nhanVien.getEmail());
         message.setSubject("Chào mừng bạn đến với Cửa hàng bán Laptop ComNoOne.");
@@ -39,8 +39,7 @@ public class EmailSender {
                 nhanVien.getTen(),
                 nhanVien.getEmail(),
                 genPassWord,
-                vaiTro
-
+                tenVaiTro
         );
 
         message.setText(emailContent);

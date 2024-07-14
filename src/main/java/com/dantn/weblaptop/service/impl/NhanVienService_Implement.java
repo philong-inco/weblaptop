@@ -89,8 +89,6 @@ public class NhanVienService_Implement implements NhanVien_Service {
         return nhanVienPage.map(nhanVien -> {
             StringBuilder vaiTrosBuilder = new StringBuilder();
             nhanVienVaiTroRepository.findByNhanVien(nhanVien).forEach(vaiTro -> vaiTrosBuilder.append(vaiTro.getTen()).append(", "));
-
-            // Remove the last comma and space if vaiTrosBuilder is not empty
             if (vaiTrosBuilder.length() > 0) {
                 vaiTrosBuilder.setLength(vaiTrosBuilder.length() - 2);
             }
@@ -127,19 +125,21 @@ public class NhanVienService_Implement implements NhanVien_Service {
                 }
             }
             String passwordNhanVien = GenerateCode.generateNhanVienCode();
-
             nhanVien.setMatKhau(passwordNhanVien);
             nhanVienRepositoy.save(nhanVien);
-
             NhanVienVaiTro nhanVienVaiTro = new NhanVienVaiTro();
             nhanVienVaiTro.setNhanVien(nhanVien);
             VaiTro vaiTro = vaiTroRepository.findById(createNhanVienRequest.getIdVaiTro()).orElseThrow(() -> new RuntimeException("Không tìm thấy vai trò."));
             nhanVienVaiTro.setVaiTro(vaiTro);
             nhanVienVaiTroRepository.save(nhanVienVaiTro);
-            String vaiTroNhanVien = nhanVienVaiTroRepository.findNhanVienVaiTroByIdNhanVien(nhanVien.getId()).getVaiTro().getTen();
-            emailSender.signupNhanVienSendEmail(nhanVien, passwordNhanVien, vaiTroNhanVien);
+
+            String tenVaiTro = nhanVienVaiTroRepository.findById(createNhanVienRequest.getIdVaiTro()).getTen();
+
+            emailSender.signupNhanVienSendEmail(nhanVien, passwordNhanVien, tenVaiTro);
         } catch (Exception ex) {
-            throw new RuntimeException("Tạo mới nhân viên không thành công.");
+            throw ex;
+//            System.out.println(ex);
+//            throw new RuntimeException("Tạo mới nhân viên không thành công.");
         }
         return null;
     }

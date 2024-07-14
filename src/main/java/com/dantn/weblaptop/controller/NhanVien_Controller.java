@@ -23,7 +23,7 @@ import java.util.List;
 @RestController
 @Component
 @AllArgsConstructor
-@CrossOrigin("*")
+@CrossOrigin(origins = "http://localhost:3000")
 public class NhanVien_Controller {
 
     @Qualifier("nhanVien_Service")
@@ -44,7 +44,7 @@ public class NhanVien_Controller {
     }
 
     @GetMapping("/searchtrangthai")
-    public ResponseEntity<?> searchTrangThai(@RequestParam(name = "search", required = false) Integer trangThai,
+    public ResponseEntity<?> searchTrangThai(@RequestParam(name = "trangThai", required = false) Integer trangThai,
                                     @RequestParam(defaultValue = "0", name = "pageNo", required = false) Integer pageNo,
                                     @RequestParam(defaultValue = "5", name = "pageSize", required = false) Integer pageSize) {
         return ResponseEntity.ok(nhanVienService.pageSearchTrangThaiNhanVien(pageNo, pageSize, trangThai));
