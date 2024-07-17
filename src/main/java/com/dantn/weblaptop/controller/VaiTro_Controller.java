@@ -19,6 +19,7 @@ import java.util.List;
 @RequestMapping("/api/vaitro")
 @AllArgsConstructor
 @Component
+@CrossOrigin(origins = "*")
 public class VaiTro_Controller {
 
     @Qualifier("vaiTro_Service")
@@ -59,5 +60,11 @@ public class VaiTro_Controller {
     public ResponseEntity<Void> revertStatus(@PathVariable Long id) {
         vaiTroService.revertStatus(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/vaitroid/{id}")
+    public ResponseEntity<VaiTro_Response> findIdVaiTro(@PathVariable Long id) {
+        VaiTro_Response response = vaiTroService.findVaiTroByIdNhanVienVaiTro(id);
+        return ResponseEntity.ok(response);
     }
 }

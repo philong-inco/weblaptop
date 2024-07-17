@@ -33,6 +33,7 @@ public class NhanVienMapper_Implement implements NhanVien_Mapper {
         nhanVien.setHinhAnh(dto.getHinhAnh());
         nhanVien.setTaiKhoanNganHang(dto.getTaiKhoanNganHang());
         nhanVien.setNgayThoiViec(dto.getNgayThoiViec());
+        nhanVien.setDiaChi(dto.getDiaChi());
         return nhanVien;
     }
 
@@ -52,6 +53,7 @@ public class NhanVienMapper_Implement implements NhanVien_Mapper {
         nhanVien.setNgaySinh(dto.getNgaySinh());
         nhanVien.setGioiTinh(dto.getGioiTinh());
         nhanVien.setHinhAnh(dto.getHinhAnh());
+        nhanVien.setDiaChi(dto.getDiaChi());
         nhanVien.setTaiKhoanNganHang(dto.getTaiKhoanNganHang());
         return nhanVien;
     }
@@ -75,6 +77,7 @@ public class NhanVienMapper_Implement implements NhanVien_Mapper {
         response.setTaiKhoanNganHang(entity.getTaiKhoanNganHang());
         response.setNgayBatDauLamViec(entity.getNgayBatDauLamViec());
         response.setNgayThoiViec(entity.getNgayThoiViec());
+        response.setDiaChi(entity.getDiaChi());
         return response;
     }
 

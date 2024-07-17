@@ -10,6 +10,8 @@ import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
+
 @Getter
 @Setter
 @FieldDefaults(level = AccessLevel.PRIVATE)
@@ -62,11 +64,13 @@ public class UpdateNhanVien {
     Integer gioiTinh;
 
     String hinhAnh;
-
+    String diaChi;
     @JsonProperty("tai_khoan_ngan_hang")
     @NotBlank(message = "Tài khoản ngân hàng không được để trống")
     @Size(max = 50, message = "Tài khoản ngân hàng không được vượt quá 50 ký tự")
     String taiKhoanNganHang;
 
     Long idVaiTro;
+
+    Set<String> listVaiTro;
 }

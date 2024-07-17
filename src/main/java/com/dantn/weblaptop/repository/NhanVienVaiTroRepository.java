@@ -22,4 +22,7 @@ public interface NhanVienVaiTroRepository extends JpaRepository<NhanVienVaiTro, 
 
     @Query(value = "SELECT vt FROM NhanVienVaiTro nvvt JOIN VaiTro vt ON nvvt.vaiTro.id = vt.id WHERE nvvt.nhanVien = :nhanVien")
     List<VaiTro> findByNhanVien(NhanVien nhanVien);
+
+    @Query(value = "DELETE NhanVienVaiTro nvvt WHERE nvvt.nhanVien.id = :id")
+    void deleteByNhanVien(@Param("id") Long id);
 }

@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface NhanVien_Repositoy extends JpaRepository<NhanVien, Integer> {
+public interface NhanVien_Repositoy extends JpaRepository<NhanVien, Long> {
     @Query("SELECT nv FROM NhanVien nv WHERE " +
             "(:search is null or nv.ma LIKE %:search% or nv.ten LIKE %:search% or nv.email like %:search% or nv.sdt like %:search%)")
     Page<NhanVien> pageSearch(
@@ -48,5 +48,8 @@ public interface NhanVien_Repositoy extends JpaRepository<NhanVien, Integer> {
 
     @Query(value = "SELECT nv FROM NhanVien nv WHERE nv.id = :id")
     Optional<NhanVien> getNhanVienById(@Param("id") Long id);
+
+    @Query(value = "SELECT nv FROM NhanVien  nv WHERE nv.id = :id")
+    NhanVien findByIdNhanVien(@Param("id") Long id);
 
 }

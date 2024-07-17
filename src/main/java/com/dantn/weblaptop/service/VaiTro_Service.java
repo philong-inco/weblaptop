@@ -18,5 +18,6 @@ public interface VaiTro_Service {
     List<VaiTro_Response> getAll();
     Page<VaiTro> pageAllVaiTro(Pageable pageable);
     void revertStatus(Long id);
+    VaiTro_Response findVaiTroByIdNhanVienVaiTro(Long id);
 }
 
