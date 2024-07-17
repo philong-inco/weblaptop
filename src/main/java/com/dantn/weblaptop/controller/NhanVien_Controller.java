@@ -51,7 +51,7 @@ public class NhanVien_Controller {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> getNhanVienId(@PathVariable("id") Integer id) {
+    public ResponseEntity<?> getNhanVienId(@PathVariable("id") Long id) {
         return ResponseEntity.ok(nhanVienService.getOne(id));
     }
 

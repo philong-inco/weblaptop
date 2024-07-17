@@ -6,6 +6,7 @@ import lombok.experimental.FieldDefaults;
 import jakarta.validation.constraints.*;
 
 import java.time.LocalDateTime;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -16,6 +17,8 @@ public class CreateNhanVien {
     Long id;
 
     String ma;
+
+    String diaChi;
 
 //    @JsonProperty("trang_thai")
 //    @NotNull(message = "Trạng thái không được để trống")
@@ -76,4 +79,6 @@ public class CreateNhanVien {
     LocalDateTime ngayThoiViec;
 
     Long idVaiTro;
+
+    Set<String> listVaiTro;
 }

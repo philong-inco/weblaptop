@@ -23,7 +23,7 @@ public interface NhanVien_Service {
 
     NhanVienResponse update(UpdateNhanVien updateNhanVienRequest, Long id);
 
-    NhanVienResponse getOne(Integer id);
+    NhanVienResponse getOne(Long id);
 
     void removeOrRevert(Long id);
 
