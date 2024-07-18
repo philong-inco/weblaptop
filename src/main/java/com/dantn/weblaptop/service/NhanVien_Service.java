@@ -30,6 +30,8 @@ public interface NhanVien_Service {
 
     void removeOrRevert(Long id);
 
+    void rollBackStatusNhanVien(Long id);
+
     boolean changeEmail(ChangeEmail_Dto changeEmailDto, String newEmailNv);
 
     void sendForgotPasswordEmailForNhanVien(String email);

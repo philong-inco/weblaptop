@@ -241,6 +241,11 @@ public class NhanVienService_Implement implements NhanVien_Service {
     }
 
     @Override
+    public void rollBackStatusNhanVien(Long id) {
+        nhanVienRepositoy.updateTrangThaiById(1, id);
+    }
+
+    @Override
     public boolean changeEmail(ChangeEmail_Dto changeEmailDto, String newEmailNv) {
         NhanVien nhanVien = nhanVienRepositoy.findByEmail(changeEmailDto.getEmail());
         if (nhanVien == null) {

@@ -78,6 +78,11 @@ public class NhanVien_Controller {
         nhanVienService.removeOrRevert(id);
         return ResponseEntity.ok("Remove Success");
     }
+    @PutMapping("/rollBackStatus/{id}")
+    public ResponseEntity<?> rollBackStatusNhanVien(@PathVariable("id") Long id) {
+        nhanVienService.rollBackStatusNhanVien(id);
+        return ResponseEntity.ok("Remove Success");
+    }
 
     @PostMapping("/changeEmailNv")
     public ResponseEntity<String> changeEmail(@RequestBody ChangeEmail_Dto changeEmailDto, @RequestParam String newEmail) {

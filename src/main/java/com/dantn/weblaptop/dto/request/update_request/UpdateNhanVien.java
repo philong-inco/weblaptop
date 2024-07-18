@@ -55,7 +55,7 @@ public class UpdateNhanVien {
     @Min(value = 0, message = "Giới tính phải là 0 hoặc 1")
     @Max(value = 1, message = "Giới tính phải là 0 hoặc 1")
     Integer gioiTinh;
-
+    @JsonProperty("hinh_anh")
     String hinhAnh;
 
     @JsonProperty("dia_chi")
