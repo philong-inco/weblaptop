@@ -20,8 +20,6 @@ public class UpdateNhanVien {
 
     String ma;
 
-    Integer trang_thai;
-
     @JsonProperty("cccd")
     @NotBlank(message = "Số căn cước công dân không được để trống")
     @Pattern(regexp = "^\\d{12}$", message = "Số căn cước công dân không hợp lệ. Phải có 12 chữ số.")

@@ -189,7 +189,6 @@ public class NhanVienService_Implement implements NhanVien_Service {
                         });
 
                 // Cập nhật các trường của nhân viên
-                nhanVien.setTrangThai(updateNhanVien.getTrangThai());
                 nhanVien.setTen(updateNhanVien.getTen());
                 nhanVien.setHinhAnh(updateNhanVien.getHinhAnh());
                 nhanVien.setGioiTinh(updateNhanVien.getGioiTinh());

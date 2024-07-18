@@ -44,7 +44,6 @@ public class NhanVienMapper_Implement implements NhanVien_Mapper {
         }
         NhanVien nhanVien = new NhanVien();
         nhanVien.setMa(dto.getMa());
-        nhanVien.setTrangThai(dto.getTrang_thai());
         nhanVien.setCccd(dto.getCccd());
         nhanVien.setTen(dto.getTen());
         nhanVien.setEmail(dto.getEmail());
