@@ -23,7 +23,7 @@ import java.util.List;
 @RestController
 @Component
 @AllArgsConstructor
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = "*")
 public class NhanVien_Controller {
 
     @Qualifier("nhanVien_Service")

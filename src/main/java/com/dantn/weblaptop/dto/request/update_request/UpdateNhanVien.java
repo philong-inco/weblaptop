@@ -20,10 +20,6 @@ public class UpdateNhanVien {
 
     String ma;
 
-    @JsonProperty("trang_thai")
-    @NotNull(message = "Trạng thái không được để trống")
-    @Min(value = 0, message = "Trạng thái phải lớn hơn hoặc bằng 0")
-    @Max(value = 1, message = "Trạng thái phải nhỏ hơn hoặc bằng 1")
     Integer trang_thai;
 
     @JsonProperty("cccd")
@@ -42,9 +38,6 @@ public class UpdateNhanVien {
     @Email(message = "Email sai định dạng")
     String email;
 
-    @JsonProperty("mat_khau")
-    @NotBlank(message = "Mật khẩu không được để trống")
-    @Size(min = 8, max = 255, message = "Mật khẩu không vượt quá 255 ký tự")
     String matKhau;
 
     @JsonProperty("sdt")
@@ -64,7 +57,10 @@ public class UpdateNhanVien {
     Integer gioiTinh;
 
     String hinhAnh;
+
+    @JsonProperty("dia_chi")
     String diaChi;
+
     @JsonProperty("tai_khoan_ngan_hang")
     @NotBlank(message = "Tài khoản ngân hàng không được để trống")
     @Size(max = 50, message = "Tài khoản ngân hàng không được vượt quá 50 ký tự")
@@ -72,5 +68,6 @@ public class UpdateNhanVien {
 
     Long idVaiTro;
 
+    @JsonProperty("list_vai_tro")
     Set<String> listVaiTro;
 }

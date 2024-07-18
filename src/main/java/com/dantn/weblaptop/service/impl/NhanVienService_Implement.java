@@ -5,10 +5,12 @@ import com.dantn.weblaptop.dto.ChangeEmail_Dto;
 import com.dantn.weblaptop.dto.request.create_request.CreateNhanVien;
 import com.dantn.weblaptop.dto.request.update_request.UpdateNhanVien;
 import com.dantn.weblaptop.dto.response.NhanVienResponse;
+import com.dantn.weblaptop.dto.response.VaiTro_Response;
 import com.dantn.weblaptop.entity.nhanvien.NhanVien;
 import com.dantn.weblaptop.entity.nhanvien.NhanVienVaiTro;
 import com.dantn.weblaptop.entity.nhanvien.VaiTro;
 import com.dantn.weblaptop.mapper.NhanVien_Mapper;
+import com.dantn.weblaptop.mapper.VaiTro_Mapper;
 import com.dantn.weblaptop.repository.NhanVienVaiTroRepository;
 import com.dantn.weblaptop.repository.NhanVien_Repositoy;
 import com.dantn.weblaptop.repository.VaiTro_Repository;
@@ -24,6 +26,7 @@ import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -38,6 +41,8 @@ public class NhanVienService_Implement implements NhanVien_Service {
     VaiTro_Repository vaiTroRepository;
     @Autowired
     EmailSender emailSender;
+    @Autowired
+    VaiTro_Mapper vaiTroMapper;
     @Autowired
     NhanVienVaiTroRepository nhanVienVaiTroRepository;
 
@@ -192,27 +197,22 @@ public class NhanVienService_Implement implements NhanVien_Service {
                 nhanVien.setCccd(updateNhanVien.getCccd());
                 nhanVien.setEmail(updateNhanVien.getEmail());
                 nhanVien.setSdt(updateNhanVien.getSdt());
+                nhanVien.setTaiKhoanNganHang(updateNhanVien.getTaiKhoanNganHang());
                 nhanVien.setDiaChi(updateNhanVien.getDiaChi());
                 nhanVien.setNgaySua(LocalDateTime.now().toInstant(ZoneOffset.UTC).toEpochMilli());
 
                 // Xóa hết vai trò hiện tại của nhân viên
                 nhanVienVaiTroRepository.deleteByNhanVien(id);
 
-                // Cập nhật vai trò mới cho nhân viên
-                if (updateNhanVienRequest.getListVaiTro() != null) {
-                    Set<String> vaiTroIds = updateNhanVienRequest.getListVaiTro();
-                    Set<VaiTro> vaiTros = vaiTroRepository.findVaiTroByTen(vaiTroIds);
-                    vaiTros.forEach(vt -> {
-                        nhanVienVaiTroRepository.save(new NhanVienVaiTro(nhanVien, vt));
-                    });
-                }
 
+
+//                Set<VaiTro> vaiTros = vaiTroRepository.findVaiTroByTen(updateNhanVienRequest.getListVaiTro());
                 // Lưu nhân viên
                 NhanVien updatedNhanVien = nhanVienRepositoy.save(nhanVien);
 
+                assignRolesToNhanVien(updatedNhanVien, updateNhanVienRequest.getListVaiTro());
                 // Trả về phản hồi
                 return nhanVienMapper.EntiyToResponse(updatedNhanVien);
-
             } else {
                 throw new RuntimeException("Nhân viên không tồn tại với ID: " + id);
             }
@@ -226,6 +226,12 @@ public class NhanVienService_Implement implements NhanVien_Service {
     public NhanVienResponse getOne(Long id) {
         NhanVien nhanVien = nhanVienRepositoy.findById(id).orElseThrow(() -> new RuntimeException("Không tìm thấy nhân viên với ID: " + id));
         return nhanVienMapper.EntiyToResponse(nhanVien);
+    }
+
+    @Override
+    public List<VaiTro_Response> findVaiTroByNhanVien(Long id) {
+        List<VaiTro> vaiTroList = nhanVienVaiTroRepository.findByIdNhanVien(id);
+        return vaiTroMapper.listVaiTroEntityToVaiTroResponse(vaiTroList);
     }
 
 

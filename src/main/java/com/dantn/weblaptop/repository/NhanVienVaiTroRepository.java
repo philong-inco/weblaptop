@@ -5,9 +5,11 @@ import com.dantn.weblaptop.entity.nhanvien.NhanVien;
 import com.dantn.weblaptop.entity.nhanvien.NhanVienVaiTro;
 import com.dantn.weblaptop.entity.nhanvien.VaiTro;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -23,6 +25,11 @@ public interface NhanVienVaiTroRepository extends JpaRepository<NhanVienVaiTro, 
     @Query(value = "SELECT vt FROM NhanVienVaiTro nvvt JOIN VaiTro vt ON nvvt.vaiTro.id = vt.id WHERE nvvt.nhanVien = :nhanVien")
     List<VaiTro> findByNhanVien(NhanVien nhanVien);
 
+    @Modifying
+    @Transactional
     @Query(value = "DELETE NhanVienVaiTro nvvt WHERE nvvt.nhanVien.id = :id")
     void deleteByNhanVien(@Param("id") Long id);
+
+    @Query(value = "SELECT vt FROM NhanVienVaiTro nvvt JOIN VaiTro vt ON nvvt.vaiTro.id = vt.id WHERE nvvt.nhanVien.id = :id")
+    List<VaiTro> findByIdNhanVien(@Param("id") Long id);
 }

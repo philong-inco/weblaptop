@@ -4,6 +4,7 @@ import com.dantn.weblaptop.dto.ChangeEmail_Dto;
 import com.dantn.weblaptop.dto.request.create_request.CreateNhanVien;
 import com.dantn.weblaptop.dto.request.update_request.UpdateNhanVien;
 import com.dantn.weblaptop.dto.response.NhanVienResponse;
+import com.dantn.weblaptop.dto.response.VaiTro_Response;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
@@ -24,6 +25,8 @@ public interface NhanVien_Service {
     NhanVienResponse update(UpdateNhanVien updateNhanVienRequest, Long id);
 
     NhanVienResponse getOne(Long id);
+
+    List<VaiTro_Response> findVaiTroByNhanVien(Long id);
 
     void removeOrRevert(Long id);
 
