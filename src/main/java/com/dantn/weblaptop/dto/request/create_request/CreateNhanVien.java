@@ -17,13 +17,9 @@ public class CreateNhanVien {
     Long id;
 
     String ma;
-
+    @JsonProperty("dia_chi")
     String diaChi;
 
-//    @JsonProperty("trang_thai")
-//    @NotNull(message = "Trạng thái không được để trống")
-//    @Min(value = 0, message = "Trạng thái phải lớn hơn hoặc bằng 0")
-//    @Max(value = 1, message = "Trạng thái phải nhỏ hơn hoặc bằng 1")
     Integer trang_thai;
 
     @JsonProperty("cccd")
@@ -42,9 +38,6 @@ public class CreateNhanVien {
     @Email(message = "Email sai định dạng")
     String email;
 
-//    @JsonProperty("mat_khau")
-//    @NotBlank(message = "Mật khẩu không được để trống")
-//    @Size(min = 8, max = 255, message = "Mật khẩu không vượt quá 255 ký tự")
     String matKhau;
 
     @JsonProperty("sdt")
@@ -62,6 +55,7 @@ public class CreateNhanVien {
     @Min(value = 0, message = "Giới tính phải là 0 hoặc 1")
     @Max(value = 1, message = "Giới tính phải là 0 hoặc 1")
     Integer gioiTinh;
+
     @JsonProperty("hinh_anh")
     String hinhAnh;
 
@@ -73,12 +67,12 @@ public class CreateNhanVien {
 //    @JsonProperty("ngay_bat_dau_lam_viec")
 //    @NotNull(message = "Ngày bắt đầu làm việc không được để trống")
 //    @FutureOrPresent(message = "Ngày bắt đầu làm việc phải là ngày hiện tại hoặc tương lai")
-//    LocalDateTime ngayBatDauLamViec;
+    LocalDateTime ngayBatDauLamViec;
 
     @JsonProperty("ngay_thoi_viet")
     LocalDateTime ngayThoiViec;
 
     Long idVaiTro;
-
+    @JsonProperty("list_vai_tro")
     Set<String> listVaiTro;
 }

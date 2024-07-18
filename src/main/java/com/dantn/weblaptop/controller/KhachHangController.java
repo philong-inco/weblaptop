@@ -25,6 +25,7 @@ import java.util.Map;
 @Component
 @AllArgsConstructor
 public class KhachHangController {
+
     @Qualifier("khachHang_Service")
     private final KhachHang_Service khachHangService;
 

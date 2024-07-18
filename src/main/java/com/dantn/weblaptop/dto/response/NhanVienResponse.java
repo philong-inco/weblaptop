@@ -44,9 +44,8 @@ public class NhanVienResponse {
 
     LocalDateTime ngayThoiViec;
 
-    Long idvaiTro;
-
     String vaiTro;
 
-    Set<VaiTro> vaiTroSet;
+    Set<String> listVaiTro;
+
 }

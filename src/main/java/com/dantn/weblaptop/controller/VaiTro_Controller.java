@@ -3,6 +3,7 @@ package com.dantn.weblaptop.controller;
 import com.dantn.weblaptop.dto.request.create_request.CreateVaiTro_Request;
 import com.dantn.weblaptop.dto.request.update_request.UpdateVaiTro_Request;
 import com.dantn.weblaptop.dto.response.VaiTro_Response;
+import com.dantn.weblaptop.service.NhanVien_Service;
 import com.dantn.weblaptop.service.VaiTro_Service;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -24,6 +25,7 @@ public class VaiTro_Controller {
 
     @Qualifier("vaiTro_Service")
     private final VaiTro_Service vaiTroService;
+    private final NhanVien_Service nhanVien_Service;
 
     @PostMapping("/create")
     public ResponseEntity<VaiTro_Response> createVaiTro(@Valid @RequestBody CreateVaiTro_Request request) {
@@ -67,4 +69,10 @@ public class VaiTro_Controller {
         VaiTro_Response response = vaiTroService.findVaiTroByIdNhanVienVaiTro(id);
         return ResponseEntity.ok(response);
     }
+    @GetMapping("/findbynhanvien/{id}")
+    public ResponseEntity<List<VaiTro_Response>> findbynhanvien(@PathVariable Long id) {
+        List<VaiTro_Response> response = nhanVien_Service.findVaiTroByNhanVien(id);
+        return ResponseEntity.ok(response);
+    }
+
 }
