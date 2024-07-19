@@ -35,7 +35,7 @@ public class PhieuGiamGiaMapper {
     public static PhieuGiamGia toCreatePGG(CreatePhieuGiamGiaRequest request) {
         PhieuGiamGia phieuGiamGia = new PhieuGiamGia();
         // 0 chưa dung : 1 đang áp dụng : 2 : hết hạn : 3 hủy
-        phieuGiamGia.setTrangThai(0);
+//        phieuGiamGia.setTrangThai(0);
         phieuGiamGia.setTen(request.getTen());
         phieuGiamGia.setMoTa(request.getMoTa());
         phieuGiamGia.setNgayBatDau(request.getNgayBatDau());

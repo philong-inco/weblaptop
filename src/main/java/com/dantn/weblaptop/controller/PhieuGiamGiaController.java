@@ -33,20 +33,20 @@ public class PhieuGiamGiaController {
     }
 
     @PostMapping("/add")
-    public ResponseEntity<ApiResponse> addPhieuGiamGia(@RequestBody CreatePhieuGiamGiaRequest request) {
+    public ResponseEntity<ApiResponse> addPhieuGiamGia(@RequestBody CreatePhieuGiamGiaRequest request) throws AppException {
         ApiResponse apiResponse = new ApiResponse();
         apiResponse.setStatusCode(HttpStatus.OK.value());
-        apiResponse.setMessage("Create ok");
+        apiResponse.setMessage("Create success");
         apiResponse.setData(phieuGiamGiaService.add(request));
         return ResponseEntity.status(HttpStatus.CREATED).body(apiResponse);
     }
 
     @PutMapping("/update/{id}")
-    public ResponseEntity<ApiResponse>  updatePhieuGiamGia(@RequestBody UpdatePhieuGiamGiaRequest request, @PathVariable Long id) {
+    public ResponseEntity<ApiResponse>  updatePhieuGiamGia(@RequestBody UpdatePhieuGiamGiaRequest request, @PathVariable Long id) throws AppException {
 //        return phieuGiamGiaService.update(phieuGiamGia, id);
         ApiResponse apiResponse = new ApiResponse();
         apiResponse.setStatusCode(HttpStatus.OK.value());
-        apiResponse.setMessage("Create ok");
+        apiResponse.setMessage("Update success");
         apiResponse.setData(phieuGiamGiaService.update(request, id));
         return ResponseEntity.ok(apiResponse);
     }

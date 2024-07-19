@@ -15,6 +15,7 @@ import com.dantn.weblaptop.mapper.impl.PhieuGiamGiaMapper;
 import com.dantn.weblaptop.repository.KhachHangPhieuGiamGiaRepository;
 import com.dantn.weblaptop.repository.KhachHangRepository;
 import com.dantn.weblaptop.repository.PhieuGiamGiaRepo;
+import com.dantn.weblaptop.util.ConvertTime;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -26,6 +27,8 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class PhieuGiamGiaService {
@@ -67,9 +70,20 @@ public class PhieuGiamGiaService {
         return "PGG" + System.currentTimeMillis();
     }
 
-    public PhieuGiamGiaResponse add(CreatePhieuGiamGiaRequest request) {
+    public PhieuGiamGiaResponse add(CreatePhieuGiamGiaRequest request) throws AppException {
         PhieuGiamGia newPhieuGiamGia = PhieuGiamGiaMapper.toCreatePGG(request);
-        newPhieuGiamGia.setMa(request.getMa()==null? generateUniqueCode() : request.getMa());
+        newPhieuGiamGia.setMa(request.getMa() == null ? generateUniqueCode() : request.getMa());
+        if (ConvertTime.convertStringToLong2(request.getNgayHetHan() + "")
+                <= ConvertTime.convertStringToLong2(request.getNgayBatDau() + "")) {
+            throw new AppException("Ngày kết thúc phải lớn hơn ngày bắt đầu");
+        }
+        long currentSeconds = (System.currentTimeMillis() / 1000) * 1000;
+        if (ConvertTime.convertStringToLong2(request.getNgayHetHan() + "") <= currentSeconds) {
+            throw new AppException("Ngày kết thúc phải lớn hơn hiện tại");
+        }
+        // 0 chưa dung : 1 đang áp dụng : 2 : hết hạn : 3 hủy
+        Integer status = (ConvertTime.convertStringToLong2(request.getNgayBatDau() + "") > currentSeconds) ? 0 : (currentSeconds >= ConvertTime.convertStringToLong2(request.getNgayHetHan() + "") ? 0 : 1);
+        newPhieuGiamGia.setTrangThai(status);
         // sau check mã trùng
         PhieuGiamGia savedPhieuGiamGia = phieuGiamGiaRepo.save(newPhieuGiamGia);
         request.getListKhachHang().forEach(id -> {
@@ -78,21 +92,96 @@ public class PhieuGiamGiaService {
                 KhachHangPhieuGiamGia khachHangPhieuGiamGia = new KhachHangPhieuGiamGia();
                 khachHangPhieuGiamGia.setPhieuGiamGia(savedPhieuGiamGia);
                 khachHangPhieuGiamGia.setKhachHang(khachHang);
-                khachHangPhieuGiamGia.setTrangThai(0); // 0 chưa dùng
+                khachHangPhieuGiamGia.setTrangThai(0);  // 0 chưa dung : 1 đang áp dụng : 2 : hết hạn : 3 hủy
                 khachHangPhieuGiamGiaRepository.save(khachHangPhieuGiamGia);
+                // send mail
             }
         });
         PhieuGiamGiaResponse response = PhieuGiamGiaMapper.toPhieuGiamGiaResponse(savedPhieuGiamGia);
         return response;
     }
 
-    public PhieuGiamGiaResponse update(UpdatePhieuGiamGiaRequest request, Long id) {
+//    public PhieuGiamGiaResponse update(UpdatePhieuGiamGiaRequest request, Long id) {
+//        Optional<PhieuGiamGia> optional = phieuGiamGiaRepo.findById(id);
+//        if (optional.isPresent()) {
+//            PhieuGiamGiaMapper.toUpdatePGG(request, optional.get());
+//            return PhieuGiamGiaMapper.toPhieuGiamGiaResponse(phieuGiamGiaRepo.save(optional.get()));
+//        }
+//        return null;
+//    }
+
+    public PhieuGiamGiaResponse update(UpdatePhieuGiamGiaRequest request, Long id) throws AppException {
         Optional<PhieuGiamGia> optional = phieuGiamGiaRepo.findById(id);
-       if(optional.isPresent()){
-           PhieuGiamGiaMapper.toUpdatePGG(request, optional.get());
-           return   PhieuGiamGiaMapper.toPhieuGiamGiaResponse(   phieuGiamGiaRepo.save(optional.get()));
-       }
-       return null;
+        if (!optional.isPresent()) {
+            throw new AppException("Phiếu giảm giá không tồn tại");
+        }
+
+        PhieuGiamGia phieuGiamGia = optional.get();
+
+        // Cập nhật thông tin phiếu giảm giá
+        phieuGiamGia.setMa(request.getMa() == null ? generateUniqueCode() : request.getMa());
+        phieuGiamGia.setTen(request.getTen());
+        phieuGiamGia.setMoTa(request.getMoTa());
+        phieuGiamGia.setNgayBatDau(request.getNgayBatDau());
+        phieuGiamGia.setNgayHetHan(request.getNgayHetHan());
+        phieuGiamGia.setLoaiGiamGia(request.getLoaiGiamGia());
+        phieuGiamGia.setGiaTriGiamGia(request.getGiaTriGiamGia());
+        phieuGiamGia.setGiaTriDonToiThieu(request.getGiaTriDonToiThieu());
+        phieuGiamGia.setGiamToiGia(request.getGiamToiGia());
+        phieuGiamGia.setPhamViApDung(request.getPhamViApDung());
+        phieuGiamGia.setSoLuong(request.getSoLuong());
+        phieuGiamGia.setNgaySua(System.currentTimeMillis());
+        phieuGiamGia.setNguoiSua(request.getNguoiSua());
+
+        // Kiểm tra ngày kết thúc và ngày bắt đầu
+        if (request.getNgayHetHan().isBefore(request.getNgayBatDau())) {
+            throw new AppException("Ngày kết thúc phải lớn hơn ngày bắt đầu");
+        }
+
+        long currentSeconds = System.currentTimeMillis() / 1000;
+        if (request.getNgayHetHan().toEpochDay() * 86400 <= currentSeconds) {
+            throw new AppException("Ngày kết thúc phải lớn hơn hiện tại");
+        }
+
+        Integer status = (request.getNgayBatDau().toEpochDay() * 86400 > currentSeconds) ? 0 :
+                (currentSeconds >= request.getNgayHetHan().toEpochDay() * 86400 ? 2 : 1);
+        phieuGiamGia.setTrangThai(status);
+
+        // Cập nhật danh sách khách hàng liên kết với phiếu giảm giá
+        Set<KhachHangPhieuGiamGia> existingRelations = khachHangPhieuGiamGiaRepository.findByPhieuGiamGiaId(phieuGiamGia.getId());
+        List<Long> existingKhachHangIds = existingRelations.stream()
+                .map(relation -> relation.getKhachHang().getId())
+                .toList();
+
+        List<Long> newKhachHangIds = request.getListKhachHang();
+
+        // Thêm các khách hàng mới
+        for (Long khachHangId : newKhachHangIds) {
+            if (!existingKhachHangIds.contains(khachHangId)) {
+                KhachHang khachHang = khachHangRepository.findById(khachHangId).orElse(null);
+                if (khachHang != null) {
+                    KhachHangPhieuGiamGia khachHangPhieuGiamGia = new KhachHangPhieuGiamGia();
+                    khachHangPhieuGiamGia.setPhieuGiamGia(phieuGiamGia);
+                    khachHangPhieuGiamGia.setKhachHang(khachHang);
+                    khachHangPhieuGiamGia.setTrangThai(0); // 0 chưa dùng : 1 đang áp dụng : 2 hết hạn : 3 hủy
+                    khachHangPhieuGiamGiaRepository.save(khachHangPhieuGiamGia);
+                }
+            }
+        }
+
+        // Xóa các khách hàng không còn trong danh sách mới
+        for (KhachHangPhieuGiamGia relation : existingRelations) {
+            if (!newKhachHangIds.contains(relation.getKhachHang().getId())) {
+                khachHangPhieuGiamGiaRepository.delete(relation);
+            }
+        }
+
+        // Lưu phiếu giảm giá đã cập nhật vào cơ sở dữ liệu
+        PhieuGiamGia savedPhieuGiamGia = phieuGiamGiaRepo.save(phieuGiamGia);
+
+        // Tạo phản hồi
+        PhieuGiamGiaResponse response = PhieuGiamGiaMapper.toPhieuGiamGiaResponse(savedPhieuGiamGia);
+        return response;
     }
 
 
@@ -107,7 +196,7 @@ public class PhieuGiamGiaService {
     public PhieuGiamGiaResponse detail(Long id) {
         Optional<PhieuGiamGia> optional = phieuGiamGiaRepo.findById(id);
         if (optional.isPresent()) {
-            return PhieuGiamGiaMapper.toPhieuGiamGiaResponse(optional.get());
+            return  PhieuGiamGiaMapper.toPhieuGiamGiaResponse(optional.get());
         }
         return null;
     }
@@ -138,13 +227,13 @@ public class PhieuGiamGiaService {
         return response;
     }
 
-    public void updateStatusKhachHangPhieuGiamGia(Long idKHPGG , Integer trangThai) throws AppException {
-     Optional<KhachHangPhieuGiamGia> optional = khachHangPhieuGiamGiaRepository.findById(idKHPGG);
-     if(optional.isPresent()){
-         KhachHangPhieuGiamGia khachHangPhieuGiamGia = optional.get();
-         khachHangPhieuGiamGia.setTrangThai(trangThai);
-         khachHangPhieuGiamGiaRepository.save(khachHangPhieuGiamGia);
-     }
+    public void updateStatusKhachHangPhieuGiamGia(Long idKHPGG, Integer trangThai) throws AppException {
+        Optional<KhachHangPhieuGiamGia> optional = khachHangPhieuGiamGiaRepository.findById(idKHPGG);
+        if (optional.isPresent()) {
+            KhachHangPhieuGiamGia khachHangPhieuGiamGia = optional.get();
+            khachHangPhieuGiamGia.setTrangThai(trangThai);
+            khachHangPhieuGiamGiaRepository.save(khachHangPhieuGiamGia);
+        }
     }
 
 }

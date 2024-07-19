@@ -1,5 +1,6 @@
 package com.dantn.weblaptop.dto.request.create_request;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -19,7 +20,9 @@ public class CreatePhieuGiamGiaRequest {
 //    Integer trangThai;
     String ten;
     String moTa;
+//    @JsonFormat(pattern = "dd-MM-yyyy")
     LocalDate ngayBatDau;
+//    @JsonFormat(pattern = "dd-MM-yyyy")
     LocalDate ngayHetHan;
     Integer loaiGiamGia;
     BigDecimal giaTriGiamGia;

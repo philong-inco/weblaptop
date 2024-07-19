@@ -94,7 +94,8 @@ public class HoaDonController {
     }
 
     /// Lôi FE chưa lấy đc code
-    @DeleteMapping("update-status/{id}")
+    /// thay lại phương thức bên FE
+    @PostMapping("update-status/{id}")
     public ResponseEntity<ApiResponse> updateStatus(
             @PathVariable(name = "id") Long id,
             @RequestParam(name = "status") String status
@@ -107,6 +108,17 @@ public class HoaDonController {
         return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
     }
 
+    @PostMapping("/bill-history/{billId}/revert-status")
+    public ResponseEntity<ApiResponse>  revertBillStatus (
+            @PathVariable Long billId) throws AppException {
+        billHistoryService.revertBillStatus(billId);
+        ApiResponse<Object> apiResponse = ApiResponse
+                .builder()
+                .statusCode(HttpStatus.CREATED.value())
+                .message("Chuyển đổi trạng thái thành công")
+                .build();
+        return ResponseEntity.status(HttpStatus.CREATED).body(apiResponse);
+    }
     // bill detail
 
 }

@@ -9,7 +9,7 @@ public enum HoaDonStatus {
     TRA_HANG_HOAN_TIEN("Trả hàng hoàn tiền"),
     HOAN_THANH("Hoàn thành"),
     HUY("Hủy"),
-    XOA("Xóa"),
+    XOA("Xóa"),// bỏ
     XAC_NHAN("Xác nhận")
     ;
 
@@ -38,5 +38,13 @@ public enum HoaDonStatus {
             }
         }
         throw new IllegalArgumentException("Không tìm thấy trạng thái hóa đơn với key: " + key);
+    }
+
+    public static HoaDonStatus getByIndex(int index) {
+        HoaDonStatus[] statuses = HoaDonStatus.values();
+        if (index >= 0 && index < statuses.length) {
+            return statuses[index];
+        }
+        throw new IllegalArgumentException("Trạng thái không tồn tại: " + index);
     }
 }

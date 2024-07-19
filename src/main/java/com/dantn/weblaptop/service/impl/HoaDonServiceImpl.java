@@ -14,6 +14,7 @@ import com.dantn.weblaptop.repository.HoaDonRepository;
 import com.dantn.weblaptop.repository.NhanVienRepository;
 import com.dantn.weblaptop.service.HoaDonService;
 import com.dantn.weblaptop.service.LichSuHoaDonService;
+import com.dantn.weblaptop.util.BillUtils;
 import com.dantn.weblaptop.util.GenerateCode;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -143,7 +144,7 @@ public class HoaDonServiceImpl implements HoaDonService {
             bill.setTrangThai(HoaDonStatus.getHoaDonStatusEnumByKey(status));
             CreateLichSuHoaDonRequest billHistoryRequest = new CreateLichSuHoaDonRequest();
             billHistoryRequest.setIdHoaDon(bill.getId());
-            billHistoryRequest.setTrangThai(8);
+            billHistoryRequest.setTrangThai(BillUtils.convertBillStatusEnumToInteger(bill.getTrangThai()));
             // sủa khi có security
             billHistoryRequest.setIdNhanVien(1L);
             // save

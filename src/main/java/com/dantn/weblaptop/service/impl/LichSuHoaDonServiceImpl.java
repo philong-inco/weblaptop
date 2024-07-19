@@ -1,6 +1,8 @@
 package com.dantn.weblaptop.service.impl;
 
+import com.dantn.weblaptop.constant.HoaDonStatus;
 import com.dantn.weblaptop.dto.request.create_request.CreateLichSuHoaDonRequest;
+import com.dantn.weblaptop.dto.request.create_request.RevertLichSuHoaDonRequest;
 import com.dantn.weblaptop.dto.response.HoaDonResponse;
 import com.dantn.weblaptop.dto.response.LichSuHoaDonResponse;
 import com.dantn.weblaptop.dto.response.Meta;
@@ -25,6 +27,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -54,6 +57,8 @@ public class LichSuHoaDonServiceImpl implements LichSuHoaDonService {
         newBillHistory.setNhanVien(existingEmployee);
         newBillHistory.setKhachHang(existingCustomer);
         newBillHistory.setHoaDon(existingBill);
+        newBillHistory.setNguoiSua(existingEmployee.getTen());
+        newBillHistory.setNguoiTao(existingEmployee.getTen());
         LichSuHoaDonResponse response = LichSuHoaDonMapper.toBillHistoryResponse(billHistoryRepository.save(newBillHistory));
 
         log.info(response.toString());
@@ -67,4 +72,36 @@ public class LichSuHoaDonServiceImpl implements LichSuHoaDonService {
                 billHistory -> LichSuHoaDonMapper.toBillHistoryResponse(billHistory)
         ).toList();
     }
+
+    // Sua Nhan Vien
+    @Override
+    public void revertBillStatus(Long billId) throws AppException {
+        // Lấy danh sách lịch sử hóa đơn theo ID hóa đơn
+        List<LichSuHoaDon> histories = billHistoryRepository.findAllByHoaDonId(billId);
+
+        if (histories.size() < 2) {
+            throw new AppException("Trạng thái trước đó không tôn tại");
+        }
+        LichSuHoaDon lastHistory = histories.get(histories.size() - 2);
+        if(lastHistory.getTrangThai()==0){
+            throw new AppException("Không thể quay lại trạng thái tạo mới");
+        }
+        HoaDon bill = lastHistory.getHoaDon();
+        String currentStatus = bill.getTrangThai().getName();
+        bill.setTrangThai(HoaDonStatus.getByIndex(lastHistory.getTrangThai()));
+        HoaDon billResponse = billRepository.save(bill);
+
+        LichSuHoaDon newBillHistory = new LichSuHoaDon();
+        newBillHistory.setHoaDon(lastHistory.getHoaDon());
+        newBillHistory.setKhachHang(lastHistory.getKhachHang());
+        newBillHistory.setNhanVien(lastHistory.getNhanVien());
+        newBillHistory.setTrangThai(lastHistory.getTrangThai());
+        String changeDescription = "Nhân Viên " + lastHistory.getNhanVien().getTen() + " chuyển trạng thái từ " + currentStatus + " -> " + billResponse.getTrangThai().getName();
+        newBillHistory.setNguoiTao(changeDescription);
+        newBillHistory.setNguoiSua(changeDescription);
+        billHistoryRepository.save(newBillHistory);
+    }
+
+
+
 }
