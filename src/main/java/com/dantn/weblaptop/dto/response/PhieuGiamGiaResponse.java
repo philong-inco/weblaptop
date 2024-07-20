@@ -49,5 +49,7 @@ public class PhieuGiamGiaResponse {
 
     String nguoiSua;
 
+    Integer soLuong;
+
     Set<KhachHangPhieuGiamGia> khachHangPhieuGiamGias;
 }

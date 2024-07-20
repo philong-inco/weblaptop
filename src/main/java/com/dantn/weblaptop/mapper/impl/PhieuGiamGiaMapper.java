@@ -16,6 +16,7 @@ public class PhieuGiamGiaMapper {
         response.setMa(phieuGiamGia.getMa());
         response.setTrangThai(phieuGiamGia.getTrangThai());
         response.setTen(phieuGiamGia.getTen());
+        response.setSoLuong(phieuGiamGia.getSoLuong());
         response.setMoTa(phieuGiamGia.getMoTa());
         response.setNgayBatDau(phieuGiamGia.getNgayBatDau());
         response.setNgayHetHan(phieuGiamGia.getNgayHetHan());
