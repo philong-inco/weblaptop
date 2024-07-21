@@ -3,11 +3,15 @@ package com.dantn.weblaptop.controller;
 import com.dantn.weblaptop.dto.request.create_request.CreatePhieuGiamGiaRequest;
 import com.dantn.weblaptop.dto.request.update_request.UpdatePhieuGiamGiaRequest;
 import com.dantn.weblaptop.dto.response.ApiResponse;
+import com.dantn.weblaptop.entity.hoadon.HoaDon;
 import com.dantn.weblaptop.entity.phieugiamgia.PhieuGiamGia;
 import com.dantn.weblaptop.exception.AppException;
 import com.dantn.weblaptop.service.impl.PhieuGiamGiaService;
+import com.turkraft.springfilter.boot.Filter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -20,6 +24,18 @@ import java.util.Optional;
 public class PhieuGiamGiaController {
     @Autowired
     private PhieuGiamGiaService phieuGiamGiaService;
+
+    @GetMapping("all")
+    public ResponseEntity<ApiResponse> filterCoupons(
+            @Filter Specification<PhieuGiamGia> specification,
+            Pageable pageable
+    ) {
+        ApiResponse apiResponse = new ApiResponse();
+        apiResponse.setStatusCode(HttpStatus.OK.value());
+        apiResponse.setMessage("Oke");
+        apiResponse.setData(phieuGiamGiaService.filterCoupons(specification , pageable));
+        return ResponseEntity.ok(apiResponse);
+    }
 
     @GetMapping
     public ResponseEntity<ApiResponse> getAllPhieuGiamGia(

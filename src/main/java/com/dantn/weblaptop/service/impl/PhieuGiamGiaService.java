@@ -2,33 +2,29 @@ package com.dantn.weblaptop.service.impl;
 
 import com.dantn.weblaptop.dto.request.create_request.CreatePhieuGiamGiaRequest;
 import com.dantn.weblaptop.dto.request.update_request.UpdatePhieuGiamGiaRequest;
-import com.dantn.weblaptop.dto.response.KhachHangPhieuGiamGiaResponse;
-import com.dantn.weblaptop.dto.response.Meta;
-import com.dantn.weblaptop.dto.response.PhieuGiamGiaResponse;
-import com.dantn.weblaptop.dto.response.ResultPaginationResponse;
+import com.dantn.weblaptop.dto.response.*;
 import com.dantn.weblaptop.entity.hoadon.HoaDon;
 import com.dantn.weblaptop.entity.khachhang.KhachHang;
 import com.dantn.weblaptop.entity.phieugiamgia.KhachHangPhieuGiamGia;
 import com.dantn.weblaptop.entity.phieugiamgia.PhieuGiamGia;
 import com.dantn.weblaptop.exception.AppException;
+import com.dantn.weblaptop.mapper.impl.HoaDonMapper;
 import com.dantn.weblaptop.mapper.impl.PhieuGiamGiaMapper;
 import com.dantn.weblaptop.repository.KhachHangPhieuGiamGiaRepository;
 import com.dantn.weblaptop.repository.KhachHangRepository;
 import com.dantn.weblaptop.repository.PhieuGiamGiaRepo;
 import com.dantn.weblaptop.util.ConvertTime;
-import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @Service
 public class PhieuGiamGiaService {
@@ -40,6 +36,25 @@ public class PhieuGiamGiaService {
     @Autowired
 
     private KhachHangRepository khachHangRepository;
+
+    public ResultPaginationResponse filterCoupons (Specification<PhieuGiamGia> specification, Pageable pageable){
+        Page<PhieuGiamGia> couponPage = phieuGiamGiaRepo.findAll(specification, pageable);
+        Page<PhieuGiamGiaResponse> responses = couponPage.map(
+                coupon -> PhieuGiamGiaMapper.toPhieuGiamGiaResponse(coupon));
+        Meta meta = Meta.builder()
+                .page(responses.getNumber())
+                .pageSize(responses.getSize())
+                .pages(responses.getTotalPages())
+                .total(responses.getTotalElements())
+                .build();
+
+        ResultPaginationResponse response = ResultPaginationResponse
+                .builder()
+                .meta(meta)
+                .result(responses.getContent())
+                .build();
+        return response;
+    }
 
     public ResultPaginationResponse getAll(int page, int size) {
         Pageable pageable = PageRequest.of(page, size, Sort.by("ngayTao").descending());
