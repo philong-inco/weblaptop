@@ -110,7 +110,7 @@ public class KhachHangService_Implement implements KhachHang_Service {
                 diaChi.setIdPhuongXa(createKhachHangRequest.getIdPhuongXa());
                 diaChi.setSdtNguoiNhan(createKhachHangRequest.getSdt());
                 diaChi.setDiaChiNhanHang(createKhachHangRequest.getDiaChiNhanHang());
-                diaChi.setLoaiDiaChi(0);
+                diaChi.setLoaiDiaChi(1);
                 diaChi.setKhachHang(khSave);
                 diaChiRepository.save(diaChi);
             }

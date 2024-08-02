@@ -4,8 +4,10 @@ import com.dantn.weblaptop.dto.request.create_request.CreateDiaChi;
 import com.dantn.weblaptop.dto.request.update_request.UpdateDiaChi;
 import com.dantn.weblaptop.dto.response.DiaChi_Response;
 import com.dantn.weblaptop.entity.khachhang.DiaChi;
+import com.dantn.weblaptop.entity.khachhang.KhachHang;
 import com.dantn.weblaptop.mapper.DiaChi_Mapper;
 import com.dantn.weblaptop.repository.DiaChi_Repository;
+import com.dantn.weblaptop.repository.KhachHangRepository;
 import com.dantn.weblaptop.service.DiaChi_Service;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -20,12 +22,15 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class DiaChiService_Implement implements DiaChi_Service {
 
+    private final KhachHangRepository khachHangRepository;
     private DiaChi_Repository diaChiRepository;
     private DiaChi_Mapper diaChiMapper;
 
     @Override
     public DiaChi_Response createDiaChi(CreateDiaChi createDiaChi) {
         DiaChi diaChi = diaChiMapper.CreateToEntityDiaChi(createDiaChi);
+        Optional<KhachHang> khachHang = khachHangRepository.findById(Long.valueOf(createDiaChi.getKhach_hang_id()));
+        diaChi.setKhachHang(khachHang.get());
         DiaChi savedDiaChi = diaChiRepository.save(diaChi);
         return diaChiMapper.EntiyToResponse(savedDiaChi);
     }
@@ -91,7 +96,7 @@ public class DiaChiService_Implement implements DiaChi_Service {
 
     @Override
     public void deleteDiaChi(Long id) {
-        diaChiRepository.deleteById(id);
+        diaChiRepository.deleteByKhachHangId(id);
     }
 
     @Override
