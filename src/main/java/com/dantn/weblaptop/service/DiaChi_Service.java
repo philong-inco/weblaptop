@@ -18,7 +18,9 @@ public interface DiaChi_Service {
 
     DiaChi_Response getDiaChiById(Long id);
 
-    Page<DiaChi> getAllDiaChi(Pageable pageable);
+    List<DiaChi_Response> getAllDiaChiByIdKhachHang(Long idKhachHang);
 
     void deleteDiaChi(Long id);
+
+    void defauldiaChi(Long id, long idKhachHang);
 }

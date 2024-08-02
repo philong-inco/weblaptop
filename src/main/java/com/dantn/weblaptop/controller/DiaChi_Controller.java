@@ -14,6 +14,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/diachi")
 @AllArgsConstructor
@@ -22,13 +24,13 @@ public class DiaChi_Controller {
     @Qualifier("diaChi_Service")
     private final DiaChi_Service diaChiService;
 
-    @PostMapping
+    @PostMapping("create")
     public ResponseEntity<DiaChi_Response> createDiaChi(@RequestBody CreateDiaChi createDiaChi) {
         DiaChi_Response response = diaChiService.createDiaChi(createDiaChi);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/updatelocation/{id}")
     public ResponseEntity<DiaChi_Response> updateDiaChi(@PathVariable Long id, @RequestBody UpdateDiaChi updateDiaChi) {
         DiaChi_Response response = diaChiService.updateDiaChi(id, updateDiaChi);
         return new ResponseEntity<>(response, HttpStatus.OK);
@@ -40,9 +42,9 @@ public class DiaChi_Controller {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @GetMapping
-    public ResponseEntity<Page<DiaChi>> getAllDiaChi(Pageable pageable) {
-        Page<DiaChi> diaChiPage = diaChiService.getAllDiaChi(pageable);
+    @GetMapping("/getAllDiaChiByIdKhachHang/{id}")
+    public ResponseEntity<?> getAllDiaChiByIdKhachHang(@PathVariable("id") Long idKhachHang) {
+        List<DiaChi_Response> diaChiPage = diaChiService.getAllDiaChiByIdKhachHang(idKhachHang);
         return new ResponseEntity<>(diaChiPage, HttpStatus.OK);
     }
 

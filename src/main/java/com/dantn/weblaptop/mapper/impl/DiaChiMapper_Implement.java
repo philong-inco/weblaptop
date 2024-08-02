@@ -39,8 +39,6 @@ public class DiaChiMapper_Implement implements DiaChi_Mapper {
         }
 
         DiaChi diaChi = new DiaChi();
-        diaChi.setTrangThai(dto.getTrangThai());
-        diaChi.setLoaiDiaChi(dto.getLoaiDiaChi());
         diaChi.setTenNguoiNhan(dto.getTenNguoiNhan());
         diaChi.setSdtNguoiNhan(dto.getSdtNguoiNhan());
         diaChi.setEmailNguoiNhan(dto.getEmailNguoiNhan());

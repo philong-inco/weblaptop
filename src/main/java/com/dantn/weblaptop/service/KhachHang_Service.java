@@ -15,6 +15,8 @@ import java.util.List;
 public interface KhachHang_Service {
     Page<KhachHangResponse> pageKhachHang(Integer pageNo, Integer size);
 
+    Page<KhachHangResponse> pageSearchGioiTinh(Integer pageNo, Integer size, Integer gioiTinh);
+
     Page<KhachHangResponse> pageSearchKhachHang(Integer pageNo, Integer size, String search);
 
     List<KhachHangResponse> listKhachHangResponse();

@@ -29,8 +29,6 @@ public class NhanVien extends BaseEntity {
     String ma;
     @Column(name = "trang_thai")
     Integer trangThai;
-    @Column(name = "cccd")
-    String cccd;
     @Column(name = "ten")
     String ten;
     @Column(name = "email")

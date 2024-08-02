@@ -3,6 +3,7 @@ package com.dantn.weblaptop.repository;
 import com.dantn.weblaptop.entity.nhanvien.NhanVien;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -14,7 +15,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface NhanVien_Repositoy extends JpaRepository<NhanVien, Long> {
+public interface NhanVien_Repositoy extends JpaRepository<NhanVien, Long>{
     @Query("SELECT nv FROM NhanVien nv WHERE " +
             "(:search is null or nv.ma LIKE %:search% or nv.ten LIKE %:search% or nv.email like %:search% or nv.sdt like %:search%)")
     Page<NhanVien> pageSearch(
@@ -22,14 +23,14 @@ public interface NhanVien_Repositoy extends JpaRepository<NhanVien, Long> {
             , @Param("search") String search
     );
 
+    @Query("SELECT nv FROM NhanVien nv")
+    Page<NhanVien> findAll(Pageable pageable);
+
     @Query(value = "SELECT nv FROM NhanVien nv WHERE nv.trangThai = :trangThai")
     Page<NhanVien>  getNhanVienByTrangThai(Pageable pageable, Integer trangThai);
 
     @Query(value = "SELECT nv FROM NhanVien nv WHERE nv.email = :email")
     NhanVien findByEmail(@Param("email") String email);
-
-    @Query(value = "SELECT nv FROM NhanVien nv WHERE nv.cccd = :cccd")
-    NhanVien findByCccd(@Param("cccd") String cccd);
 
     @Modifying
     @Transactional
@@ -52,4 +53,9 @@ public interface NhanVien_Repositoy extends JpaRepository<NhanVien, Long> {
     @Query(value = "SELECT nv FROM NhanVien  nv WHERE nv.id = :id")
     NhanVien findByIdNhanVien(@Param("id") Long id);
 
+    @Query(value = "SELECT nv FROM NhanVien nv WHERE nv.gioiTinh = :gioiTinh")
+    Page<NhanVien> getNhanVienByGioiTinh (Pageable pageable,@Param("gioiTinh") Integer gioiTinh);
+
+    @Query(value = "SELECT nv FROM NhanVien nv WHERE YEAR(nv.ngaySinh) = :year")
+    Page<NhanVien> getNhanVienByNamSinh (Pageable pageable,@Param("year") Integer year);
 }

@@ -114,36 +114,60 @@ public class NhanVienService_Implement implements NhanVien_Service {
     @Override
     public NhanVienResponse create(CreateNhanVien createNhanVienRequest) {
         try {
-            NhanVien nhanVien = nhanVienMapper.CreateToEntity(createNhanVienRequest);
-            nhanVien.setMa(GenerateCode.generateNhanVienCode());
-            nhanVien.setNgayTao(LocalDateTime.now().toInstant(ZoneOffset.UTC).toEpochMilli());
-            nhanVien.setNgayBatDauLamViec(LocalDateTime.now());
-            nhanVien.setTrangThai(1);
-            if (nhanVienRepositoy.findByEmail(createNhanVienRequest.getEmail()) != null) {
-                throw new RuntimeException("Email đã được sử dụng trước đó.");
-            }
-            if (nhanVienRepositoy.findByCccd(createNhanVienRequest.getCccd()) != null) {
-                throw new RuntimeException("Căn cước công dân đã tồn tại trước đó.");
-            }
-            if (createNhanVienRequest.getHinhAnh() != null) {
-                if (createNhanVienRequest.getHinhAnh().length() > 250) {
-                    throw new RuntimeException("Hình ảnh quá dài. Hãy sửa lại ảnh!");
-                }
-            }
-            String passwordNhanVien = GenerateCode.generateNhanVienCode();
-            nhanVien.setMatKhau(passwordNhanVien);
-
-            nhanVien = nhanVienRepositoy.save(nhanVien);
+            NhanVien nhanVien = prepareNhanVienEntity(createNhanVienRequest);
+            validateNhanVien(createNhanVienRequest);
+            nhanVien = saveNhanVien(nhanVien);
 
             assignRolesToNhanVien(nhanVien, createNhanVienRequest.getListVaiTro());
 
             Set<VaiTro> vaiTros = vaiTroRepository.findVaiTroByTen(createNhanVienRequest.getListVaiTro());
 
-            emailSender.signupNhanVienSendEmail(nhanVien, passwordNhanVien, vaiTros);
+            sendSignupEmailAsync(nhanVien, vaiTros);
+
+            return mapToResponse(nhanVien);
         } catch (Exception ex) {
+            System.out.println(ex);
             throw new RuntimeException("Tạo mới nhân viên không thành công.");
         }
-        return null;
+    }
+
+    private NhanVien prepareNhanVienEntity(CreateNhanVien createNhanVienRequest) {
+        NhanVien nhanVien = nhanVienMapper.CreateToEntity(createNhanVienRequest);
+        nhanVien.setMa(GenerateCode.generateNhanVienCode());
+        nhanVien.setNgayTao(LocalDateTime.now().toInstant(ZoneOffset.UTC).toEpochMilli());
+        nhanVien.setNgayBatDauLamViec(LocalDateTime.now());
+        nhanVien.setTrangThai(1);
+        nhanVien.setMatKhau(GenerateCode.generateNhanVienCode());
+        return nhanVien;
+    }
+
+    private void validateNhanVien(CreateNhanVien createNhanVienRequest) {
+        if (nhanVienRepositoy.findByEmail(createNhanVienRequest.getEmail()) != null) {
+            throw new RuntimeException("Email đã được sử dụng trước đó.");
+        }
+        if (createNhanVienRequest.getHinhAnh() != null && createNhanVienRequest.getHinhAnh().length() > 250) {
+            throw new RuntimeException("Hình ảnh quá dài. Hãy sửa lại ảnh!");
+        }
+    }
+
+    private NhanVien saveNhanVien(NhanVien nhanVien) {
+        return nhanVienRepositoy.save(nhanVien);
+    }
+
+    private void sendSignupEmailAsync(NhanVien nhanVien, Set<VaiTro> vaiTros) {
+        new Thread(() -> {
+            try {
+                emailSender.signupNhanVienSendEmail(nhanVien, nhanVien.getMatKhau(), vaiTros);
+            } catch (Exception e) {
+                // Log lỗi nhưng không làm gián đoạn quá trình chính
+                System.out.println(e);
+            }
+        }).start();
+    }
+
+    private NhanVienResponse mapToResponse(NhanVien nhanVien) {
+        // Mapping logic từ NhanVien sang NhanVienResponse
+        return nhanVienMapper.EntiyToResponse(nhanVien);
     }
 
     private void assignRolesToNhanVien(NhanVien nhanVien, Set<String> vaiTroStrings) {
@@ -172,14 +196,6 @@ public class NhanVienService_Implement implements NhanVien_Service {
                             throw new RuntimeException("Email này đã tồn tại: " + nv.getEmail());
                         });
 
-                // Kiểm tra căn cước công dân trùng lặp
-                nhanVienRepositoy.findAll().stream()
-                        .filter(nv -> nv.getCccd().equals(updateNhanVien.getCccd()) && !nv.getId().equals(nhanVien.getId()))
-                        .findFirst()
-                        .ifPresent(nv -> {
-                            throw new RuntimeException("Số căn cước công dân này đã tồn tại: " + nv.getCccd());
-                        });
-
                 // Kiểm tra số điện thoại trùng lặp
                 nhanVienRepositoy.findAll().stream()
                         .filter(nv -> nv.getSdt().equals(updateNhanVien.getSdt()) && !nv.getId().equals(nhanVien.getId()))
@@ -193,7 +209,6 @@ public class NhanVienService_Implement implements NhanVien_Service {
                 nhanVien.setHinhAnh(updateNhanVien.getHinhAnh());
                 nhanVien.setGioiTinh(updateNhanVien.getGioiTinh());
                 nhanVien.setNgaySinh(updateNhanVien.getNgaySinh());
-                nhanVien.setCccd(updateNhanVien.getCccd());
                 nhanVien.setEmail(updateNhanVien.getEmail());
                 nhanVien.setSdt(updateNhanVien.getSdt());
                 nhanVien.setTaiKhoanNganHang(updateNhanVien.getTaiKhoanNganHang());
@@ -276,5 +291,43 @@ public class NhanVienService_Implement implements NhanVien_Service {
     @Override
     public void updateImageNV(String image, Long id) {
         nhanVienRepositoy.updateImageEmployee(image, id);
+    }
+
+    @Override
+    public Page<NhanVienResponse> searchNhanVienByGioiTinh(Integer pageNo, Integer size, Integer gioiTinh) {
+        Pageable pageable = PageRequest.of(pageNo, size, Sort.by(Sort.Direction.DESC, "id"));
+        Page<NhanVien> nhanVienPage = nhanVienRepositoy.getNhanVienByGioiTinh(pageable, gioiTinh);
+        return nhanVienPage.map(nhanVien -> {
+            StringBuilder vaiTrosBuilder = new StringBuilder();
+            nhanVienVaiTroRepository.findByNhanVien(nhanVien).forEach(vaiTro -> vaiTrosBuilder.append(vaiTro.getTen()).append(", "));
+
+            // Remove the last comma and space if vaiTrosBuilder is not empty
+            if (vaiTrosBuilder.length() > 0) {
+                vaiTrosBuilder.setLength(vaiTrosBuilder.length() - 2);
+            }
+
+            NhanVienResponse response = nhanVienMapper.EntiyToResponse(nhanVien);
+            response.setVaiTro(vaiTrosBuilder.toString());
+            return response;
+        });
+    }
+
+    @Override
+    public Page<NhanVienResponse> searchNhanVienByNamSinh(Integer pageNo, Integer size, Integer year) {
+        Pageable pageable = PageRequest.of(pageNo, size, Sort.by(Sort.Direction.DESC, "id"));
+        Page<NhanVien> nhanVienPage = nhanVienRepositoy.getNhanVienByNamSinh(pageable, year);
+        return nhanVienPage.map(nhanVien -> {
+            StringBuilder vaiTrosBuilder = new StringBuilder();
+            nhanVienVaiTroRepository.findByNhanVien(nhanVien).forEach(vaiTro -> vaiTrosBuilder.append(vaiTro.getTen()).append(", "));
+
+            // Remove the last comma and space if vaiTrosBuilder is not empty
+            if (vaiTrosBuilder.length() > 0) {
+                vaiTrosBuilder.setLength(vaiTrosBuilder.length() - 2);
+            }
+
+            NhanVienResponse response = nhanVienMapper.EntiyToResponse(nhanVien);
+            response.setVaiTro(vaiTrosBuilder.toString());
+            return response;
+        });
     }
 }

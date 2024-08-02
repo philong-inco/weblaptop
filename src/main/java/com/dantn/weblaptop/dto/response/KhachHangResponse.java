@@ -18,12 +18,7 @@ public class KhachHangResponse {
 
     Integer trangThai;
 
-
-    String ho;
-
-
     String ten;
-
 
     String email;
 

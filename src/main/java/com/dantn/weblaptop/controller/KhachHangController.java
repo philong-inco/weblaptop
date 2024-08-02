@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api/khach-hang")
+@RequestMapping("/api/khachhang")
 @Component
 @AllArgsConstructor
 public class KhachHangController {
@@ -29,10 +29,17 @@ public class KhachHangController {
     @Qualifier("khachHang_Service")
     private final KhachHang_Service khachHangService;
 
-    @GetMapping("")
+    @GetMapping("/all")
     public ResponseEntity<?> getAll(@RequestParam(defaultValue = "0", name = "pageNo", required = false) Integer pageNo,
                                     @RequestParam(defaultValue = "5", name = "pageSize", required = false) Integer pageSize) {
         return ResponseEntity.ok(khachHangService.pageKhachHang(pageNo, pageSize));
+    }
+
+    @GetMapping("/searchgioitinh")
+    public ResponseEntity<?> search(@RequestParam(name = "gioiTinh", required = false) Integer gioiTinh,
+                                    @RequestParam(defaultValue = "0", name = "pageNo", required = false) Integer pageNo,
+                                    @RequestParam(defaultValue = "5", name = "pageSize", required = false) Integer pageSize) {
+        return ResponseEntity.ok(khachHangService.pageSearchGioiTinh(pageNo, pageSize, gioiTinh));
     }
 
     @GetMapping("/search")
@@ -52,7 +59,7 @@ public class KhachHangController {
         return ResponseEntity.ok(khachHangService.listKhachHangInfo());
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("searchbyid/{id}")
     public ResponseEntity<?> getKhachHangId(@PathVariable("id") Long id) {
         return ResponseEntity.ok(khachHangService.getOne(id));
     }

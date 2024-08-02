@@ -30,7 +30,7 @@ public class NhanVien_Controller {
     private final NhanVien_Service nhanVienService;
 
 
-    @GetMapping("")
+    @GetMapping("/all")
     public ResponseEntity<?> getAll(@RequestParam(defaultValue = "0", name = "pageNo", required = false) Integer pageNo,
                                     @RequestParam(defaultValue = "5", name = "pageSize", required = false) Integer pageSize) {
         return ResponseEntity.ok(nhanVienService.pageNhanVien(pageNo, pageSize));
@@ -53,6 +53,20 @@ public class NhanVien_Controller {
     @GetMapping("/{id}")
     public ResponseEntity<?> getNhanVienId(@PathVariable("id") Long id) {
         return ResponseEntity.ok(nhanVienService.getOne(id));
+    }
+
+    @GetMapping("/searchgioitinh")
+    public ResponseEntity<?> searchGioiTinh(@RequestParam(name = "gioiTinh", required = false) Integer gioiTinh,
+                                             @RequestParam(defaultValue = "0", name = "pageNo", required = false) Integer pageNo,
+                                             @RequestParam(defaultValue = "5", name = "pageSize", required = false) Integer pageSize) {
+        return ResponseEntity.ok(nhanVienService.searchNhanVienByGioiTinh(pageNo, pageSize, gioiTinh));
+    }
+
+    @GetMapping("/searchyear")
+    public ResponseEntity<?> searchNamSinh(@RequestParam(name = "year", required = false) Integer year,
+                                            @RequestParam(defaultValue = "0", name = "pageNo", required = false) Integer pageNo,
+                                            @RequestParam(defaultValue = "5", name = "pageSize", required = false) Integer pageSize) {
+        return ResponseEntity.ok(nhanVienService.searchNhanVienByNamSinh(pageNo, pageSize, year));
     }
 
     @PostMapping("/create")

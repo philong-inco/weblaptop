@@ -18,6 +18,10 @@ public interface NhanVien_Service {
 
     Page<NhanVienResponse> pageSearchTrangThaiNhanVien(Integer pageNo, Integer size, Integer trangThai);
 
+    Page<NhanVienResponse> searchNhanVienByGioiTinh(Integer pageNo, Integer size, Integer gioiTinh);
+
+    Page<NhanVienResponse> searchNhanVienByNamSinh(Integer pageNo, Integer size, Integer year);
+
     NhanVienResponse findByEmail(String email);
 
     NhanVienResponse create(CreateNhanVien createNhanVienRequest);

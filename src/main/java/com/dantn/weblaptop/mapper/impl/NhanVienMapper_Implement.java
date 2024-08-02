@@ -23,7 +23,6 @@ public class NhanVienMapper_Implement implements NhanVien_Mapper {
         NhanVien nhanVien = new NhanVien();
         nhanVien.setMa(dto.getMa());
         nhanVien.setTrangThai(dto.getTrang_thai());
-        nhanVien.setCccd(dto.getCccd());
         nhanVien.setTen(dto.getTen());
         nhanVien.setEmail(dto.getEmail());
         nhanVien.setMatKhau(dto.getMatKhau());
@@ -44,7 +43,6 @@ public class NhanVienMapper_Implement implements NhanVien_Mapper {
         }
         NhanVien nhanVien = new NhanVien();
         nhanVien.setMa(dto.getMa());
-        nhanVien.setCccd(dto.getCccd());
         nhanVien.setTen(dto.getTen());
         nhanVien.setEmail(dto.getEmail());
         nhanVien.setMatKhau(dto.getMatKhau());
@@ -66,7 +64,6 @@ public class NhanVienMapper_Implement implements NhanVien_Mapper {
         response.setId(entity.getId());
         response.setMa(entity.getMa());
         response.setTrangThai(entity.getTrangThai());
-        response.setCccd(entity.getCccd());
         response.setTen(entity.getTen());
         response.setEmail(entity.getEmail());
         response.setSdt(entity.getSdt());
