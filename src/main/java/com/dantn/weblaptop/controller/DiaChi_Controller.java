@@ -4,6 +4,7 @@ import com.dantn.weblaptop.dto.request.create_request.CreateDiaChi;
 import com.dantn.weblaptop.dto.request.update_request.UpdateDiaChi;
 import com.dantn.weblaptop.dto.response.DiaChi_Response;
 import com.dantn.weblaptop.entity.khachhang.DiaChi;
+import com.dantn.weblaptop.repository.DiaChi_Repository;
 import com.dantn.weblaptop.service.DiaChi_Service;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -23,6 +24,7 @@ import java.util.List;
 public class DiaChi_Controller {
     @Qualifier("diaChi_Service")
     private final DiaChi_Service diaChiService;
+    private final DiaChi_Repository diaChi_Repository;
 
     @PostMapping("create")
     public ResponseEntity<DiaChi_Response> createDiaChi(@RequestBody CreateDiaChi createDiaChi) {
@@ -52,5 +54,11 @@ public class DiaChi_Controller {
     public ResponseEntity<Void> deleteDiaChi(@PathVariable Long id) {
         diaChiService.deleteDiaChi(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    @PutMapping("/defaultlocation/{id}")
+    public ResponseEntity<?> defaultLocation(@PathVariable Long id, @RequestParam Long idKhachHang) {
+        diaChiService.defauldiaChi(id, idKhachHang);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }
