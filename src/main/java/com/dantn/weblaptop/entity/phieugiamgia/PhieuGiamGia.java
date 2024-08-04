@@ -54,7 +54,7 @@ public class PhieuGiamGia extends BaseEntity {
     @Column(name = "gia_tri_don_toi_thieu")
     BigDecimal giaTriDonToiThieu;
     @Column(name = "giam_toi_da")
-    BigDecimal giamToiGia;
+    BigDecimal giamToiDa;
     @Column(name = "pham_vi_ap_dung")
     Integer phamViApDung; // 1 công khai
     @Column(name = "so_luong")

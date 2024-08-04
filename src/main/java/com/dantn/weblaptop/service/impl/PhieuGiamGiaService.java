@@ -1,19 +1,24 @@
 package com.dantn.weblaptop.service.impl;
 
+import com.dantn.weblaptop.constant.EmailSender;
 import com.dantn.weblaptop.dto.request.create_request.CreatePhieuGiamGiaRequest;
 import com.dantn.weblaptop.dto.request.update_request.UpdatePhieuGiamGiaRequest;
-import com.dantn.weblaptop.dto.response.*;
-import com.dantn.weblaptop.entity.hoadon.HoaDon;
+import com.dantn.weblaptop.dto.response.KhachHangPhieuGiamGiaResponse;
+import com.dantn.weblaptop.dto.response.Meta;
+import com.dantn.weblaptop.dto.response.PhieuGiamGiaResponse;
+import com.dantn.weblaptop.dto.response.ResultPaginationResponse;
 import com.dantn.weblaptop.entity.khachhang.KhachHang;
+import com.dantn.weblaptop.entity.nhanvien.NhanVien;
 import com.dantn.weblaptop.entity.phieugiamgia.KhachHangPhieuGiamGia;
 import com.dantn.weblaptop.entity.phieugiamgia.PhieuGiamGia;
 import com.dantn.weblaptop.exception.AppException;
-import com.dantn.weblaptop.mapper.impl.HoaDonMapper;
+import com.dantn.weblaptop.exception.ErrorCode;
 import com.dantn.weblaptop.mapper.impl.PhieuGiamGiaMapper;
 import com.dantn.weblaptop.repository.KhachHangPhieuGiamGiaRepository;
 import com.dantn.weblaptop.repository.KhachHangRepository;
+import com.dantn.weblaptop.repository.NhanVien_Repositoy;
 import com.dantn.weblaptop.repository.PhieuGiamGiaRepo;
-import com.dantn.weblaptop.util.ConvertTime;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -22,6 +27,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -29,15 +35,17 @@ import java.util.Set;
 @Service
 public class PhieuGiamGiaService {
     @Autowired
+    private EmailSender emailSender;
+    @Autowired
     private PhieuGiamGiaRepo phieuGiamGiaRepo;
-
     @Autowired
     private KhachHangPhieuGiamGiaRepository khachHangPhieuGiamGiaRepository;
     @Autowired
-
     private KhachHangRepository khachHangRepository;
+    @Autowired
+    private NhanVien_Repositoy nhanVienRepositoy;
 
-    public ResultPaginationResponse filterCoupons (Specification<PhieuGiamGia> specification, Pageable pageable){
+    public ResultPaginationResponse filterCoupons(Specification<PhieuGiamGia> specification, Pageable pageable) {
         Page<PhieuGiamGia> couponPage = phieuGiamGiaRepo.findAll(specification, pageable);
         Page<PhieuGiamGiaResponse> responses = couponPage.map(
                 coupon -> PhieuGiamGiaMapper.toPhieuGiamGiaResponse(coupon));
@@ -85,82 +93,61 @@ public class PhieuGiamGiaService {
         return "PGG" + System.currentTimeMillis();
     }
 
+    @Transactional
     public PhieuGiamGiaResponse add(CreatePhieuGiamGiaRequest request) throws AppException {
         PhieuGiamGia newPhieuGiamGia = PhieuGiamGiaMapper.toCreatePGG(request);
-        newPhieuGiamGia.setMa(request.getMa() == null ? generateUniqueCode() : request.getMa());
-        if (ConvertTime.convertStringToLong2(request.getNgayHetHan() + "")
-                <= ConvertTime.convertStringToLong2(request.getNgayBatDau() + "")) {
-            throw new AppException("Ngày kết thúc phải lớn hơn ngày bắt đầu");
+        validateFormDataCreate(newPhieuGiamGia, request);
+        if (request.getSoLuong() != null && request.getSoLuong() == 0) {
+            newPhieuGiamGia.setTrangThai(2);
         }
-        long currentSeconds = (System.currentTimeMillis() / 1000) * 1000;
-        if (ConvertTime.convertStringToLong2(request.getNgayHetHan() + "") <= currentSeconds) {
-            throw new AppException("Ngày kết thúc phải lớn hơn hiện tại");
-        }
-        // 0 chưa dung : 1 đang áp dụng : 2 : hết hạn : 3 hủy
-        Integer status = (ConvertTime.convertStringToLong2(request.getNgayBatDau() + "") > currentSeconds) ? 0 : (currentSeconds >= ConvertTime.convertStringToLong2(request.getNgayHetHan() + "") ? 0 : 1);
-        newPhieuGiamGia.setTrangThai(status);
-        // sau check mã trùng
         PhieuGiamGia savedPhieuGiamGia = phieuGiamGiaRepo.save(newPhieuGiamGia);
-        request.getListKhachHang().forEach(id -> {
-            KhachHang khachHang = khachHangRepository.findById(id).orElse(null);
-            if (khachHang != null) {
-                KhachHangPhieuGiamGia khachHangPhieuGiamGia = new KhachHangPhieuGiamGia();
-                khachHangPhieuGiamGia.setPhieuGiamGia(savedPhieuGiamGia);
-                khachHangPhieuGiamGia.setKhachHang(khachHang);
-                khachHangPhieuGiamGia.setTrangThai(0);  // 0 chưa dung : 1 đang áp dụng : 2 : hết hạn : 3 hủy
-                khachHangPhieuGiamGiaRepository.save(khachHangPhieuGiamGia);
-                // send mail
-            }
-        });
-        PhieuGiamGiaResponse response = PhieuGiamGiaMapper.toPhieuGiamGiaResponse(savedPhieuGiamGia);
+        List<Long> listKhachHangIds = request.getListKhachHang();
+
+        NhanVien nhanVien = nhanVienRepositoy.findById(1).get();
+        if (listKhachHangIds != null) {
+            listKhachHangIds.forEach(id -> {
+                KhachHang khachHang = khachHangRepository.findById(id).orElse(null);
+                if (khachHang != null) {
+                    KhachHangPhieuGiamGia khachHangPhieuGiamGia = new KhachHangPhieuGiamGia();
+                    khachHangPhieuGiamGia.setPhieuGiamGia(savedPhieuGiamGia);
+                    khachHangPhieuGiamGia.setKhachHang(khachHang);
+                    khachHangPhieuGiamGia.setTrangThai(0);  // 0 chưa dung : 1 đang áp dụng : 2 : hết hạn : 3 hủy
+                    khachHangPhieuGiamGiaRepository.save(khachHangPhieuGiamGia);
+                    if (khachHang.getEmail() != null) {
+                        emailSender.sendEmailCoupons(nhanVien, khachHang, savedPhieuGiamGia);
+                    }
+                }
+            });
+        }
+        PhieuGiamGia phieuGiamGia = phieuGiamGiaRepo.findById(savedPhieuGiamGia.getId()).get();
+        PhieuGiamGiaResponse response = PhieuGiamGiaMapper.toPhieuGiamGiaResponse(phieuGiamGia);
+
         return response;
     }
-
-//    public PhieuGiamGiaResponse update(UpdatePhieuGiamGiaRequest request, Long id) {
-//        Optional<PhieuGiamGia> optional = phieuGiamGiaRepo.findById(id);
-//        if (optional.isPresent()) {
-//            PhieuGiamGiaMapper.toUpdatePGG(request, optional.get());
-//            return PhieuGiamGiaMapper.toPhieuGiamGiaResponse(phieuGiamGiaRepo.save(optional.get()));
-//        }
-//        return null;
-//    }
 
     public PhieuGiamGiaResponse update(UpdatePhieuGiamGiaRequest request, Long id) throws AppException {
         Optional<PhieuGiamGia> optional = phieuGiamGiaRepo.findById(id);
         if (!optional.isPresent()) {
-            throw new AppException("Phiếu giảm giá không tồn tại");
+            throw new AppException(ErrorCode.COUPONS_NOT_FOUND);
         }
 
         PhieuGiamGia phieuGiamGia = optional.get();
-
+        validateFormDataUpdate(phieuGiamGia, request);
         // Cập nhật thông tin phiếu giảm giá
-        phieuGiamGia.setMa(request.getMa() == null ? generateUniqueCode() : request.getMa());
-        phieuGiamGia.setTen(request.getTen());
-        phieuGiamGia.setMoTa(request.getMoTa());
-        phieuGiamGia.setNgayBatDau(request.getNgayBatDau());
-        phieuGiamGia.setNgayHetHan(request.getNgayHetHan());
-        phieuGiamGia.setLoaiGiamGia(request.getLoaiGiamGia());
-        phieuGiamGia.setGiaTriGiamGia(request.getGiaTriGiamGia());
-        phieuGiamGia.setGiaTriDonToiThieu(request.getGiaTriDonToiThieu());
-        phieuGiamGia.setGiamToiGia(request.getGiamToiGia());
-        phieuGiamGia.setPhamViApDung(request.getPhamViApDung());
-        phieuGiamGia.setSoLuong(request.getSoLuong());
-        phieuGiamGia.setNgaySua(System.currentTimeMillis());
-        phieuGiamGia.setNguoiSua(request.getNguoiSua());
-
-        // Kiểm tra ngày kết thúc và ngày bắt đầu
-        if (request.getNgayHetHan().isBefore(request.getNgayBatDau())) {
-            throw new AppException("Ngày kết thúc phải lớn hơn ngày bắt đầu");
-        }
-
-        long currentSeconds = System.currentTimeMillis() / 1000;
-        if (request.getNgayHetHan().toEpochDay() * 86400 <= currentSeconds) {
-            throw new AppException("Ngày kết thúc phải lớn hơn hiện tại");
-        }
-
-        Integer status = (request.getNgayBatDau().toEpochDay() * 86400 > currentSeconds) ? 0 :
-                (currentSeconds >= request.getNgayHetHan().toEpochDay() * 86400 ? 2 : 1);
-        phieuGiamGia.setTrangThai(status);
+        PhieuGiamGiaMapper.toUpdatePGG(request, phieuGiamGia);
+//        phieuGiamGia.setMa(request.getMa());
+//        phieuGiamGia.setTen(request.getTen());
+//        phieuGiamGia.setMoTa(request.getMoTa());
+//        phieuGiamGia.setNgayBatDau(request.getNgayBatDau());
+//        phieuGiamGia.setNgayHetHan(request.getNgayHetHan());
+//        phieuGiamGia.setLoaiGiamGia(request.getLoaiGiamGia());
+//        phieuGiamGia.setGiaTriGiamGia(request.getGiaTriGiamGia());
+//        phieuGiamGia.setGiaTriDonToiThieu(request.getGiaTriDonToiThieu());
+//        phieuGiamGia.setGiamToiDa(request.getGiamToiGia());
+//        phieuGiamGia.setPhamViApDung(request.getPhamViApDung());
+//        phieuGiamGia.setSoLuong(request.getSoLuong());
+//        phieuGiamGia.setNgaySua(System.currentTimeMillis());
+//        phieuGiamGia.setNguoiSua(request.getNguoiSua());
 
         // Cập nhật danh sách khách hàng liên kết với phiếu giảm giá
         Set<KhachHangPhieuGiamGia> existingRelations = khachHangPhieuGiamGiaRepository.findByPhieuGiamGiaId(phieuGiamGia.getId());
@@ -190,7 +177,9 @@ public class PhieuGiamGiaService {
                 khachHangPhieuGiamGiaRepository.delete(relation);
             }
         }
-
+        if (request.getSoLuong() != null && request.getSoLuong() == 0) {
+            phieuGiamGia.setTrangThai(2);
+        }
         // Lưu phiếu giảm giá đã cập nhật vào cơ sở dữ liệu
         PhieuGiamGia savedPhieuGiamGia = phieuGiamGiaRepo.save(phieuGiamGia);
 
@@ -204,6 +193,8 @@ public class PhieuGiamGiaService {
         Optional<PhieuGiamGia> optional = phieuGiamGiaRepo.findById(id);
         return optional.map(o -> {
             o.setTrangThai(3);   // 0 chưa dung : 1 đang áp dụng : 2 : hết hạn : 3 hủy
+            Set<KhachHangPhieuGiamGia> khachHangPhieuGiamGias = khachHangPhieuGiamGiaRepository.findByPhieuGiamGiaId(id);
+            khachHangPhieuGiamGiaRepository.deleteAll(khachHangPhieuGiamGias);
             return phieuGiamGiaRepo.save(o);
         }).orElse(null);
     }
@@ -211,7 +202,7 @@ public class PhieuGiamGiaService {
     public PhieuGiamGiaResponse detail(Long id) {
         Optional<PhieuGiamGia> optional = phieuGiamGiaRepo.findById(id);
         if (optional.isPresent()) {
-            return  PhieuGiamGiaMapper.toPhieuGiamGiaResponse(optional.get());
+            return PhieuGiamGiaMapper.toPhieuGiamGiaResponse(optional.get());
         }
         return null;
     }
@@ -219,7 +210,7 @@ public class PhieuGiamGiaService {
     /// page pgg với id khach hàng
     public ResultPaginationResponse getKhPGGById(Long id, Optional<String> page, Optional<String> size) throws AppException {
         PhieuGiamGia phieuGiamGia = phieuGiamGiaRepo.findById(id).orElseThrow(
-                () -> new AppException("Không tìm thấy phiếu giảm giá với id :" + id));
+                () -> new AppException(ErrorCode.COUPONS_NOT_FOUND));
         String sPage = page.isPresent() ? page.get() : "0";
         String sSize = size.isPresent() ? size.get() : "5";
         Pageable pageable = PageRequest.of(Integer.parseInt(sPage), Integer.parseInt(sSize));
@@ -249,6 +240,53 @@ public class PhieuGiamGiaService {
             khachHangPhieuGiamGia.setTrangThai(trangThai);
             khachHangPhieuGiamGiaRepository.save(khachHangPhieuGiamGia);
         }
+    }
+
+    // validate form data
+    private void validateFormDataCreate(PhieuGiamGia phieuGiamGia, CreatePhieuGiamGiaRequest request) throws AppException {
+        if (request.getMa() != null && phieuGiamGiaRepo.existsByMa(request.getMa())) {
+            throw new AppException(ErrorCode.COUPON_CODE_ALREADY_EXISTS);
+        } else {
+            phieuGiamGia.setMa(request.getMa() == null ? generateUniqueCode() : request.getMa());
+        }
+        if (request.getLoaiGiamGia() == 1 && request.getGiaTriGiamGia().compareTo(new BigDecimal("100")) > 0) {
+            throw new AppException(ErrorCode.COUPONS_MAXIMUM_100);
+        }
+        // Kiểm tra ngày kết thúc và ngày bắt đầu
+        if (request.getNgayHetHan().isBefore(request.getNgayBatDau())) {
+            throw new AppException(ErrorCode.ERROR_DATE_1);
+        }
+
+        long currentSeconds = System.currentTimeMillis() / 1000;
+        if (request.getNgayHetHan().toEpochDay() * 86400 <= currentSeconds) {
+            throw new AppException(ErrorCode.ERROR_DATE_2);
+        }
+        // chỉnh sử trạng thái
+        Integer status = (request.getNgayBatDau().toEpochDay() * 86400 > currentSeconds) ? 0 :
+                (currentSeconds >= request.getNgayHetHan().toEpochDay() * 86400 ? 2 : 1);
+        phieuGiamGia.setTrangThai(status);
+
+    }
+
+    private void validateFormDataUpdate(PhieuGiamGia phieuGiamGia, UpdatePhieuGiamGiaRequest request) throws AppException {
+
+        if (request.getLoaiGiamGia() == 1 && request.getGiaTriGiamGia().compareTo(new BigDecimal("100")) > 0) {
+            throw new AppException(ErrorCode.COUPONS_MAXIMUM_100);
+        }
+        // Kiểm tra ngày kết thúc và ngày bắt đầu
+        if (request.getNgayHetHan().isBefore(request.getNgayBatDau())) {
+            throw new AppException(ErrorCode.ERROR_DATE_1);
+        }
+
+        long currentSeconds = System.currentTimeMillis() / 1000;
+        if (request.getNgayHetHan().toEpochDay() * 86400 <= currentSeconds) {
+            throw new AppException(ErrorCode.ERROR_DATE_2);
+        }
+        // chỉnh sử trạng thái
+        Integer status = (request.getNgayBatDau().toEpochDay() * 86400 > currentSeconds) ? 0 :
+                (currentSeconds >= request.getNgayHetHan().toEpochDay() * 86400 ? 2 : 1);
+        phieuGiamGia.setTrangThai(status);
+
     }
 
 }

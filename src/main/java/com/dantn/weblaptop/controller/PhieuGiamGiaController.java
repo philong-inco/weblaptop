@@ -8,6 +8,7 @@ import com.dantn.weblaptop.entity.phieugiamgia.PhieuGiamGia;
 import com.dantn.weblaptop.exception.AppException;
 import com.dantn.weblaptop.service.impl.PhieuGiamGiaService;
 import com.turkraft.springfilter.boot.Filter;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -38,20 +39,20 @@ public class PhieuGiamGiaController {
     }
 
     @GetMapping
-    public ResponseEntity<ApiResponse> getAllPhieuGiamGia(
+    public  ResponseEntity<ApiResponse>  getAllPhieuGiamGia(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "5") int size) {
         ApiResponse apiResponse = new ApiResponse();
         apiResponse.setStatusCode(HttpStatus.OK.value());
         apiResponse.setMessage("Call api success");
         apiResponse.setData(phieuGiamGiaService.getAll(page, size));
-        return ResponseEntity.ok(apiResponse);
+         return ResponseEntity.ok(apiResponse);
     }
 
     @PostMapping("/add")
-    public ResponseEntity<ApiResponse> addPhieuGiamGia(@RequestBody CreatePhieuGiamGiaRequest request) throws AppException {
+    public ResponseEntity<ApiResponse> addPhieuGiamGia(@Valid @RequestBody CreatePhieuGiamGiaRequest request) throws AppException {
         ApiResponse apiResponse = new ApiResponse();
-        apiResponse.setStatusCode(HttpStatus.OK.value());
+        apiResponse.setStatusCode(HttpStatus.CREATED.value());
         apiResponse.setMessage("Create success");
         apiResponse.setData(phieuGiamGiaService.add(request));
         return ResponseEntity.status(HttpStatus.CREATED).body(apiResponse);

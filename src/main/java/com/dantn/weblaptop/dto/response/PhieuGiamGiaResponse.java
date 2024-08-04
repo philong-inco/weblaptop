@@ -8,6 +8,7 @@ import lombok.experimental.FieldDefaults;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Set;
 
 @Getter
@@ -15,7 +16,7 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class PhieuGiamGiaResponse {
+public class PhieuGiamGiaResponse2 {
 
     Long id;
 
@@ -51,5 +52,5 @@ public class PhieuGiamGiaResponse {
 
     Integer soLuong;
 
-    Set<KhachHangPhieuGiamGia> khachHangPhieuGiamGias;
+    Set<Long> khachHangPhieuGiamGias;
 }

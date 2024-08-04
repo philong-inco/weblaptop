@@ -8,6 +8,9 @@ import com.dantn.weblaptop.entity.phieugiamgia.KhachHangPhieuGiamGia;
 import com.dantn.weblaptop.entity.phieugiamgia.PhieuGiamGia;
 import com.dantn.weblaptop.util.ConvertTime;
 
+import java.util.Set;
+import java.util.stream.Collectors;
+
 public class PhieuGiamGiaMapper {
 
     public static PhieuGiamGiaResponse toPhieuGiamGiaResponse(PhieuGiamGia phieuGiamGia) {
@@ -23,13 +26,19 @@ public class PhieuGiamGiaMapper {
         response.setLoaiGiamGia(phieuGiamGia.getLoaiGiamGia());
         response.setGiaTriGiamGia(phieuGiamGia.getGiaTriGiamGia());
         response.setGiaTriDonToiThieu(phieuGiamGia.getGiaTriDonToiThieu());
-        response.setGiamToiGia(phieuGiamGia.getGiamToiGia());
+        response.setGiamToiGia(phieuGiamGia.getGiamToiDa());
         response.setPhamViApDung(phieuGiamGia.getPhamViApDung());
         response.setNgayTao(ConvertTime.convert(phieuGiamGia.getNgayTao().toString()));
         response.setNgaySua(ConvertTime.convert(phieuGiamGia.getNgaySua().toString()));
         response.setNguoiTao(phieuGiamGia.getNguoiTao());
         response.setNguoiSua(phieuGiamGia.getNguoiSua());
-        response.setKhachHangPhieuGiamGias(phieuGiamGia.getKhachHangPhieuGiamGias());
+        if (phieuGiamGia.getKhachHangPhieuGiamGias() != null) {
+            Set<Long> khachHangIds = phieuGiamGia.getKhachHangPhieuGiamGias().stream()
+                    .map(khachHangPhieuGiamGia -> khachHangPhieuGiamGia.getKhachHang().getId())
+                    .collect(Collectors.toSet());
+            response.setKhachHangPhieuGiamGias(khachHangIds);
+        }
+
         return response;
     }
 
@@ -44,7 +53,7 @@ public class PhieuGiamGiaMapper {
         phieuGiamGia.setLoaiGiamGia(request.getLoaiGiamGia());
         phieuGiamGia.setGiaTriGiamGia(request.getGiaTriGiamGia());
         phieuGiamGia.setGiaTriDonToiThieu(request.getGiaTriDonToiThieu());
-        phieuGiamGia.setGiamToiGia(request.getGiamToiGia());
+        phieuGiamGia.setGiamToiDa(request.getGiamToiDa());
         phieuGiamGia.setPhamViApDung(request.getPhamViApDung());
         phieuGiamGia.setSoLuong(request.getSoLuong());
         phieuGiamGia.setNgayTao(request.getNgayTao());
@@ -54,7 +63,7 @@ public class PhieuGiamGiaMapper {
         return phieuGiamGia;
     }
 
-    public static PhieuGiamGia toUpdatePGG(UpdatePhieuGiamGiaRequest request , PhieuGiamGia phieuGiamGia) {
+    public static void toUpdatePGG(UpdatePhieuGiamGiaRequest request, PhieuGiamGia phieuGiamGia) {
         // 0 chưa dung : 1 đang áp dụng : 2 : hết hạn : 3 hủy
 
         phieuGiamGia.setTen(request.getTen());
@@ -64,14 +73,13 @@ public class PhieuGiamGiaMapper {
         phieuGiamGia.setLoaiGiamGia(request.getLoaiGiamGia());
         phieuGiamGia.setGiaTriGiamGia(request.getGiaTriGiamGia());
         phieuGiamGia.setGiaTriDonToiThieu(request.getGiaTriDonToiThieu());
-        phieuGiamGia.setGiamToiGia(request.getGiamToiGia());
+        phieuGiamGia.setGiamToiDa(request.getGiamToiGia());
         phieuGiamGia.setPhamViApDung(request.getPhamViApDung());
         phieuGiamGia.setSoLuong(request.getSoLuong());
 //        phieuGiamGia.setNgayTao(request.getNgayTao());
 //        phieuGiamGia.setNgaySua(request.getNgaySua());
 //        phieuGiamGia.setNguoiTao(request.getNguoiTao());
 //        phieuGiamGia.setNguoiSua(request.getNguoiSua());
-        return phieuGiamGia;
     }
 
     public static KhachHangPhieuGiamGiaResponse toKhachHangPhieuGiamGiaResponse(KhachHangPhieuGiamGia khachHangPhieuGiamGia) {

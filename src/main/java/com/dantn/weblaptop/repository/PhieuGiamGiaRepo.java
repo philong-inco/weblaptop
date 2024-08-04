@@ -7,4 +7,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface PhieuGiamGiaRepo extends JpaRepository<PhieuGiamGia, Long> , JpaSpecificationExecutor<PhieuGiamGia> {
+    Boolean existsByMa(String ma);
 }

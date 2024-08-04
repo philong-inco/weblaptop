@@ -12,6 +12,7 @@ import com.dantn.weblaptop.entity.hoadon.LichSuHoaDon;
 import com.dantn.weblaptop.entity.khachhang.KhachHang;
 import com.dantn.weblaptop.entity.nhanvien.NhanVien;
 import com.dantn.weblaptop.exception.AppException;
+import com.dantn.weblaptop.exception.ErrorCode;
 import com.dantn.weblaptop.mapper.impl.LichSuHoaDonMapper;
 import com.dantn.weblaptop.repository.HoaDonRepository;
 import com.dantn.weblaptop.repository.KhachHangRepository;
@@ -44,15 +45,15 @@ public class LichSuHoaDonServiceImpl implements LichSuHoaDonService {
     @Override
     public LichSuHoaDonResponse create(CreateLichSuHoaDonRequest request) throws AppException {
         NhanVien existingEmployee = employeeRepository.findById(request.getIdNhanVien()).orElseThrow(
-                () -> new AppException("Cant not find employee with ID : " + request.getIdNhanVien()));
+                () -> new AppException(ErrorCode.EMPLOYEE_NOT_FOUND));
 
         KhachHang existingCustomer = null;
         if (request.getIdKhachHang() != null) {
             existingCustomer = customerRepository.findById(request.getIdKhachHang()).orElseThrow(
-                    () -> new AppException("Cant not find customer with ID : " + request.getIdKhachHang()));
+                    () -> new AppException(ErrorCode.CUSTOMER_NOT_FOUND));
         }
         HoaDon existingBill = billRepository.findById(request.getIdHoaDon()).orElseThrow(
-                () -> new AppException("Cant not find bill with ID : " + request.getIdHoaDon()));
+                () -> new AppException(ErrorCode.BILL_NOT_FOUND));
         LichSuHoaDon newBillHistory = LichSuHoaDonMapper.createBillHistory(request);
         newBillHistory.setNhanVien(existingEmployee);
         newBillHistory.setKhachHang(existingCustomer);
@@ -80,11 +81,11 @@ public class LichSuHoaDonServiceImpl implements LichSuHoaDonService {
         List<LichSuHoaDon> histories = billHistoryRepository.findAllByHoaDonId(billId);
 
         if (histories.size() < 2) {
-            throw new AppException("Trạng thái trước đó không tôn tại");
+            throw new AppException(ErrorCode.NOT_FOUND);
         }
         LichSuHoaDon lastHistory = histories.get(histories.size() - 2);
         if(lastHistory.getTrangThai()==0){
-            throw new AppException("Không thể quay lại trạng thái tạo mới");
+            throw new AppException(ErrorCode.UNACHIEVABLE);
         }
         HoaDon bill = lastHistory.getHoaDon();
         String currentStatus = bill.getTrangThai().getName();

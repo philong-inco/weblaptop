@@ -10,6 +10,7 @@ import com.dantn.weblaptop.entity.hoadon.SerialNumberDaBan;
 import com.dantn.weblaptop.entity.sanpham.SanPhamChiTiet;
 import com.dantn.weblaptop.entity.sanpham.SerialNumber;
 import com.dantn.weblaptop.exception.AppException;
+import com.dantn.weblaptop.exception.ErrorCode;
 import com.dantn.weblaptop.repository.HoaDonRepository;
 import com.dantn.weblaptop.repository.SanPhamChiTietRepository;
 import com.dantn.weblaptop.repository.SerialNumberDaBanRepository;
@@ -67,7 +68,7 @@ public class SerialNumberDaBanServiceImpl implements SerialNumberDaBanService {
     @Override
     public SerialNumberDaBanResponse create(CreateSerialNumberDaBanRequest request) throws AppException {
         HoaDon existingBill = hoaDonRepository.findById(request.getIdHoaDon()).orElseThrow(
-                () -> new AppException("Không tìm thấy hóa đơn với id : " + request.getIdHoaDon()));
+                () -> new AppException(ErrorCode.BILL_NOT_FOUND));
         List<SerialNumber> serialNumbers = serialNumberService.getSerialNumberByProductIdAndStatus(
                 request.getIdSanPham(), 0);
 

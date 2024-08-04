@@ -37,13 +37,13 @@ public class KhachHangPhieuGiamGia extends BaseEntity {
     Integer trangThai;
     @ManyToOne(cascade = {CascadeType.DETACH, CascadeType.PERSIST,
             CascadeType.MERGE, CascadeType.REFRESH},
-            fetch = FetchType.EAGER)
+            fetch = FetchType.LAZY)
     @JoinColumn(name = "khach_hang_id")
     @JsonBackReference
     KhachHang khachHang;
     @ManyToOne(cascade = {CascadeType.DETACH, CascadeType.PERSIST,
             CascadeType.MERGE, CascadeType.REFRESH},
-            fetch = FetchType.EAGER)
+            fetch = FetchType.LAZY)
     @JoinColumn(name = "phieu_giam_gia_id")
     @JsonBackReference
     PhieuGiamGia phieuGiamGia;
