@@ -67,12 +67,8 @@ public class PhieuGiamGiaService {
     public ResultPaginationResponse getAll(int page, int size) {
         Pageable pageable = PageRequest.of(page, size, Sort.by("ngayTao").descending());
         Page<PhieuGiamGia> phieuGiamGiaPage = phieuGiamGiaRepo.findAll(pageable);
-        // chuyển thành response :
         Page<PhieuGiamGiaResponse> responses = phieuGiamGiaPage.map(
                 phieuGiamGia -> PhieuGiamGiaMapper.toPhieuGiamGiaResponse(phieuGiamGia));
-        // 2 đối tượng này dùng đề format lại dữ liệu trả về
-        // mate : danh cho phân trang
-        // ResultPaginationResponse : là kết quả trả về
         Meta meta = Meta.builder()
                 .page(responses.getNumber())
                 .pageSize(responses.getSize())
@@ -113,9 +109,9 @@ public class PhieuGiamGiaService {
                     khachHangPhieuGiamGia.setKhachHang(khachHang);
                     khachHangPhieuGiamGia.setTrangThai(0);  // 0 chưa dung : 1 đang áp dụng : 2 : hết hạn : 3 hủy
                     khachHangPhieuGiamGiaRepository.save(khachHangPhieuGiamGia);
-                    if (khachHang.getEmail() != null) {
-                        emailSender.sendEmailCoupons(nhanVien, khachHang, savedPhieuGiamGia);
-                    }
+//                    if (khachHang.getEmail() != null) {
+//                        emailSender.sendEmailCoupons(nhanVien, khachHang, savedPhieuGiamGia);
+//                    }
                 }
             });
         }
@@ -156,6 +152,19 @@ public class PhieuGiamGiaService {
                 .toList();
 
         List<Long> newKhachHangIds = request.getListKhachHang();
+        if (request.getSoLuong() != null && request.getSoLuong() == 0) {
+            phieuGiamGia.setTrangThai(2);
+        }
+        // Lưu phiếu giảm giá đã cập nhật vào cơ sở dữ liệu
+        PhieuGiamGia savedPhieuGiamGia = phieuGiamGiaRepo.save(phieuGiamGia);
+        // Xóa các khách hàng không còn trong danh sách mới
+        for (KhachHangPhieuGiamGia relation : existingRelations) {
+            if (!newKhachHangIds.contains(relation.getKhachHang().getId())) {
+                khachHangPhieuGiamGiaRepository.delete(relation);
+                // send mail báo hủy phiếu
+            }
+        }
+
 
         // Thêm các khách hàng mới
         for (Long khachHangId : newKhachHangIds) {
@@ -167,21 +176,13 @@ public class PhieuGiamGiaService {
                     khachHangPhieuGiamGia.setKhachHang(khachHang);
                     khachHangPhieuGiamGia.setTrangThai(0); // 0 chưa dùng : 1 đang áp dụng : 2 hết hạn : 3 hủy
                     khachHangPhieuGiamGiaRepository.save(khachHangPhieuGiamGia);
+                    // send mail báo cập
                 }
+            }else{
+                // send mail báo cập nhập phiếu
             }
         }
 
-        // Xóa các khách hàng không còn trong danh sách mới
-        for (KhachHangPhieuGiamGia relation : existingRelations) {
-            if (!newKhachHangIds.contains(relation.getKhachHang().getId())) {
-                khachHangPhieuGiamGiaRepository.delete(relation);
-            }
-        }
-        if (request.getSoLuong() != null && request.getSoLuong() == 0) {
-            phieuGiamGia.setTrangThai(2);
-        }
-        // Lưu phiếu giảm giá đã cập nhật vào cơ sở dữ liệu
-        PhieuGiamGia savedPhieuGiamGia = phieuGiamGiaRepo.save(phieuGiamGia);
 
         // Tạo phản hồi
         PhieuGiamGiaResponse response = PhieuGiamGiaMapper.toPhieuGiamGiaResponse(savedPhieuGiamGia);

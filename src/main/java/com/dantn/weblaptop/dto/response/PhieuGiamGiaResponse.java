@@ -16,7 +16,7 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class PhieuGiamGiaResponse2 {
+public class PhieuGiamGiaResponse {
 
     Long id;
 

@@ -33,20 +33,20 @@ public class PhieuGiamGiaController {
     ) {
         ApiResponse apiResponse = new ApiResponse();
         apiResponse.setStatusCode(HttpStatus.OK.value());
-        apiResponse.setMessage("Oke");
-        apiResponse.setData(phieuGiamGiaService.filterCoupons(specification , pageable));
+        apiResponse.setMessage("Call api success");
+        apiResponse.setData(phieuGiamGiaService.filterCoupons(specification, pageable));
         return ResponseEntity.ok(apiResponse);
     }
 
     @GetMapping
-    public  ResponseEntity<ApiResponse>  getAllPhieuGiamGia(
+    public ResponseEntity<ApiResponse> getAllPhieuGiamGia(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "5") int size) {
         ApiResponse apiResponse = new ApiResponse();
         apiResponse.setStatusCode(HttpStatus.OK.value());
         apiResponse.setMessage("Call api success");
         apiResponse.setData(phieuGiamGiaService.getAll(page, size));
-         return ResponseEntity.ok(apiResponse);
+        return ResponseEntity.ok(apiResponse);
     }
 
     @PostMapping("/add")
@@ -59,7 +59,7 @@ public class PhieuGiamGiaController {
     }
 
     @PutMapping("/update/{id}")
-    public ResponseEntity<ApiResponse>  updatePhieuGiamGia(@RequestBody UpdatePhieuGiamGiaRequest request, @PathVariable Long id) throws AppException {
+    public ResponseEntity<ApiResponse> updatePhieuGiamGia(@Valid @RequestBody UpdatePhieuGiamGiaRequest request, @PathVariable Long id) throws AppException {
 //        return phieuGiamGiaService.update(phieuGiamGia, id);
         ApiResponse apiResponse = new ApiResponse();
         apiResponse.setStatusCode(HttpStatus.OK.value());
