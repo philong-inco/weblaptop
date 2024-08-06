@@ -20,9 +20,13 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -42,6 +46,13 @@ public class KhachHangService_Implement implements KhachHang_Service {
     public Page<KhachHangResponse> pageKhachHang(Integer pageNo, Integer size) {
         Pageable pageable = PageRequest.of(pageNo, size, Sort.by(Sort.Direction.DESC, "id"));
         Page<KhachHang> khachHangPage = khachHangRepository.findAll(pageable);
+        return khachHangPage.map(khachHangMapper::entityToResponseKhachHang);
+    }
+
+    @Override
+    public Page<KhachHangResponse> pageSearchHang(Integer pageNo, Integer size, Integer hangKhachHang) {
+        Pageable pageable = PageRequest.of(pageNo, size, Sort.by(Sort.Direction.DESC, "id"));
+        Page<KhachHang> khachHangPage = khachHangRepository.pageSearchHangKhachHang(pageable, hangKhachHang);
         return khachHangPage.map(khachHangMapper::entityToResponseKhachHang);
     }
 

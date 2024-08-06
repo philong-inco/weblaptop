@@ -2,6 +2,7 @@ package com.dantn.weblaptop.repository;
 
 
 import com.dantn.weblaptop.entity.khachhang.KhachHang;
+import lombok.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -11,6 +12,9 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.Optional;
 
 @Repository
@@ -45,4 +49,6 @@ public interface KhachHang_Repository extends JpaRepository<KhachHang, Integer> 
     @Query(value = "SELECT kh FROM KhachHang kh WHERE kh.gioiTinh = :gioiTinh")
     Page<KhachHang> pageSearchGioiTinh(Pageable pageable, @Param("gioiTinh") Integer gioiTinh);
 
+    @Query(value = "SELECT kh FROM KhachHang kh WHERE kh.hangKhachHang = :hangKhachHang")
+    Page<KhachHang> pageSearchHangKhachHang(Pageable pageable, @Param("hangKhachHang") Integer hangKhachHang);
 }

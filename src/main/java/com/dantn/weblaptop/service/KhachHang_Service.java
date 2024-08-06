@@ -9,11 +9,16 @@ import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 
 @Service("khachHang_Service")
 public interface KhachHang_Service {
     Page<KhachHangResponse> pageKhachHang(Integer pageNo, Integer size);
+
+    Page<KhachHangResponse> pageSearchHang (Integer pageNo, Integer size, Integer hangKhachHang);
 
     Page<KhachHangResponse> pageSearchGioiTinh(Integer pageNo, Integer size, Integer gioiTinh);
 
@@ -40,4 +45,5 @@ public interface KhachHang_Service {
     boolean changeEmail(InfomationKhachHang infomationKhachHang, String newEmail);
 
     void updateImage(String image, String email);
+
 }
