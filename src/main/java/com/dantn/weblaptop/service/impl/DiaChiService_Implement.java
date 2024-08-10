@@ -103,4 +103,9 @@ public class DiaChiService_Implement implements DiaChi_Service {
     public void defauldiaChi(Long id, long idKhachHang) {
         diaChiRepository.defaultDiaChi(id, idKhachHang);
     }
+
+    @Override
+    public void unDefauldiaChi(Long id, long idKhachHang) {
+        diaChiRepository.unDefaultDiaChi(id, idKhachHang);
+    }
 }

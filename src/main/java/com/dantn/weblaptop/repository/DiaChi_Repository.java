@@ -33,6 +33,11 @@ public interface DiaChi_Repository extends JpaRepository<DiaChi, Long> {
 
     @Modifying
     @Transactional
+    @Query("UPDATE DiaChi dc SET dc.loaiDiaChi = 0 WHERE dc.khachHang.id = :idKhachHang")
+    void unDefaultDiaChi(@Param("id") Long id, @Param("idKhachHang") Long idKhachHang);
+
+    @Modifying
+    @Transactional
     @Query(value = "DELETE FROM DiaChi dc WHERE dc.id = :id")
     void deleteByKhachHangId(@Param("id") Long id);
 }

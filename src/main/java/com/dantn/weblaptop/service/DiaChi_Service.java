@@ -23,4 +23,6 @@ public interface DiaChi_Service {
     void deleteDiaChi(Long id);
 
     void defauldiaChi(Long id, long idKhachHang);
+
+    void unDefauldiaChi(Long id, long idKhachHang);
 }

@@ -61,4 +61,10 @@ public class DiaChi_Controller {
         diaChiService.defauldiaChi(id, idKhachHang);
         return new ResponseEntity<>(HttpStatus.OK);
     }
+
+    @PutMapping("/undefaultlocation/{id}")
+    public ResponseEntity<?> unDefaultLocation(@PathVariable Long id, @RequestParam Long idKhachHang) {
+        diaChiService.unDefauldiaChi(id, idKhachHang);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 }
