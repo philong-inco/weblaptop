@@ -54,14 +54,6 @@ public class CreateNhanVien {
     @JsonProperty("hinh_anh")
     String hinhAnh;
 
-    @JsonProperty("tai_khoan_ngan_hang")
-    @NotBlank(message = "Tài khoản ngân hàng không được để trống")
-    @Size(max = 50, message = "Tài khoản ngân hàng không được vượt quá 50 ký tự")
-    String taiKhoanNganHang;
-
-//    @JsonProperty("ngay_bat_dau_lam_viec")
-//    @NotNull(message = "Ngày bắt đầu làm việc không được để trống")
-//    @FutureOrPresent(message = "Ngày bắt đầu làm việc phải là ngày hiện tại hoặc tương lai")
     LocalDateTime ngayBatDauLamViec;
 
     @JsonProperty("ngay_thoi_viet")

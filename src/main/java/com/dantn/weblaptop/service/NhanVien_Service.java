@@ -32,6 +32,8 @@ public interface NhanVien_Service {
 
     List<VaiTro_Response> findVaiTroByNhanVien(Long id);
 
+    List<NhanVienResponse> getDanhSachNhanVien();
+
     void removeOrRevert(Long id);
 
     void rollBackStatusNhanVien(Long id);

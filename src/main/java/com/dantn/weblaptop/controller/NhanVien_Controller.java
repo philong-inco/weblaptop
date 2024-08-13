@@ -4,6 +4,7 @@ import com.dantn.weblaptop.dto.ChangeEmail_Dto;
 import com.dantn.weblaptop.dto.ForgotPassword_Dto;
 import com.dantn.weblaptop.dto.request.create_request.CreateNhanVien;
 import com.dantn.weblaptop.dto.request.update_request.UpdateNhanVien;
+import com.dantn.weblaptop.repository.NhanVien_Repositoy;
 import com.dantn.weblaptop.service.NhanVien_Service;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -28,12 +29,18 @@ public class NhanVien_Controller {
 
     @Qualifier("nhanVien_Service")
     private final NhanVien_Service nhanVienService;
+    private final NhanVien_Repositoy nhanVien_Repositoy;
 
 
     @GetMapping("/all")
     public ResponseEntity<?> getAll(@RequestParam(defaultValue = "0", name = "pageNo", required = false) Integer pageNo,
                                     @RequestParam(defaultValue = "5", name = "pageSize", required = false) Integer pageSize) {
         return ResponseEntity.ok(nhanVienService.pageNhanVien(pageNo, pageSize));
+    }
+
+    @GetMapping("/danhsachnhanvien")
+    public ResponseEntity<?> getDanhSach() {
+        return ResponseEntity.ok(nhanVienService.getDanhSachNhanVien());
     }
 
     @GetMapping("/search")

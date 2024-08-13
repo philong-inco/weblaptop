@@ -45,8 +45,6 @@ public class NhanVien extends BaseEntity {
     String hinhAnh;
     @Column(name = "dia_chi")
     String diaChi;
-    @Column(name = "tai_khoan_ngan_hang")
-    String taiKhoanNganHang;
     @Column(name = "ngay_bat_dau_lam_viet")
     LocalDateTime ngayBatDauLamViec;
     @Column(name = "ngay_thoi_viet")

@@ -24,6 +24,9 @@ public interface NhanVien_Repositoy extends JpaRepository<NhanVien, Long>{
     );
 
     @Query("SELECT nv FROM NhanVien nv")
+    List<NhanVien> getDanhSachNhanVien();
+
+    @Query("SELECT nv FROM NhanVien nv")
     Page<NhanVien> findAll(Pageable pageable);
 
     @Query(value = "SELECT nv FROM NhanVien nv WHERE nv.trangThai = :trangThai")

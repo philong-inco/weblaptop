@@ -45,6 +45,8 @@ public class NhanVienService_Implement implements NhanVien_Service {
     VaiTro_Mapper vaiTroMapper;
     @Autowired
     NhanVienVaiTroRepository nhanVienVaiTroRepository;
+    @Autowired
+    private NhanVien_Repositoy nhanVien_Repositoy;
 
 
     @Override
@@ -189,20 +191,14 @@ public class NhanVienService_Implement implements NhanVien_Service {
                 NhanVien updateNhanVien = nhanVienMapper.UpdateToEntity(updateNhanVienRequest);
 
                 // Kiểm tra email trùng lặp
-                nhanVienRepositoy.findAll().stream()
-                        .filter(nv -> nv.getEmail().equals(updateNhanVien.getEmail()) && !nv.getId().equals(nhanVien.getId()))
-                        .findFirst()
-                        .ifPresent(nv -> {
-                            throw new RuntimeException("Email này đã tồn tại: " + nv.getEmail());
-                        });
+                nhanVienRepositoy.findAll().stream().filter(nv -> nv.getEmail().equals(updateNhanVien.getEmail()) && !nv.getId().equals(nhanVien.getId())).findFirst().ifPresent(nv -> {
+                    throw new RuntimeException("Email này đã tồn tại: " + nv.getEmail());
+                });
 
                 // Kiểm tra số điện thoại trùng lặp
-                nhanVienRepositoy.findAll().stream()
-                        .filter(nv -> nv.getSdt().equals(updateNhanVien.getSdt()) && !nv.getId().equals(nhanVien.getId()))
-                        .findFirst()
-                        .ifPresent(nv -> {
-                            throw new RuntimeException("Số điện thoại này đã tồn tại: " + nv.getSdt());
-                        });
+                nhanVienRepositoy.findAll().stream().filter(nv -> nv.getSdt().equals(updateNhanVien.getSdt()) && !nv.getId().equals(nhanVien.getId())).findFirst().ifPresent(nv -> {
+                    throw new RuntimeException("Số điện thoại này đã tồn tại: " + nv.getSdt());
+                });
 
                 // Cập nhật các trường của nhân viên
                 nhanVien.setTen(updateNhanVien.getTen());
@@ -211,13 +207,11 @@ public class NhanVienService_Implement implements NhanVien_Service {
                 nhanVien.setNgaySinh(updateNhanVien.getNgaySinh());
                 nhanVien.setEmail(updateNhanVien.getEmail());
                 nhanVien.setSdt(updateNhanVien.getSdt());
-                nhanVien.setTaiKhoanNganHang(updateNhanVien.getTaiKhoanNganHang());
                 nhanVien.setDiaChi(updateNhanVien.getDiaChi());
                 nhanVien.setNgaySua(LocalDateTime.now().toInstant(ZoneOffset.UTC).toEpochMilli());
 
                 // Xóa hết vai trò hiện tại của nhân viên
                 nhanVienVaiTroRepository.deleteByNhanVien(id);
-
 
 
 //                Set<VaiTro> vaiTros = vaiTroRepository.findVaiTroByTen(updateNhanVienRequest.getListVaiTro());
@@ -246,6 +240,28 @@ public class NhanVienService_Implement implements NhanVien_Service {
     public List<VaiTro_Response> findVaiTroByNhanVien(Long id) {
         List<VaiTro> vaiTroList = nhanVienVaiTroRepository.findByIdNhanVien(id);
         return vaiTroMapper.listVaiTroEntityToVaiTroResponse(vaiTroList);
+    }
+
+    @Override
+    public List<NhanVienResponse> getDanhSachNhanVien() {
+        List<NhanVien> danhSachNhanVien = nhanVien_Repositoy.getDanhSachNhanVien();
+        List<NhanVienResponse> danhSachNhanVienResponse = new ArrayList<>();
+
+        for (NhanVien nhanVien : danhSachNhanVien) {
+            StringBuilder vaiTrosBuilder = new StringBuilder();
+            nhanVienVaiTroRepository.findByNhanVien(nhanVien).forEach(vaiTro -> vaiTrosBuilder.append(vaiTro.getTen()).append(", "));
+
+            // Remove the last comma and space if vaiTrosBuilder is not empty
+            if (vaiTrosBuilder.length() > 0) {
+                vaiTrosBuilder.setLength(vaiTrosBuilder.length() - 2);
+            }
+
+            NhanVienResponse response = nhanVienMapper.EntiyToResponse(nhanVien);
+            response.setVaiTro(vaiTrosBuilder.toString());
+            danhSachNhanVienResponse.add(response);
+        }
+
+        return danhSachNhanVienResponse;
     }
 
 

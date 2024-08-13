@@ -54,11 +54,6 @@ public class UpdateNhanVien {
     @JsonProperty("dia_chi")
     String diaChi;
 
-    @JsonProperty("tai_khoan_ngan_hang")
-    @NotBlank(message = "Tài khoản ngân hàng không được để trống")
-    @Size(max = 50, message = "Tài khoản ngân hàng không được vượt quá 50 ký tự")
-    String taiKhoanNganHang;
-
     Long idVaiTro;
 
     @JsonProperty("list_vai_tro")
