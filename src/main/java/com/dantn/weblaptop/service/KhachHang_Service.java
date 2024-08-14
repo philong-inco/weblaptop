@@ -26,6 +26,8 @@ public interface KhachHang_Service {
 
     List<KhachHangResponse> listKhachHangResponse();
 
+    List<KhachHangResponse> listKhachHang();
+
     List<InfomationKhachHang> listKhachHangInfo();
 
     KhachHangResponse create(CreateKhachHang createKhachHangRequest, HttpServletRequest request);

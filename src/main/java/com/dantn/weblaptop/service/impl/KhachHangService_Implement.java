@@ -77,6 +77,11 @@ public class KhachHangService_Implement implements KhachHang_Service {
     }
 
     @Override
+    public List<KhachHangResponse> listKhachHang() {
+        return khachHangMapper.listKhachHangToKhachHangResponse(khachHangRepository.findAllKhachHang());
+    }
+
+    @Override
     public List<InfomationKhachHang> listKhachHangInfo() {
         List<KhachHang> khachHangEntities = khachHangRepository.findAll();
         List<InfomationKhachHang> khachHangInfos = new ArrayList<>();

@@ -39,6 +39,11 @@ public class KhachHangController {
         return ResponseEntity.ok(khachHangService.pageKhachHang(pageNo, pageSize));
     }
 
+    @GetMapping("/danhsachkhachhang")
+    public ResponseEntity<?> danhSachKhachHang(){
+        return ResponseEntity.ok(khachHangService.listKhachHang());
+    }
+
     @GetMapping("/searchhangkhachhang")
     public ResponseEntity<?> getAll( @RequestParam(name = "hangKhachHang", required = false) Integer hangKhachHang,
                                     @RequestParam(defaultValue = "0", name = "pageNo", required = false) Integer pageNo,

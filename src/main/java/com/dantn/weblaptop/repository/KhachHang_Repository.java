@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -51,4 +52,7 @@ public interface KhachHang_Repository extends JpaRepository<KhachHang, Integer> 
 
     @Query(value = "SELECT kh FROM KhachHang kh WHERE kh.hangKhachHang = :hangKhachHang")
     Page<KhachHang> pageSearchHangKhachHang(Pageable pageable, @Param("hangKhachHang") Integer hangKhachHang);
+
+    @Query(value = "SELECT kh FROM KhachHang kh")
+    List<KhachHang> findAllKhachHang();
 }
