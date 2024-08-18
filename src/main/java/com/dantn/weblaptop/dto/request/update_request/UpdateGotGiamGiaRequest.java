@@ -44,4 +44,8 @@ public class UpdateGotGiamGiaRequest {
     @NotBlank(message = "Giảm Tối Đa không được để trống!")
     @Pattern(regexp = "^[1-9]\\d*$", message = "Giảm Tối Đa phải là số dương!")
     String giamToiDa;
+
+    @NotBlank(message = "giá Trị giảm không được để trống!")
+    @Pattern(regexp = "^[1-9]\\d*$", message = "giá Trị giảm  phải là số dương!")
+    String giaTriGiam;
 }

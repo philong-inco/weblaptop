@@ -1,5 +1,6 @@
 package com.dantn.weblaptop.mapper.impl;
 
+import com.dantn.weblaptop.entity.sanpham.SanPhamChiTiet;
 import com.dantn.weblaptop.mapper.DotGiamGiaMapper;
 import com.dantn.weblaptop.dto.request.create_request.CreateDotGiamGiaRequest;
 import com.dantn.weblaptop.dto.request.update_request.UpdateGotGiamGiaRequest;
@@ -28,7 +29,8 @@ public class DotGiamGiaMapperImpl implements DotGiamGiaMapper {
         dotGiamGia.setTrangThai(Integer.parseInt(request.getTrangThai()));
         dotGiamGia.setLoaiChietKhau(Integer.parseInt(request.getLoaiChietKhau()));
         dotGiamGia.setThoiGianBatDau(request.getThoiGianBatDau());
-        dotGiamGia.setThoiGianKetthuc(request.getThoiGianKetthuc());
+        dotGiamGia.setThoiGianKetthuc(request.getThoiGianKetThuc());
+        dotGiamGia.setGiaTriGiam(Integer.parseInt(request.getGiaTriGiam()));
         // Ép kiểu từ String sang BigDecimal
         BigDecimal giamToiDa = new BigDecimal(request.getGiamToiDa());
 
@@ -50,6 +52,7 @@ public class DotGiamGiaMapperImpl implements DotGiamGiaMapper {
         dotGiamGiaResponse.setLoaiChietKhau(dotGiamGia.getLoaiChietKhau());
         dotGiamGiaResponse.setThoiGianBatDau(dotGiamGia.getThoiGianBatDau());
         dotGiamGiaResponse.setThoiGianKetthuc(dotGiamGia.getThoiGianKetthuc());
+        dotGiamGiaResponse.setGiaTriGiam(dotGiamGia.getGiaTriGiam());
         return dotGiamGiaResponse;
     }
 
@@ -65,10 +68,12 @@ public class DotGiamGiaMapperImpl implements DotGiamGiaMapper {
             dotGiamGiaResponse.setThoiGianKetthuc(dotGiamGia.getThoiGianKetthuc());
             dotGiamGiaResponse.setGiamToiDa(dotGiamGia.getGiamToiDa());
             dotGiamGiaResponse.setLoaiChietKhau(dotGiamGia.getLoaiChietKhau());
+            dotGiamGiaResponse.setGiaTriGiam(dotGiamGia.getGiaTriGiam());
             return dotGiamGiaResponse;
         }).collect(Collectors.toList());
         return new PageImpl<>(responses, PageRequest.of(page.getNumber(), page.getSize()), page.getTotalElements());
     }
+
 
     @Override
     public DotGiamGia updateDotGiamGia(DotGiamGia dotGiamGia, UpdateGotGiamGiaRequest request) {
@@ -79,6 +84,7 @@ public class DotGiamGiaMapperImpl implements DotGiamGiaMapper {
         dotGiamGia.setLoaiChietKhau(Integer.parseInt(request.getLoaiChietKhau()));
         dotGiamGia.setThoiGianBatDau(request.getThoiGianBatDau());
         dotGiamGia.setThoiGianKetthuc(request.getThoiGianKetthuc());
+        dotGiamGia.setGiaTriGiam(Integer.parseInt(request.getGiaTriGiam()));
         // Ép kiểu từ String sang BigDecimal
         BigDecimal giamToiDa = new BigDecimal(request.getGiamToiDa());
 

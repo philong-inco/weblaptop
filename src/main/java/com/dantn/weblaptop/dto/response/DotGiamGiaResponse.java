@@ -22,4 +22,5 @@ public class DotGiamGiaResponse {
     LocalDateTime thoiGianBatDau;
     LocalDateTime thoiGianKetthuc;
     BigDecimal giamToiDa;
+    Integer giaTriGiam;
 }
