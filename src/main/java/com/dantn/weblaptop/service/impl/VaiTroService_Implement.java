@@ -76,4 +76,10 @@ public class VaiTroService_Implement implements VaiTro_Service {
     public void revertStatus(Long id) {
         vaiTroRepository.revertStatus(0, id);
     }
+
+    @Override
+    public VaiTro_Response findVaiTroByIdNhanVienVaiTro(Long id) {
+        VaiTro vaiTroByIdNhanVienVaiTro= vaiTroRepository.findVaiTroByIdNhanVienVaiTro(id);
+        return vaiTroMapper.toResponse(vaiTroByIdNhanVienVaiTro);
+    }
 }

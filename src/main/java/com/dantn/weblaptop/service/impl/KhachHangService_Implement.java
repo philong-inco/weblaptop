@@ -4,6 +4,7 @@ import com.dantn.weblaptop.dto.InfomationKhachHang;
 import com.dantn.weblaptop.dto.request.create_request.CreateKhachHang;
 import com.dantn.weblaptop.dto.request.update_request.UpdateKhachHang;
 import com.dantn.weblaptop.dto.response.KhachHangResponse;
+import com.dantn.weblaptop.entity.khachhang.DiaChi;
 import com.dantn.weblaptop.entity.khachhang.KhachHang;
 import com.dantn.weblaptop.mapper.KhachHang_Mapper;
 import com.dantn.weblaptop.repository.DiaChi_Repository;
@@ -19,9 +20,13 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -45,6 +50,20 @@ public class KhachHangService_Implement implements KhachHang_Service {
     }
 
     @Override
+    public Page<KhachHangResponse> pageSearchHang(Integer pageNo, Integer size, Integer hangKhachHang) {
+        Pageable pageable = PageRequest.of(pageNo, size, Sort.by(Sort.Direction.DESC, "id"));
+        Page<KhachHang> khachHangPage = khachHangRepository.pageSearchHangKhachHang(pageable, hangKhachHang);
+        return khachHangPage.map(khachHangMapper::entityToResponseKhachHang);
+    }
+
+    @Override
+    public Page<KhachHangResponse> pageSearchGioiTinh(Integer pageNo, Integer size, Integer gioiTinh) {
+        Pageable pageable = PageRequest.of(pageNo, size, Sort.by(Sort.Direction.DESC, "id"));
+        Page<KhachHang> khachHangPage = khachHangRepository.pageSearchGioiTinh(pageable,gioiTinh);
+        return khachHangPage.map(khachHangMapper::entityToResponseKhachHang);
+    }
+
+    @Override
     public Page<KhachHangResponse> pageSearchKhachHang(Integer pageNo, Integer size, String search) {
         Pageable pageable = PageRequest.of(pageNo, size, Sort.by(Sort.Direction.DESC, "id"));
         Page<KhachHang> khachHangPage = khachHangRepository.pageSearch(pageable, search);
@@ -55,6 +74,11 @@ public class KhachHangService_Implement implements KhachHang_Service {
     public List<KhachHangResponse> listKhachHangResponse() {
         return khachHangMapper.listKhachHangToKhachHangResponse(khachHangRepository.findAll());
 
+    }
+
+    @Override
+    public List<KhachHangResponse> listKhachHang() {
+        return khachHangMapper.listKhachHangToKhachHangResponse(khachHangRepository.findAllKhachHang());
     }
 
     @Override
@@ -83,7 +107,7 @@ public class KhachHangService_Implement implements KhachHang_Service {
             // Lấy session ID từ request
             String sessionId = request.getSession().getId();
             khachHang.setSessionId(sessionId);
-            // Mã hóa mật khẩu trước khi lưu vào cơ sở dữ liệu
+
             if (khachHangRepository.findKhachHangBySdt(khachHang.getSdt()) != null) {
                 throw new RuntimeException("Số điện thoại này đã tồn tại " + khachHang.getSdt());
             }
@@ -92,6 +116,20 @@ public class KhachHangService_Implement implements KhachHang_Service {
                 throw new RuntimeException("Email này đã tồn tại " + khachHang.getEmail());
             }
             KhachHang khSave = khachHangRepository.save(khachHang);
+            if(khSave != null){
+                DiaChi diaChi = new DiaChi();
+                diaChi.setTenNguoiNhan(createKhachHangRequest.getTen());
+                diaChi.setSdtNguoiNhan(createKhachHangRequest.getSdt());
+                diaChi.setEmailNguoiNhan(createKhachHangRequest.getEmail());
+                diaChi.setIdTinhThanhPho(createKhachHangRequest.getIdTinhThanhPho());
+                diaChi.setIdQuanHuyen(createKhachHangRequest.getIdQuanHuyen());
+                diaChi.setIdPhuongXa(createKhachHangRequest.getIdPhuongXa());
+                diaChi.setSdtNguoiNhan(createKhachHangRequest.getSdt());
+                diaChi.setDiaChiNhanHang(createKhachHangRequest.getDiaChiNhanHang());
+                diaChi.setLoaiDiaChi(1);
+                diaChi.setKhachHang(khSave);
+                diaChiRepository.save(diaChi);
+            }
             return khachHangMapper.entityToResponseKhachHang(khSave);
         } catch (Exception ex) {
             throw new RuntimeException("Failed to create khach hang. Possibly duplicate record." + ex);

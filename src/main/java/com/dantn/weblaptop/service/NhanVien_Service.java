@@ -4,6 +4,7 @@ import com.dantn.weblaptop.dto.ChangeEmail_Dto;
 import com.dantn.weblaptop.dto.request.create_request.CreateNhanVien;
 import com.dantn.weblaptop.dto.request.update_request.UpdateNhanVien;
 import com.dantn.weblaptop.dto.response.NhanVienResponse;
+import com.dantn.weblaptop.dto.response.VaiTro_Response;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
@@ -15,7 +16,11 @@ public interface NhanVien_Service {
 
     Page<NhanVienResponse> pageSearchNhanVien(Integer pageNo, Integer size, String search);
 
-    List<NhanVienResponse> listNhanVienResponse();
+    Page<NhanVienResponse> pageSearchTrangThaiNhanVien(Integer pageNo, Integer size, Integer trangThai);
+
+    Page<NhanVienResponse> searchNhanVienByGioiTinh(Integer pageNo, Integer size, Integer gioiTinh);
+
+    Page<NhanVienResponse> searchNhanVienByNamSinh(Integer pageNo, Integer size, Integer year);
 
     NhanVienResponse findByEmail(String email);
 
@@ -23,9 +28,15 @@ public interface NhanVien_Service {
 
     NhanVienResponse update(UpdateNhanVien updateNhanVienRequest, Long id);
 
-    NhanVienResponse getOne(Integer id);
+    NhanVienResponse getOne(Long id);
+
+    List<VaiTro_Response> findVaiTroByNhanVien(Long id);
+
+    List<NhanVienResponse> getDanhSachNhanVien();
 
     void removeOrRevert(Long id);
+
+    void rollBackStatusNhanVien(Long id);
 
     boolean changeEmail(ChangeEmail_Dto changeEmailDto, String newEmailNv);
 
@@ -33,5 +44,5 @@ public interface NhanVien_Service {
 
     void updatePassword(String newPassword, String email);
 
-    void updateImageNV(String image, String email);
+    void updateImageNV(String image, Long id);
 }

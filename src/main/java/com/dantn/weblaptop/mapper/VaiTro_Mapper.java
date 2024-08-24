@@ -6,6 +6,7 @@ import com.dantn.weblaptop.dto.request.update_request.UpdateVaiTro_Request;
 import com.dantn.weblaptop.dto.response.VaiTro_Response;
 import com.dantn.weblaptop.entity.nhanvien.VaiTro;
 
+import java.util.List;
 
 
 public interface VaiTro_Mapper {
@@ -17,5 +18,7 @@ public interface VaiTro_Mapper {
 
 
     VaiTro_Response toResponse(VaiTro entity);
+
+    List<VaiTro_Response> listVaiTroEntityToVaiTroResponse(List<VaiTro> entityList);
 }
 

@@ -23,16 +23,13 @@ public class KhachHangMapper_Implement implements KhachHang_Mapper {
 
         KhachHang khachHang = new KhachHang();
         khachHang.setMa(createKhachHang.getMa());
-        khachHang.setTrangThai(createKhachHang.getTrangThai());
-        khachHang.setHo(createKhachHang.getHo());
         khachHang.setTen(createKhachHang.getTen());
         khachHang.setEmail(createKhachHang.getEmail());
         khachHang.setSdt(createKhachHang.getSdt());
         khachHang.setNgaySinh(createKhachHang.getNgaySinh());
         khachHang.setGioiTinh(createKhachHang.getGioiTinh());
         khachHang.setHinhAnh(createKhachHang.getHinhAnh());
-        khachHang.setHangKhachHang(createKhachHang.getHangKhachHang());
-        khachHang.setSessionId(createKhachHang.getSessionId());
+
 
         return khachHang;
     }
@@ -44,17 +41,12 @@ public class KhachHangMapper_Implement implements KhachHang_Mapper {
         }
 
         KhachHang khachHang = new KhachHang();
-        khachHang.setMa(updateKhachHang.getMa());
-        khachHang.setTrangThai(updateKhachHang.getTrangThai());
-        khachHang.setHo(updateKhachHang.getHo());
         khachHang.setTen(updateKhachHang.getTen());
         khachHang.setEmail(updateKhachHang.getEmail());
         khachHang.setSdt(updateKhachHang.getSdt());
         khachHang.setNgaySinh(updateKhachHang.getNgaySinh());
         khachHang.setGioiTinh(updateKhachHang.getGioiTinh());
         khachHang.setHinhAnh(updateKhachHang.getHinhAnh());
-        khachHang.setHangKhachHang(updateKhachHang.getHangKhachHang());
-
         return khachHang;
     }
 
@@ -68,7 +60,6 @@ public class KhachHangMapper_Implement implements KhachHang_Mapper {
                 .id(khachHang.getId())
                 .ma(khachHang.getMa())
                 .trangThai(khachHang.getTrangThai())
-                .ho(khachHang.getHo())
                 .ten(khachHang.getTen())
                 .email(khachHang.getEmail())
                 .sdt(khachHang.getSdt())

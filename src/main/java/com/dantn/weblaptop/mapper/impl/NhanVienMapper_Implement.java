@@ -23,7 +23,6 @@ public class NhanVienMapper_Implement implements NhanVien_Mapper {
         NhanVien nhanVien = new NhanVien();
         nhanVien.setMa(dto.getMa());
         nhanVien.setTrangThai(dto.getTrang_thai());
-        nhanVien.setCccd(dto.getCccd());
         nhanVien.setTen(dto.getTen());
         nhanVien.setEmail(dto.getEmail());
         nhanVien.setMatKhau(dto.getMatKhau());
@@ -31,8 +30,9 @@ public class NhanVienMapper_Implement implements NhanVien_Mapper {
         nhanVien.setNgaySinh(dto.getNgaySinh());
         nhanVien.setGioiTinh(dto.getGioiTinh());
         nhanVien.setHinhAnh(dto.getHinhAnh());
-        nhanVien.setTaiKhoanNganHang(dto.getTaiKhoanNganHang());
+
         nhanVien.setNgayThoiViec(dto.getNgayThoiViec());
+        nhanVien.setDiaChi(dto.getDiaChi());
         return nhanVien;
     }
 
@@ -43,8 +43,6 @@ public class NhanVienMapper_Implement implements NhanVien_Mapper {
         }
         NhanVien nhanVien = new NhanVien();
         nhanVien.setMa(dto.getMa());
-        nhanVien.setTrangThai(dto.getTrang_thai());
-        nhanVien.setCccd(dto.getCccd());
         nhanVien.setTen(dto.getTen());
         nhanVien.setEmail(dto.getEmail());
         nhanVien.setMatKhau(dto.getMatKhau());
@@ -52,7 +50,7 @@ public class NhanVienMapper_Implement implements NhanVien_Mapper {
         nhanVien.setNgaySinh(dto.getNgaySinh());
         nhanVien.setGioiTinh(dto.getGioiTinh());
         nhanVien.setHinhAnh(dto.getHinhAnh());
-        nhanVien.setTaiKhoanNganHang(dto.getTaiKhoanNganHang());
+        nhanVien.setDiaChi(dto.getDiaChi());
         return nhanVien;
     }
 
@@ -65,16 +63,16 @@ public class NhanVienMapper_Implement implements NhanVien_Mapper {
         response.setId(entity.getId());
         response.setMa(entity.getMa());
         response.setTrangThai(entity.getTrangThai());
-        response.setCccd(entity.getCccd());
         response.setTen(entity.getTen());
         response.setEmail(entity.getEmail());
         response.setSdt(entity.getSdt());
         response.setNgaySinh(entity.getNgaySinh());
         response.setGioiTinh(entity.getGioiTinh());
         response.setHinhAnh(entity.getHinhAnh());
-        response.setTaiKhoanNganHang(entity.getTaiKhoanNganHang());
+
         response.setNgayBatDauLamViec(entity.getNgayBatDauLamViec());
         response.setNgayThoiViec(entity.getNgayThoiViec());
+        response.setDiaChi(entity.getDiaChi());
         return response;
     }
 
@@ -86,6 +84,5 @@ public class NhanVienMapper_Implement implements NhanVien_Mapper {
         }
         return list;
     }
-
 
 }

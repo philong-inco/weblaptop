@@ -6,6 +6,8 @@ import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
+
 @Getter
 @Setter
 @Builder
@@ -28,6 +30,7 @@ public class NhanVienResponse {
     String matKhau;
 
     String sdt;
+    String diaChi;
 
     LocalDateTime ngaySinh;
 
@@ -41,5 +44,8 @@ public class NhanVienResponse {
 
     LocalDateTime ngayThoiViec;
 
-    Long idvaiTro;
+    String vaiTro;
+
+    Set<String> listVaiTro;
+
 }

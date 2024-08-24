@@ -3,6 +3,7 @@ package com.dantn.weblaptop.repository;
 import com.dantn.weblaptop.entity.nhanvien.NhanVien;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -14,23 +15,25 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface NhanVien_Repositoy extends JpaRepository<NhanVien, Integer> {
+public interface NhanVien_Repositoy extends JpaRepository<NhanVien, Long>{
     @Query("SELECT nv FROM NhanVien nv WHERE " +
-            "(:search is null or nv.ma LIKE %:search% or nv.ten LIKE %:search% or nv.email like %:search% or nv.sdt like %:search%) " +
-            "and (:trangThai is null or nv.trangThai = :trangThai)")
+            "(:search is null or nv.ma LIKE %:search% or nv.ten LIKE %:search% or nv.email like %:search% or nv.sdt like %:search%)")
     Page<NhanVien> pageSearch(
             Pageable pageable
             , @Param("search") String search
     );
 
+    @Query("SELECT nv FROM NhanVien nv")
+    List<NhanVien> getDanhSachNhanVien();
+
+    @Query("SELECT nv FROM NhanVien nv")
+    Page<NhanVien> findAll(Pageable pageable);
+
     @Query(value = "SELECT nv FROM NhanVien nv WHERE nv.trangThai = :trangThai")
-    List<NhanVien> getNhanVienByTrangThai(Integer trangThai);
+    Page<NhanVien>  getNhanVienByTrangThai(Pageable pageable, Integer trangThai);
 
     @Query(value = "SELECT nv FROM NhanVien nv WHERE nv.email = :email")
     NhanVien findByEmail(@Param("email") String email);
-
-    @Query(value = "SELECT nv FROM NhanVien nv WHERE nv.cccd = :cccd")
-    NhanVien findByCccd(@Param("cccd") String cccd);
 
     @Modifying
     @Transactional
@@ -44,9 +47,18 @@ public interface NhanVien_Repositoy extends JpaRepository<NhanVien, Integer> {
 
     @Modifying
     @Transactional
-    @Query(value = "UPDATE NhanVien nv SET nv.hinhAnh = :image WHERE nv.email = :email")
-    void updateImageEmployee(String image, String email);
+    @Query(value = "UPDATE NhanVien nv SET nv.hinhAnh = :image WHERE nv.id = :id")
+    void updateImageEmployee(@Param("image") String image, @Param("id") Long id);
 
     @Query(value = "SELECT nv FROM NhanVien nv WHERE nv.id = :id")
     Optional<NhanVien> getNhanVienById(@Param("id") Long id);
+
+    @Query(value = "SELECT nv FROM NhanVien  nv WHERE nv.id = :id")
+    NhanVien findByIdNhanVien(@Param("id") Long id);
+
+    @Query(value = "SELECT nv FROM NhanVien nv WHERE nv.gioiTinh = :gioiTinh")
+    Page<NhanVien> getNhanVienByGioiTinh (Pageable pageable,@Param("gioiTinh") Integer gioiTinh);
+
+    @Query(value = "SELECT nv FROM NhanVien nv WHERE YEAR(nv.ngaySinh) = :year")
+    Page<NhanVien> getNhanVienByNamSinh (Pageable pageable,@Param("year") Integer year);
 }

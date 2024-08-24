@@ -9,6 +9,7 @@ import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
@@ -16,22 +17,45 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api/khach-hang")
+@RequestMapping("/api/khachhang")
 @Component
 @AllArgsConstructor
 public class KhachHangController {
+
     @Qualifier("khachHang_Service")
     private final KhachHang_Service khachHangService;
 
-    @GetMapping("")
+    @GetMapping("/all")
     public ResponseEntity<?> getAll(@RequestParam(defaultValue = "0", name = "pageNo", required = false) Integer pageNo,
                                     @RequestParam(defaultValue = "5", name = "pageSize", required = false) Integer pageSize) {
         return ResponseEntity.ok(khachHangService.pageKhachHang(pageNo, pageSize));
+    }
+
+    @GetMapping("/danhsachkhachhang")
+    public ResponseEntity<?> danhSachKhachHang(){
+        return ResponseEntity.ok(khachHangService.listKhachHang());
+    }
+
+    @GetMapping("/searchhangkhachhang")
+    public ResponseEntity<?> getAll( @RequestParam(name = "hangKhachHang", required = false) Integer hangKhachHang,
+                                    @RequestParam(defaultValue = "0", name = "pageNo", required = false) Integer pageNo,
+                                    @RequestParam(defaultValue = "5", name = "pageSize", required = false) Integer pageSize) {
+        return ResponseEntity.ok(khachHangService.pageSearchHang(pageNo, pageSize, hangKhachHang));
+    }
+
+    @GetMapping("/searchgioitinh")
+    public ResponseEntity<?> search(@RequestParam(name = "gioiTinh", required = false) Integer gioiTinh,
+                                    @RequestParam(defaultValue = "0", name = "pageNo", required = false) Integer pageNo,
+                                    @RequestParam(defaultValue = "5", name = "pageSize", required = false) Integer pageSize) {
+        return ResponseEntity.ok(khachHangService.pageSearchGioiTinh(pageNo, pageSize, gioiTinh));
     }
 
     @GetMapping("/search")
@@ -51,11 +75,10 @@ public class KhachHangController {
         return ResponseEntity.ok(khachHangService.listKhachHangInfo());
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("searchbyid/{id}")
     public ResponseEntity<?> getKhachHangId(@PathVariable("id") Long id) {
         return ResponseEntity.ok(khachHangService.getOne(id));
     }
-
     @GetMapping("/email/{email}")
     public ResponseEntity<?> getKhachHangEmail(@PathVariable String email) {
         return ResponseEntity.ok(khachHangService.findKhachHangByEmail(email));

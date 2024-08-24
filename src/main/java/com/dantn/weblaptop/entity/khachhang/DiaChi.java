@@ -2,6 +2,8 @@ package com.dantn.weblaptop.entity.khachhang;
 
 import com.dantn.weblaptop.entity.base.BaseEntity;
 import com.dantn.weblaptop.entity.hoadon.HoaDon;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -34,6 +36,7 @@ import java.util.Set;
 @Getter
 @ToString
 @FieldDefaults(level = AccessLevel.PRIVATE)
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class DiaChi extends BaseEntity {
     @Column(name = "trang_thai")
     Integer trangThai;
@@ -45,6 +48,12 @@ public class DiaChi extends BaseEntity {
     String sdtNguoiNhan;
     @Column(name = "email_nguoi_nhan")
     String emailNguoiNhan;
+    @Column(name = "id_Phuong_Xa")
+    Integer idPhuongXa;
+    @Column(name = "id_Quan_Huyen")
+    Integer idQuanHuyen;
+    @Column(name = "id_Tinh_Thanh_Pho")
+    Integer idTinhThanhPho;
     @Column(name = "dia_chi_nhan_hang")
     String diaChiNhanHang;
     @ManyToOne(cascade = {CascadeType.DETACH, CascadeType.PERSIST,

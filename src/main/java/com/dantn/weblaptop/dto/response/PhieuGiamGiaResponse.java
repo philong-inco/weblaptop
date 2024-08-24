@@ -6,6 +6,7 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Set;
 
@@ -26,9 +27,9 @@ public class PhieuGiamGiaResponse {
 
     String moTa;
 
-    LocalDateTime ngayBatDau;
+    LocalDate ngayBatDau;
 
-    LocalDateTime ngayHetHan;
+    LocalDate ngayHetHan;
 
     Integer loaiGiamGia;
 

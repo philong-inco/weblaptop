@@ -8,6 +8,9 @@ import com.dantn.weblaptop.entity.nhanvien.VaiTro;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Component
 @AllArgsConstructor
 public class VaiTroMapper_Implement implements VaiTro_Mapper {
@@ -48,5 +51,14 @@ public class VaiTroMapper_Implement implements VaiTro_Mapper {
         response.setMa(entity.getMa());
         response.setTrang_thai(entity.getTrangThai());
         return response;
+    }
+
+    @Override
+    public List<VaiTro_Response> listVaiTroEntityToVaiTroResponse(List<VaiTro> entityList) {
+        List<VaiTro_Response> responseList = new ArrayList<>(entityList.size());
+        for (VaiTro entity : entityList) {
+            responseList.add(toResponse(entity));
+        }
+        return responseList;
     }
 }

@@ -23,6 +23,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -94,13 +95,44 @@ public class HoaDonServiceImpl implements HoaDonService {
     }
 
     @Override
-    public List<HoaDonResponse> listBillByStatusAndType(String status, Integer type) {
+    public HoaDonResponse getBillById(Long id) throws AppException {
+        HoaDon existingBill = billRepository.findById(id).orElseThrow(
+                ()-> new AppException("Không thể lấy được thông tin hóa đơn"));
+
+        return HoaDonMapper.toHoaDonResponse(existingBill);
+    }
+
+    @Override
+    public HoaDonResponse getBillByIdAndStatus(Long id, String status) {
+        HoaDon bill = billRepository.findByIdAndTrangThai(id , HoaDonStatus.getHoaDonStatusEnum(status)).orElse(null);
+        if(bill!=null){
+            return  HoaDonMapper.toHoaDonResponse(bill);
+        }
+        return null;
+    }
+
+    @Override
+    public ResultPaginationResponse pageBillByStatusAndType(String status, Integer type, Optional<String> page, Optional<String> size) {
+        String sPage = page.isPresent() ? page.get() : "0";
+        String sSize = size.isPresent() ? size.get() : "5";
+        Pageable pageable = PageRequest.of(Integer.parseInt(sPage), Integer.parseInt(sSize), Sort.by("id").descending());
         HoaDonStatus billStatus = HoaDonStatus.getHoaDonStatusEnumByKey(status);
-        List<HoaDonResponse> listBill = billRepository.findByTrangThaiAndLoaiHoaDon(billStatus,type)
-                .stream().map(
-                        bill ->HoaDonMapper.toHoaDonResponse(bill)
-                ).toList();
-        return listBill;
+        Page<HoaDon> billPage = billRepository.findByTrangThaiAndLoaiHoaDon(billStatus,type,pageable);
+        Page<HoaDonResponse> responses = billPage.map(bill -> HoaDonMapper.toHoaDonResponse(bill));
+
+        Meta meta = Meta.builder()
+                .page(responses.getNumber())
+                .pageSize(responses.getSize())
+                .pages(responses.getTotalPages())
+                .total(responses.getTotalElements())
+                .build();
+
+        ResultPaginationResponse response = ResultPaginationResponse
+                .builder()
+                .meta(meta)
+                .result(responses.getContent())
+                .build();
+        return response;
     }
 
     @Override
@@ -118,5 +150,26 @@ public class HoaDonServiceImpl implements HoaDonService {
             billHistoryService.create(billHistoryRequest);
             billRepository.save(bill);
         }
+    }
+
+    @Override
+    public ResultPaginationResponse filterHoaDon(Specification<HoaDon> specification ,Pageable pageable) {
+        Page<HoaDon> billPage = billRepository.findAll(specification, pageable);
+        Page<HoaDonResponse> responses = billPage.map(
+                bill -> HoaDonMapper.toHoaDonResponse(bill)
+        );
+        Meta meta = Meta.builder()
+                .page(responses.getNumber())
+                .pageSize(responses.getSize())
+                .pages(responses.getTotalPages())
+                .total(responses.getTotalElements())
+                .build();
+
+        ResultPaginationResponse response = ResultPaginationResponse
+                .builder()
+                .meta(meta)
+                .result(responses.getContent())
+                .build();
+        return response;
     }
 }

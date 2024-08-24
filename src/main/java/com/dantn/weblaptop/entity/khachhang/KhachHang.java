@@ -4,6 +4,8 @@ import com.dantn.weblaptop.entity.base.BaseEntity;
 import com.dantn.weblaptop.entity.danhgia.DanhGia;
 import com.dantn.weblaptop.entity.hoadon.LichSuHoaDon;
 import com.dantn.weblaptop.entity.phieugiamgia.KhachHangPhieuGiamGia;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -31,6 +33,8 @@ import java.util.Set;
 @ToString
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
+
 public class KhachHang extends BaseEntity {
 
     String ma;

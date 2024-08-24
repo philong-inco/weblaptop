@@ -9,7 +9,8 @@ public enum HoaDonStatus {
     TRA_HANG_HOAN_TIEN("Trả hàng hoàn tiền"),
     HOAN_THANH("Hoàn thành"),
     HUY("Hủy"),
-    XOA("Xóa")
+    XOA("Xóa"),
+    XAC_NHAN("Xác nhận")
     ;
 
     HoaDonStatus(String name) {

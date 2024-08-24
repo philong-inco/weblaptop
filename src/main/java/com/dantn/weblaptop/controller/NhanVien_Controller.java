@@ -4,6 +4,7 @@ import com.dantn.weblaptop.dto.ChangeEmail_Dto;
 import com.dantn.weblaptop.dto.ForgotPassword_Dto;
 import com.dantn.weblaptop.dto.request.create_request.CreateNhanVien;
 import com.dantn.weblaptop.dto.request.update_request.UpdateNhanVien;
+import com.dantn.weblaptop.repository.NhanVien_Repositoy;
 import com.dantn.weblaptop.service.NhanVien_Service;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -23,16 +24,23 @@ import java.util.List;
 @RestController
 @Component
 @AllArgsConstructor
+@CrossOrigin(origins = "*")
 public class NhanVien_Controller {
 
     @Qualifier("nhanVien_Service")
     private final NhanVien_Service nhanVienService;
+    private final NhanVien_Repositoy nhanVien_Repositoy;
 
 
-    @GetMapping("")
+    @GetMapping("/all")
     public ResponseEntity<?> getAll(@RequestParam(defaultValue = "0", name = "pageNo", required = false) Integer pageNo,
                                     @RequestParam(defaultValue = "5", name = "pageSize", required = false) Integer pageSize) {
         return ResponseEntity.ok(nhanVienService.pageNhanVien(pageNo, pageSize));
+    }
+
+    @GetMapping("/danhsachnhanvien")
+    public ResponseEntity<?> getDanhSach() {
+        return ResponseEntity.ok(nhanVienService.getDanhSachNhanVien());
     }
 
     @GetMapping("/search")
@@ -42,14 +50,30 @@ public class NhanVien_Controller {
         return ResponseEntity.ok(nhanVienService.pageSearchNhanVien(pageNo, pageSize, search));
     }
 
-    @GetMapping("/list")
-    public ResponseEntity<?> listNhanVienAcitve() {
-        return ResponseEntity.ok(nhanVienService.listNhanVienResponse());
+    @GetMapping("/searchtrangthai")
+    public ResponseEntity<?> searchTrangThai(@RequestParam(name = "trangThai", required = false) Integer trangThai,
+                                    @RequestParam(defaultValue = "0", name = "pageNo", required = false) Integer pageNo,
+                                    @RequestParam(defaultValue = "5", name = "pageSize", required = false) Integer pageSize) {
+        return ResponseEntity.ok(nhanVienService.pageSearchTrangThaiNhanVien(pageNo, pageSize, trangThai));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> getNhanVienId(@PathVariable("id") Integer id) {
+    public ResponseEntity<?> getNhanVienId(@PathVariable("id") Long id) {
         return ResponseEntity.ok(nhanVienService.getOne(id));
+    }
+
+    @GetMapping("/searchgioitinh")
+    public ResponseEntity<?> searchGioiTinh(@RequestParam(name = "gioiTinh", required = false) Integer gioiTinh,
+                                             @RequestParam(defaultValue = "0", name = "pageNo", required = false) Integer pageNo,
+                                             @RequestParam(defaultValue = "5", name = "pageSize", required = false) Integer pageSize) {
+        return ResponseEntity.ok(nhanVienService.searchNhanVienByGioiTinh(pageNo, pageSize, gioiTinh));
+    }
+
+    @GetMapping("/searchyear")
+    public ResponseEntity<?> searchNamSinh(@RequestParam(name = "year", required = false) Integer year,
+                                            @RequestParam(defaultValue = "0", name = "pageNo", required = false) Integer pageNo,
+                                            @RequestParam(defaultValue = "5", name = "pageSize", required = false) Integer pageSize) {
+        return ResponseEntity.ok(nhanVienService.searchNhanVienByNamSinh(pageNo, pageSize, year));
     }
 
     @PostMapping("/create")
@@ -73,6 +97,11 @@ public class NhanVien_Controller {
     @PutMapping("/remove/{id}")
     public ResponseEntity<?> removeNhanVien(@PathVariable("id") Long id) {
         nhanVienService.removeOrRevert(id);
+        return ResponseEntity.ok("Remove Success");
+    }
+    @PutMapping("/rollBackStatus/{id}")
+    public ResponseEntity<?> rollBackStatusNhanVien(@PathVariable("id") Long id) {
+        nhanVienService.rollBackStatusNhanVien(id);
         return ResponseEntity.ok("Remove Success");
     }
 
@@ -102,9 +131,11 @@ public class NhanVien_Controller {
         return ResponseEntity.ok("Password was updated");
     }
 
-    @PutMapping("/updateimage/{email}")
-    public ResponseEntity<?> updateImage(@PathVariable("email") String email, @RequestParam("image") String image) {
-        this.nhanVienService.updateImageNV(image, email);
+    @PutMapping("/updateimage/{id}")
+    public ResponseEntity<?> updateImage(@PathVariable("id") Long id, @RequestParam("image") String image) {
+        this.nhanVienService.updateImageNV(image, id);
         return ResponseEntity.ok("Image was updated");
     }
+
+
 }
