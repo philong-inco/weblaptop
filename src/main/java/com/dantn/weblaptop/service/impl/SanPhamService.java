@@ -26,6 +26,7 @@ import com.dantn.weblaptop.generics.GenericsService;
 import com.dantn.weblaptop.generics.IGenericsMapper;
 import com.dantn.weblaptop.generics.IGenericsRepository;
 import com.dantn.weblaptop.repository.SanPhamRepository;
+import com.dantn.weblaptop.util.ConvertStringToArray;
 import com.dantn.weblaptop.util.GenerateCode;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -33,6 +34,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class SanPhamService extends GenericsService<SanPham, Long, SanPhamCreate, SanPhamUpdate, SanPhamResponse> {
@@ -88,9 +90,9 @@ public class SanPhamService extends GenericsService<SanPham, Long, SanPhamCreate
 
     public Page<SanPhamResponse> findWithFilterByName(FindSanPhamFilterByName attribute, Pageable pageable) {
         Specification<SanPham> spec = Specification
-                .where(SanPhamSpecifications.hasTen(attribute.getTenSanPham()))
-                .and(SanPhamSpecifications.hasMa(attribute.getMa()))
-                .and(SanPhamSpecifications.hasTrangThai(attribute.getTrangThai()))
+                .where(SanPhamSpecifications.hasTen(ConvertStringToArray.toArray(attribute.getTenSanPham())))
+                .and(SanPhamSpecifications.hasMa(ConvertStringToArray.toArray(attribute.getMa())))
+                .and(SanPhamSpecifications.hasTrangThai(ConvertStringToArray.toArray(attribute.getTrangThai())))
                 .and(SanPhamSpecifications.ngayTaoTruoc(attribute.getNgayTaoTruoc()))
                 .and(SanPhamSpecifications.ngayTaoSau(attribute.getNgayTaoSau()))
                 .and(SanPhamSpecifications.ngaySuaTruoc(attribute.getNgaySuaTruoc()))
@@ -116,9 +118,9 @@ public class SanPhamService extends GenericsService<SanPham, Long, SanPhamCreate
 
     public Page<SanPhamResponse> findWithFilterById(FindSanPhamFilterByName attribute, Pageable pageable) {
         Specification<SanPham> spec = Specification
-                .where(SanPhamSpecifications.hasTen(attribute.getTenSanPham()))
-                .and(SanPhamSpecifications.hasMa(attribute.getMa()))
-                .and(SanPhamSpecifications.hasTrangThai(attribute.getTrangThai()))
+                .where(SanPhamSpecifications.hasTen(ConvertStringToArray.toArray(attribute.getTenSanPham())))
+                .and(SanPhamSpecifications.hasMa(ConvertStringToArray.toArray(attribute.getMa())))
+                .and(SanPhamSpecifications.hasTrangThai(ConvertStringToArray.toArray(attribute.getTrangThai())))
                 .and(SanPhamSpecifications.ngayTaoTruoc(attribute.getNgayTaoTruoc()))
                 .and(SanPhamSpecifications.ngayTaoSau(attribute.getNgayTaoSau()))
                 .and(SanPhamSpecifications.ngaySuaTruoc(attribute.getNgaySuaTruoc()))
@@ -140,5 +142,16 @@ public class SanPhamService extends GenericsService<SanPham, Long, SanPhamCreate
                 .and(SanPhamSpecifications.hasGiaLonHon(attribute.getGiaLonHon()));
 
         return genericsMapper.pageEntityToPageResponse(sanPhamRepository.findAll(spec, pageable));
+    }
+
+    public boolean setStatus(Long id, Integer status) {
+        Optional<SanPham> result = sanPhamRepository.findById(id);
+        if (result.isPresent()) {
+            SanPham sanPham = result.get();
+            sanPham.setTrangThai(status);
+            if (sanPhamRepository.save(sanPham) != null)
+                return true;
+        }
+        return false;
     }
 }

@@ -20,7 +20,7 @@ public class SanPhamChiTietSpecificationJoin extends GenericsSpecificationAttrib
     public Specification<SanPhamChiTiet> hasNhuCau(String[] nhuCau) {
         return (root, query, builder) -> {
             if (nhuCau == null || nhuCau.length == 0)
-                builder.conjunction();
+                return builder.conjunction();
 
             Join<SanPhamChiTiet, SanPham> sanPhamJoin = root.join("sanPham", JoinType.LEFT);
             Join<SanPham, NhuCau> nhuCauJoin = sanPhamJoin.join("nhuCau", JoinType.LEFT);
@@ -36,7 +36,7 @@ public class SanPhamChiTietSpecificationJoin extends GenericsSpecificationAttrib
     public Specification<SanPhamChiTiet> hasThuongHieu(String[] thuongHieu) {
         return (root, query, builder) -> {
             if (thuongHieu == null || thuongHieu.length == 0)
-                builder.conjunction();
+                return builder.conjunction();
 
             Join<SanPhamChiTiet, SanPham> sanPhamJoin = root.join("sanPham", JoinType.LEFT);
             Join<SanPham, ThuongHieu> thuongHieuJoin = sanPhamJoin.join("thuongHieu", JoinType.LEFT);

@@ -14,7 +14,10 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.repository.query.Param;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -23,6 +26,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
+@CrossOrigin(origins = "*")
 @RequestMapping("/api/san-pham/")
 public class SanPhamController extends GenericsController<SanPham, Long, SanPhamCreate, SanPhamUpdate, SanPhamResponse> {
 
@@ -32,6 +36,29 @@ public class SanPhamController extends GenericsController<SanPham, Long, SanPham
                              SanPhamService sanPhamService) {
         super(genericsService);
         this.sanPhamService = sanPhamService;
+    }
+
+    @GetMapping("/change-status")
+    public ResponseEntity<ResponseLong<Boolean>> setStatus(
+            @RequestParam("id") String idStr,
+            @RequestParam("status") String statusStr) {
+        try {
+            Long id = Long.valueOf(idStr);
+            Integer status = Integer.valueOf(statusStr);
+            if (!(status == 1 || status == 0))
+                throw new RuntimeException("Status invalid");
+            if (!sanPhamService.setStatus(id, status))
+                throw new RuntimeException("Set status failed");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+                    new ResponseLong<>(200, "Change status successfully", true
+                            , null, null, null, null)
+            );
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+                    new ResponseLong<>(999, "Params invaild", false
+                            , null, null, null, null)
+            );
+        }
     }
 
     @GetMapping("find/filter-name")

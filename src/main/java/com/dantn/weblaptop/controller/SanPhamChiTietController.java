@@ -15,12 +15,15 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -75,13 +78,16 @@ public class SanPhamChiTietController {
         );
     }
 
-    @PostMapping("update/{id}")
+    @PutMapping("update/{id}")
     public ResponseEntity<ResponseLong<SanPhamChiTietResponse>> update(@RequestBody @Valid SanPhamChiTietUpdate update,
                                                                        @PathVariable("id") String idStr) {
         try {
             Long id = Long.valueOf(idStr);
             if (id != update.getId())
                 throw new RuntimeException("ID invalid");
+            if (service.isExistSanPhamChiTietByUpdate(update)){
+                throw new RuntimeException("Produc is exist");
+            }
         } catch (Exception e) {
             throw new RuntimeException("ID invalid");
         }
@@ -93,7 +99,7 @@ public class SanPhamChiTietController {
 
     }
 
-    @GetMapping("delete/{id}")
+    @DeleteMapping("delete/{id}")
     public ResponseEntity<ResponseLong<String>> delete(@PathVariable("id") String idStr) {
         try {
             Long id = Long.valueOf(idStr);
@@ -120,6 +126,7 @@ public class SanPhamChiTietController {
             @RequestParam(value = "ngaySuaSau", required = false, defaultValue = "") String ngaySuaSau,
             @RequestParam(value = "thuongHieu", required = false, defaultValue = "") String thuongHieu,
             @RequestParam(value = "nhuCau", required = false, defaultValue = "") String nhuCau,
+            @RequestParam(value = "mauSac", required = false, defaultValue = "") String mauSac,
             @RequestParam(value = "ram", required = false, defaultValue = "") String ram,
             @RequestParam(value = "cpu", required = false, defaultValue = "") String cpu,
             @RequestParam(value = "vga", required = false, defaultValue = "") String vga,
@@ -132,11 +139,63 @@ public class SanPhamChiTietController {
             @RequestParam(value = "giaLonHon", required = false, defaultValue = "") String giaLonHon
     ) {
 
-        FindSanPhamChiTietByFilter filter = FindSanPhamChiTietByFilter.builder().build();
+        FindSanPhamChiTietByFilter filter = FindSanPhamChiTietByFilter.builder()
+                .tenSanPham(tenSP)
+                .maSanPham(maSP)
+                .maSanPhamChiTiet(maSPCT)
+                .trangThai(trangThai)
+                .ngayTaoSau(ngayTaoSau)
+                .ngayTaoTruoc(ngayTaoTruoc)
+                .ngaySuaSau(ngaySuaSau)
+                .ngaySuaTruoc(ngaySuaTruoc)
+                .thuongHieu(thuongHieu)
+                .nhuCau(nhuCau)
+                .ram(ram)
+                .cpu(cpu)
+                .vga(vga)
+                .mauSac(mauSac)
+                .webcam(webcam)
+                .oCung(oCung)
+                .manHinh(manHinh)
+                .heDieuHanh(heDieuHanh)
+                .banPhim(banPhim)
+                .giaLonHon(giaLonHon)
+                .giaNhoHon(giaNhoHon)
+                .build();
         return ResponseEntity.ok().body(new ResponseLong<>(
                 200, "Find successfully",
                 service.findByFilter(filter),
                 null, null, null, null
+        ));
+    }
+
+    @PostMapping("/valid-for-add")
+    public ResponseEntity<ResponseLong<Boolean>> validForAdd(@RequestBody @Valid SanPhamChiTietCreate create){
+        if (service.isExistSanPhamChiTietByCreate(create))
+            return ResponseEntity.ok(new ResponseLong<>(
+                    200,
+                    "Hợp lệ",
+                    true, null, null, null, null
+            ));
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseLong<>(
+                999,
+                "Biến thể đã tồn tại",
+                true, null, null, null, null
+        ));
+    }
+
+    @PostMapping("/valid-for-update")
+    public ResponseEntity<ResponseLong<Boolean>> validForAdd(@RequestBody @Valid SanPhamChiTietUpdate update){
+        if (service.isExistSanPhamChiTietByUpdate(update))
+            return ResponseEntity.ok(new ResponseLong<>(
+                    200,
+                    "Hợp lệ",
+                    true, null, null, null, null
+            ));
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseLong<>(
+                999,
+                "Biến thể đã tồn tại",
+                true, null, null, null, null
         ));
     }
 }
