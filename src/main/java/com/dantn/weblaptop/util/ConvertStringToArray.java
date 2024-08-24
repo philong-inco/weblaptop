@@ -2,7 +2,7 @@ package com.dantn.weblaptop.util;
 
 public class ConvertStringToArray {
     public static String[] toArray(String str) {
-        if (str.isBlank())
+        if (str == null || str.isBlank())
             return null;
         String regex = "[,\\-\\.]";
         String[] array = str.split(regex);
@@ -10,8 +10,8 @@ public class ConvertStringToArray {
     }
 
     public static String[] trimArray(String[] arr) {
-        for (String str : arr) {
-            str = str.trim();
+        for (int i = 0; i < arr.length; i++) {
+            arr[i] = arr[i].trim();
         }
         return arr;
     }

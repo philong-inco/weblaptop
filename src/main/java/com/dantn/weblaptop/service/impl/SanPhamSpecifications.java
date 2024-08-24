@@ -17,11 +17,15 @@ import java.util.List;
 
 public class SanPhamSpecifications {
 
-    public static Specification<SanPham> hasTen(String name) {
+    public static Specification<SanPham> hasTen(String[] names) {
         return (root, query, builder) -> {
-            if (name == null || name.isBlank())
+            if (names == null || names.length == 0)
                 return builder.conjunction();
-            return builder.like(root.get("ten"), "%" + name.toLowerCase() + "%");
+            List<Predicate> predicates = new ArrayList<>();
+            for (String name:names) {
+                predicates.add(builder.like(builder.lower(root.get("ten")), "%" + name.toLowerCase() +"%"));
+            }
+            return builder.or(predicates.toArray(new Predicate[0]));
         };
     }
 
@@ -60,19 +64,27 @@ public class SanPhamSpecifications {
         };
     }
 
-    public static Specification<SanPham> hasTrangThai(String trangThai) {
+    public static Specification<SanPham> hasTrangThai(String[] trangThais) {
         return (root, query, builder) -> {
-            if (trangThai == null || trangThai.isBlank())
+            if (trangThais == null || trangThais.length == 0)
                 return builder.conjunction();
-            return builder.equal(root.get("trangThai"), Integer.valueOf(trangThai));
+            List<Predicate> predicates = new ArrayList<>();
+            for (String trangThai: trangThais) {
+                predicates.add(builder.equal(root.get("trangThai"), Integer.valueOf(trangThai)));
+            }
+            return builder.or(predicates.toArray(new Predicate[0]));
         };
     }
 
-    public static Specification<SanPham> hasMa(String ma) {
+    public static Specification<SanPham> hasMa(String[] mas) {
         return (root, query, builder) -> {
-            if (ma == null || ma.isBlank())
+            if (mas == null || mas.length == 0)
                 return builder.conjunction();
-            return builder.equal(root.get("ma"), ma.toLowerCase());
+            List<Predicate> predicates = new ArrayList<>();
+            for (String ma:mas) {
+                predicates.add(builder.equal(builder.lower(root.get("ma")), ma.toLowerCase()));
+            }
+            return builder.or(predicates.toArray(new Predicate[0]));
         };
     }
 

@@ -33,4 +33,6 @@ public interface IGenericsService<E, ID, C, U, R> {
     boolean existByName(String name);
 
     boolean existByNameAndDifferentId(String name, ID id);
+
+
 }
