@@ -3,12 +3,7 @@ package com.dantn.weblaptop.entity.nhanvien;
 import com.dantn.weblaptop.entity.base.BaseEntity;
 import com.dantn.weblaptop.entity.hoadon.HoaDon;
 import com.dantn.weblaptop.entity.hoadon.LichSuHoaDon;
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -68,4 +63,10 @@ public class NhanVien extends BaseEntity {
     @ToString.Exclude
     Set<HoaDon> hoaDons;
 
+    @OneToMany(mappedBy = "nhanVien",
+            cascade = {CascadeType.DETACH, CascadeType.PERSIST,
+                    CascadeType.MERGE, CascadeType.REFRESH},
+            fetch = FetchType.LAZY)
+    @ToString.Exclude
+    Set<LichLamViec> lichLamViecs;
 }
