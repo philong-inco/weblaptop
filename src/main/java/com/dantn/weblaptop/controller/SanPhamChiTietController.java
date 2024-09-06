@@ -171,7 +171,7 @@ public class SanPhamChiTietController {
 
     @PostMapping("/valid-for-add")
     public ResponseEntity<ResponseLong<Boolean>> validForAdd(@RequestBody @Valid SanPhamChiTietCreate create){
-        if (service.isExistSanPhamChiTietByCreate(create))
+        if (!service.isExistSanPhamChiTietByCreate(create))
             return ResponseEntity.ok(new ResponseLong<>(
                     200,
                     "Hợp lệ",
@@ -186,7 +186,7 @@ public class SanPhamChiTietController {
 
     @PostMapping("/valid-for-update")
     public ResponseEntity<ResponseLong<Boolean>> validForAdd(@RequestBody @Valid SanPhamChiTietUpdate update){
-        if (service.isExistSanPhamChiTietByUpdate(update))
+        if (!service.isExistSanPhamChiTietByUpdate(update))
             return ResponseEntity.ok(new ResponseLong<>(
                     200,
                     "Hợp lệ",
