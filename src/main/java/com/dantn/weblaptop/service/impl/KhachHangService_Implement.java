@@ -1,5 +1,6 @@
 package com.dantn.weblaptop.service.impl;
 
+import com.dantn.weblaptop.constant.EmailSender;
 import com.dantn.weblaptop.dto.InfomationKhachHang;
 import com.dantn.weblaptop.dto.request.create_request.CreateKhachHang;
 import com.dantn.weblaptop.dto.request.update_request.UpdateKhachHang;
@@ -41,6 +42,9 @@ public class KhachHangService_Implement implements KhachHang_Service {
 
     @Autowired
     KhachHang_Mapper khachHangMapper;
+
+    @Autowired
+    EmailSender emailSender;
 
     @Override
     public Page<KhachHangResponse> pageKhachHang(Integer pageNo, Integer size) {
@@ -130,6 +134,7 @@ public class KhachHangService_Implement implements KhachHang_Service {
                 diaChi.setKhachHang(khSave);
                 diaChiRepository.save(diaChi);
             }
+            emailSender.newEmployeeSendEmail(khachHang);
             return khachHangMapper.entityToResponseKhachHang(khSave);
         } catch (Exception ex) {
             throw new RuntimeException("Failed to create khach hang. Possibly duplicate record." + ex);

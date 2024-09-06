@@ -61,4 +61,5 @@ public interface NhanVien_Repositoy extends JpaRepository<NhanVien, Long>{
 
     @Query(value = "SELECT nv FROM NhanVien nv WHERE YEAR(nv.ngaySinh) = :year")
     Page<NhanVien> getNhanVienByNamSinh (Pageable pageable,@Param("year") Integer year);
+
 }
