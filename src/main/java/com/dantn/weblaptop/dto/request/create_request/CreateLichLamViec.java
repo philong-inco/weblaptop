@@ -8,6 +8,8 @@ import jakarta.validation.constraints.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.time.LocalDate;
+import java.util.Date;
 import java.util.List;
 
 @Data
@@ -16,12 +18,14 @@ import java.util.List;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class CreateLichLamViec {
     @JsonProperty("chuThich")
-    @NotEmpty(message = "Chú thích không được để trống")
     @Size(max = 255, message = "Chú thích không được vượt quá 255 ký tự")
     private String chuThich;
 
     private Long idNhanVien;
 
     private Long idCaLamViec;
+
+    private LocalDate ngayLamViec;
+
 }
 

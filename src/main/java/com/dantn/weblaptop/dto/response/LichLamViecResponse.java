@@ -5,6 +5,8 @@ import com.dantn.weblaptop.entity.nhanvien.NhanVien;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.time.LocalDate;
+
 @Data
 @Builder
 @AllArgsConstructor
@@ -12,6 +14,7 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class LichLamViecResponse {
     private String chuThich;
-    private NhanVien nhanVien;
-    private CaLamViec caLamViec;
+    private Long nhanVien;
+    private Long caLamViec;
+    private LocalDate ngayLamViec;
 }
