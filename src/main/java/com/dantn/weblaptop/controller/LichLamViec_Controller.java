@@ -2,8 +2,6 @@ package com.dantn.weblaptop.controller;
 
 import com.dantn.weblaptop.dto.request.create_request.CreateLichLamViec;
 import com.dantn.weblaptop.dto.request.update_request.UpdateLichLamViec;
-import com.dantn.weblaptop.dto.request.update_request.UpdateNhanVien;
-import com.dantn.weblaptop.entity.nhanvien.LichLamViec;
 import com.dantn.weblaptop.service.LichLamViec_Service;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -33,7 +31,7 @@ public class LichLamViec_Controller {
         return ResponseEntity.ok(lichlamviec_service.getLichLamViecByIdNhanVien(id));
     }
 
-    @PostMapping("/themlichnhanvien")
+    @PostMapping("/addlichnhanvien")
      public ResponseEntity<?> themlich(@Valid @RequestBody CreateLichLamViec lichlamviec, BindingResult result) {
         if(result.hasErrors()) {
             List<ObjectError> list = result.getAllErrors();

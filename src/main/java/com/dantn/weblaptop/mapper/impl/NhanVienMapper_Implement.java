@@ -69,7 +69,6 @@ public class NhanVienMapper_Implement implements NhanVien_Mapper {
         response.setNgaySinh(entity.getNgaySinh());
         response.setGioiTinh(entity.getGioiTinh());
         response.setHinhAnh(entity.getHinhAnh());
-
         response.setNgayBatDauLamViec(entity.getNgayBatDauLamViec());
         response.setNgayThoiViec(entity.getNgayThoiViec());
         response.setDiaChi(entity.getDiaChi());

@@ -6,7 +6,6 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDate;
-import java.util.List;
 import java.util.Set;
 
 
@@ -27,8 +26,6 @@ public class CaLamViec extends BaseEntity {
     String moTa;
     @Column(name = "trang_thai")
     Integer trangThai;
-    @Column(name = "ngay_lam_viec")
-    LocalDate ngayLamViec;
     @OneToMany(mappedBy = "caLamViec",
             cascade = {CascadeType.DETACH, CascadeType.PERSIST,
             CascadeType.MERGE, CascadeType.REFRESH},

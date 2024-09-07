@@ -21,6 +21,7 @@ public class LichLamViecMapper_Implement implements LichLamViec_Mapper {
 
         LichLamViec lichLamViec = new LichLamViec();
         lichLamViec.setChuThich(createLichLamViec.getChuThich());
+        lichLamViec.setNgayLamViec(createLichLamViec.getNgayLamViec());
         return lichLamViec;
     }
 
@@ -32,6 +33,7 @@ public class LichLamViecMapper_Implement implements LichLamViec_Mapper {
 
         LichLamViec lichLamViec = new LichLamViec();
         lichLamViec.setChuThich(updateLichLamViec.getChuThich());
+        lichLamViec.setNgayLamViec(updateLichLamViec.getNgayLamViec());
         return lichLamViec;
     }
 
@@ -43,6 +45,10 @@ public class LichLamViecMapper_Implement implements LichLamViec_Mapper {
 
         LichLamViecResponse response = new LichLamViecResponse();
         response.setChuThich(lichLamViec.getChuThich());
+        response.setNgayLamViec(lichLamViec.getNgayLamViec());
+        response.setNhanVien(lichLamViec.getNhanVien().getId());
+        response.setCaLamViec(lichLamViec.getCaLamViec().getId());
+
         return response;
     }
 

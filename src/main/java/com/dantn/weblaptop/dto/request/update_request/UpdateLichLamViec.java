@@ -9,6 +9,7 @@ import jakarta.validation.constraints.Size;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Getter
@@ -23,4 +24,5 @@ public class UpdateLichLamViec {
     private String chuThich;
     private Long idNhanVien;
     private Long idCaLamViec;
+    private LocalDate ngayLamViec;
 }

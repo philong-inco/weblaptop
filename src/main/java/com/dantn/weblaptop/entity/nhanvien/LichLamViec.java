@@ -5,6 +5,8 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.time.LocalDate;
+
 @Entity
 @Table(name = "lich_lam_viec")
 @NoArgsConstructor
@@ -20,6 +22,8 @@ public class LichLamViec extends BaseEntity {
     String chuThich;
     @Column(name = "trang_thai")
     Integer trangThai;
+    @Column(name = "ngay_lam_viec")
+    LocalDate ngayLamViec;
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "id_nhan_vien")
     NhanVien nhanVien;
