@@ -7,6 +7,7 @@ import com.dantn.weblaptop.dto.response.Meta;
 import com.dantn.weblaptop.dto.response.ResultPaginationResponse;
 import com.dantn.weblaptop.entity.hoadon.HinhThucThanhToan;
 import com.dantn.weblaptop.exception.AppException;
+import com.dantn.weblaptop.exception.ErrorCode;
 import com.dantn.weblaptop.mapper.impl.HinhThucThanhToanMapper;
 import com.dantn.weblaptop.repository.HinhThucThanhToanRepository;
 import com.dantn.weblaptop.service.HinhThucThanhToanService;
@@ -62,7 +63,7 @@ public class HinhThucThanhToanServiceImpl implements HinhThucThanhToanService {
     @Override
     public HinhThucThanhToanResponse update(Long id, UpdateHinhThucThanhToanRequest request) throws AppException {
         HinhThucThanhToan existingPaymentMethod = paymentMethodRepository.findById(id).orElseThrow(
-                () -> new AppException("Không tìm được hình thức thanh toán với ID : " + id));
+                () -> new AppException(ErrorCode.PAYMENT_METHOD_NOT_FOUND));
         HinhThucThanhToanMapper.update(request, existingPaymentMethod);
         HinhThucThanhToanResponse response = HinhThucThanhToanMapper.toHinhThucThanhToanResponse(
                 paymentMethodRepository.save(existingPaymentMethod));

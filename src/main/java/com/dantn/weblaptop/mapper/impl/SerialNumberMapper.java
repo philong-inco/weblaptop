@@ -45,10 +45,11 @@ public class SerialNumberMapper extends GenericsMapper<SerialNumber, SerialNumbe
                 .mauSac(entity.getSanPhamChiTiet().getMauSac().getTen())
                 .oCung(entity.getSanPhamChiTiet().getOCung().getTen())
                 .vga(entity.getSanPhamChiTiet().getVga().getTen())
-                .ngayTao(entity.getNgayTao() + "")
-                .ngaySua(entity.getNgaySua() + "")
-                .nguoiTao(entity.getNguoiTao())
-                .nguoiSua(entity.getNguoiSua())
+                // manh cmt
+//                .ngayTao(entity.getNgayTao() + "")
+//                .ngaySua(entity.getNgaySua() + "")
+//                .nguoiTao(entity.getNguoiTao())
+//                .nguoiSua(entity.getNguoiSua())
                 .build();
         response.convertTime();
         return response;

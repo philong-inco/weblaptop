@@ -3,6 +3,7 @@ package com.dantn.weblaptop.entity.phieugiamgia;
 import com.dantn.weblaptop.entity.base.BaseEntity;
 import com.dantn.weblaptop.entity.hoadon.HoaDon;
 import com.dantn.weblaptop.entity.khachhang.KhachHang;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -44,6 +45,7 @@ public class PhieuGiamGia extends BaseEntity {
     @Column(name = "ngay_bat_dau")
     LocalDate ngayBatDau;
     @Column(name = "ngay_het_han")
+    @JsonFormat(pattern = "dd-MM-yyyy")
     LocalDate ngayHetHan;
     @Column(name = "loai_giam_gia")
     Integer loaiGiamGia;
@@ -52,9 +54,9 @@ public class PhieuGiamGia extends BaseEntity {
     @Column(name = "gia_tri_don_toi_thieu")
     BigDecimal giaTriDonToiThieu;
     @Column(name = "giam_toi_da")
-    BigDecimal giamToiGia;
+    BigDecimal giamToiDa;
     @Column(name = "pham_vi_ap_dung")
-    Integer phamViApDung;
+    Integer phamViApDung; // 1 công khai
     @Column(name = "so_luong")
     Integer soLuong;
     @OneToMany(mappedBy = "phieuGiamGia",

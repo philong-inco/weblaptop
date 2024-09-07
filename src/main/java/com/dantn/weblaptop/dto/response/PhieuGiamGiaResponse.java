@@ -8,6 +8,7 @@ import lombok.experimental.FieldDefaults;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Set;
 
 @Getter
@@ -49,5 +50,7 @@ public class PhieuGiamGiaResponse {
 
     String nguoiSua;
 
-    Set<KhachHangPhieuGiamGia> khachHangPhieuGiamGias;
+    Integer soLuong;
+
+    Set<Long> khachHangPhieuGiamGias;
 }

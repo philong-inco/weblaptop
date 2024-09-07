@@ -9,11 +9,13 @@ import com.dantn.weblaptop.dto.response.ResultPaginationResponse;
 import com.dantn.weblaptop.entity.hoadon.HoaDon;
 import com.dantn.weblaptop.entity.nhanvien.NhanVien;
 import com.dantn.weblaptop.exception.AppException;
+import com.dantn.weblaptop.exception.ErrorCode;
 import com.dantn.weblaptop.mapper.impl.HoaDonMapper;
 import com.dantn.weblaptop.repository.HoaDonRepository;
 import com.dantn.weblaptop.repository.NhanVienRepository;
 import com.dantn.weblaptop.service.HoaDonService;
 import com.dantn.weblaptop.service.LichSuHoaDonService;
+import com.dantn.weblaptop.util.BillUtils;
 import com.dantn.weblaptop.util.GenerateCode;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -65,7 +67,7 @@ public class HoaDonServiceImpl implements HoaDonService {
     public HoaDonResponse createBill() throws AppException {
         List<HoaDon> billListStatusPending = billRepository.findByTrangThaiAndLoaiHoaDon(HoaDonStatus.getHoaDonStatusEnum("Đơn mới"), 0);
         if (billListStatusPending.size() >= 5) {
-            throw new AppException("Chỉ được tạo 5 hóa đơn");
+            throw new AppException(ErrorCode.MAXIMUM_5);
         }
         NhanVien existingEmployee = employeeRepository.findById(1L).get();
         // save
@@ -97,7 +99,7 @@ public class HoaDonServiceImpl implements HoaDonService {
     @Override
     public HoaDonResponse getBillById(Long id) throws AppException {
         HoaDon existingBill = billRepository.findById(id).orElseThrow(
-                ()-> new AppException("Không thể lấy được thông tin hóa đơn"));
+                ()-> new AppException(ErrorCode.BILL_NOT_FOUND));
 
         return HoaDonMapper.toHoaDonResponse(existingBill);
     }
@@ -143,7 +145,7 @@ public class HoaDonServiceImpl implements HoaDonService {
             bill.setTrangThai(HoaDonStatus.getHoaDonStatusEnumByKey(status));
             CreateLichSuHoaDonRequest billHistoryRequest = new CreateLichSuHoaDonRequest();
             billHistoryRequest.setIdHoaDon(bill.getId());
-            billHistoryRequest.setTrangThai(8);
+            billHistoryRequest.setTrangThai(BillUtils.convertBillStatusEnumToInteger(bill.getTrangThai()));
             // sủa khi có security
             billHistoryRequest.setIdNhanVien(1L);
             // save

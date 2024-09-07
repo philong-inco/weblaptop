@@ -1,5 +1,6 @@
 package com.dantn.weblaptop.service;
 
+<<<<<<< HEAD
 import com.dantn.weblaptop.dto.request.create_request.SerialNumberCreate;
 import com.dantn.weblaptop.dto.request.update_request.SerialNumberUpdate;
 import com.dantn.weblaptop.dto.response.SerialNumberResponse;
@@ -24,4 +25,12 @@ public interface SerialNumberService {
 
     SerialNumberResponse findById(Long id);
     SerialNumberResponse findByMa(String ma);
+=======
+import com.dantn.weblaptop.entity.sanpham.SerialNumber;
+
+import java.util.List;
+
+public interface SerialNumberService {
+    List<SerialNumber> getSerialNumberByProductIdAndStatus(Long productId, Integer status);
+>>>>>>> manhntph37150
 }

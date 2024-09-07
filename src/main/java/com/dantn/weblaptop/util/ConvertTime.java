@@ -23,10 +23,23 @@ public class ConvertTime {
         return date.getTime();
     }
 
+    public static long convertStringToLong2(String time) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        LocalDate localDate = LocalDate.parse(time, formatter);
+        Date date = Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
+        return date.getTime();
+    }
+
     public static LocalDateTime convertStringToLocalDateTime(String time) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm");
         LocalDateTime localDateTime = LocalDateTime.parse(time, formatter);
         return localDateTime;
+    }
+
+    public static Long convertLocalDateToLong(String time) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        LocalDate localDate = LocalDate.parse(time, formatter);
+        return localDate.atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli();
     }
 
     public static void main(String[] args) {

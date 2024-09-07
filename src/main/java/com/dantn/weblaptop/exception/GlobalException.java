@@ -2,6 +2,7 @@ package com.dantn.weblaptop.exception;
 
 
 import com.dantn.weblaptop.dto.response.ApiResponse;
+import com.dantn.weblaptop.dto.response.ApiResponseError;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -19,18 +20,19 @@ public class GlobalException {
     @ExceptionHandler(value = Exception.class)
     public ResponseEntity<ApiResponse<Object>> handleAllException(Exception exception) {
         ApiResponse<Object> apiResponse = new ApiResponse<>();
-        apiResponse.setStatusCode(HttpStatus.BAD_REQUEST.value());
+        apiResponse.setStatusCode(ErrorCode.UNCATEGORIZED_EXCEPTION.getCode());
         apiResponse.setError(exception.getMessage());
-        apiResponse.setMessage("Exception : ");
+        apiResponse.setMessage("Exception : " + ErrorCode.UNCATEGORIZED_EXCEPTION.getCode());
         return ResponseEntity.badRequest().body(apiResponse);
     }
 
     @ExceptionHandler(value = AppException.class)
     public ResponseEntity<ApiResponse<Object>> handleAppException(AppException exception) {
+        ErrorCode errorCode = exception.getErrorCode();
         ApiResponse<Object> apiResponse = new ApiResponse<>();
-        apiResponse.setStatusCode(HttpStatus.BAD_REQUEST.value());
-        apiResponse.setError(exception.getMessage());
-        apiResponse.setMessage("AppException ...");
+        apiResponse.setStatusCode(errorCode.getCode());
+        apiResponse.setError(errorCode.getMessage());
+        apiResponse.setMessage(errorCode.getMessage());
         return ResponseEntity.badRequest().body(apiResponse);
     }
 
@@ -46,22 +48,35 @@ public class GlobalException {
     @ExceptionHandler(value = NoResourceFoundException.class)
     public ResponseEntity<ApiResponse<Object>> handleNoResourceFoundException(NoResourceFoundException exception) {
         ApiResponse<Object> apiResponse = new ApiResponse<>();
-        apiResponse.setStatusCode(HttpStatus.NOT_FOUND.value());
-        apiResponse.setError(exception.getMessage());
+        apiResponse.setStatusCode(ErrorCode.NOT_FOUND.getCode());
+        apiResponse.setError(ErrorCode.NOT_FOUND.getMessage());
         apiResponse.setMessage("404 : Not found");
         return ResponseEntity.badRequest().body(apiResponse);
     }
 
     @ExceptionHandler(value = MethodArgumentNotValidException.class)
-    public ResponseEntity<ApiResponse<Object>> handleValidationError(MethodArgumentNotValidException exception) {
+    public ResponseEntity<ApiResponse<List<ApiResponseError>>> handleValidationError(MethodArgumentNotValidException exception) {
         BindingResult result = exception.getBindingResult();
         final List<FieldError> fieldErrors = result.getFieldErrors();
-        ApiResponse<Object> apiResponse = new ApiResponse<>();
+        List<ApiResponseError> errors = fieldErrors.stream()
+                .map(fieldError -> {
+                    String enumKey = fieldError.getDefaultMessage();
+                    ErrorCode errorCode;
+                    try {
+                        errorCode = ErrorCode.valueOf(enumKey);
+                    } catch (IllegalArgumentException e) {
+                        errorCode = ErrorCode.UNCATEGORIZED_EXCEPTION;
+                    }
+                    ApiResponseError apiError = new ApiResponseError();
+                    apiError.setField(fieldError.getField());
+                    apiError.setMessages(errorCode.getMessage());
+                    apiError.setErrorCode(errorCode.getCode());
+                    return apiError;
+                }).toList();
+        ApiResponse<List<ApiResponseError>> apiResponse = new ApiResponse<>();
         apiResponse.setStatusCode(HttpStatus.BAD_REQUEST.value());
-        apiResponse.setError(exception.getBody().getDetail());
-        List<String> error = fieldErrors.stream().map(
-                f -> f.getDefaultMessage()).toList();
-        apiResponse.setMessage(error.size() > 1 ? error : error.get(0));
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(apiResponse);
+        apiResponse.setError("Validation failed");
+        apiResponse.setMessage(errors);
+        return ResponseEntity.badRequest().body(apiResponse);
     }
 }
