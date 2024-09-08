@@ -1,36 +1,29 @@
 package com.dantn.weblaptop.service.impl;
 
-<<<<<<< HEAD
 import com.dantn.weblaptop.dto.request.create_request.SerialNumberCreate;
 import com.dantn.weblaptop.dto.request.update_request.SerialNumberUpdate;
-import com.dantn.weblaptop.dto.response.SanPhamChiTietResponse;
+import com.dantn.weblaptop.dto.response.Meta;
+import com.dantn.weblaptop.dto.response.ResultPaginationResponse;
 import com.dantn.weblaptop.dto.response.SerialNumberResponse;
 import com.dantn.weblaptop.entity.sanpham.SanPhamChiTiet;
 import com.dantn.weblaptop.entity.sanpham.SerialNumber;
 import com.dantn.weblaptop.mapper.impl.SerialNumberMapper;
 import com.dantn.weblaptop.repository.SanPhamChiTietRepository;
-=======
-import com.dantn.weblaptop.dto.response.SerialNumberResponse;
-import com.dantn.weblaptop.entity.sanpham.SerialNumber;
-import com.dantn.weblaptop.mapper.impl.SerialNumberMapper;
->>>>>>> manhntph37150
 import com.dantn.weblaptop.repository.SerialNumberRepository;
 import com.dantn.weblaptop.service.SerialNumberService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-<<<<<<< HEAD
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-=======
-import org.springframework.beans.factory.annotation.Autowired;
->>>>>>> manhntph37150
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
-<<<<<<< HEAD
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @RequiredArgsConstructor
 public class SerialNumberServiceImpl implements SerialNumberService {
@@ -103,15 +96,37 @@ public class SerialNumberServiceImpl implements SerialNumberService {
         SerialNumber entity = serialNumberRepository.findByMa(ma.trim().toLowerCase());
         if (entity == null) return null;
         return mapper.entityToResponse(entity);
-=======
-@RequiredArgsConstructor
-@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
-public class SerialNumberServiceImpl  implements SerialNumberService {
-    SerialNumberRepository serialNumberRepository;
+    }
+
+    // mạnh
     // note : 0 là chưa bán
     @Override
     public List<SerialNumber> getSerialNumberByProductIdAndStatus(Long productId, Integer status) {
         return serialNumberRepository.findBySanPhamChiTietIdAndTrangThai(productId, status);
->>>>>>> manhntph37150
+    }
+
+    @Override
+    public ResultPaginationResponse getAllSerialNumberByProductDetailIdAndStatus(
+            Long productDetailId, Integer status, Optional<String> page, Optional<String> size) {
+        String sPage = page.isPresent() ? page.get() : "0";
+        String sSize = size.isPresent() ? size.get() : "5";
+        Pageable pageable = PageRequest.of(Integer.parseInt(sPage), Integer.parseInt(sSize), Sort.by("id").descending());
+        Page<SerialNumberResponse> responses = serialNumberRepository
+                .findBySanPhamChiTietIdAndTrangThai(productDetailId, status, pageable).
+                        map(serialNumber -> mapper.entityToResponse(serialNumber));
+
+        Meta meta = Meta.builder()
+                .page(responses.getNumber())
+                .pageSize(responses.getSize())
+                .pages(responses.getTotalPages())
+                .total(responses.getTotalElements())
+                .build();
+
+        ResultPaginationResponse response = ResultPaginationResponse
+                .builder()
+                .meta(meta)
+                .result(responses.getContent())
+                .build();
+        return response;
     }
 }

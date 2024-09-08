@@ -99,7 +99,7 @@ public class PhieuGiamGiaService {
         PhieuGiamGia savedPhieuGiamGia = phieuGiamGiaRepo.save(newPhieuGiamGia);
         List<Long> listKhachHangIds = request.getListKhachHang();
 
-        NhanVien nhanVien = nhanVienRepositoy.findById(1).get();
+        NhanVien nhanVien = nhanVienRepositoy.findById(1L).get();
         if (listKhachHangIds != null) {
             listKhachHangIds.forEach(id -> {
                 KhachHang khachHang = khachHangRepository.findById(id).orElse(null);

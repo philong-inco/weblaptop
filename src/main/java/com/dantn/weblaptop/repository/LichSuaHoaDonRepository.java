@@ -13,4 +13,6 @@ public interface LichSuaHoaDonRepository extends JpaRepository<LichSuHoaDon, Lon
     Page<LichSuHoaDon> findAllByHoaDonId(Long billId, Pageable pageable);
 
     List<LichSuHoaDon> findAllByHoaDonId (Long billId);
+
+    List<LichSuHoaDon> findAllByHoaDonMa(String code);
 }

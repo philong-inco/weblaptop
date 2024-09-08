@@ -14,6 +14,7 @@ import java.util.Optional;
 
 @Repository
 public interface HoaDonRepository extends JpaRepository<HoaDon, Long>, JpaSpecificationExecutor<HoaDon> {
+    Optional<HoaDon> findHoaDonByMa(String ma);
 
     List<HoaDon> findByTrangThaiAndLoaiHoaDon(HoaDonStatus status, Integer type);
 

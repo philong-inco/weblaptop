@@ -19,11 +19,11 @@ public class SerialNumberDaBanController {
     SerialNumberDaBanService serialNumberDaBanService;
 
     @GetMapping
-    public ResponseEntity<ApiResponse> getSerialNumberSold(@RequestParam(name = "billId") Long billId){
+    public ResponseEntity<ApiResponse> getSerialNumberSold(@RequestParam(name = "code") String code){
         ApiResponse apiResponse = new ApiResponse();
         apiResponse.setStatusCode(HttpStatus.OK.value());
-        apiResponse.setData(serialNumberDaBanService.getSerialNumberDaBanPage(billId));
-        apiResponse.setMessage("Get success");
+        apiResponse.setData(serialNumberDaBanService.getSerialNumberDaBanPage(code));
+        apiResponse.setMessage("Lấy danh sách sản phẩm đã có trong hóa đơn : "+ code);
         return ResponseEntity.ok(apiResponse);
     }
 

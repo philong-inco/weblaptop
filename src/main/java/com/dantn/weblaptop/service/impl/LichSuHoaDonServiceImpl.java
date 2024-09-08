@@ -66,6 +66,8 @@ public class LichSuHoaDonServiceImpl implements LichSuHoaDonService {
         return response;
     }
 
+
+
     @Override
     public List<LichSuHoaDonResponse> getBillHistoryByBillId(Long billId) {
         List<LichSuHoaDon> billHistoryList = billHistoryRepository.findAllByHoaDonId(billId);
@@ -74,11 +76,19 @@ public class LichSuHoaDonServiceImpl implements LichSuHoaDonService {
         ).toList();
     }
 
+    @Override
+    public List<LichSuHoaDonResponse> getBillHistoryByBillCode(String code) {
+        List<LichSuHoaDon> billHistoryList = billHistoryRepository.findAllByHoaDonMa(code);
+        return billHistoryList.stream().map(
+                billHistory -> LichSuHoaDonMapper.toBillHistoryResponse(billHistory)
+        ).toList();
+    }
+
     // Sua Nhan Vien
     @Override
-    public void revertBillStatus(Long billId) throws AppException {
+    public void revertBillStatus(String codeBill) throws AppException {
         // Lấy danh sách lịch sử hóa đơn theo ID hóa đơn
-        List<LichSuHoaDon> histories = billHistoryRepository.findAllByHoaDonId(billId);
+        List<LichSuHoaDon> histories = billHistoryRepository.findAllByHoaDonMa(codeBill);
 
         if (histories.size() < 2) {
             throw new AppException(ErrorCode.NOT_FOUND);

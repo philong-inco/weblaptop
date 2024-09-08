@@ -10,6 +10,7 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class CreateSerialNumberDaBanRequest {
 // bỏ
+    String maHoaDon;
     Long idHoaDon;
     Long idSanPham;
     Long idSerialNumber;

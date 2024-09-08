@@ -19,13 +19,18 @@ public interface HoaDonService {
 
     HoaDonResponse updateBill(Long id, UpdateHoaDonRequest request);
 
+    HoaDonResponse updateBillByCode(String code, UpdateHoaDonRequest request);
+
     HoaDonResponse getBillById (Long id) throws AppException;
+
+    HoaDonResponse getBillByCode (String code) throws AppException;
 
     HoaDonResponse getBillByIdAndStatus (Long id , String status);
 
     ResultPaginationResponse pageBillByStatusAndType (String status , Integer type, Optional<String> page, Optional<String> size);
 
-    void updateStatus(Long id , String status) throws AppException;
+    void updateStatus(String code , String status) throws AppException;
+
 
     ResultPaginationResponse filterHoaDon (Specification<HoaDon> specification, Pageable pageable);
 }
