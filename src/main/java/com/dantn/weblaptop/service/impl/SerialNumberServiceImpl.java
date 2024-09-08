@@ -114,4 +114,14 @@ public class SerialNumberServiceImpl  implements SerialNumberService {
         return serialNumberRepository.findBySanPhamChiTietIdAndTrangThai(productId, status);
 >>>>>>> manhntph37150
     }
+
+    @Override
+    public void deleteAllByIdSPCT(Long idSPCT) {
+        serialNumberRepository.deleteAllByIdSPCT(idSPCT);
+    }
+
+    @Override
+    public void changeStatusToSeriNumberDaBan(Long idSerialNumber) {
+        serialNumberRepository.changeStatusToSeriNumberDaBan(idSerialNumber);
+    }
 }
