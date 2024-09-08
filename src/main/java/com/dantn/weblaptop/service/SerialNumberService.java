@@ -2,6 +2,7 @@ package com.dantn.weblaptop.service;
 
 import com.dantn.weblaptop.dto.request.create_request.SerialNumberCreate;
 import com.dantn.weblaptop.dto.request.update_request.SerialNumberUpdate;
+import com.dantn.weblaptop.dto.response.ResultPaginationResponse;
 import com.dantn.weblaptop.dto.response.SerialNumberResponse;
 import com.dantn.weblaptop.entity.sanpham.SerialNumber;
 import com.dantn.weblaptop.repository.SerialNumberRepository;
@@ -10,6 +11,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public interface SerialNumberService {
