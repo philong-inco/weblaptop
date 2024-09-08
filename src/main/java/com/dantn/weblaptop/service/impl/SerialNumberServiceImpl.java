@@ -1,36 +1,25 @@
 package com.dantn.weblaptop.service.impl;
 
-<<<<<<< HEAD
 import com.dantn.weblaptop.dto.request.create_request.SerialNumberCreate;
 import com.dantn.weblaptop.dto.request.update_request.SerialNumberUpdate;
-import com.dantn.weblaptop.dto.response.SanPhamChiTietResponse;
 import com.dantn.weblaptop.dto.response.SerialNumberResponse;
 import com.dantn.weblaptop.entity.sanpham.SanPhamChiTiet;
 import com.dantn.weblaptop.entity.sanpham.SerialNumber;
 import com.dantn.weblaptop.mapper.impl.SerialNumberMapper;
 import com.dantn.weblaptop.repository.SanPhamChiTietRepository;
-=======
-import com.dantn.weblaptop.dto.response.SerialNumberResponse;
-import com.dantn.weblaptop.entity.sanpham.SerialNumber;
-import com.dantn.weblaptop.mapper.impl.SerialNumberMapper;
->>>>>>> manhntph37150
 import com.dantn.weblaptop.repository.SerialNumberRepository;
 import com.dantn.weblaptop.service.SerialNumberService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-<<<<<<< HEAD
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-=======
-import org.springframework.beans.factory.annotation.Autowired;
->>>>>>> manhntph37150
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
-<<<<<<< HEAD
+
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @RequiredArgsConstructor
 public class SerialNumberServiceImpl implements SerialNumberService {
@@ -76,6 +65,7 @@ public class SerialNumberServiceImpl implements SerialNumberService {
         return mapper.listEntityToListResponse(serialNumberRepository.getAllList());
     }
 
+
     @Override
     public Page<SerialNumberResponse> getAllPage(Pageable pageable) {
         return mapper.pageEntityToPageResponse(serialNumberRepository.getAllPage(pageable));
@@ -103,15 +93,16 @@ public class SerialNumberServiceImpl implements SerialNumberService {
         SerialNumber entity = serialNumberRepository.findByMa(ma.trim().toLowerCase());
         if (entity == null) return null;
         return mapper.entityToResponse(entity);
-=======
-@RequiredArgsConstructor
-@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
-public class SerialNumberServiceImpl  implements SerialNumberService {
-    SerialNumberRepository serialNumberRepository;
-    // note : 0 là chưa bán
+
+    }
+
     @Override
-    public List<SerialNumber> getSerialNumberByProductIdAndStatus(Long productId, Integer status) {
-        return serialNumberRepository.findBySanPhamChiTietIdAndTrangThai(productId, status);
->>>>>>> manhntph37150
+    public void deleteAllByIdSPCT(Long idSPCT) {
+        serialNumberRepository.deleteAllByIdSPCT(idSPCT);
+    }
+
+    @Override
+    public void changeStatusToSeriNumberDaBan(Long idSerialNumber) {
+        serialNumberRepository.changeStatusToSeriNumberDaBan(idSerialNumber);
     }
 }
