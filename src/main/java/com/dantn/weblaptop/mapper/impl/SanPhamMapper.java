@@ -39,6 +39,7 @@ public class SanPhamMapper extends GenericsMapper<SanPham, SanPhamCreate, SanPha
                 .id(entity.getId())
                 .ma(entity.getMa())
                 .ten(entity.getTen())
+                .moTa(entity.getMoTa())
                 .trangThai(entity.getTrangThai())
                 .nhuCau(entity.getNhuCau().getTen())
                 .thuongHieu(entity.getThuongHieu().getTen())

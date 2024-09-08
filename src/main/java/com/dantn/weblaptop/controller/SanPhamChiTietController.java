@@ -198,4 +198,37 @@ public class SanPhamChiTietController {
                 true, null, null, null, null
         ));
     }
+
+    @GetMapping("/get-by-product-id")
+    public ResponseEntity<ResponseLong<List<SanPhamChiTietResponse>>> getAllByProductId(
+            @RequestParam(value = "idProduct", required = true) Long idProduct){
+        List<SanPhamChiTietResponse> responses = service.getAllListBySanPhamId(idProduct);
+        if ( responses == null || responses.size() == 0)
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseLong<>(
+                    404, "Không có biến thể nào trên ID Product này",
+                    null, null, null, null, null
+            ));
+        return ResponseEntity.status(HttpStatus.OK).body(new ResponseLong<>(
+                200, "Get thành công",
+                responses, null, null, null, null
+        ));
+    }
+
+    @GetMapping("/get-by-productdetail-id")
+    public ResponseEntity<ResponseLong<SanPhamChiTietResponse>> getAllByProductDetailId(
+            @RequestParam(value = "idProductDetail", required = true) Long idProductDetail){
+        SanPhamChiTietResponse responses = service.findById(idProductDetail);
+        if (responses == null){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseLong<>(
+                    404, "Không có biến thể nào",
+            null, null, null, null, null
+            ));
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(new ResponseLong<>(
+                200, "Get thành công",
+                responses, null, null, null, null
+        ));
+    }
+
+
 }
