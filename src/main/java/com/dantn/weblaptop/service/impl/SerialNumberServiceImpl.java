@@ -96,6 +96,7 @@ public class SerialNumberServiceImpl implements SerialNumberService {
         SerialNumber entity = serialNumberRepository.findByMa(ma.trim().toLowerCase());
         if (entity == null) return null;
         return mapper.entityToResponse(entity);
+
     }
 
     // mạnh
@@ -112,8 +113,8 @@ public class SerialNumberServiceImpl implements SerialNumberService {
         String sSize = size.isPresent() ? size.get() : "5";
         Pageable pageable = PageRequest.of(Integer.parseInt(sPage), Integer.parseInt(sSize), Sort.by("id").descending());
         Page<SerialNumberResponse> responses = serialNumberRepository
-                .findBySanPhamChiTietIdAndTrangThai(productDetailId, status, pageable).
-                        map(serialNumber -> mapper.entityToResponse(serialNumber));
+                .findBySanPhamChiTietIdAndTrangThai(productDetailId, status , pageable).
+                map(serialNumber -> mapper.entityToResponse(serialNumber));
 
         Meta meta = Meta.builder()
                 .page(responses.getNumber())
@@ -128,5 +129,15 @@ public class SerialNumberServiceImpl implements SerialNumberService {
                 .result(responses.getContent())
                 .build();
         return response;
+    }
+
+    @Override
+    public void deleteAllByIdSPCT(Long idSPCT) {
+        serialNumberRepository.deleteAllByIdSPCT(idSPCT);
+    }
+
+    @Override
+    public void changeStatusToSeriNumberDaBan(Long idSerialNumber) {
+        serialNumberRepository.changeStatusToSeriNumberDaBan(idSerialNumber);
     }
 }

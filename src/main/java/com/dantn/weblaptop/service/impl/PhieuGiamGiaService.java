@@ -100,6 +100,7 @@ public class PhieuGiamGiaService {
         List<Long> listKhachHangIds = request.getListKhachHang();
 
         NhanVien nhanVien = nhanVienRepositoy.findById(1L).get();
+
         if (listKhachHangIds != null) {
             listKhachHangIds.forEach(id -> {
                 KhachHang khachHang = khachHangRepository.findById(id).orElse(null);

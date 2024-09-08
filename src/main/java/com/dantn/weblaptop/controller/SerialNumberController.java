@@ -2,7 +2,6 @@ package com.dantn.weblaptop.controller;
 
 import com.dantn.weblaptop.dto.request.create_request.SerialNumberCreate;
 import com.dantn.weblaptop.dto.request.update_request.SerialNumberUpdate;
-import com.dantn.weblaptop.dto.response.ApiResponse;
 import com.dantn.weblaptop.dto.response.ResponseLong;
 import com.dantn.weblaptop.dto.response.SerialNumberResponse;
 import com.dantn.weblaptop.entity.sanpham.SanPham;
@@ -177,7 +176,7 @@ public class SerialNumberController {
         Long id = null;
         try {
             id = Long.valueOf(idStr.trim());
-        } catch (Exception e) {
+        } catch (Exception e){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseLong<>(
                     999, "Id invalid!", true, null, null, null, null
             ));
@@ -191,18 +190,5 @@ public class SerialNumberController {
                 ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseLong<>(
                         200, "Valid", false, null, null, null, null
                 ));
-    }
-
-//    mạnh
-    @GetMapping("serial-number/product-detail/{productDetailId}")
-    public ResponseEntity<ApiResponse> getSerialNumberByProductDetailId(
-            @PathVariable(name = "productDetailId") Long productDetailId
-    ){
-        return ResponseEntity.ok(ApiResponse.builder()
-                .statusCode(HttpStatus.OK.value())
-                .message("Danh sach serial với idSPCT")
-//                .data(serialNumberService.getAllSerialNumberByProductDetailIdAndStatus())
-                .build());
-
     }
 }

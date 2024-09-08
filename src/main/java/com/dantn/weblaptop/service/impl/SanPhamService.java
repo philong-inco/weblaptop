@@ -59,7 +59,7 @@ public class SanPhamService extends GenericsService<SanPham, Long, SanPhamCreate
     public void convertCreateToEntity(SanPhamCreate create, SanPham entity) {
         String ma;
         do {
-            ma = GenerateCode.generateCode(GenerateCode.VGA_PREFIX);
+            ma = GenerateCode.generateCode(GenerateCode.SAN_PHAM_PREFIX);
         } while (existByCode(ma));
         ThuongHieu thuongHieu = serviceThuongHieu.findEntityById(create.getThuongHieuId());
         NhuCau nhuCau = serviceNhuCau.findEntityById(create.getNhuCauId());

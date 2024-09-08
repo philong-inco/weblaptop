@@ -5,6 +5,7 @@ import com.dantn.weblaptop.generics.GenericsMapper;
 import com.dantn.weblaptop.dto.request.create_request.SanPhamChiTietCreate;
 import com.dantn.weblaptop.dto.request.update_request.SanPhamChiTietUpdate;
 import com.dantn.weblaptop.dto.response.SanPhamChiTietResponse;
+import com.dantn.weblaptop.util.ConvertStringToArray;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.stereotype.Service;
@@ -52,6 +53,8 @@ public class SanPhamChiTietMapper extends GenericsMapper<SanPhamChiTiet, SanPham
                 .ngaySua(entity.getNgaySua() + "")
                 .nguoiTao(entity.getNguoiTao())
                 .nguoiSua(entity.getNguoiSua())
+                .listSerialNumber(ConvertStringToArray.setSeriNumberToNameString(entity.getSerialNumbers()))
+                .listUrlAnhSanPham(ConvertStringToArray.setAnhSanPhamToNameString(entity.getAnhSanPhams()))
                 .build();
         response.convertTime();
         return response;

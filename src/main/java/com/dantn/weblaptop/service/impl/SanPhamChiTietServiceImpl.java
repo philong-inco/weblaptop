@@ -1,11 +1,16 @@
 package com.dantn.weblaptop.service.impl;
 
+import com.dantn.weblaptop.dto.request.create_request.AnhSanPhamCreate;
 import com.dantn.weblaptop.dto.request.create_request.FindSanPhamChiTietByFilter;
 import com.dantn.weblaptop.dto.request.create_request.SanPhamChiTietCreate;
+import com.dantn.weblaptop.dto.request.create_request.SerialNumberCreate;
+import com.dantn.weblaptop.dto.request.update_request.AnhSanPhamUpdate;
 import com.dantn.weblaptop.dto.request.update_request.SanPhamChiTietUpdate;
+import com.dantn.weblaptop.dto.request.update_request.SerialNumberUpdate;
 import com.dantn.weblaptop.dto.response.SanPhamChiTietResponse;
 import com.dantn.weblaptop.entity.sanpham.SanPham;
 import com.dantn.weblaptop.entity.sanpham.SanPhamChiTiet;
+import com.dantn.weblaptop.entity.sanpham.SerialNumber;
 import com.dantn.weblaptop.entity.sanpham.thuoctinh.BanPhim;
 import com.dantn.weblaptop.entity.sanpham.thuoctinh.CPU;
 import com.dantn.weblaptop.entity.sanpham.thuoctinh.HeDieuHanh;
@@ -17,7 +22,9 @@ import com.dantn.weblaptop.entity.sanpham.thuoctinh.VGA;
 import com.dantn.weblaptop.entity.sanpham.thuoctinh.Webcam;
 import com.dantn.weblaptop.mapper.impl.SanPhamChiTietMapper;
 import com.dantn.weblaptop.repository.SanPhamChiTietRepository;
+import com.dantn.weblaptop.service.AnhSanPhamService;
 import com.dantn.weblaptop.service.SanPhamChiTietService;
+import com.dantn.weblaptop.service.SerialNumberService;
 import com.dantn.weblaptop.util.ConvertStringToArray;
 import com.dantn.weblaptop.util.GenerateCode;
 import lombok.AccessLevel;
@@ -28,6 +35,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -49,6 +57,9 @@ public class SanPhamChiTietServiceImpl implements SanPhamChiTietService {
     WebcamService webcamService;
     MauSacService mauSacService;
     SanPhamService sanPhamService;
+
+    AnhSanPhamService anhSanPhamService;
+    SerialNumberService serialNumberService;
 
     SanPhamChiTietSpecificationInner specificationInner;
     SanPhamChiTietSpecificationJoin specificationJoin;
@@ -77,7 +88,32 @@ public class SanPhamChiTietServiceImpl implements SanPhamChiTietService {
     public SanPhamChiTietResponse add(SanPhamChiTietCreate create) {
         SanPhamChiTiet spct = spctMapper.createToEntity(create);
         beforeAdd(spct, create);
-        return spctMapper.entityToResponse(spctRepository.save(spct));
+        SanPhamChiTiet entity = spctRepository.save(spct);
+        afterAdd(create, entity);
+        return spctMapper.entityToResponse(entity);
+    }
+
+    private void afterAdd(SanPhamChiTietCreate create, SanPhamChiTiet entity) {
+        String[] serinumberList = ConvertStringToArray.toArray(create.getListSerialNumber());
+        String[] anhSanPhamList = ConvertStringToArray.toArray(create.getListUrlAnhSanPham());
+        for (int i = 0; i < serinumberList.length; i ++){
+            SerialNumberCreate newSeriNumber = SerialNumberCreate.builder()
+                    .ngayNhap(LocalDateTime.now())
+                    .trangThai(1)
+                    .ma(serinumberList[i])
+                    .sanPhamChiTietId(entity.getId())
+                    .build();
+            serialNumberService.add(newSeriNumber);
+        }
+
+        for (int i = 0; i < anhSanPhamList.length; i++) {
+            AnhSanPhamCreate newAnhSP = AnhSanPhamCreate.builder()
+                    .idSPCT(entity.getId())
+                    .status(1)
+                    .url(anhSanPhamList[i])
+                    .build();
+            anhSanPhamService.create(newAnhSP);
+        }
     }
 
     @Override
@@ -91,14 +127,44 @@ public class SanPhamChiTietServiceImpl implements SanPhamChiTietService {
 
     @Override
     public SanPhamChiTietResponse update(SanPhamChiTietUpdate update) {
-        Optional<SanPhamChiTiet> result = spctRepository.findById(update.getId());
-        if (!result.isPresent())
+        SanPhamChiTiet spct = spctRepository.findById(update.getId()).get();
+        if (spct == null)
             return null;
-        SanPhamChiTiet spct = result.get();
         SanPhamChiTiet entity = spctMapper.updateToEntity(update, spct);
         beforeUpdate(spct, update);
-        return spctMapper.entityToResponse(spctRepository.save(entity));
+        SanPhamChiTiet entityNew = spctRepository.save(entity);
+        afterUpdate(entityNew, update);
+        return spctMapper.entityToResponse(entityNew);
     }
+
+    private void afterUpdate(SanPhamChiTiet entityNew, SanPhamChiTietUpdate update) {
+        serialNumberService.deleteAllByIdSPCT(entityNew.getId());
+        anhSanPhamService.deleteAllByIdSPCT(entityNew.getId());
+        String[] serinumberList = ConvertStringToArray.toArray(update.getListSerialNumber());
+        String[] anhSanPhamList = ConvertStringToArray.toArray(update.getListUrlAnhSanPham());
+        for (int i = 0; i < serinumberList.length; i ++){
+            SerialNumberUpdate newSeriNumber = SerialNumberUpdate.builder()
+                    .ngayNhap(LocalDateTime.now())
+                    .trangThai(1)
+                    .ma(serinumberList[i])
+                    .sanPhamChiTietId(entityNew.getId())
+                    .build();
+            serialNumberService.update(newSeriNumber);
+        }
+
+        for (int i = 0; i < anhSanPhamList.length; i++) {
+            AnhSanPhamUpdate newAnhSP = AnhSanPhamUpdate.builder()
+                    .idSPCT(entityNew.getId())
+                    .status(1)
+                    .url(anhSanPhamList[i])
+                    .build();
+            anhSanPhamService.update(newAnhSP);
+        }
+    }
+
+
+
+
 
     @Override
     public void delete(Long idSPCT) {
