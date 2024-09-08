@@ -93,4 +93,14 @@ public class SerialNumberServiceImpl implements SerialNumberService {
         if (entity == null) return null;
         return mapper.entityToResponse(entity);
     }
+
+    @Override
+    public void deleteAllByIdSPCT(Long idSPCT) {
+        serialNumberRepository.deleteAllByIdSPCT(idSPCT);
+    }
+
+    @Override
+    public void changeStatusToSeriNumberDaBan(Long idSerialNumber) {
+        serialNumberRepository.changeStatusToSeriNumberDaBan(idSerialNumber);
+    }
 }

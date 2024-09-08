@@ -191,4 +191,13 @@ public class SerialNumberController {
                         200, "Valid", false, null, null, null, null
                 ));
     }
+
+    @PutMapping("chang-status-to-serial-da-ban")
+    public ResponseEntity<ResponseLong<String>> changeStatusToSeriNumberDaBan(@RequestParam(value = "idSerialNumber")Long id){
+        serialNumberService.changeStatusToSeriNumberDaBan(id);
+        return ResponseEntity.ok().body(new ResponseLong<>(
+                200, "Successfully", null, null, null, null, null
+        ));
+    }
+
 }

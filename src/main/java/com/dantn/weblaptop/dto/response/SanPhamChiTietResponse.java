@@ -34,6 +34,8 @@ public class SanPhamChiTietResponse {
     String nguoiTao;
     String ngaySua;
     String nguoiSua;
+    String listSerialNumber;
+    String listUrlAnhSanPham;
 
     public void convertTime(){
         this.ngayTao = ConvertTime.convert(this.ngayTao);

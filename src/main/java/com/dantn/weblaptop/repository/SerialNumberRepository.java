@@ -24,5 +24,12 @@ public interface SerialNumberRepository extends JpaRepository<SerialNumber, Long
     @Query("SELECT s FROM SerialNumber s WHERE lower(s.ma) = :ma AND s.id <> :id")
     List<SerialNumber> existByMaForUpdate(@Param("ma") String ma, @Param("id") Long id);
 
-    SerialNumber findByMa(String ma);
+    @Query("SELECT s FROM SerialNumber s WHERE lower(s.ma) = :ma ")
+    SerialNumber findByMa(@Param("ma") String ma);
+
+    @Query("DELETE FROM SerialNumber s WHERE s.sanPhamChiTiet.id = :idSPCT AND s.trangThai = 1")
+    void deleteAllByIdSPCT(@Param("idSPCT") Long idSPCT);
+
+    @Query("UPDATE SerialNumber s SET s.trangThai = 0 WHERE s.id = :id")
+    void changeStatusToSeriNumberDaBan(Long id);
 }

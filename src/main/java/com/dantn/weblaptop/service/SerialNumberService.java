@@ -24,4 +24,8 @@ public interface SerialNumberService {
 
     SerialNumberResponse findById(Long id);
     SerialNumberResponse findByMa(String ma);
+
+    void deleteAllByIdSPCT(Long idSPCT);
+
+    void changeStatusToSeriNumberDaBan(Long idSerialNumber);
 }
