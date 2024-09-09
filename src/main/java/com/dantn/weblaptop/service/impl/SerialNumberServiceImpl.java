@@ -109,12 +109,12 @@ public class SerialNumberServiceImpl implements SerialNumberService {
     @Override
     public ResultPaginationResponse getAllSerialNumberByProductDetailIdAndStatus(
             Long productDetailId, Integer status, Optional<String> page, Optional<String> size) {
-        String sPage = page.isPresent() ? page.get() : "0";
-        String sSize = size.isPresent() ? size.get() : "5";
+        String sPage = page.orElse("0");
+        String sSize = size.orElse("5");
         Pageable pageable = PageRequest.of(Integer.parseInt(sPage), Integer.parseInt(sSize), Sort.by("id").descending());
         Page<SerialNumberResponse> responses = serialNumberRepository
                 .findBySanPhamChiTietIdAndTrangThai(productDetailId, status , pageable).
-                map(serialNumber -> mapper.entityToResponse(serialNumber));
+                map(mapper::entityToResponse);
 
         Meta meta = Meta.builder()
                 .page(responses.getNumber())
@@ -123,12 +123,11 @@ public class SerialNumberServiceImpl implements SerialNumberService {
                 .total(responses.getTotalElements())
                 .build();
 
-        ResultPaginationResponse response = ResultPaginationResponse
+        return ResultPaginationResponse
                 .builder()
                 .meta(meta)
                 .result(responses.getContent())
                 .build();
-        return response;
     }
 
     @Override

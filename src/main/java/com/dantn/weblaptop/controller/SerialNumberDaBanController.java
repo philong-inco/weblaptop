@@ -2,6 +2,8 @@ package com.dantn.weblaptop.controller;
 
 import com.dantn.weblaptop.dto.request.create_request.CreateSerialNumberDaBanRequest;
 import com.dantn.weblaptop.dto.response.ApiResponse;
+import com.dantn.weblaptop.dto.response.SerialNumberDaBanResponse;
+import com.dantn.weblaptop.dto.response.SerialNumberResponse;
 import com.dantn.weblaptop.exception.AppException;
 import com.dantn.weblaptop.service.SerialNumberDaBanService;
 import lombok.AccessLevel;

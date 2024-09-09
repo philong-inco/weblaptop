@@ -2,7 +2,9 @@ package com.dantn.weblaptop.controller;
 
 import com.dantn.weblaptop.dto.request.create_request.SerialNumberCreate;
 import com.dantn.weblaptop.dto.request.update_request.SerialNumberUpdate;
+import com.dantn.weblaptop.dto.response.ApiResponse;
 import com.dantn.weblaptop.dto.response.ResponseLong;
+import com.dantn.weblaptop.dto.response.ResultPaginationResponse;
 import com.dantn.weblaptop.dto.response.SerialNumberResponse;
 import com.dantn.weblaptop.entity.sanpham.SanPham;
 import com.dantn.weblaptop.repository.SerialNumberRepository;
@@ -29,6 +31,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/serial-number")
@@ -176,7 +179,7 @@ public class SerialNumberController {
         Long id = null;
         try {
             id = Long.valueOf(idStr.trim());
-        } catch (Exception e){
+        } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseLong<>(
                     999, "Id invalid!", true, null, null, null, null
             ));
@@ -190,5 +193,19 @@ public class SerialNumberController {
                 ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseLong<>(
                         200, "Valid", false, null, null, null, null
                 ));
+    }
+
+    @GetMapping("/product-detail/{productId}")
+    public ApiResponse<ResultPaginationResponse> getSerialNumberByProduct
+    (@PathVariable("productId") Long productId,
+     @RequestParam(name = "status", defaultValue = "0") Integer status,
+     @RequestParam(name = "page", defaultValue = "0") Optional<String> page,
+     @RequestParam(name = "size", defaultValue = "5") Optional<String> size
+    ) {
+        return ApiResponse.<ResultPaginationResponse>builder()
+                .statusCode(HttpStatus.OK.value())
+                .message("Get SerialNumber By Product Success")
+                .data(serialNumberService.getAllSerialNumberByProductDetailIdAndStatus(productId, status, page, size))
+                .build();
     }
 }

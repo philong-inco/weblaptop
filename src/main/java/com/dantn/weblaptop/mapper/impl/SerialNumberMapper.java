@@ -33,6 +33,8 @@ public class SerialNumberMapper extends GenericsMapper<SerialNumber, SerialNumbe
     @Override
     public SerialNumberResponse entityToResponse(SerialNumber entity) {
         SerialNumberResponse response = SerialNumberResponse.builder()
+                .id(entity.getId())
+                .ma(entity.getMa())
                 .trangThai(entity.getTrangThai())
                 .ngayNhap(entity.getNgayNhap() + "")
                 .sanPham(entity.getSanPhamChiTiet().getSanPham().getTen())
@@ -45,13 +47,11 @@ public class SerialNumberMapper extends GenericsMapper<SerialNumber, SerialNumbe
                 .mauSac(entity.getSanPhamChiTiet().getMauSac().getTen())
                 .oCung(entity.getSanPhamChiTiet().getOCung().getTen())
                 .vga(entity.getSanPhamChiTiet().getVga().getTen())
-                // manh cmt
-//                .ngayTao(entity.getNgayTao() + "")
-//                .ngaySua(entity.getNgaySua() + "")
-//                .nguoiTao(entity.getNguoiTao())
-//                .nguoiSua(entity.getNguoiSua())
+                .ngayTao(entity.getNgayTao() + "")
+                .ngaySua(entity.getNgaySua() + "")
+                .nguoiTao(entity.getNguoiTao())
+                .nguoiSua(entity.getNguoiSua())
                 .build();
-        response.convertTime();
         return response;
     }
 
