@@ -1,23 +1,23 @@
 package com.dantn.weblaptop.service;
 
 import com.dantn.weblaptop.dto.request.create_request.CreateSerialNumberDaBanRequest;
-import com.dantn.weblaptop.dto.response.ResultPaginationResponse;
+import com.dantn.weblaptop.dto.request.update_request.SerialNumberSoldDelete;
 import com.dantn.weblaptop.dto.response.SerialNumberDaBanResponse;
-import com.dantn.weblaptop.dto.response.SerialNumberDaBanResponse2;
-import com.dantn.weblaptop.entity.hoadon.SerialNumberDaBan;
+import com.dantn.weblaptop.entity.hoadon.HoaDon;
 import com.dantn.weblaptop.exception.AppException;
+import com.dantn.weblaptop.repository.HoaDonRepository;
 
+import java.math.BigDecimal;
 import java.util.List;
-import java.util.Optional;
 
 public interface SerialNumberDaBanService {
 
-//    List<SerialNumberDaBanResponse> getSerialNumberDaBanPage (Long billId );
+    List<SerialNumberDaBanResponse> getSerialNumberDaBanPage(String code);
 
-    List<SerialNumberDaBanResponse> getSerialNumberDaBanPage (String code );
+    Boolean create(CreateSerialNumberDaBanRequest request) throws AppException;
 
-    SerialNumberDaBanResponse create(CreateSerialNumberDaBanRequest request) throws AppException;
+    void delete(SerialNumberSoldDelete request) throws AppException;
 
-    void  delete(Long id);
+    BigDecimal getBigDecimal(HoaDon hoaDon, List<SerialNumberDaBanResponse> listSerialNumberDaBan, HoaDonRepository hoaDonRepository);
 
 }

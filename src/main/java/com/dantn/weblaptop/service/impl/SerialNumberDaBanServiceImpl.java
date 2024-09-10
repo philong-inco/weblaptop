@@ -3,6 +3,7 @@ package com.dantn.weblaptop.service.impl;
 import com.dantn.weblaptop.constant.HoaDonStatus;
 import com.dantn.weblaptop.dto.request.create_request.CreateLichSuHoaDonRequest;
 import com.dantn.weblaptop.dto.request.create_request.CreateSerialNumberDaBanRequest;
+import com.dantn.weblaptop.dto.request.update_request.SerialNumberSoldDelete;
 import com.dantn.weblaptop.dto.response.LichSuHoaDonResponse;
 import com.dantn.weblaptop.dto.response.SerialNumberDaBanResponse;
 import com.dantn.weblaptop.entity.hoadon.HoaDon;
@@ -11,6 +12,7 @@ import com.dantn.weblaptop.entity.phieugiamgia.PhieuGiamGia;
 import com.dantn.weblaptop.entity.sanpham.SerialNumber;
 import com.dantn.weblaptop.exception.AppException;
 import com.dantn.weblaptop.exception.ErrorCode;
+import com.dantn.weblaptop.mapper.impl.SerialNumberSoldMapper;
 import com.dantn.weblaptop.repository.HoaDonRepository;
 import com.dantn.weblaptop.repository.SerialNumberDaBanRepository;
 import com.dantn.weblaptop.repository.SerialNumberRepository;
@@ -21,6 +23,7 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -36,63 +39,37 @@ public class SerialNumberDaBanServiceImpl implements SerialNumberDaBanService {
     HoaDonRepository hoaDonRepository;
     LichSuHoaDonService billHistoryService;
 
-
-//    @Override
-//    public List<SerialNumberDaBanResponse> getSerialNumberDaBanPage(Long billId) {
-//        List<SerialNumberDaBan> serialNumberSold = serialNumberDaBanRepository.findAllByHoaDonId(billId);
-//        List<SerialNumberDaBanResponse> serialNumberSoldResponses = new ArrayList<>();
-//        serialNumberSold.stream().map(
-//                serialNumberDaBan -> {
-//                    SerialNumberDaBanResponse response = new SerialNumberDaBanResponse();
-//                    response.setAnh("Ảnh");
-//                    // cần update
-//                    response.setGia(
-//                            serialNumberDaBan.getGiaBan() == null ?
-//                                    serialNumberDaBan.getSerialNumber().getSanPhamChiTiet().getGiaBan() :
-//                                    serialNumberDaBan.getGiaBan());
-//                    response.setTenSanPham(serialNumberDaBan.getSerialNumber().getSanPhamChiTiet().getSanPham().getTen());
-//                    response.setId(serialNumberDaBan.getId());
-//                    response.setHoaDonId(serialNumberDaBan.getHoaDon().getId());
-//                    return serialNumberSoldResponses.add(response);
-//                }
-//        ).toList();
-//        return serialNumberSoldResponses;
-//    }
-
     @Override
     public List<SerialNumberDaBanResponse> getSerialNumberDaBanPage(String code) {
         List<SerialNumberDaBan> serialNumberSold = serialNumberDaBanRepository.findAllByHoaDonMa(code);
         Map<String, SerialNumberDaBanResponse> responseMap = new HashMap<>();
-        for (SerialNumberDaBan serialNumberDaBan : serialNumberSold) {
-            SerialNumberDaBanResponse response = new SerialNumberDaBanResponse();
-            response.setId(serialNumberDaBan.getId());
-            response.setHoaDonId(serialNumberDaBan.getHoaDon().getId());
-            response.setSerialNumberId(serialNumberDaBan.getSerialNumber().getId());
-            response.setIdSPCT(serialNumberDaBan.getSerialNumber().getSanPhamChiTiet().getId());
-            response.setMaSerialNumber(serialNumberDaBan.getSerialNumber().getMa());
-            response.setMaSPCT(serialNumberDaBan.getSerialNumber().getSanPhamChiTiet().getMa());
-            response.setTenSanPham(serialNumberDaBan.getSerialNumber().getSanPhamChiTiet().getSanPham().getTen());
-            response.setGia(serialNumberDaBan.getGiaBan() == null ?
-                    serialNumberDaBan.getSerialNumber().getSanPhamChiTiet().getGiaBan() :
-                    serialNumberDaBan.getGiaBan());
 
-            // Tạo khóa
-            String key = response.getHoaDonId() + "-" + response.getIdSPCT();
-//        + "-" + response.getMaSerialNumber();
+        for (SerialNumberDaBan serialNumberDaBan : serialNumberSold) {
+            SerialNumberDaBanResponse.SerialInfo serialInfo = new SerialNumberDaBanResponse.SerialInfo(
+                    serialNumberDaBan.getSerialNumber().getId(),
+                    serialNumberDaBan.getSerialNumber().getMa()
+            );
+            SerialNumberDaBanResponse response =
+                    SerialNumberSoldMapper.toSerialNumberDaBanResponse(serialNumberDaBan);
+            String key = response.getBillId() + "-" + response.getProductDetailId();
             if (responseMap.containsKey(key)) {
                 SerialNumberDaBanResponse existingResponse = responseMap.get(key);
                 existingResponse.setSoLuong(existingResponse.getSoLuong() + 1);
+                existingResponse.getSerialNumbers().add(serialInfo);
             } else {
                 response.setSoLuong(1);
+                Set<SerialNumberDaBanResponse.SerialInfo> serialInfos = new HashSet<>();
+                serialInfos.add(serialInfo);
+                response.setSerialNumbers(serialInfos);
                 responseMap.put(key, response);
             }
         }
         return new ArrayList<>(responseMap.values());
     }
 
-
     @Override
-    public SerialNumberDaBanResponse create(CreateSerialNumberDaBanRequest request) throws AppException {
+    @Transactional(rollbackFor = AppException.class)
+    public Boolean create(CreateSerialNumberDaBanRequest request) throws AppException {
         HoaDon existingBill = hoaDonRepository.findHoaDonByMa(request.getBillCode()).orElseThrow(
                 () -> new AppException(ErrorCode.BILL_NOT_FOUND));
         List<SerialNumber> serialNumbers = request.getListSerialNumberId()
@@ -106,31 +83,19 @@ public class SerialNumberDaBanServiceImpl implements SerialNumberDaBanService {
                         throw new RuntimeException(e);
                     }
                 }).toList();
-//                serialNumberService.getSerialNumberByProductIdAndStatus(
-//                request.getProductId(), 0);
+        serialNumbers.forEach(serialNumber -> {
+            SerialNumberDaBan newSerialNumberDaBan = new SerialNumberDaBan();
+            newSerialNumberDaBan.setHoaDon(existingBill);
+            newSerialNumberDaBan.setSerialNumber(serialNumber);
 
-        SerialNumberDaBan newSerialNumberDaBan = new SerialNumberDaBan();
-        newSerialNumberDaBan.setHoaDon(existingBill);
-
-        SerialNumber existingSerialNumber = null;
-        if (!serialNumbers.isEmpty()) {
-            newSerialNumberDaBan.setSerialNumber(existingSerialNumber);
-        }
-        SerialNumberDaBan serialNumberDaBan = serialNumberDaBanRepository.save(newSerialNumberDaBan);
-//
-//        serialNumbers.forEach(serialNumber -> {
-//            SerialNumberDaBan newSerialNumberDaBan = new SerialNumberDaBan();
-//            newSerialNumberDaBan.setHoaDon(existingBill);
-//            newSerialNumberDaBan.setSerialNumber(serialNumber);
-//
-//            // Lưu SerialNumberDaBan vào cơ sở dữ liệu
-//            serialNumberDaBanRepository.save(newSerialNumberDaBan);
-//        });
+            // Lưu SerialNumberDaBan vào cơ sở dữ liệu
+            serialNumberDaBanRepository.save(newSerialNumberDaBan);
+        });
 
         List<LichSuHoaDonResponse> existingHistories = billHistoryService.getBillHistoryByBillId(existingBill.getId());
-        boolean hasStatus2 = existingHistories.stream().anyMatch(history -> history.getTrangThai() == 1);
+        boolean hasStatus = existingHistories.stream().anyMatch(history -> history.getTrangThai() == 1);
 
-        if (!hasStatus2) {
+        if (!hasStatus) {
             CreateLichSuHoaDonRequest billHistoryRequest = new CreateLichSuHoaDonRequest();
             billHistoryRequest.setIdHoaDon(existingBill.getId());
             billHistoryRequest.setTrangThai(1);
@@ -145,32 +110,29 @@ public class SerialNumberDaBanServiceImpl implements SerialNumberDaBanService {
                 e.printStackTrace();
             }
         }
-        tinhTien(existingBill.getMa());
-        SerialNumberDaBanResponse response = new SerialNumberDaBanResponse();
-        response.setSerialNumberId(serialNumberDaBan.getSerialNumber().getId());
-        response.setHoaDonId(serialNumberDaBan.getHoaDon().getId());
-
-        return response;
+//        tính tiền và check phiếu pgg
+        prepareTheBill(existingBill.getMa());
+        return true;
     }
 
     @Override
-    public void delete(Long id) {
-        Optional<SerialNumberDaBan> optional = serialNumberDaBanRepository.findById(id);
-        if (optional.isPresent()) {
-            serialNumberDaBanRepository.delete(optional.get());
-            tinhTien(optional.get().getHoaDon().getMa());
+    public void delete(SerialNumberSoldDelete request) throws AppException {
+        List<SerialNumberDaBan> serialNumbersToDelete = serialNumberDaBanRepository.findAllByIdInAndHoaDonMa(request.getSerialNumberIds(), request.getBillCode());
+        if (!serialNumbersToDelete.isEmpty()) {
+            String billCode = serialNumbersToDelete.get(0).getHoaDon().getMa();
+            serialNumberDaBanRepository.deleteAll(serialNumbersToDelete);
+            prepareTheBill(billCode);
         }
     }
 
-    //    hàm này gọi ở hàm trên
-    private BigDecimal tinhTien(String codeBill) {
-        HoaDon hoaDon = hoaDonRepository.findHoaDonByMa(codeBill).get();
-        List<SerialNumberDaBanResponse> listSerialNumberDaBan = getSerialNumberDaBanPage(codeBill);
+
+    @Override
+    public BigDecimal getBigDecimal(HoaDon hoaDon, List<SerialNumberDaBanResponse> listSerialNumberDaBan, HoaDonRepository hoaDonRepository) {
         PhieuGiamGia phieuGiamGia = hoaDon.getPhieuGiamGia();
         BigDecimal tongTien = listSerialNumberDaBan.stream()
                 .map(response -> {
                     BigDecimal gia = response.getGia() != null ? response.getGia() : BigDecimal.ZERO;
-                    Integer soLuong = response.getSoLuong() != null ? response.getSoLuong() : 0;
+                    int soLuong = response.getSoLuong() != null ? response.getSoLuong() : 0;
                     return gia.multiply(BigDecimal.valueOf(soLuong));
                 })
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
@@ -178,6 +140,7 @@ public class SerialNumberDaBanServiceImpl implements SerialNumberDaBanService {
         hoaDon.setTongTienBanDau(tongTien);
         BigDecimal tienGiam = BigDecimal.ZERO;
         if (phieuGiamGia != null) {
+//            check điều kiện pgg
             Integer loaiPGG = phieuGiamGia.getLoaiGiamGia();
             Integer trangThai = phieuGiamGia.getTrangThai();
             BigDecimal giaTraiPhieuGiam = phieuGiamGia.getGiaTriGiamGia();
@@ -193,11 +156,20 @@ public class SerialNumberDaBanServiceImpl implements SerialNumberDaBanService {
 //          tính % của phiếu giảm rồi trừ đi
                 tienGiam = tongTien.multiply(giaTraiPhieuGiam).divide(BigDecimal.valueOf(100), RoundingMode.HALF_UP);
             }
+            System.out.println("Quy đổi : " + tienGiam);
             tongTien = tongTien.subtract(tienGiam);
         }
         System.out.println("Tổng tiền sau giảm giá : " + tongTien);
         hoaDon.setTongTienPhaiTra(tongTien);
         hoaDonRepository.save(hoaDon);
         return tongTien;
+    }
+
+    //    hàm này gọi ở hàm trên
+    private void prepareTheBill
+    (String codeBill) {
+        HoaDon hoaDon = hoaDonRepository.findHoaDonByMa(codeBill).get();
+        List<SerialNumberDaBanResponse> listSerialNumberDaBan = getSerialNumberDaBanPage(codeBill);
+        getBigDecimal(hoaDon, listSerialNumberDaBan, hoaDonRepository);
     }
 }
