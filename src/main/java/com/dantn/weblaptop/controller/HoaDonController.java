@@ -35,7 +35,7 @@ public class HoaDonController {
     @GetMapping("test/{code}")
     public ResponseEntity<ApiResponse> a(@PathVariable(name = "code") String code) throws AppException {
         return ResponseEntity.ok(ApiResponse.builder().statusCode(HttpStatus.OK.value())
-                .data(hoaDonService.tinhTien(code)).build());
+                .data(hoaDonService.prepareTheBill(code)).build());
     }
 
 

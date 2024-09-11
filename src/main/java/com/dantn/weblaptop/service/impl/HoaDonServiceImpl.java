@@ -9,7 +9,6 @@ import com.dantn.weblaptop.dto.response.ResultPaginationResponse;
 import com.dantn.weblaptop.dto.response.SerialNumberDaBanResponse;
 import com.dantn.weblaptop.entity.hoadon.HoaDon;
 import com.dantn.weblaptop.entity.nhanvien.NhanVien;
-import com.dantn.weblaptop.entity.phieugiamgia.PhieuGiamGia;
 import com.dantn.weblaptop.exception.AppException;
 import com.dantn.weblaptop.exception.ErrorCode;
 import com.dantn.weblaptop.mapper.impl.HoaDonMapper;
@@ -32,7 +31,6 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.List;
 import java.util.Optional;
 
@@ -192,42 +190,11 @@ public class HoaDonServiceImpl implements HoaDonService {
                 .build();
         return response;
     }
-//Lặp code bên .. ĐÃ bán
-    public BigDecimal tinhTien(String codeBill) {
+
+    //Lặp code bên .. ĐÃ bán
+    public BigDecimal prepareTheBill(String codeBill) {
         HoaDon hoaDon = billRepository.findHoaDonByMa(codeBill).get();
         List<SerialNumberDaBanResponse> listSerialNumberDaBan = serialNumberDaBanService.getSerialNumberDaBanPage(codeBill);
-        PhieuGiamGia phieuGiamGia = hoaDon.getPhieuGiamGia();
-        BigDecimal tongTien = listSerialNumberDaBan.stream()
-                .map(response -> {
-                    BigDecimal gia = response.getGia() != null ? response.getGia() : BigDecimal.ZERO;
-                    Integer soLuong = response.getSoLuong() != null ? response.getSoLuong() : 0;
-                    return gia.multiply(BigDecimal.valueOf(soLuong));
-                })
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
-        System.out.println("Tổng tiền : " + tongTien);
-        hoaDon.setTongTienBanDau(tongTien);
-        BigDecimal tienGiam = BigDecimal.ZERO;
-        if (phieuGiamGia != null) {
-            Integer loaiPGG = phieuGiamGia.getLoaiGiamGia();
-            Integer trangThai = phieuGiamGia.getTrangThai();
-            BigDecimal giaTraiPhieuGiam = phieuGiamGia.getGiaTriGiamGia();
-            if (trangThai == 3 || trangThai == 2) {
-                hoaDon.setPhieuGiamGia(null);
-                hoaDon = billRepository.save(hoaDon);
-                return null;
-            }
-//            1 % : 2 VND
-            if (loaiPGG == 2) {
-                tienGiam = giaTraiPhieuGiam;
-            } else {
-//          tính % của phiếu giảm rồi trừ đi
-                tienGiam = tongTien.multiply(giaTraiPhieuGiam).divide(BigDecimal.valueOf(100), RoundingMode.HALF_UP);
-            }
-            tongTien = tongTien.subtract(tienGiam);
-        }
-        System.out.println("Tổng tiền sau giảm giá : " + tongTien);
-        hoaDon.setTongTienPhaiTra(tongTien);
-        billRepository.save(hoaDon);
-        return tongTien;
+        return serialNumberDaBanService.getBigDecimal(hoaDon, listSerialNumberDaBan, billRepository);
     }
 }

@@ -8,10 +8,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public enum ErrorCode {
-    UNCATEGORIZED_EXCEPTION(9999,"Không được phân loại ngoại lệ !!!"),
+    UNCATEGORIZED_EXCEPTION(9999, "Không được phân loại ngoại lệ !!!"),
 
-    NOT_FOUND(1001,"Không tìm thấy"),
-    PAYMENT_METHOD_NOT_FOUND(1002,"Phương thức thanh toán không tồn tại"),
+    NOT_FOUND(1001, "Không tìm thấy"),
+    PAYMENT_METHOD_NOT_FOUND(1002, "Phương thức thanh toán không tồn tại"),
     BILL_NOT_FOUND(1003, "Hóa đơn không tồn tại"),
     EMPLOYEE_NOT_FOUND(1004, "Nhân viên không tồn tại"),
     CUSTOMER_NOT_FOUND(1005, "Khách hàng không tồn tại"),
@@ -34,9 +34,11 @@ public enum ErrorCode {
     COUPONS_MAX_DISCOUNT(3009, "Giảm tối đa phải lớn hơn 0 VND"),
     COUPONS_APPLICABLE_SCOPE_NOT_NULL(3010, "Phạm vi áp dụng không được để trống"),
     COUPONS_MIN_QUANTITY(3011, "Số lượng phải lớn hơn 0"),
-    COUPON_CODE_ALREADY_EXISTS(3012,"Mã phiếu đã tồn tại")
-    ;
-    private  Integer code;
-    private  String message;
+    COUPON_CODE_ALREADY_EXISTS(3012, "Mã phiếu đã tồn tại"),
+
+    // Đầu 4 Serial Number
+    SERIAL_NUMBER_NOT_FOUND(4000, "Serial Number không tồn tại");
+    private Integer code;
+    private String message;
 
 }

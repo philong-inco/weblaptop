@@ -4,6 +4,7 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.math.BigDecimal;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -12,19 +13,23 @@ import java.math.BigDecimal;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class SerialNumberDaBanResponse {
 
-    Long id;
-    Long hoaDonId;
-    Long serialNumberId;
-    Long idSPCT;
-    String maSerialNumber;
-    String maSPCT;
-    String tenSanPham;
+    Long billId;
+    Long productDetailId;
+    String productDetailCode;
+    String productName;
     BigDecimal gia;
     Integer soLuong;
+    Set<SerialInfo> serialNumbers;
+
 //    String anh;
 
-
-    // sau theem cac trường cần thiết
-
-
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @FieldDefaults(level = AccessLevel.PRIVATE)
+    public static class SerialInfo {
+        Long serialNumberId;
+        String serialNumberCode;
+    }
 }

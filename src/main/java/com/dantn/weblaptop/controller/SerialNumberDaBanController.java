@@ -1,6 +1,7 @@
 package com.dantn.weblaptop.controller;
 
 import com.dantn.weblaptop.dto.request.create_request.CreateSerialNumberDaBanRequest;
+import com.dantn.weblaptop.dto.request.update_request.SerialNumberSoldDelete;
 import com.dantn.weblaptop.dto.response.ApiResponse;
 import com.dantn.weblaptop.exception.AppException;
 import com.dantn.weblaptop.service.SerialNumberDaBanService;
@@ -19,32 +20,34 @@ public class SerialNumberDaBanController {
     SerialNumberDaBanService serialNumberDaBanService;
 
     @GetMapping
-    public ResponseEntity<ApiResponse> getSerialNumberSold(@RequestParam(name = "code") String code){
-        ApiResponse apiResponse = new ApiResponse();
-        apiResponse.setStatusCode(HttpStatus.OK.value());
-        apiResponse.setData(serialNumberDaBanService.getSerialNumberDaBanPage(code));
-        apiResponse.setMessage("Lấy danh sách sản phẩm đã có trong hóa đơn : "+ code);
-        return ResponseEntity.ok(apiResponse);
+    public ResponseEntity<ApiResponse> getSerialNumberSold(
+            @RequestParam(name = "code") String code) {
+        return ResponseEntity.ok(
+                ApiResponse.builder()
+                        .statusCode(HttpStatus.OK.value())
+                        .message("Get product list and serial number sold by bill code")
+                        .data(serialNumberDaBanService.getSerialNumberDaBanPage(code))
+                        .build());
     }
 
     @PostMapping
-    public ResponseEntity<ApiResponse> create(@RequestBody CreateSerialNumberDaBanRequest request) throws AppException {
-        ApiResponse apiResponse = new ApiResponse();
-        apiResponse.setStatusCode(HttpStatus.CREATED.value());
-        apiResponse.setData(serialNumberDaBanService.create(request));
-        apiResponse.setMessage("Thêm mới thành công 1 sản phẩm");
-        return ResponseEntity.status(HttpStatus.CREATED).body(apiResponse);
+    public ResponseEntity<ApiResponse> create(
+            @RequestBody CreateSerialNumberDaBanRequest request) throws AppException {
+        return ResponseEntity.status(HttpStatus.CREATED).body(
+                ApiResponse.builder()
+                        .statusCode(HttpStatus.CREATED.value())
+                        .message("Created successfully")
+                        .data(serialNumberDaBanService.create(request))
+                        .build());
     }
 
-    @DeleteMapping("{id}")
-    public ResponseEntity<ApiResponse> delete(
-            @PathVariable("id") Long id
-    ){
-        serialNumberDaBanService.delete(id);
-        ApiResponse apiResponse = new ApiResponse();
-        apiResponse.setStatusCode(HttpStatus.OK.value());
-        apiResponse.setData(null);
-        apiResponse.setMessage("Hủy thành công ");
-        return ResponseEntity.status(HttpStatus.CREATED).body(apiResponse);
+    @DeleteMapping("delete")
+    public ResponseEntity<ApiResponse> delete(@RequestBody SerialNumberSoldDelete request) throws AppException {
+        serialNumberDaBanService.delete(request);
+        return ResponseEntity.status(HttpStatus.OK).body(
+                ApiResponse.builder()
+                        .statusCode(HttpStatus.OK.value())
+                        .message("Deleted successfully")
+                        .build());
     }
 }
