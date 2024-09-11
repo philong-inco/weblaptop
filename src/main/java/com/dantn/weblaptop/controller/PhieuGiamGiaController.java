@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/api/v1/coupons")
+@RequestMapping("/api/coupons")
 public class PhieuGiamGiaController {
     @Autowired
     private PhieuGiamGiaService phieuGiamGiaService;

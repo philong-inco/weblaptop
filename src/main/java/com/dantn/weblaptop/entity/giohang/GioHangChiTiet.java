@@ -1,5 +1,6 @@
 package com.dantn.weblaptop.entity.giohang;
 
+import com.dantn.weblaptop.entity.sanpham.SanPhamChiTiet;
 import com.dantn.weblaptop.entity.sanpham.SerialNumber;
 import jakarta.persistence.*;
 import lombok.*;
@@ -23,19 +24,17 @@ public class GioHangChiTiet {
     Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_gio_hang", referencedColumnName = "id")
+    @JoinColumn(name = "gio_hang_id", referencedColumnName = "id")
     GioHang gioHang;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_serial_number", referencedColumnName = "id")
-    SerialNumber serialNumber;
+    @JoinColumn(name = "san_pham_chi_tiet_id", referencedColumnName = "id")
+    SanPhamChiTiet sanPhamChiTiet;
 
     @Column(name = "so_luong")
     Integer soLuong;
 
-    @Column(name = "thanh_tien")
-    BigDecimal thanhTen;
-    //    0: vẫn còn : 1 hết sản phẩm :
+    //    0: vẫn còn : 1 hết sản phẩm : 2 : số lượng ko đủ
     @Column(name = "trang_thai")
     Integer trangThai;
 }
