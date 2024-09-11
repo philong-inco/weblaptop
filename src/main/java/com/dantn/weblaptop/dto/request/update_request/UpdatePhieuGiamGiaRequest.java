@@ -23,10 +23,10 @@ public class UpdatePhieuGiamGiaRequest {
     String ten;
     String moTa;
     @NotNull(message = "COUPONS_START_DATE_NOT_NULL")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     LocalDateTime ngayBatDau;
     @NotNull(message = "COUPONS_END_DATE_NOT_NULL")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     LocalDateTime ngayHetHan;
     @NotNull(message = "COUPONS_DISCOUNT_TYPE_NOT_NULL")
     Integer loaiGiamGia;
@@ -36,7 +36,7 @@ public class UpdatePhieuGiamGiaRequest {
     @Min(value = 1, message = "COUPONS_MIN_ORDER_VALUE")
     BigDecimal giaTriDonToiThieu;
     @Min(value = 1, message = "COUPONS_MAX_DISCOUNT")
-    BigDecimal giamToiGia;
+    BigDecimal giamToiDa;
     @NotNull(message = "COUPONS_APPLICABLE_SCOPE_NOT_NULL")
     Integer phamViApDung;
     @Min(value = 1, message = "COUPONS_MIN_QUANTITY")

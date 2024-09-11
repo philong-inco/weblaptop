@@ -34,7 +34,7 @@ public class PhieuGiamGiaResponse {
 
     BigDecimal giaTriDonToiThieu;
 
-    BigDecimal giamToiGia;
+    BigDecimal giamToiDa;
 
     Integer phamViApDung;
 

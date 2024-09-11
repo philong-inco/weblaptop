@@ -26,7 +26,7 @@ public class PhieuGiamGiaMapper {
         response.setLoaiGiamGia(phieuGiamGia.getLoaiGiamGia());
         response.setGiaTriGiamGia(phieuGiamGia.getGiaTriGiamGia());
         response.setGiaTriDonToiThieu(phieuGiamGia.getGiaTriDonToiThieu());
-        response.setGiamToiGia(phieuGiamGia.getGiamToiDa());
+        response.setGiamToiDa(phieuGiamGia.getGiamToiDa());
         response.setPhamViApDung(phieuGiamGia.getPhamViApDung());
         response.setNgayTao(ConvertTime.convert(phieuGiamGia.getNgayTao().toString()));
         response.setNgaySua(ConvertTime.convert(phieuGiamGia.getNgaySua().toString()));
@@ -73,7 +73,7 @@ public class PhieuGiamGiaMapper {
         phieuGiamGia.setLoaiGiamGia(request.getLoaiGiamGia());
         phieuGiamGia.setGiaTriGiamGia(request.getGiaTriGiamGia());
         phieuGiamGia.setGiaTriDonToiThieu(request.getGiaTriDonToiThieu());
-        phieuGiamGia.setGiamToiDa(request.getGiamToiGia());
+        phieuGiamGia.setGiamToiDa(request.getGiamToiDa());
         phieuGiamGia.setPhamViApDung(request.getPhamViApDung());
         phieuGiamGia.setSoLuong(request.getSoLuong());
 //        phieuGiamGia.setNgayTao(request.getNgayTao());
