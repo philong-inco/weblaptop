@@ -108,6 +108,7 @@ public class KhachHangService_Implement implements KhachHang_Service {
             khachHang.setMa(GenerateCode.generateKhachHangCode());
             khachHang.setNgayTao(LocalDateTime.now().toInstant(ZoneOffset.UTC).toEpochMilli());
             khachHang.setTrangThai(1);
+            khachHang.setHangKhachHang(0);
             // Lấy session ID từ request
             String sessionId = request.getSession().getId();
             khachHang.setSessionId(sessionId);

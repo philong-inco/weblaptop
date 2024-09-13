@@ -99,9 +99,7 @@ public class PhieuGiamGiaService {
         }
         PhieuGiamGia savedPhieuGiamGia = phieuGiamGiaRepo.save(newPhieuGiamGia);
         List<Long> listKhachHangIds = request.getListKhachHang();
-
         NhanVien nhanVien = nhanVienRepositoy.findById(1L).get();
-
         if (listKhachHangIds != null) {
             listKhachHangIds.forEach(id -> {
                 sendMailToCustomer(savedPhieuGiamGia, id);
@@ -134,9 +132,7 @@ public class PhieuGiamGiaService {
 
         PhieuGiamGia phieuGiamGia = optional.get();
         validateFormDataUpdate(phieuGiamGia, request);
-        // Cập nhật thông tin phiếu giảm giá
         PhieuGiamGiaMapper.toUpdatePGG(request, phieuGiamGia);
-        // Cập nhật danh sách khách hàng liên kết với phiếu giảm giá
         Set<KhachHangPhieuGiamGia> existingRelations = khachHangPhieuGiamGiaRepository.findByPhieuGiamGiaId(phieuGiamGia.getId());
         List<Long> existingKhachHangIds = existingRelations.stream()
                 .map(relation -> relation.getKhachHang().getId())
@@ -146,13 +142,10 @@ public class PhieuGiamGiaService {
         if (request.getSoLuong() != null && request.getSoLuong() == 0) {
             phieuGiamGia.setTrangThai(2);
         }
-        // Lưu phiếu giảm giá đã cập nhật vào cơ sở dữ liệu
         PhieuGiamGia savedPhieuGiamGia = phieuGiamGiaRepo.save(phieuGiamGia);
-        // Xóa các khách hàng không còn trong danh sách mới
         for (KhachHangPhieuGiamGia relation : existingRelations) {
             if (!newKhachHangIds.contains(relation.getKhachHang().getId())) {
                 khachHangPhieuGiamGiaRepository.delete(relation);
-                // send mail báo hủy phiếu
             }
         }
         // Thêm các khách hàng mới
