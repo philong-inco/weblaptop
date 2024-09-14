@@ -167,13 +167,17 @@ public class PhieuGiamGiaService {
         return PhieuGiamGiaMapper.toPhieuGiamGiaResponse(savedPhieuGiamGia);
     }
 
-
+    @org.springframework.transaction.annotation.Transactional(rollbackFor = AppException.class)
     public PhieuGiamGia delete(Long id) {
         Optional<PhieuGiamGia> optional = phieuGiamGiaRepo.findById(id);
         return optional.map(o -> {
             o.setTrangThai(3);   // 0 chưa dung : 1 đang áp dụng : 2 : hết hạn : 3 hủy
             Set<KhachHangPhieuGiamGia> khachHangPhieuGiamGias = khachHangPhieuGiamGiaRepository.findByPhieuGiamGiaId(id);
-            khachHangPhieuGiamGiaRepository.deleteAll(khachHangPhieuGiamGias);
+            // 0 : chưa dùng : 1 : đã dùng : 2 hủy
+            khachHangPhieuGiamGias.forEach(khachHangPhieuGiamGia -> {
+                khachHangPhieuGiamGia.setTrangThai(2);
+            });
+            khachHangPhieuGiamGiaRepository.saveAll(khachHangPhieuGiamGias);
             return phieuGiamGiaRepo.save(o);
         }).orElse(null);
     }
