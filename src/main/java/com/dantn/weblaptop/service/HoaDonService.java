@@ -33,4 +33,6 @@ public interface HoaDonService {
 
 
     ResultPaginationResponse filterHoaDon (Specification<HoaDon> specification, Pageable pageable);
+
+    void deleteBillByCode (String code) ;
 }

@@ -8,11 +8,13 @@ import com.dantn.weblaptop.dto.response.Meta;
 import com.dantn.weblaptop.dto.response.ResultPaginationResponse;
 import com.dantn.weblaptop.dto.response.SerialNumberDaBanResponse;
 import com.dantn.weblaptop.entity.hoadon.HoaDon;
+import com.dantn.weblaptop.entity.hoadon.LichSuHoaDon;
 import com.dantn.weblaptop.entity.nhanvien.NhanVien;
 import com.dantn.weblaptop.exception.AppException;
 import com.dantn.weblaptop.exception.ErrorCode;
 import com.dantn.weblaptop.mapper.impl.HoaDonMapper;
 import com.dantn.weblaptop.repository.HoaDonRepository;
+import com.dantn.weblaptop.repository.LichSuHoaDonRepository;
 import com.dantn.weblaptop.repository.NhanVienRepository;
 import com.dantn.weblaptop.service.HoaDonService;
 import com.dantn.weblaptop.service.LichSuHoaDonService;
@@ -41,6 +43,7 @@ import java.util.Optional;
 public class HoaDonServiceImpl implements HoaDonService {
     HoaDonRepository billRepository;
     LichSuHoaDonService billHistoryService;
+    LichSuHoaDonRepository billHistoryRepository;
     NhanVienRepository employeeRepository;
     SerialNumberDaBanService serialNumberDaBanService;
 
@@ -70,9 +73,9 @@ public class HoaDonServiceImpl implements HoaDonService {
     @Override
     public HoaDonResponse createBill() throws AppException {
         List<HoaDon> billListStatusPending = billRepository.findByTrangThaiAndLoaiHoaDon(HoaDonStatus.getHoaDonStatusEnum("Đơn mới"), 0);
-        if (billListStatusPending.size() >= 5) {
-            throw new AppException(ErrorCode.MAXIMUM_5);
-        }
+//        if (billListStatusPending.size() >= 5) {
+//            throw new AppException(ErrorCode.MAXIMUM_5);
+//        }
         NhanVien existingEmployee = employeeRepository.findById(1L).get();
         // save
         HoaDon newBill = new HoaDon();
@@ -196,5 +199,14 @@ public class HoaDonServiceImpl implements HoaDonService {
         HoaDon hoaDon = billRepository.findHoaDonByMa(codeBill).get();
         List<SerialNumberDaBanResponse> listSerialNumberDaBan = serialNumberDaBanService.getSerialNumberDaBanPage(codeBill);
         return serialNumberDaBanService.getBigDecimal(hoaDon, listSerialNumberDaBan, billRepository);
+    }
+
+    @Override
+    public void deleteBillByCode(String code) {
+        Optional<HoaDon> optional = billRepository.findHoaDonByMa(code);
+        if(optional.isPresent()){
+            optional.get().setTrangThai(HoaDonStatus.XOA);
+            billRepository.save(optional.get());
+        }
     }
 }
