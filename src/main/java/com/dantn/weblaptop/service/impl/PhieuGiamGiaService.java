@@ -18,6 +18,7 @@ import com.dantn.weblaptop.repository.KhachHangPhieuGiamGiaRepository;
 import com.dantn.weblaptop.repository.KhachHangRepository;
 import com.dantn.weblaptop.repository.NhanVien_Repositoy;
 import com.dantn.weblaptop.repository.PhieuGiamGiaRepo;
+import jakarta.mail.MessagingException;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -26,6 +27,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.web.servlet.View;
 
 import java.math.BigDecimal;
 import java.time.ZoneOffset;
@@ -45,6 +47,8 @@ public class PhieuGiamGiaService {
     private KhachHangRepository khachHangRepository;
     @Autowired
     private NhanVien_Repositoy nhanVienRepositoy;
+    @Autowired
+    private View error;
 
     public ResultPaginationResponse filterCoupons(Specification<PhieuGiamGia> specification, Pageable pageable) {
         Page<PhieuGiamGia> couponPage = phieuGiamGiaRepo.findAll(specification, pageable);
@@ -99,10 +103,13 @@ public class PhieuGiamGiaService {
         }
         PhieuGiamGia savedPhieuGiamGia = phieuGiamGiaRepo.save(newPhieuGiamGia);
         List<Long> listKhachHangIds = request.getListKhachHang();
-        NhanVien nhanVien = nhanVienRepositoy.findById(1L).get();
         if (listKhachHangIds != null) {
             listKhachHangIds.forEach(id -> {
-                sendMailToCustomer(savedPhieuGiamGia, id);
+                try {
+                    sendMailToCustomer(savedPhieuGiamGia, id);
+                } catch (MessagingException e) {
+                    throw new RuntimeException(e);
+                }
             });
         }
         PhieuGiamGia phieuGiamGia = phieuGiamGiaRepo.findById(savedPhieuGiamGia.getId()).get();
@@ -110,7 +117,7 @@ public class PhieuGiamGiaService {
         return PhieuGiamGiaMapper.toPhieuGiamGiaResponse(phieuGiamGia);
     }
 
-    private void sendMailToCustomer(PhieuGiamGia savedPhieuGiamGia, Long id) {
+    private void sendMailToCustomer(PhieuGiamGia savedPhieuGiamGia, Long id) throws MessagingException {
         KhachHang khachHang = khachHangRepository.findById(id).orElse(null);
         if (khachHang != null) {
             KhachHangPhieuGiamGia khachHangPhieuGiamGia = new KhachHangPhieuGiamGia();
@@ -118,13 +125,13 @@ public class PhieuGiamGiaService {
             khachHangPhieuGiamGia.setKhachHang(khachHang);
             khachHangPhieuGiamGia.setTrangThai(0);  // 0 chưa dung : 1 đang áp dụng : 2 : hết hạn : 3 hủy
             khachHangPhieuGiamGiaRepository.save(khachHangPhieuGiamGia);
-//                    if (khachHang.getEmail() != null) {
-//                        emailSender.sendEmailCoupons(nhanVien, khachHang, savedPhieuGiamGia);
-//                    }
+                    if (khachHang.getEmail() != null) {
+                        emailSender.sendEmailCoupons(khachHang, savedPhieuGiamGia);
+                    }
         }
     }
 
-    public PhieuGiamGiaResponse update(UpdatePhieuGiamGiaRequest request, Long id) throws AppException {
+    public PhieuGiamGiaResponse update(UpdatePhieuGiamGiaRequest request, Long id) throws AppException, MessagingException {
         Optional<PhieuGiamGia> optional = phieuGiamGiaRepo.findById(id);
         if (!optional.isPresent()) {
             throw new AppException(ErrorCode.COUPONS_NOT_FOUND);
@@ -152,8 +159,8 @@ public class PhieuGiamGiaService {
         for (Long khachHangId : newKhachHangIds) {
             if (!existingKhachHangIds.contains(khachHangId)) {
                 sendMailToCustomer(phieuGiamGia, khachHangId);
-            } else {
-                // send mail báo cập nhập phiếu
+            }else {
+                System.out.println(error);
             }
         }
         // Tạo phản hồi
@@ -221,7 +228,6 @@ public class PhieuGiamGiaService {
         if (request.getLoaiGiamGia() == 1 && request.getGiaTriGiamGia().compareTo(new BigDecimal("100")) > 0) {
             throw new AppException(ErrorCode.COUPONS_MAXIMUM_100);
         }
-        // Kiểm tra ngày kết thúc và ngày bắt đầu
         if (request.getNgayHetHan().isBefore(request.getNgayBatDau())) {
             throw new AppException(ErrorCode.ERROR_DATE_1);
         }

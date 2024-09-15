@@ -8,6 +8,7 @@ import com.dantn.weblaptop.entity.phieugiamgia.PhieuGiamGia;
 import com.dantn.weblaptop.exception.AppException;
 import com.dantn.weblaptop.service.impl.PhieuGiamGiaService;
 import com.turkraft.springfilter.boot.Filter;
+import jakarta.mail.MessagingException;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -59,7 +60,7 @@ public class PhieuGiamGiaController {
     }
 
     @PutMapping("/update/{id}")
-    public ResponseEntity<ApiResponse> updatePhieuGiamGia(@Valid @RequestBody UpdatePhieuGiamGiaRequest request, @PathVariable Long id) throws AppException {
+    public ResponseEntity<ApiResponse> updatePhieuGiamGia(@Valid @RequestBody UpdatePhieuGiamGiaRequest request, @PathVariable Long id) throws AppException, MessagingException {
 //        return phieuGiamGiaService.update(phieuGiamGia, id);
         ApiResponse apiResponse = new ApiResponse();
         apiResponse.setStatusCode(HttpStatus.OK.value());
