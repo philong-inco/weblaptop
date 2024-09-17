@@ -17,8 +17,8 @@ public class SerialNumberDaBanResponse {
     Long productDetailId;
     String productDetailCode;
     String productName;
-    BigDecimal gia;
-    Integer soLuong;
+    BigDecimal price;
+    Integer quantity;
     Set<SerialInfo> serialNumbers;
 
 //    String anh;

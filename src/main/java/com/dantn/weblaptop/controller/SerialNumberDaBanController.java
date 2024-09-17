@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.*;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class SerialNumberDaBanController {
     SerialNumberDaBanService serialNumberDaBanService;
-
     @GetMapping
     public ResponseEntity<ApiResponse> getSerialNumberSold(
             @RequestParam(name = "code") String code) {
@@ -42,7 +41,8 @@ public class SerialNumberDaBanController {
     }
 
     @DeleteMapping("delete")
-    public ResponseEntity<ApiResponse> delete(@RequestBody SerialNumberSoldDelete request) throws AppException {
+    public ResponseEntity<ApiResponse> delete(
+            @RequestBody SerialNumberSoldDelete request) throws AppException {
         serialNumberDaBanService.delete(request);
         return ResponseEntity.status(HttpStatus.OK).body(
                 ApiResponse.builder()
