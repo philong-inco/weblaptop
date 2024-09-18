@@ -10,7 +10,7 @@ import java.math.BigDecimal;
 
 public class HoaDonMapper {
 
-    public static HoaDonResponse  toHoaDonResponse (HoaDon hoaDon){
+    public static HoaDonResponse   toHoaDonResponse (HoaDon hoaDon){
         HoaDonResponse response = new HoaDonResponse();
         KhachHang customer = hoaDon.getKhachHang();
         response.setId(hoaDon.getId());

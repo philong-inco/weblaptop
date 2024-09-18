@@ -40,7 +40,7 @@ public class SerialNumberDaBanController {
                         .build());
     }
 
-    @DeleteMapping("delete")
+    @PostMapping("delete")
     public ResponseEntity<ApiResponse> delete(
             @RequestBody SerialNumberSoldDelete request) throws AppException {
         serialNumberDaBanService.delete(request);

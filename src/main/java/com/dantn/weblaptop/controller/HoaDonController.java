@@ -86,6 +86,20 @@ public class HoaDonController {
         );
     }
 
+    @PostMapping("add-customer-to-bill")
+    public ResponseEntity<ApiResponse> addCustomerToBill(
+            @RequestParam(name = "customerId") Long customerId,
+            @RequestParam(name = "codeBill") String codeBill
+    ) throws AppException {
+        billService.addCustomerToBill(customerId, codeBill);
+        return ResponseEntity.status(HttpStatus.CREATED).body(
+                ApiResponse.builder()
+                        .statusCode(HttpStatus.CREATED.value())
+                        .message("Add customer to bill success")
+                        .build()
+        );
+    }
+
     @PostMapping("update/{id}")
     public ResponseEntity<ApiResponse> updateBillById(@RequestBody UpdateHoaDonRequest request) {
         return ResponseEntity.status(HttpStatus.OK).body(null);

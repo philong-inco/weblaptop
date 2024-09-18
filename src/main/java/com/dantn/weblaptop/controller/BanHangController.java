@@ -34,7 +34,7 @@ public class BanHangController {
             @PathVariable(name = "billCode") String billCode
     ) {
         billService.deleteBillByCode(billCode);
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).body(
+        return ResponseEntity.status(HttpStatus.OK).body(
                 ApiResponse.builder()
                         .statusCode(HttpStatus.NO_CONTENT.value())
                         .message("Delete Bill Code Success")

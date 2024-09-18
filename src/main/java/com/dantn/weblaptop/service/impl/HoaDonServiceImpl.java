@@ -8,12 +8,13 @@ import com.dantn.weblaptop.dto.response.Meta;
 import com.dantn.weblaptop.dto.response.ResultPaginationResponse;
 import com.dantn.weblaptop.dto.response.SerialNumberDaBanResponse;
 import com.dantn.weblaptop.entity.hoadon.HoaDon;
-import com.dantn.weblaptop.entity.hoadon.LichSuHoaDon;
+import com.dantn.weblaptop.entity.khachhang.KhachHang;
 import com.dantn.weblaptop.entity.nhanvien.NhanVien;
 import com.dantn.weblaptop.exception.AppException;
 import com.dantn.weblaptop.exception.ErrorCode;
 import com.dantn.weblaptop.mapper.impl.HoaDonMapper;
 import com.dantn.weblaptop.repository.HoaDonRepository;
+import com.dantn.weblaptop.repository.KhachHangRepository;
 import com.dantn.weblaptop.repository.LichSuHoaDonRepository;
 import com.dantn.weblaptop.repository.NhanVienRepository;
 import com.dantn.weblaptop.service.HoaDonService;
@@ -46,6 +47,7 @@ public class HoaDonServiceImpl implements HoaDonService {
     LichSuHoaDonRepository billHistoryRepository;
     NhanVienRepository employeeRepository;
     SerialNumberDaBanService serialNumberDaBanService;
+    KhachHangRepository customerRepository;
 
     @Override
     public ResultPaginationResponse getBillPage(Optional<String> page, Optional<String> size) {
@@ -83,6 +85,10 @@ public class HoaDonServiceImpl implements HoaDonService {
         newBill.setNhanVien(existingEmployee);
         newBill.setTrangThai(HoaDonStatus.DON_MOI);
         newBill.setLoaiHoaDon(0);// 0 : Tại quầy - 1 : Online
+        Optional<HoaDon> exitingBill = billRepository.findHoaDonByMa(newBill.getMa());
+        if (exitingBill.isPresent()) {
+            newBill.setMa(GenerateCode.generateHoaDon());
+        }
         HoaDonResponse response = HoaDonMapper.toHoaDonResponse(billRepository.save(newBill));
 
         CreateLichSuHoaDonRequest billHistoryRequest = new CreateLichSuHoaDonRequest();
@@ -204,9 +210,25 @@ public class HoaDonServiceImpl implements HoaDonService {
     @Override
     public void deleteBillByCode(String code) {
         Optional<HoaDon> optional = billRepository.findHoaDonByMa(code);
-        if(optional.isPresent()){
+        if (optional.isPresent()) {
             optional.get().setTrangThai(HoaDonStatus.XOA);
             billRepository.save(optional.get());
+        }
+    }
+
+    @Override
+    public void addCustomerToBill(Long customerId, String billCode) throws AppException {
+        Optional<KhachHang> customer = customerRepository.findById(customerId);
+        if (customer.isPresent()) {
+            Optional<HoaDon> bill = billRepository.findHoaDonByMa(billCode);
+            if (bill.isPresent()) {
+                bill.get().setKhachHang(customer.get());
+                billRepository.save(bill.get());
+            } else {
+                throw new AppException(ErrorCode.BILL_NOT_FOUND);
+            }
+        } else {
+            throw new AppException(ErrorCode.CUSTOMER_NOT_FOUND);
         }
     }
 }
