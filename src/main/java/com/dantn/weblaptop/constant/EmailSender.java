@@ -2,16 +2,10 @@ package com.dantn.weblaptop.constant;
 
 import com.dantn.weblaptop.entity.khachhang.KhachHang;
 import com.dantn.weblaptop.entity.nhanvien.NhanVien;
-<<<<<<< HEAD
 import com.dantn.weblaptop.entity.nhanvien.VaiTro;
-=======
 import com.dantn.weblaptop.entity.phieugiamgia.PhieuGiamGia;
->>>>>>> manhntph37150
-import com.dantn.weblaptop.repository.VaiTro_Repository;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
-import lombok.AllArgsConstructor;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
