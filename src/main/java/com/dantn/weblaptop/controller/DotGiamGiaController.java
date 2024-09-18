@@ -84,6 +84,16 @@ public class DotGiamGiaController {
         return ResponseEntity.ok(dotGiamGiaService.filter(tenOrMa, giaTri, trangThai, start, end, page, size));
     }
 
+    @PutMapping("/changestatus/{id}")
+    public ResponseEntity<?> changeStatusDotGiamGia(@PathVariable Long id, BindingResult bindingResult){
+        if (bindingResult.hasErrors()) {
+            // Xử lý lỗi validation ở đây (nếu cần)
+            return ResponseEntity.badRequest().body(bindingResult.getFieldError().getDefaultMessage());
+        }
+        dotGiamGiaService.changeStatusDotGiamGia(id);
+        return ResponseEntity.ok("Bạn đã update trạng thái thành công");
+    }
+
 //    @GetMapping("/find-product-detail")
 //    public ResponseEntity<?> getProductsDetail(
 //            @RequestParam(value = " v", required = false) List<Long> idSanPham,

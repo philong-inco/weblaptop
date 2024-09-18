@@ -22,5 +22,5 @@ public interface DotGiamGiaService {
 
     Page<DotGiamGiaResponse> filter(String tenOrMa, Integer giaTri, Integer trangThai, LocalDateTime startDay, LocalDateTime endDay, Integer page, Integer size);
 
-//    Page<DotGiamGiaSanPhamChiTietResponse> timKiemSanPhamChiTietTheoIdSanPham(List<Long> idSanPham, Integer page, Integer size);
+    void changeStatusDotGiamGia(Long id);
 }

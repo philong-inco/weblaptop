@@ -3,8 +3,13 @@ package com.dantn.weblaptop.service.impl;
 import com.dantn.weblaptop.dto.request.create_request.CreateDotGiamGiaRequest;
 import com.dantn.weblaptop.dto.request.update_request.UpdateGotGiamGiaRequest;
 import com.dantn.weblaptop.dto.response.DotGiamGiaResponse;
+import com.dantn.weblaptop.entity.dotgiamgia.DotGiamGiaSanPhamChiTiet;
+import com.dantn.weblaptop.entity.sanpham.SanPhamChiTiet;
+import com.dantn.weblaptop.exception.AppException;
+import com.dantn.weblaptop.exception.ErrorCode;
 import com.dantn.weblaptop.repository.DotGiamGiaRepository;
 import com.dantn.weblaptop.mapper.DotGiamGiaMapper;
+import com.dantn.weblaptop.repository.DotGiamGiaSanPhamChiTiet_Repository;
 import com.dantn.weblaptop.repository.SanPhamChiTietRepository;
 import com.dantn.weblaptop.service.DotGiamGiaService;
 import com.dantn.weblaptop.entity.dotgiamgia.DotGiamGia;
@@ -15,6 +20,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 
 
 @Component
@@ -26,6 +32,8 @@ public class DotGiamGiaServiceImpl implements DotGiamGiaService {
     @Autowired
     private SanPhamChiTietRepository sanPhamChiTietRepository;
 
+    @Autowired
+    private DotGiamGiaSanPhamChiTiet_Repository dotGiamGiaSanPhamChiTietRepository;
     @Override
     public Page<DotGiamGiaResponse> findAll(int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
@@ -74,19 +82,67 @@ public class DotGiamGiaServiceImpl implements DotGiamGiaService {
         return responses;
     }
 
+    @Override
+    public void changeStatusDotGiamGia(Long id) {
+        dotGiamGiaRepository.updateStatusDGG(id);
+    }
 
-        // cái hàm này em mới chỉ test get id sản phẩm hiển thị sản phẩm chi tiết nhưng mới chỉ lấy được 1 cần lấy 1 mảng
-//    @Override
-//    public Page<DotGiamGiaSanPhamChiTietResponse> timKiemSanPhamChiTietTheoIdSanPham(List<Long> idSanPham, Integer page, Integer size) {
-//        Pageable pageable = PageRequest.of(page, size);
-//        Page<SanPhamChiTiet> sanPhamChiTietPage;
-//
-//        if (idSanPham == null || idSanPham.isEmpty()) {
-//            sanPhamChiTietPage = sanPhamChiTietRepository.findAll(pageable);
-//        } else {
-//            sanPhamChiTietPage = dotGiamGiaRepository.timKiemSanPhamChiTietTheoIdSanPham(idSanPham, pageable);
-//        }
-//        Page<DotGiamGiaSanPhamChiTietResponse> responses = dotGiamGiaMapper.findSanPhamChiTietChoDotGiamGia(sanPhamChiTietPage);
-//        return responses;
-//    }
+    private String generateUniqueCode() {
+        return "DGG" + System.currentTimeMillis();
+    }
+    private void validateFormDataCreate(DotGiamGia dotGiamGia, CreateDotGiamGiaRequest request) throws AppException {
+        if (request.getMa() != null && dotGiamGiaRepository.existsByMa(request.getMa())) {
+            throw new AppException(ErrorCode.COUPON_CODE_ALREADY_EXISTS);
+        } else {
+            dotGiamGia.setMa(request.getMa() == null ? generateUniqueCode() : request.getMa());
+        }
+        if (request.getGiaTriGiam()>0) {
+            throw new AppException(ErrorCode.COUPONS_MAXIMUM_100);
+        }
+        if (request.getThoiGianBatDau().isBefore(request.getThoiGianKetThuc())) {
+            throw new AppException(ErrorCode.ERROR_DATE_1);
+        }
+
+        long currentSeconds = System.currentTimeMillis() / 1000;
+        long ngayBatDauSeconds = request.getThoiGianBatDau().toEpochSecond(ZoneOffset.UTC);
+        long ngayHetHanSeconds = request.getThoiGianKetThuc().toEpochSecond(ZoneOffset.UTC);
+        if (ngayHetHanSeconds <= currentSeconds) {
+            throw new AppException(ErrorCode.ERROR_DATE_2);
+        }
+        // chỉnh sử trạng thái
+        Integer status = (ngayBatDauSeconds > currentSeconds) ? 0 :
+                (currentSeconds >= ngayHetHanSeconds ? 2 : 1);
+        dotGiamGia.setTrangThai(status);
+    }
+
+    private void validateFormDataUpdate(DotGiamGia dotGiamGia, UpdateGotGiamGiaRequest request) throws AppException {
+        if (request.getGiaTriGiam() > 0) {
+            throw new AppException(ErrorCode.COUPONS_MAXIMUM_100);
+        }
+        // Kiểm tra ngày kết thúc và ngày bắt đầu
+        if (request.getThoiGianBatDau().isBefore(request.getThoiGianKetthuc())) {
+            throw new AppException(ErrorCode.ERROR_DATE_1);
+        }
+        long currentSeconds = System.currentTimeMillis() / 1000;
+        long ngayBatDauSeconds = request.getThoiGianBatDau().toEpochSecond(ZoneOffset.UTC);
+        long ngayHetHanSeconds = request.getThoiGianKetthuc().toEpochSecond(ZoneOffset.UTC);
+        if (ngayHetHanSeconds <= currentSeconds) {
+            throw new AppException(ErrorCode.ERROR_DATE_2);
+        }
+        // chỉnh sử trạng thái
+        Integer status = (ngayBatDauSeconds > currentSeconds) ? 0 :
+                (currentSeconds >= ngayHetHanSeconds ? 2 : 1);
+        dotGiamGia.setTrangThai(status);
+    }
+
+    private void addSpct (DotGiamGia dotGiamGia, Long id){
+        SanPhamChiTiet sanPhamChiTiet = sanPhamChiTietRepository.findById(id).orElse(null);
+        if(sanPhamChiTiet != null){
+            DotGiamGiaSanPhamChiTiet dotGiamGiaSanPhamChiTiet = new DotGiamGiaSanPhamChiTiet();
+            dotGiamGiaSanPhamChiTiet.setDotGiamGia(dotGiamGia);
+            dotGiamGiaSanPhamChiTiet.setSanPhamChiTiet(sanPhamChiTiet);
+            dotGiamGiaSanPhamChiTiet.setTrangThai(0);
+            dotGiamGiaSanPhamChiTietRepository.save(dotGiamGiaSanPhamChiTiet);
+        }
+    }
 }

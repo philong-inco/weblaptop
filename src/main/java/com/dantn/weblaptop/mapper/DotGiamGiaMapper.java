@@ -17,7 +17,5 @@ public interface DotGiamGiaMapper {
     DotGiamGiaResponse dotGiamGiaToDotGiamGiaResponse(DotGiamGia dotGiamGia);
 
     Page<DotGiamGiaResponse> findAllRequestToDotGiamGiaResponse(Page<DotGiamGia> page);
-//    Page<DotGiamGiaSanPhamChiTietResponse> findSanPhamChiTietChoDotGiamGia(Page<SanPhamChiTiet> page);
-
     DotGiamGia updateDotGiamGia(DotGiamGia dotGiamGia, UpdateGotGiamGiaRequest request);
 }
