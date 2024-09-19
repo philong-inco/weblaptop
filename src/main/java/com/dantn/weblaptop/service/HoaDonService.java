@@ -1,6 +1,5 @@
 package com.dantn.weblaptop.service;
 
-import com.dantn.weblaptop.constant.HoaDonStatus;
 import com.dantn.weblaptop.dto.request.update_request.UpdateHoaDonRequest;
 import com.dantn.weblaptop.dto.response.HoaDonResponse;
 import com.dantn.weblaptop.dto.response.ResultPaginationResponse;
@@ -33,4 +32,8 @@ public interface HoaDonService {
 
 
     ResultPaginationResponse filterHoaDon (Specification<HoaDon> specification, Pageable pageable);
+
+    void deleteBillByCode (String code) ;
+
+    HoaDonResponse addCustomerToBill (Long customerId, String billCode) throws AppException;
 }

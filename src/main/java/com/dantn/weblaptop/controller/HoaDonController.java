@@ -77,30 +77,33 @@ public class HoaDonController {
 
     @PostMapping("create")
     public ResponseEntity<ApiResponse> createBill() throws AppException {
-        ApiResponse apiResponse = new ApiResponse();
-        apiResponse.setStatusCode(HttpStatus.CREATED.value());
-        apiResponse.setMessage("Tạo mới hóa đơn thành công");
-        apiResponse.setData(billService.createBill());
-        return ResponseEntity.status(HttpStatus.CREATED).body(apiResponse);
+        return ResponseEntity.status(HttpStatus.CREATED).body(
+                ApiResponse.builder()
+                        .statusCode(HttpStatus.CREATED.value())
+                        .message("Tạo mới hóa đơn thành công")
+                        .data(billService.createBill())
+                        .build()
+        );
+    }
+
+    @PostMapping("add-customer-to-bill")
+    public ResponseEntity<ApiResponse> addCustomerToBill(
+            @RequestParam(name = "customerId") Long customerId,
+            @RequestParam(name = "codeBill") String codeBill
+    ) throws AppException {
+        return ResponseEntity.status(HttpStatus.CREATED).body(
+                ApiResponse.builder()
+                        .statusCode(HttpStatus.CREATED.value())
+                        .message("Add customer to bill success")
+                        .data( billService.addCustomerToBill(customerId, codeBill))
+                        .build()
+        );
     }
 
     @PostMapping("update/{id}")
     public ResponseEntity<ApiResponse> updateBillById(@RequestBody UpdateHoaDonRequest request) {
         return ResponseEntity.status(HttpStatus.OK).body(null);
     }
-//
-//    @GetMapping("/bill-history/{billId}")
-//    public ResponseEntity<ApiResponse> getBillHistoryByBillId(
-//            @PathVariable Long billId
-//    ) {
-//        ApiResponse<Object> apiResponse = ApiResponse
-//                .builder()
-//                .statusCode(HttpStatus.OK.value())
-//                .message("Call api success")
-//                .data(billHistoryService.getBillHistoryByBillId(billId))
-//                .build();
-//        return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
-//    }
 
     @GetMapping("/bill-history/{code}")
     public ResponseEntity<ApiResponse> getBillHistoryByBillCode(

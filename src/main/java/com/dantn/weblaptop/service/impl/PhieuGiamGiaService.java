@@ -18,6 +18,7 @@ import com.dantn.weblaptop.repository.KhachHangPhieuGiamGiaRepository;
 import com.dantn.weblaptop.repository.KhachHangRepository;
 import com.dantn.weblaptop.repository.NhanVien_Repositoy;
 import com.dantn.weblaptop.repository.PhieuGiamGiaRepo;
+import com.dantn.weblaptop.service.HoaDonService;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -45,6 +46,9 @@ public class PhieuGiamGiaService {
     private KhachHangRepository khachHangRepository;
     @Autowired
     private NhanVien_Repositoy nhanVienRepositoy;
+
+    @Autowired
+    private HoaDonService hoaDonService;
 
     public ResultPaginationResponse filterCoupons(Specification<PhieuGiamGia> specification, Pageable pageable) {
         Page<PhieuGiamGia> couponPage = phieuGiamGiaRepo.findAll(specification, pageable);
@@ -160,13 +164,17 @@ public class PhieuGiamGiaService {
         return PhieuGiamGiaMapper.toPhieuGiamGiaResponse(savedPhieuGiamGia);
     }
 
-
+    @org.springframework.transaction.annotation.Transactional(rollbackFor = AppException.class)
     public PhieuGiamGia delete(Long id) {
         Optional<PhieuGiamGia> optional = phieuGiamGiaRepo.findById(id);
         return optional.map(o -> {
             o.setTrangThai(3);   // 0 chưa dung : 1 đang áp dụng : 2 : hết hạn : 3 hủy
             Set<KhachHangPhieuGiamGia> khachHangPhieuGiamGias = khachHangPhieuGiamGiaRepository.findByPhieuGiamGiaId(id);
-            khachHangPhieuGiamGiaRepository.deleteAll(khachHangPhieuGiamGias);
+            // 0 : chưa dùng : 1 : đã dùng : 2 hủy
+            khachHangPhieuGiamGias.forEach(khachHangPhieuGiamGia -> {
+                khachHangPhieuGiamGia.setTrangThai(2);
+            });
+            khachHangPhieuGiamGiaRepository.saveAll(khachHangPhieuGiamGias);
             return phieuGiamGiaRepo.save(o);
         }).orElse(null);
     }
@@ -258,6 +266,11 @@ public class PhieuGiamGiaService {
         Integer status = (ngayBatDauSeconds > currentSeconds) ? 0 :
                 (currentSeconds >= ngayHetHanSeconds ? 2 : 1);
         phieuGiamGia.setTrangThai(status);
+    }
+
+
+    private List<PhieuGiamGiaResponse> getAllPggByHoaDon (String maHoaDon){
+        return  null;
     }
 
 }
