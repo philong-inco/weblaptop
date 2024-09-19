@@ -41,6 +41,8 @@ public class HoaDonResponse {
 
     String email;
 
+    String diaChi;
+
     String ghiChu;
 
     HoaDonStatus trangThai;

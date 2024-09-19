@@ -28,6 +28,7 @@ public class HoaDonMapper {
         // xem lại
         response.setSdt(hoaDon.getSdt());
         response.setEmail(hoaDon.getEmail() );
+        response.setDiaChi(hoaDon.getDiaChi());
         response.setNguoiSua(hoaDon.getNguoiSua());
         response.setNguoiTao(hoaDon.getNguoiTao());
         response.setNgayTao(ConvertTime.convert(hoaDon.getNgayTao()+""));

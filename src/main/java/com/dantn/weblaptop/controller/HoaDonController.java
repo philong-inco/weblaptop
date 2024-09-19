@@ -91,11 +91,11 @@ public class HoaDonController {
             @RequestParam(name = "customerId") Long customerId,
             @RequestParam(name = "codeBill") String codeBill
     ) throws AppException {
-        billService.addCustomerToBill(customerId, codeBill);
         return ResponseEntity.status(HttpStatus.CREATED).body(
                 ApiResponse.builder()
                         .statusCode(HttpStatus.CREATED.value())
                         .message("Add customer to bill success")
+                        .data( billService.addCustomerToBill(customerId, codeBill))
                         .build()
         );
     }
