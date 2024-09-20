@@ -10,17 +10,22 @@ import com.dantn.weblaptop.exception.ErrorCode;
 import com.dantn.weblaptop.repository.DotGiamGiaRepository;
 import com.dantn.weblaptop.mapper.DotGiamGiaMapper;
 import com.dantn.weblaptop.repository.DotGiamGiaSanPhamChiTiet_Repository;
+import com.dantn.weblaptop.repository.KhachHangPhieuGiamGiaRepository;
 import com.dantn.weblaptop.repository.SanPhamChiTietRepository;
 import com.dantn.weblaptop.service.DotGiamGiaService;
 import com.dantn.weblaptop.entity.dotgiamgia.DotGiamGia;
+import jakarta.mail.MessagingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
+import org.springframework.web.servlet.View;
 
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
+import java.util.List;
+import java.util.Set;
 
 
 @Component
@@ -34,6 +39,11 @@ public class DotGiamGiaServiceImpl implements DotGiamGiaService {
 
     @Autowired
     private DotGiamGiaSanPhamChiTiet_Repository dotGiamGiaSanPhamChiTietRepository;
+    @Autowired
+    private KhachHangPhieuGiamGiaRepository khachHangPhieuGiamGiaRepository;
+    @Autowired
+    private View error;
+
     @Override
     public Page<DotGiamGiaResponse> findAll(int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
@@ -50,28 +60,54 @@ public class DotGiamGiaServiceImpl implements DotGiamGiaService {
     }
 
     @Override
-    public DotGiamGiaResponse save(CreateDotGiamGiaRequest request) {
-        DotGiamGia dotGiamGiaGetByName = dotGiamGiaRepository.findbyNameAndMa(request.getTen(), request.getMa());
-        if (dotGiamGiaGetByName != null) {
-            throw new RuntimeException("Tên Hoặc Mã Đợt Giảm Giá : Đã Tồn Tại");
+    public DotGiamGiaResponse save(CreateDotGiamGiaRequest request) throws AppException {
+        DotGiamGia newDotGiamGia = dotGiamGiaMapper.createRequestToDotGiamGia(request);
+        validateFormDataCreate(newDotGiamGia, request);
+        newDotGiamGia.setMa(generateUniqueCode());
+        if(request.getGiaTriGiam() != null){
+            newDotGiamGia.setTrangThai(0);
         }
-        DotGiamGia dotGiamGia = dotGiamGiaMapper.createRequestToDotGiamGia(request);
-        dotGiamGiaRepository.saveAndFlush(dotGiamGia);
-        DotGiamGiaResponse dotGiamGiaResponse = dotGiamGiaMapper.dotGiamGiaToDotGiamGiaResponse(dotGiamGia);
-        return dotGiamGiaResponse;
+        DotGiamGia saveDotGiamGia = dotGiamGiaRepository.save(newDotGiamGia);
+        List<Long> listSpctIds = request.getListSanPhamChiTiet();
+        if (listSpctIds != null) {
+            listSpctIds.forEach(id -> {
+                try {
+                    addSpct(saveDotGiamGia, id);
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+            });
+        }
+        DotGiamGia dotGiamGia = dotGiamGiaRepository.findById(saveDotGiamGia.getId()).get();
+        return dotGiamGiaMapper.dotGiamGiaToDotGiamGiaResponse(dotGiamGia);
     }
 
     @Override
-    public DotGiamGiaResponse update(Long id, UpdateGotGiamGiaRequest request) {
-        DotGiamGia dotGiamGia = dotGiamGiaRepository.findById(id).orElseThrow(() -> new RuntimeException("Đợt Giảm Giá Không Tồn Tại"));
-        DotGiamGia checkName = dotGiamGiaRepository.findByNameOrMaExcludingId(id, request.getTen(), request.getMa());
-        if (checkName != null) {
-            throw new RuntimeException(" Update Không Thành Công Tên Hoặc Ma Đợt Giảm Giá : Đã Tồn Tại");
+    public DotGiamGiaResponse update(Long id, UpdateGotGiamGiaRequest request) throws AppException {
+        DotGiamGia findDotGiamGia = dotGiamGiaRepository.findById(id).get();
+        validateFormDataUpdate(findDotGiamGia, request);
+        dotGiamGiaMapper.updateDotGiamGia(findDotGiamGia, request);
+        Set<DotGiamGiaSanPhamChiTiet> existingRelations = dotGiamGiaSanPhamChiTietRepository.findByDotGiamGiaId(findDotGiamGia.getId());
+        List<Long> existingSpctIds =  existingRelations.stream().map(relation -> relation.getSanPhamChiTiet().getId()).toList();
+        List<Long> newSpctIds = request.getListSanPhamChiTiet();
+        if (newSpctIds != null) {
+            findDotGiamGia.setTrangThai(0);
         }
-        dotGiamGia = dotGiamGiaMapper.updateDotGiamGia(dotGiamGia, request);
-        dotGiamGiaRepository.save(dotGiamGia);
-        DotGiamGiaResponse response = dotGiamGiaMapper.dotGiamGiaToDotGiamGiaResponse(dotGiamGia);
-        return response;
+        DotGiamGia saveDotGiamGia = dotGiamGiaRepository.save(findDotGiamGia);
+        for(DotGiamGiaSanPhamChiTiet relation : existingRelations){
+            if (!newSpctIds.contains(relation.getSanPhamChiTiet().getId())){
+                dotGiamGiaSanPhamChiTietRepository.delete(relation);
+            }
+        }
+
+        for (Long sanPhamChiTietId : newSpctIds) {
+            if (!existingRelations.contains(sanPhamChiTietId)){
+                addSpct(findDotGiamGia, sanPhamChiTietId);
+            }else {
+                System.out.println(error);
+            }
+        }
+        return dotGiamGiaMapper.dotGiamGiaToDotGiamGiaResponse(saveDotGiamGia);
     }
 
     @Override
@@ -96,10 +132,7 @@ public class DotGiamGiaServiceImpl implements DotGiamGiaService {
         } else {
             dotGiamGia.setMa(request.getMa() == null ? generateUniqueCode() : request.getMa());
         }
-        if (request.getGiaTriGiam()>0) {
-            throw new AppException(ErrorCode.COUPONS_MAXIMUM_100);
-        }
-        if (request.getThoiGianBatDau().isBefore(request.getThoiGianKetThuc())) {
+        if (request.getThoiGianKetThuc().isBefore(request.getThoiGianBatDau())) {
             throw new AppException(ErrorCode.ERROR_DATE_1);
         }
 
@@ -116,16 +149,13 @@ public class DotGiamGiaServiceImpl implements DotGiamGiaService {
     }
 
     private void validateFormDataUpdate(DotGiamGia dotGiamGia, UpdateGotGiamGiaRequest request) throws AppException {
-        if (request.getGiaTriGiam() > 0) {
-            throw new AppException(ErrorCode.COUPONS_MAXIMUM_100);
-        }
         // Kiểm tra ngày kết thúc và ngày bắt đầu
-        if (request.getThoiGianBatDau().isBefore(request.getThoiGianKetthuc())) {
+        if (request.getThoiGianKetThuc().isBefore(request.getThoiGianBatDau())) {
             throw new AppException(ErrorCode.ERROR_DATE_1);
         }
         long currentSeconds = System.currentTimeMillis() / 1000;
         long ngayBatDauSeconds = request.getThoiGianBatDau().toEpochSecond(ZoneOffset.UTC);
-        long ngayHetHanSeconds = request.getThoiGianKetthuc().toEpochSecond(ZoneOffset.UTC);
+        long ngayHetHanSeconds = request.getThoiGianKetThuc().toEpochSecond(ZoneOffset.UTC);
         if (ngayHetHanSeconds <= currentSeconds) {
             throw new AppException(ErrorCode.ERROR_DATE_2);
         }

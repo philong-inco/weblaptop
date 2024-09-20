@@ -1,8 +1,7 @@
 package com.dantn.weblaptop.dto.request.update_request;
 
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.Size;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import jakarta.validation.constraints.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -17,38 +16,24 @@ import java.util.List;
 @ToString
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class UpdateGotGiamGiaRequest {
-    @NotBlank
-    @Size(min = 1, max = 255, message = "Mã Không Được Trống Và Vượt Quá 255 ký tự !")
-    @Pattern(regexp = "^(?!.*[+;\\-*\\/]).*$", message = "Mã không được chứa các ký tự đặc biệt như +, ;, -, *, Chia!")
     String ma;
-
     @NotBlank(message = "Tên Đợt Giảm Giá Trống !")
     @Size(min = 1, max = 255, message = "Tên Vượt Quá 255 ký tự !")
-    @Pattern(regexp = "^(?!.*[+;\\-*\\/]).*$", message = "Tên không được chứa các ký tự đặc biệt như +, ;, -, *, Chia!")
     String ten;
-
-    @NotBlank(message = "Trạng Thái Đợt Giảm Giá Trống !")
-    @Pattern(regexp = "^[0-9]\\d*$", message = "Trạng Thái Không Được Trống")
-    String trangThai;
-
+    Integer trangThai;
     @NotBlank(message = "Mô Tả Đợt Giảm Giá Trống !")
     @Size(min = 1, max = 255, message = "Mô Tả Vượt Quá 255 ký tự !")
-    @Pattern(regexp = "^(?!.*[+;\\-*\\/]).*$", message = "Mô Tả không được chứa các ký tự đặc biệt như +, ;, -, *, Chia!")
     String moTa;
-
     @NotBlank(message = "Loại Chiết Khấu không được để trống!")
-    @Pattern(regexp = "^(?:100|[1-9]?[0-9])$", message = "Loại Chiết Khấu phải là số từ 1 đến 100!")
-    String loaiChietKhau;
-
+    Integer loaiChietKhau;
+    @NotNull(message = "=START_DATE_NOT_NULL")
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     LocalDateTime thoiGianBatDau;
-    LocalDateTime thoiGianKetthuc;
-
-    @NotBlank(message = "Giảm Tối Đa không được để trống!")
-    @Pattern(regexp = "^[1-9]\\d*$", message = "Giảm Tối Đa phải là số dương!")
-    BigDecimal giamToiDa;
-
-    @NotBlank(message = "giá Trị giảm không được để trống!")
-    @Pattern(regexp = "^[1-9]\\d*$", message = "giá Trị giảm  phải là số dương!")
-    Integer giaTriGiam;
+    @NotNull(message = "END_DATE_NOT_NULL")
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
+    LocalDateTime thoiGianKetThuc;
+    @NotNull(message = "COUPONS_DISCOUNT_VALUE_NOT_NULL")
+    @Min(value = 1, message = "COUPONS_MIN_DISCOUNT_VALUE")
+    BigDecimal giaTriGiam;
     List<Long> listSanPhamChiTiet;
 }
