@@ -44,7 +44,7 @@ public class DotGiamGia extends BaseEntity {
     @Column(name = "giam_toi_da")
     BigDecimal giamToiDa;
     @Column(name = "gia_tri_giam")
-    Integer giaTriGiam;
+    BigDecimal giaTriGiam;
     @OneToMany(mappedBy = "dotGiamGia", fetch = FetchType.LAZY)
     Set<DotGiamGiaSanPhamChiTiet> dotGiamGiaSanPhamChiTiets;
     @OneToMany(mappedBy = "dotGiamGia", fetch = FetchType.LAZY)
