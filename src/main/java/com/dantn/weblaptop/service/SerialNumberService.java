@@ -28,4 +28,10 @@ public interface SerialNumberService {
 
     void changeStatusToSeriNumberDaBan(Long idSerialNumber);
 
+
+    List<SerialNumberResponse> findAllBySanPhamChiTietId(Long id);
+    List<SerialNumberResponse> findAllBySanPhamChiTietIdActive(Long id);
+
+
+
 }

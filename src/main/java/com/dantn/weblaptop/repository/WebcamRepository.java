@@ -1,5 +1,7 @@
 package com.dantn.weblaptop.repository;
 
+import com.dantn.weblaptop.entity.sanpham.thuoctinh.BanPhim;
+import com.dantn.weblaptop.entity.sanpham.thuoctinh.VGA;
 import com.dantn.weblaptop.entity.sanpham.thuoctinh.Webcam;
 import com.dantn.weblaptop.generics.IGenericsRepository;
 import org.springframework.data.domain.Page;
@@ -19,6 +21,10 @@ public interface WebcamRepository extends IGenericsRepository<Webcam, Long> {
     @Override
     @Query("SELECT r FROM Webcam r")
     List<Webcam> getAllList();
+
+    @Override
+    @Query("SELECT r FROM Webcam r WHERE r.trangThai = 1")
+    List<Webcam> getAllListActive();
 
     @Override
     @Query("SELECT r FROM Webcam r WHERE r.trangThai = :status")

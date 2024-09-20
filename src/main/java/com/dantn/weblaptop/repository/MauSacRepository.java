@@ -1,5 +1,6 @@
 package com.dantn.weblaptop.repository;
 
+import com.dantn.weblaptop.entity.sanpham.thuoctinh.BanPhim;
 import com.dantn.weblaptop.entity.sanpham.thuoctinh.MauSac;
 import com.dantn.weblaptop.generics.IGenericsRepository;
 import org.springframework.data.domain.Page;
@@ -19,6 +20,10 @@ public interface MauSacRepository extends IGenericsRepository<MauSac, Long> {
     @Override
     @Query("SELECT r FROM MauSac r")
     List<MauSac> getAllList();
+
+    @Override
+    @Query("SELECT r FROM MauSac r WHERE r.trangThai = 1")
+    List<MauSac> getAllListActive();
 
     @Override
     @Query("SELECT r FROM MauSac r WHERE r.trangThai = :status")

@@ -9,6 +9,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.stereotype.Service;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -17,6 +18,7 @@ public class SerialNumberMapper extends GenericsMapper<SerialNumber, SerialNumbe
     @Override
     public SerialNumber createToEntity(SerialNumberCreate create) {
         SerialNumber serial = SerialNumber.builder()
+                .ma(create.getMa())
                 .trangThai(create.getTrangThai())
                 .ngayNhap(create.getNgayNhap())
                 .build();
@@ -25,6 +27,7 @@ public class SerialNumberMapper extends GenericsMapper<SerialNumber, SerialNumbe
 
     @Override
     public SerialNumber updateToEntity(SerialNumberUpdate update, SerialNumber entity) {
+        entity.setMa(update.getMa());
         entity.setTrangThai(update.getTrangThai());
         entity.setNgayNhap(update.getNgayNhap());
         return entity;
@@ -34,6 +37,9 @@ public class SerialNumberMapper extends GenericsMapper<SerialNumber, SerialNumbe
     public SerialNumberResponse entityToResponse(SerialNumber entity) {
         SerialNumberResponse response = SerialNumberResponse.builder()
                 .trangThai(entity.getTrangThai())
+                .id(entity.getId())
+                .ma(entity.getMa())
+                .giaBan(entity.getSanPhamChiTiet().getGiaBan() +"")
                 .ngayNhap(entity.getNgayNhap() + "")
                 .sanPham(entity.getSanPhamChiTiet().getSanPham().getTen())
                 .ram(entity.getSanPhamChiTiet().getRam().getTen())
@@ -57,6 +63,7 @@ public class SerialNumberMapper extends GenericsMapper<SerialNumber, SerialNumbe
 
     @Override
     public List<SerialNumberResponse> listEntityToListResponse(List<SerialNumber> entityList) {
+        entityList.sort(Comparator.comparingLong(SerialNumber::getNgayTao).reversed());
         return entityList.stream().map(this::entityToResponse).collect(Collectors.toList());
     }
 

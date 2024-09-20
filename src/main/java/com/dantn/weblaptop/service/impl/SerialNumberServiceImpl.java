@@ -105,4 +105,14 @@ public class SerialNumberServiceImpl implements SerialNumberService {
     public void changeStatusToSeriNumberDaBan(Long idSerialNumber) {
         serialNumberRepository.changeStatusToSeriNumberDaBan(idSerialNumber);
     }
+
+    @Override
+    public List<SerialNumberResponse> findAllBySanPhamChiTietId(Long id) {
+        return mapper.listEntityToListResponse(serialNumberRepository.findBySanPhamChiTietId(id));
+    }
+
+    @Override
+    public List<SerialNumberResponse> findAllBySanPhamChiTietIdActive(Long id) {
+        return mapper.listEntityToListResponse(serialNumberRepository.findBySanPhamChiTietIdActive(id));
+    }
 }

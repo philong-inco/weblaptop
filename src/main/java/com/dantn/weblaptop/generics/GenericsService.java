@@ -28,6 +28,11 @@ public abstract class GenericsService<E, ID, C, U, R> implements IGenericsServic
     }
 
     @Override
+    public List<R> getAllListActive() {
+        return genericsMapper.listEntityToListResponse(genericsRepository.getAllListActive());
+    }
+
+    @Override
     public Page<R> findByStatusPage(Integer status, Pageable pageable) {
         return genericsMapper.pageEntityToPageResponse(genericsRepository.findByStatusPage(status, pageable));
     }

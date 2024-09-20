@@ -200,4 +200,43 @@ public class SerialNumberController {
         ));
     }
 
+    @GetMapping("find-by-spct-id/{id}")
+    public ResponseEntity<ResponseLong<List<SerialNumberResponse>>> findAllBySPCTId(@PathVariable("id")Long id)
+    {
+        List<SerialNumberResponse> result = serialNumberService.findAllBySanPhamChiTietId(id);
+        if (result != null || result.size() > 0)
+            return ResponseEntity.ok().body(new ResponseLong<>(
+                    200, "Get successfully", result
+            ));
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseLong<>(
+                404, "Not have serials", null
+        ));
+    }
+
+    @GetMapping("find-by-spct-id-active/{id}")
+    public ResponseEntity<ResponseLong<List<SerialNumberResponse>>> findAllBySPCTIdAcitve(@PathVariable("id")Long id)
+    {
+        List<SerialNumberResponse> result = serialNumberService.findAllBySanPhamChiTietIdActive(id);
+        if (result != null || result.size() > 0)
+            return ResponseEntity.ok().body(new ResponseLong<>(
+                    200, "Get successfully", result
+            ));
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseLong<>(
+                404, "Not have serials", null
+        ));
+    }
+
+
+    @GetMapping("find-by-ma/{ma}")
+    public ResponseEntity<ResponseLong<SerialNumberResponse>> findByMa(@PathVariable("ma")String ma)
+    {
+        SerialNumberResponse result = serialNumberService.findByMa(ma.trim());
+        if (result != null)
+            return ResponseEntity.ok().body(new ResponseLong<>(
+                    200, "Get successfully", result
+            ));
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseLong<>(
+                404, "Not have serials", null
+        ));
+    }
 }

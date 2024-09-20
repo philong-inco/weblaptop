@@ -24,4 +24,13 @@ public class ResponseLong<T> {
     String totalPage;
     String totalElement;
 
+
+
+    public ResponseLong(Integer code, String message, T data) {
+        this.code = code;
+        this.message = message;
+        this.data = data;
+    }
+
+
 }

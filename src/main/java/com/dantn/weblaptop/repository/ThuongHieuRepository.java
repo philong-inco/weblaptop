@@ -21,6 +21,10 @@ public interface ThuongHieuRepository extends IGenericsRepository<ThuongHieu, Lo
     List<ThuongHieu> getAllList();
 
     @Override
+    @Query("SELECT r FROM ThuongHieu r WHERE r.trangThai = 1")
+    List<ThuongHieu> getAllListActive();
+
+    @Override
     @Query("SELECT r FROM ThuongHieu r WHERE r.trangThai = :status")
     Page<ThuongHieu> findByStatusPage(@Param("status") Integer status, Pageable pageable);
 
