@@ -2,6 +2,9 @@ package com.dantn.weblaptop.service.impl;
 
 import com.dantn.weblaptop.dto.request.create_request.SerialNumberCreate;
 import com.dantn.weblaptop.dto.request.update_request.SerialNumberUpdate;
+
+import com.dantn.weblaptop.dto.response.Meta;
+import com.dantn.weblaptop.dto.response.ResultPaginationResponse;
 import com.dantn.weblaptop.dto.response.SerialNumberResponse;
 import com.dantn.weblaptop.entity.sanpham.SanPhamChiTiet;
 import com.dantn.weblaptop.entity.sanpham.SerialNumber;
@@ -13,10 +16,15 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+
+import org.springframework.data.domain.Sort;
+
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 
@@ -93,6 +101,39 @@ public class SerialNumberServiceImpl implements SerialNumberService {
         SerialNumber entity = serialNumberRepository.findByMa(ma.trim().toLowerCase());
         if (entity == null) return null;
         return mapper.entityToResponse(entity);
+
+
+    }
+
+    // mạnh
+    // note : 0 là chưa bán
+    @Override
+    public List<SerialNumber> getSerialNumberByProductIdAndStatus(Long productId, Integer status) {
+        return serialNumberRepository.findBySanPhamChiTietIdAndTrangThai(productId, status);
+    }
+
+    @Override
+    public ResultPaginationResponse getAllSerialNumberByProductDetailIdAndStatus(
+            Long productDetailId, Integer status, Optional<String> page, Optional<String> size) {
+        String sPage = page.orElse("0");
+        String sSize = size.orElse("5");
+        Pageable pageable = PageRequest.of(Integer.parseInt(sPage), Integer.parseInt(sSize), Sort.by("id").descending());
+        Page<SerialNumberResponse> responses = serialNumberRepository
+                .findBySanPhamChiTietIdAndTrangThai(productDetailId, status , pageable).
+                map(mapper::entityToResponse);
+
+        Meta meta = Meta.builder()
+                .page(responses.getNumber())
+                .pageSize(responses.getSize())
+                .pages(responses.getTotalPages())
+                .total(responses.getTotalElements())
+                .build();
+
+        return ResultPaginationResponse
+                .builder()
+                .meta(meta)
+                .result(responses.getContent())
+                .build();
 
     }
 

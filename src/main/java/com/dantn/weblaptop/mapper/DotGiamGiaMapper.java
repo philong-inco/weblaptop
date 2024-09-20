@@ -4,6 +4,7 @@ import com.dantn.weblaptop.dto.request.create_request.CreateDotGiamGiaRequest;
 import com.dantn.weblaptop.dto.request.update_request.UpdateGotGiamGiaRequest;
 import com.dantn.weblaptop.dto.response.DotGiamGiaResponse;
 import com.dantn.weblaptop.entity.dotgiamgia.DotGiamGia;
+import com.dantn.weblaptop.entity.sanpham.SanPhamChiTiet;
 import org.mapstruct.Mapper;
 import org.springframework.data.domain.Page;
 
@@ -16,6 +17,5 @@ public interface DotGiamGiaMapper {
     DotGiamGiaResponse dotGiamGiaToDotGiamGiaResponse(DotGiamGia dotGiamGia);
 
     Page<DotGiamGiaResponse> findAllRequestToDotGiamGiaResponse(Page<DotGiamGia> page);
-
     DotGiamGia updateDotGiamGia(DotGiamGia dotGiamGia, UpdateGotGiamGiaRequest request);
 }

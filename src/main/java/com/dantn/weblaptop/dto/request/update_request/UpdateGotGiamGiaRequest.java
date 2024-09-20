@@ -6,7 +6,9 @@ import jakarta.validation.constraints.Size;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -43,5 +45,10 @@ public class UpdateGotGiamGiaRequest {
 
     @NotBlank(message = "Giảm Tối Đa không được để trống!")
     @Pattern(regexp = "^[1-9]\\d*$", message = "Giảm Tối Đa phải là số dương!")
-    String giamToiDa;
+    BigDecimal giamToiDa;
+
+    @NotBlank(message = "giá Trị giảm không được để trống!")
+    @Pattern(regexp = "^[1-9]\\d*$", message = "giá Trị giảm  phải là số dương!")
+    Integer giaTriGiam;
+    List<Long> listSanPhamChiTiet;
 }

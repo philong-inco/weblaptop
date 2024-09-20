@@ -1,14 +1,10 @@
 package com.dantn.weblaptop.dto.response;
 
-import com.dantn.weblaptop.entity.khachhang.KhachHang;
-import com.dantn.weblaptop.entity.phieugiamgia.KhachHangPhieuGiamGia;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Set;
 
 @Getter
@@ -28,9 +24,9 @@ public class PhieuGiamGiaResponse {
 
     String moTa;
 
-    LocalDate ngayBatDau;
+    LocalDateTime ngayBatDau;
 
-    LocalDate ngayHetHan;
+    LocalDateTime ngayHetHan;
 
     Integer loaiGiamGia;
 
@@ -38,7 +34,7 @@ public class PhieuGiamGiaResponse {
 
     BigDecimal giaTriDonToiThieu;
 
-    BigDecimal giamToiGia;
+    BigDecimal giamToiDa;
 
     Integer phamViApDung;
 

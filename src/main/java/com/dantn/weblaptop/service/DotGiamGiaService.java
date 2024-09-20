@@ -7,6 +7,8 @@ import com.dantn.weblaptop.dto.response.DotGiamGiaResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+
 
 @Service
 public interface DotGiamGiaService {
@@ -18,6 +20,7 @@ public interface DotGiamGiaService {
 
     DotGiamGiaResponse update(Long id, UpdateGotGiamGiaRequest request);
 
-//    void delete(Long id);
-//    void saveDotGiamGia(DotGiamGia dotGiamGia);
+    Page<DotGiamGiaResponse> filter(String tenOrMa, Integer giaTri, Integer trangThai, LocalDateTime startDay, LocalDateTime endDay, Integer page, Integer size);
+
+    void changeStatusDotGiamGia(Long id);
 }

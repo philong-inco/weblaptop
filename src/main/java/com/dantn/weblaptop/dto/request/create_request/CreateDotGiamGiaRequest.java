@@ -1,12 +1,12 @@
 package com.dantn.weblaptop.dto.request.create_request;
 
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -27,7 +27,6 @@ public class CreateDotGiamGiaRequest {
     String ten;
 
     @NotBlank(message = "Trạng Thái Đợt Giảm Giá Trống !")
-    @Pattern(regexp = "^[0-9]\\d*$", message = "Trạng Thái Không Được Trống")
     String trangThai;
 
     @NotBlank(message = "Mô Tả Đợt Giảm Giá Trống !")
@@ -38,11 +37,17 @@ public class CreateDotGiamGiaRequest {
     @NotBlank(message = "Loại Chiết Khấu không được để trống!")
     @Pattern(regexp = "^(?:100|[1-9]?[0-9])$", message = "Loại Chiết Khấu phải là số từ 1 đến 100!")
     String loaiChietKhau;
-
+    @NotNull(message = "Thời Gian Băt Đầu Không Được Để Trống !")
     LocalDateTime thoiGianBatDau;
-    LocalDateTime thoiGianKetthuc;
+    @NotNull(message = "Thời Gian Kết Thúc Không Được Để Trống !")
+    LocalDateTime thoiGianKetThuc;
 
     @NotBlank(message = "Giảm Tối Đa không được để trống!")
     @Pattern(regexp = "^[1-9]\\d*$", message = "Giảm Tối Đa phải là số dương!")
-    String giamToiDa;
+    BigDecimal giamToiDa;
+
+    @NotBlank(message = "giá Trị giảm không được để trống!")
+    @Pattern(regexp = "^[1-9]\\d*$", message = "giá Trị giảm  phải là số dương!")
+    Integer giaTriGiam;
+    List<Long> listSanPhamChiTiet;
 }

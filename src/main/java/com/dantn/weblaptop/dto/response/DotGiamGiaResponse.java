@@ -5,6 +5,7 @@ import lombok.experimental.FieldDefaults;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.Set;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -22,4 +23,6 @@ public class DotGiamGiaResponse {
     LocalDateTime thoiGianBatDau;
     LocalDateTime thoiGianKetthuc;
     BigDecimal giamToiDa;
+    Integer giaTriGiam;
+    Set<Long> spctDotGiamGias;
 }
