@@ -32,4 +32,11 @@ public interface SerialNumberRepository extends JpaRepository<SerialNumber, Long
 
     @Query("UPDATE SerialNumber s SET s.trangThai = 0 WHERE s.id = :id")
     void changeStatusToSeriNumberDaBan(Long id);
+
+    List<SerialNumber> findBySanPhamChiTietId(Long id);
+
+    @Query("SELECT s FROM SerialNumber s WHERE s.sanPhamChiTiet.id = :id AND s.trangThai = 1")
+    List<SerialNumber> findBySanPhamChiTietIdActive(@Param("id") Long id);
+
+
 }

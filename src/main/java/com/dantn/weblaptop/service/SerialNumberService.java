@@ -28,4 +28,9 @@ public interface SerialNumberService {
     void deleteAllByIdSPCT(Long idSPCT);
 
     void changeStatusToSeriNumberDaBan(Long idSerialNumber);
+
+    List<SerialNumberResponse> findAllBySanPhamChiTietId(Long id);
+    List<SerialNumberResponse> findAllBySanPhamChiTietIdActive(Long id);
+
+
 }

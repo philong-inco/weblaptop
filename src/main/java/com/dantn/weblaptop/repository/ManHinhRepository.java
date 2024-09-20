@@ -1,5 +1,6 @@
 package com.dantn.weblaptop.repository;
 
+import com.dantn.weblaptop.entity.sanpham.thuoctinh.BanPhim;
 import com.dantn.weblaptop.entity.sanpham.thuoctinh.ManHinh;
 import com.dantn.weblaptop.generics.IGenericsRepository;
 import org.springframework.data.domain.Page;
@@ -19,6 +20,10 @@ public interface ManHinhRepository extends IGenericsRepository<ManHinh, Long> {
     @Override
     @Query("SELECT r FROM ManHinh r")
     List<ManHinh> getAllList();
+
+    @Override
+    @Query("SELECT r FROM ManHinh r WHERE r.trangThai = 1")
+    List<ManHinh> getAllListActive();
 
     @Override
     @Query("SELECT r FROM ManHinh r WHERE r.trangThai = :status")

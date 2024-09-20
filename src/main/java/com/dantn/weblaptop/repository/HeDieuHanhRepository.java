@@ -1,5 +1,6 @@
 package com.dantn.weblaptop.repository;
 
+import com.dantn.weblaptop.entity.sanpham.thuoctinh.BanPhim;
 import com.dantn.weblaptop.entity.sanpham.thuoctinh.HeDieuHanh;
 import com.dantn.weblaptop.generics.IGenericsRepository;
 import org.springframework.data.domain.Page;
@@ -19,6 +20,10 @@ public interface HeDieuHanhRepository extends IGenericsRepository<HeDieuHanh, Lo
     @Override
     @Query("SELECT r FROM HeDieuHanh r")
     List<HeDieuHanh> getAllList();
+
+    @Override
+    @Query("SELECT r FROM HeDieuHanh r WHERE r.trangThai = 1")
+    List<HeDieuHanh> getAllListActive();
 
     @Override
     @Query("SELECT r FROM HeDieuHanh r WHERE r.trangThai = :status")
