@@ -76,7 +76,6 @@ public class DotGiamGiaMapperImpl implements DotGiamGiaMapper {
 
     @Override
     public DotGiamGia updateDotGiamGia(DotGiamGia dotGiamGia, UpdateGotGiamGiaRequest request) {
-        dotGiamGia.setMa(request.getMa());
         dotGiamGia.setTen(request.getTen());
         dotGiamGia.setMoTa(request.getMoTa());
         dotGiamGia.setTrangThai(request.getTrangThai());

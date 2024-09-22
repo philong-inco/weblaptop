@@ -27,11 +27,12 @@ public interface DotGiamGiaRepository extends JpaRepository<DotGiamGia, Long>, J
     Page<DotGiamGia> finAllDotGiamGia(Pageable pageable);
 
     @Query("SELECT d FROM DotGiamGia d WHERE "
-            + "(:tenOrMa IS NULL OR d.ten LIKE %:tenOrMa% OR d.ma LIKE %:tenOrMa%) "
-            + "AND (:giaTri IS NULL OR d.giaTriGiam = :giaTri) "
-            + "AND (:trangThai IS NULL OR d.trangThai = :trangThai) "
-            + "AND (:thoiGianBatDau IS NULL OR d.thoiGianBatDau >= :thoiGianBatDau) "
-            + "AND (:thoiGianKetThuc IS NULL OR d.thoiGianKetthuc <= :thoiGianKetThuc)")
+           + "(:tenOrMa IS NULL OR d.ten LIKE %:tenOrMa% OR d.ma LIKE %:tenOrMa%) "
+           + "AND (:giaTri IS NULL OR d.giaTriGiam = :giaTri) "
+           + "AND (:trangThai IS NULL OR d.trangThai = :trangThai) "
+           + "AND (:thoiGianBatDau IS NULL OR d.thoiGianBatDau >= :thoiGianBatDau) "
+           + "AND (:thoiGianKetThuc IS NULL OR d.thoiGianKetthuc <= :thoiGianKetThuc) "
+           + "ORDER BY d.thoiGianBatDau DESC")  // Thêm ORDER BY để sắp xếp
     Page<DotGiamGia> filterAllDiscount(Pageable pageable, @Param("tenOrMa") String tenOrMa, @Param("giaTri") Integer giaTri, @Param("trangThai") Integer trangThai, @Param("thoiGianBatDau") LocalDateTime thoiGianBatDau, @Param("thoiGianKetThuc") LocalDateTime thoiGianKetThuc);
 
     @Query("SELECT sp FROM SanPhamChiTiet sp WHERE (:idSanPham IS NULL OR sp.sanPham.id IN :idSanPham)")
