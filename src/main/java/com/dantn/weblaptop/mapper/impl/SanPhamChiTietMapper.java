@@ -56,8 +56,6 @@ public class SanPhamChiTietMapper extends GenericsMapper<SanPhamChiTiet, SanPham
                 .ngaySua(entity.getNgaySua() + "")
                 .nguoiTao(entity.getNguoiTao())
                 .nguoiSua(entity.getNguoiSua())
-                .listSerialNumber(ConvertStringToArray.setSeriNumberToNameString(entity.getSerialNumbers()))
-                .listUrlAnhSanPham(ConvertStringToArray.setAnhSanPhamToNameString(entity.getAnhSanPhams()))
                 .build();
         response.convertTime();
         return response;

@@ -7,7 +7,9 @@ import com.dantn.weblaptop.dto.request.create_request.SerialNumberCreate;
 import com.dantn.weblaptop.dto.request.update_request.AnhSanPhamUpdate;
 import com.dantn.weblaptop.dto.request.update_request.SanPhamChiTietUpdate;
 import com.dantn.weblaptop.dto.request.update_request.SerialNumberUpdate;
+import com.dantn.weblaptop.dto.response.AnhSanPhamResponse;
 import com.dantn.weblaptop.dto.response.SanPhamChiTietResponse;
+import com.dantn.weblaptop.dto.response.SerialNumberResponse;
 import com.dantn.weblaptop.entity.sanpham.SanPham;
 import com.dantn.weblaptop.entity.sanpham.SanPhamChiTiet;
 import com.dantn.weblaptop.entity.sanpham.SerialNumber;
@@ -90,29 +92,39 @@ public class SanPhamChiTietServiceImpl implements SanPhamChiTietService {
         beforeAdd(spct, create);
         SanPhamChiTiet entity = spctRepository.save(spct);
         afterAdd(create, entity);
-        return spctMapper.entityToResponse(entity);
+        List<SerialNumberResponse> listSeri = serialNumberService.findAllBySanPhamChiTietId(entity.getId());
+        List<AnhSanPhamResponse> listAnh = anhSanPhamService.getAllBySPCTId(entity.getId());
+        SanPhamChiTietResponse response = spctMapper.entityToResponse(entity);
+        response.setListUrlAnhSanPham(ConvertStringToArray.setAnhSanPhamToNameString(listAnh));
+        response.setListSerialNumber(ConvertStringToArray.setSeriNumberToNameString(listSeri));
+        return response;
     }
+
 
     private void afterAdd(SanPhamChiTietCreate create, SanPhamChiTiet entity) {
         String[] serinumberList = ConvertStringToArray.toArray(create.getListSerialNumber());
         String[] anhSanPhamList = ConvertStringToArray.toArray(create.getListUrlAnhSanPham());
-        for (int i = 0; i < serinumberList.length; i ++){
-            SerialNumberCreate newSeriNumber = SerialNumberCreate.builder()
-                    .ngayNhap(LocalDateTime.now())
-                    .trangThai(1)
-                    .ma(serinumberList[i])
-                    .sanPhamChiTietId(entity.getId())
-                    .build();
-            serialNumberService.add(newSeriNumber);
+        if (serinumberList != null && serinumberList.length > 0) {
+            for (int i = 0; i < serinumberList.length; i++) {
+                SerialNumberCreate newSeriNumber = SerialNumberCreate.builder()
+                        .ngayNhap(LocalDateTime.now())
+                        .trangThai(1)
+                        .ma(serinumberList[i])
+                        .sanPhamChiTietId(entity.getId())
+                        .build();
+                serialNumberService.add(newSeriNumber);
+            }
         }
 
-        for (int i = 0; i < anhSanPhamList.length; i++) {
-            AnhSanPhamCreate newAnhSP = AnhSanPhamCreate.builder()
-                    .idSPCT(entity.getId())
-                    .status(1)
-                    .url(anhSanPhamList[i])
-                    .build();
-            anhSanPhamService.create(newAnhSP);
+        if (anhSanPhamList != null && anhSanPhamList.length > 0) {
+            for (int i = 0; i < anhSanPhamList.length; i++) {
+                AnhSanPhamCreate newAnhSP = AnhSanPhamCreate.builder()
+                        .idSPCT(entity.getId())
+                        .status(1)
+                        .url(anhSanPhamList[i])
+                        .build();
+                anhSanPhamService.create(newAnhSP);
+            }
         }
     }
 
@@ -134,7 +146,12 @@ public class SanPhamChiTietServiceImpl implements SanPhamChiTietService {
         beforeUpdate(spct, update);
         SanPhamChiTiet entityNew = spctRepository.save(entity);
         afterUpdate(entityNew, update);
-        return spctMapper.entityToResponse(entityNew);
+        SanPhamChiTietResponse response = spctMapper.entityToResponse(entityNew);
+        List<SerialNumberResponse> listSeri = serialNumberService.findAllBySanPhamChiTietId(entity.getId());
+        List<AnhSanPhamResponse> listAnh = anhSanPhamService.getAllBySPCTId(entity.getId());
+        response.setListUrlAnhSanPham(ConvertStringToArray.setAnhSanPhamToNameString(listAnh));
+        response.setListSerialNumber(ConvertStringToArray.setSeriNumberToNameString(listSeri));
+        return response;
     }
 
     private void afterUpdate(SanPhamChiTiet entityNew, SanPhamChiTietUpdate update) {
@@ -142,7 +159,7 @@ public class SanPhamChiTietServiceImpl implements SanPhamChiTietService {
         anhSanPhamService.deleteAllByIdSPCT(entityNew.getId());
         String[] serinumberList = ConvertStringToArray.toArray(update.getListSerialNumber());
         String[] anhSanPhamList = ConvertStringToArray.toArray(update.getListUrlAnhSanPham());
-        for (int i = 0; i < serinumberList.length; i ++){
+        for (int i = 0; i < serinumberList.length; i++) {
             SerialNumberUpdate newSeriNumber = SerialNumberUpdate.builder()
                     .ngayNhap(LocalDateTime.now())
                     .trangThai(1)
@@ -163,9 +180,6 @@ public class SanPhamChiTietServiceImpl implements SanPhamChiTietService {
     }
 
 
-
-
-
     @Override
     public void delete(Long idSPCT) {
         spctRepository.deleteById(idSPCT);
@@ -175,7 +189,18 @@ public class SanPhamChiTietServiceImpl implements SanPhamChiTietService {
     public SanPhamChiTietResponse findById(Long idSPCT) {
         Optional<SanPhamChiTiet> result = spctRepository.findById(idSPCT);
         if (result.isPresent())
-            return spctMapper.entityToResponse(result.get());
+        {
+            SanPhamChiTiet entityResult = result.get();
+            SanPhamChiTietResponse response  = spctMapper.entityToResponse(entityResult);
+            List<SerialNumberResponse> listSeri = serialNumberService.findAllBySanPhamChiTietId(entityResult.getId());
+            List<AnhSanPhamResponse> listAnh = anhSanPhamService.getAllBySPCTId(entityResult.getId());
+            response.setListUrlAnhSanPham(ConvertStringToArray.setAnhSanPhamToNameString(listAnh));
+            response.setListSerialNumber(ConvertStringToArray.setSeriNumberToNameString(listSeri));
+            return response;
+        }
+
+
+
         return null;
     }
 
