@@ -33,7 +33,7 @@ import java.util.Set;
 @Getter
 @ToString
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class PhieuGiamGia extends BaseEntity {
+public class  PhieuGiamGia extends BaseEntity {
 
     String ma;
     @Column(name = "trang_thai")

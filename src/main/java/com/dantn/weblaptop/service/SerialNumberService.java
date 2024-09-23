@@ -34,4 +34,7 @@ public interface SerialNumberService {
     ResultPaginationResponse getAllSerialNumberByProductDetailIdAndStatus(
             Long productId, Integer status, Optional<String> page, Optional<String> size);
 
+    ResultPaginationResponse getAllSerialNumberByProductDetailId(
+            Long productId, Optional<String> page, Optional<String> size);
+
 }

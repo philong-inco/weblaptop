@@ -196,7 +196,7 @@ public class SerialNumberController {
     }
 
     @GetMapping("/product-detail/{productId}")
-    public ApiResponse<ResultPaginationResponse> getSerialNumberByProduct
+    public ApiResponse<ResultPaginationResponse> getSerialNumberByProductAndStatus
     (@PathVariable("productId") Long productId,
      @RequestParam(name = "status", defaultValue = "0") Integer status,
      @RequestParam(name = "page", defaultValue = "0") Optional<String> page,
@@ -206,6 +206,19 @@ public class SerialNumberController {
                 .statusCode(HttpStatus.OK.value())
                 .message("Get SerialNumber By Product Success")
                 .data(serialNumberService.getAllSerialNumberByProductDetailIdAndStatus(productId, status, page, size))
+                .build();
+    }
+
+    @GetMapping("/product-detail-/{productId}")
+    public ApiResponse<ResultPaginationResponse> getSerialNumberByProduct
+            (@PathVariable("productId") Long productId,
+             @RequestParam(name = "page", defaultValue = "0") Optional<String> page,
+             @RequestParam(name = "size", defaultValue = "5") Optional<String> size
+            ) {
+        return ApiResponse.<ResultPaginationResponse>builder()
+                .statusCode(HttpStatus.OK.value())
+                .message("Get SerialNumber By Product Success")
+                .data(serialNumberService.getAllSerialNumberByProductDetailId(productId, page, size))
                 .build();
     }
 }

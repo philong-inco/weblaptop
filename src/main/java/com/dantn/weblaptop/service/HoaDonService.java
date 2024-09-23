@@ -36,4 +36,11 @@ public interface HoaDonService {
     void deleteBillByCode (String code) ;
 
     HoaDonResponse addCustomerToBill (Long customerId, String billCode) throws AppException;
+
+    HoaDonResponse addCouponToBill (Long couponId, String billCode) throws AppException;
+
+    HoaDonResponse addCouponToBillByCode (String couponCode, String billCode) throws AppException;
+
+    Boolean payCounter(String billCode) throws AppException;
+
 }

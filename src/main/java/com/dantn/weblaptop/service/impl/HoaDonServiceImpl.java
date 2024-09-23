@@ -7,10 +7,13 @@ import com.dantn.weblaptop.dto.response.HoaDonResponse;
 import com.dantn.weblaptop.dto.response.Meta;
 import com.dantn.weblaptop.dto.response.ResultPaginationResponse;
 import com.dantn.weblaptop.dto.response.SerialNumberDaBanResponse;
+import com.dantn.weblaptop.entity.hoadon.HinhThucThanhToan;
 import com.dantn.weblaptop.entity.hoadon.HoaDon;
-import com.dantn.weblaptop.entity.khachhang.DiaChi;
+import com.dantn.weblaptop.entity.hoadon.HoaDonHinhThucThanhToan;
+import com.dantn.weblaptop.entity.hoadon.LichSuHoaDon;
 import com.dantn.weblaptop.entity.khachhang.KhachHang;
 import com.dantn.weblaptop.entity.nhanvien.NhanVien;
+import com.dantn.weblaptop.entity.phieugiamgia.PhieuGiamGia;
 import com.dantn.weblaptop.exception.AppException;
 import com.dantn.weblaptop.exception.ErrorCode;
 import com.dantn.weblaptop.mapper.impl.HoaDonMapper;
@@ -32,6 +35,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.List;
 import java.util.Optional;
 
@@ -45,9 +49,13 @@ public class HoaDonServiceImpl implements HoaDonService {
     LichSuHoaDonRepository billHistoryRepository;
     NhanVienRepository employeeRepository;
     SerialNumberDaBanService serialNumberDaBanService;
+    SerialNumberDaBanRepository serialNumberDaBanRepository;
     KhachHangRepository customerRepository;
-
+    PhieuGiamGiaRepo couponRepository;
     DiaChi_Repository addressRepository;
+    HinhThucThanhToanRepository hinhThucThanhToanRepository;
+    HoaDonHinhThucThanhToanRepository hoaDonHinhThucThanhToanRepository;
+    SerialNumberRepository serialNumberRepository;
 
     @Override
     public ResultPaginationResponse getBillPage(Optional<String> page, Optional<String> size) {
@@ -230,7 +238,7 @@ public class HoaDonServiceImpl implements HoaDonService {
                 existingBill.setEmail(existingCustomer.getEmail());
                 existingBill.setSdt(existingCustomer.getSdt());
 //                Optional<DiaChi> address = addressRepository.findByKhachHangId(existingCustomer.getId());
-                return  HoaDonMapper.toHoaDonResponse(billRepository.save(bill.get()));
+                return HoaDonMapper.toHoaDonResponse(billRepository.save(bill.get()));
             } else {
                 throw new AppException(ErrorCode.BILL_NOT_FOUND);
             }
@@ -238,4 +246,148 @@ public class HoaDonServiceImpl implements HoaDonService {
             throw new AppException(ErrorCode.CUSTOMER_NOT_FOUND);
         }
     }
+
+    @Override
+    public HoaDonResponse addCouponToBill(Long couponId, String billCode) throws AppException {
+        HoaDon existingBill = billRepository.findHoaDonByMa(billCode).orElseThrow(
+                () -> new AppException(ErrorCode.BILL_NOT_FOUND)
+        );
+        PhieuGiamGia coupon = couponRepository.findById(couponId).orElseThrow(
+                () -> new AppException(ErrorCode.COUPONS_NOT_FOUND));
+//        BigDecimal moneyReduced = BigDecimal.ZERO;
+//        // 1 % : 2 VND
+//        if (coupon.getLoaiGiamGia() == 2) {
+//            moneyReduced = coupon.getGiaTriGiamGia();
+//        } else {
+////  tính % của phiếu giảm rồi trừ đi
+//            moneyReduced = existingBill.getTongTienBanDau()
+//                    .multiply(coupon.getGiaTriGiamGia())
+//                    .divide(BigDecimal.valueOf(100),RoundingMode.HALF_UP);
+//        }
+//        if(coupon.getGiamToiDa().compareTo(moneyReduced) < 0) {
+//            moneyReduced = coupon.getGiamToiDa();
+//        }
+//        if (existingBill.getTongTienBanDau().compareTo(moneyReduced) < 0) {
+//            existingBill.setTongTienPhaiTra(BigDecimal.ZERO);
+//        } else {
+//            BigDecimal totalMoney = existingBill.getTongTienBanDau().subtract(moneyReduced);
+//            existingBill.setTongTienPhaiTra(totalMoney);
+//        }
+//        existingBill.setPhieuGiamGia(coupon);
+        BigDecimal moneyReduced = calculateDiscount(existingBill, coupon);
+        calculateDiscount(existingBill, coupon);
+        updateTotalMoney(existingBill, moneyReduced);
+        existingBill.setPhieuGiamGia(coupon);
+        return HoaDonMapper.toHoaDonResponse(billRepository.save(existingBill));
+    }
+
+    @Override
+    public HoaDonResponse addCouponToBillByCode(String couponCode, String billCode) throws AppException {
+        HoaDon existingBill = billRepository.findHoaDonByMa(billCode).orElseThrow(
+                () -> new AppException(ErrorCode.BILL_NOT_FOUND)
+        );
+        PhieuGiamGia coupon = couponRepository.findByMa(couponCode.trim().toUpperCase()).orElseThrow(
+                () -> new AppException(ErrorCode.COUPONS_NOT_FOUND));
+        boolean isCustomerNull = existingBill.getKhachHang() == null;
+        Optional<PhieuGiamGia> optional = isCustomerNull
+                ? couponRepository.getByTotalAmountAndCouponCode(existingBill.getTongTienBanDau(), coupon.getMa())
+                : couponRepository.getAllByTotalAmountAndCustomerAndCouponCode(
+                existingBill.getTongTienBanDau(),
+                existingBill.getKhachHang().getId(),
+                coupon.getMa()
+        );
+
+        if (!optional.isPresent()) {
+            throw new AppException(ErrorCode.COUPON_DOES_NOT_APPLY);
+        }
+
+        BigDecimal moneyReduced = calculateDiscount(existingBill, coupon);
+        updateTotalMoney(existingBill, moneyReduced);
+        existingBill.setPhieuGiamGia(coupon);
+        return HoaDonMapper.toHoaDonResponse(billRepository.save(existingBill));
+    }
+
+    @Override
+    public Boolean payCounter(String billCode) throws AppException {
+        HinhThucThanhToan httt = hinhThucThanhToanRepository.findById(1L).orElseThrow(
+                () -> new AppException(ErrorCode.PAY_NO_FOUND)
+        );
+        HoaDon bill = billRepository.findHoaDonByMa(billCode.trim()).orElseThrow(
+                () -> new AppException(ErrorCode.BILL_NOT_FOUND)
+        );
+        List<Long> serialInBill = serialNumberDaBanRepository.getSerialNumberInBillId(bill.getId());
+
+        // up lại các trạng thái của serial sang đã bán
+        serialNumberRepository.updateStatusByInIds(serialInBill);
+        // up lại tổng tiền
+        billRepository.updateTotalMoneyByBillCode(bill.getMa());
+        // xóa các serial ở hóa đươn khác khác
+        serialNumberDaBanRepository.deleteAllNotBillId(bill.getId(), serialInBill);
+        // xóa phiếu pgg ở bill !=
+        billRepository.deleteCouponInBill();
+
+        // trừ phiếu giảm giá
+        if (bill.getPhieuGiamGia() != null) {
+            Optional<PhieuGiamGia> couponOptional = couponRepository.findById(bill.getPhieuGiamGia().getId());
+            if (couponOptional.isPresent()) {
+                PhieuGiamGia coupon = couponOptional.get();
+                Integer quantity = coupon.getSoLuong() - 1;
+                coupon.setSoLuong(quantity);
+                couponRepository.save(coupon);
+            }
+        }
+
+        HoaDonHinhThucThanhToan hoaDonHinhThucThanhToan = new HoaDonHinhThucThanhToan();
+        hoaDonHinhThucThanhToan.setHoaDon(bill);
+        hoaDonHinhThucThanhToan.setHinhThucThanhToan(httt);
+        hoaDonHinhThucThanhToanRepository.save(hoaDonHinhThucThanhToan);
+        bill.setTrangThai(HoaDonStatus.HOAN_THANH);
+        billRepository.save(bill);
+        LichSuHoaDon billHistory = new LichSuHoaDon();
+        billHistory.setHoaDon(bill);
+        billHistory.setTrangThai(6);
+        billHistory.setGhiChuChoCuaHang("Thanh toán thành công");
+        billHistory.setGhiChuChoKhachHang("Thanh toán thành công");
+        NhanVien nhanVien = employeeRepository.findById(1L).get();
+        billHistory.setNhanVien(nhanVien);
+        billHistoryRepository.save(billHistory);
+        return true;
+    }
+
+    private BigDecimal calculateDiscount(HoaDon existingBill, PhieuGiamGia coupon) {
+        BigDecimal moneyReduced = BigDecimal.ZERO;
+        // 1 % : 2 VND
+        if (coupon.getLoaiGiamGia() == 2) {
+            moneyReduced = coupon.getGiaTriGiamGia();
+        } else {
+            // Tính % của phiếu giảm rồi trừ đi
+            moneyReduced = existingBill.getTongTienBanDau()
+                    .multiply(coupon.getGiaTriGiamGia())
+                    .divide(BigDecimal.valueOf(100), RoundingMode.HALF_UP);
+        }
+
+        if (coupon.getGiamToiDa().compareTo(moneyReduced) < 0) {
+            moneyReduced = coupon.getGiamToiDa();
+        }
+        return moneyReduced;
+    }
+
+    private void updateTotalMoney(HoaDon existingBill, BigDecimal moneyReduced) {
+        if (existingBill.getTongTienBanDau().compareTo(moneyReduced) < 0) {
+            existingBill.setTongTienPhaiTra(BigDecimal.ZERO);
+        } else {
+            BigDecimal totalMoney = existingBill.getTongTienBanDau().subtract(moneyReduced);
+            existingBill.setTongTienPhaiTra(totalMoney);
+        }
+    }
+
+    private Optional<PhieuGiamGia> getPhieuGiamGia(HoaDon hoaDon, BigDecimal tongTien) {
+        if (hoaDon.getKhachHang() == null) {
+            return couponRepository.getHighestDiscountVoucherByTotalAmount(tongTien);
+        } else {
+            return couponRepository.getHighestDiscountVoucherByTotalAmountAndCustomer(tongTien, hoaDon.getKhachHang().getId());
+        }
+    }
+
+
 }

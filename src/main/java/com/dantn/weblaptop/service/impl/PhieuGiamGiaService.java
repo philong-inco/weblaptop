@@ -18,7 +18,6 @@ import com.dantn.weblaptop.repository.KhachHangPhieuGiamGiaRepository;
 import com.dantn.weblaptop.repository.KhachHangRepository;
 import com.dantn.weblaptop.repository.NhanVien_Repositoy;
 import com.dantn.weblaptop.repository.PhieuGiamGiaRepo;
-import com.dantn.weblaptop.service.HoaDonService;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -47,8 +46,6 @@ public class PhieuGiamGiaService {
     @Autowired
     private NhanVien_Repositoy nhanVienRepositoy;
 
-    @Autowired
-    private HoaDonService hoaDonService;
 
     public ResultPaginationResponse filterCoupons(Specification<PhieuGiamGia> specification, Pageable pageable) {
         Page<PhieuGiamGia> couponPage = phieuGiamGiaRepo.findAll(specification, pageable);
@@ -275,9 +272,14 @@ public class PhieuGiamGiaService {
         phieuGiamGia.setTrangThai(status);
     }
 
+    public List<PhieuGiamGiaResponse> getAllByTotalAmount(BigDecimal totalAmount) {
+        return phieuGiamGiaRepo.getAllByTotalAmount(totalAmount)
+                .stream().map(PhieuGiamGiaMapper::toPhieuGiamGiaResponse).toList();
+    }
 
-    private List<PhieuGiamGiaResponse> getAllPggByHoaDon (String maHoaDon){
-        return  null;
+    public List<PhieuGiamGiaResponse> getAllByTotalAmountAndCustomer(BigDecimal totalAmount, Long customerId) {
+        return phieuGiamGiaRepo.getAllByTotalAmountAndCustomer(totalAmount, customerId)
+                .stream().map(PhieuGiamGiaMapper::toPhieuGiamGiaResponse).toList();
     }
 
 }
