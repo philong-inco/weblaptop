@@ -35,9 +35,13 @@ public enum ErrorCode {
     COUPONS_APPLICABLE_SCOPE_NOT_NULL(3010, "Phạm vi áp dụng không được để trống"),
     COUPONS_MIN_QUANTITY(3011, "Số lượng phải lớn hơn 0"),
     COUPON_CODE_ALREADY_EXISTS(3012, "Mã phiếu đã tồn tại"),
+    COUPON_DOES_NOT_APPLY(3013, "Không thể áp dụng phiếu giảm giá này"),
 
     // Đầu 4 Serial Number
-    SERIAL_NUMBER_NOT_FOUND(4000, "Serial Number không tồn tại");
+    SERIAL_NUMBER_NOT_FOUND(4000, "Serial Number không tồn tại"),
+
+    //
+    PAY_NO_FOUND(5000, "Phương thức thanh toán không tồn tại");
     private Integer code;
     private String message;
 

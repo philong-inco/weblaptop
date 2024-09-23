@@ -53,6 +53,7 @@ public class HoaDonResponse {
 
     String ngayTao;
 // PGG
+    Long idPhieuGiamGia;
     BigDecimal giaTriPhieuGiamGia;
     Integer loaiPGG;
     String maPGG;

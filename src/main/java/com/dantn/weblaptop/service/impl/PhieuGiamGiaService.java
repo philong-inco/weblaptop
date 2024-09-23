@@ -51,8 +51,6 @@ public class PhieuGiamGiaService {
     @Autowired
     private View error;
 
-    @Autowired
-    private HoaDonService hoaDonService;
 
     public ResultPaginationResponse filterCoupons(Specification<PhieuGiamGia> specification, Pageable pageable) {
         Page<PhieuGiamGia> couponPage = phieuGiamGiaRepo.findAll(specification, pageable);
@@ -274,9 +272,14 @@ public class PhieuGiamGiaService {
         phieuGiamGia.setTrangThai(status);
     }
 
+    public List<PhieuGiamGiaResponse> getAllByTotalAmount(BigDecimal totalAmount) {
+        return phieuGiamGiaRepo.getAllByTotalAmount(totalAmount)
+                .stream().map(PhieuGiamGiaMapper::toPhieuGiamGiaResponse).toList();
+    }
 
-    private List<PhieuGiamGiaResponse> getAllPggByHoaDon (String maHoaDon){
-        return  null;
+    public List<PhieuGiamGiaResponse> getAllByTotalAmountAndCustomer(BigDecimal totalAmount, Long customerId) {
+        return phieuGiamGiaRepo.getAllByTotalAmountAndCustomer(totalAmount, customerId)
+                .stream().map(PhieuGiamGiaMapper::toPhieuGiamGiaResponse).toList();
     }
 
 }
