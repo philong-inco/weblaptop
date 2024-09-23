@@ -15,6 +15,7 @@ public interface IGenericsRepository<T, ID> extends JpaRepository<T, ID>, JpaSpe
     Page<T> getAllPage(Pageable pageable);
 
     List<T> getAllList();
+    List<T> getAllListActive();
 
     Page<T> findByStatusPage(Integer status, Pageable pageable);
 

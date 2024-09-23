@@ -43,6 +43,8 @@ public class DotGiamGia extends BaseEntity {
     LocalDateTime thoiGianKetthuc;
     @Column(name = "giam_toi_da")
     BigDecimal giamToiDa;
+    @Column(name = "gia_tri_giam")
+    BigDecimal giaTriGiam;
     @OneToMany(mappedBy = "dotGiamGia", fetch = FetchType.LAZY)
     Set<DotGiamGiaSanPhamChiTiet> dotGiamGiaSanPhamChiTiets;
     @OneToMany(mappedBy = "dotGiamGia", fetch = FetchType.LAZY)

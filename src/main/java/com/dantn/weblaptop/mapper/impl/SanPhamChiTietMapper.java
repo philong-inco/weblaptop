@@ -1,6 +1,7 @@
 package com.dantn.weblaptop.mapper.impl;
 
 import com.dantn.weblaptop.entity.sanpham.SanPhamChiTiet;
+import com.dantn.weblaptop.entity.sanpham.SerialNumber;
 import com.dantn.weblaptop.generics.GenericsMapper;
 import com.dantn.weblaptop.dto.request.create_request.SanPhamChiTietCreate;
 import com.dantn.weblaptop.dto.request.update_request.SanPhamChiTietUpdate;
@@ -11,6 +12,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -40,6 +42,7 @@ public class SanPhamChiTietMapper extends GenericsMapper<SanPhamChiTiet, SanPham
                 .giaBan(entity.getGiaBan() + "")
                 .trangThai(entity.getTrangThai())
                 .sanPham(entity.getSanPham().getTen())
+                .sanPhamId(entity.getSanPham().getId()+"")
                 .ram(entity.getRam().getTen())
                 .cpu(entity.getCpu().getTen())
                 .webcam(entity.getWebcam().getTen())
@@ -53,8 +56,6 @@ public class SanPhamChiTietMapper extends GenericsMapper<SanPhamChiTiet, SanPham
                 .ngaySua(entity.getNgaySua() + "")
                 .nguoiTao(entity.getNguoiTao())
                 .nguoiSua(entity.getNguoiSua())
-                .listSerialNumber(ConvertStringToArray.setSeriNumberToNameString(entity.getSerialNumbers()))
-                .listUrlAnhSanPham(ConvertStringToArray.setAnhSanPhamToNameString(entity.getAnhSanPhams()))
                 .build();
         response.convertTime();
         return response;
@@ -62,6 +63,7 @@ public class SanPhamChiTietMapper extends GenericsMapper<SanPhamChiTiet, SanPham
 
     @Override
     public List<SanPhamChiTietResponse> listEntityToListResponse(List<SanPhamChiTiet> entityList) {
+        entityList.sort(Comparator.comparingLong(SanPhamChiTiet::getNgayTao).reversed());
         return entityList.stream().map(this::entityToResponse).collect(Collectors.toList());
     }
 

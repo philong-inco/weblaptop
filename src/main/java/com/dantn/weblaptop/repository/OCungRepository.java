@@ -1,5 +1,6 @@
 package com.dantn.weblaptop.repository;
 
+import com.dantn.weblaptop.entity.sanpham.thuoctinh.BanPhim;
 import com.dantn.weblaptop.entity.sanpham.thuoctinh.OCung;
 import com.dantn.weblaptop.generics.IGenericsRepository;
 import org.springframework.data.domain.Page;
@@ -19,6 +20,10 @@ public interface OCungRepository extends IGenericsRepository<OCung, Long> {
     @Override
     @Query("SELECT r FROM OCung r")
     List<OCung> getAllList();
+
+    @Override
+    @Query("SELECT r FROM OCung r WHERE r.trangThai = 1")
+    List<OCung> getAllListActive();
 
     @Override
     @Query("SELECT r FROM OCung r WHERE r.trangThai = :status")

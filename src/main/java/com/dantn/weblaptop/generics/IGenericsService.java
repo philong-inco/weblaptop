@@ -9,6 +9,7 @@ public interface IGenericsService<E, ID, C, U, R> {
     Page<R> getAllPage(Pageable pageable);
 
     List<R> getAllList();
+    List<R> getAllListActive();
 
     Page<R> findByStatusPage(Integer status, Pageable pageable);
 

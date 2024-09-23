@@ -28,6 +28,7 @@ public class SanPhamChiTietResponse {
     String oCung;
     String ram;
     String sanPham;
+    String sanPhamId;
     String vga;
     String webcam;
     String ngayTao;

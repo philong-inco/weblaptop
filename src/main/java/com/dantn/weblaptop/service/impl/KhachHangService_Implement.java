@@ -135,7 +135,7 @@ public class KhachHangService_Implement implements KhachHang_Service {
                 diaChi.setKhachHang(khSave);
                 diaChiRepository.save(diaChi);
             }
-            emailSender.newEmployeeSendEmail(khachHang);
+            emailSender.newCustomerSendEmail(khachHang);
             return khachHangMapper.entityToResponseKhachHang(khSave);
         } catch (Exception ex) {
             throw new RuntimeException("Failed to create khach hang. Possibly duplicate record." + ex);

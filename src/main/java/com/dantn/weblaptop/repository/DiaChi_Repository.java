@@ -1,5 +1,6 @@
 package com.dantn.weblaptop.repository;
 
+import com.dantn.weblaptop.dto.response.DiaChi_Response;
 import com.dantn.weblaptop.entity.khachhang.DiaChi;
 import com.dantn.weblaptop.entity.khachhang.KhachHang;
 import com.dantn.weblaptop.entity.nhanvien.VaiTro;
@@ -25,6 +26,9 @@ public interface DiaChi_Repository extends JpaRepository<DiaChi, Long> {
 
     @Query("SELECT v FROM DiaChi v WHERE v.khachHang.id = :idKhachHang")
     List<DiaChi> findByKhachHangId(@Param("idKhachHang") Long idKhachHang);
+
+    @Query("SELECT v FROM DiaChi v WHERE v.khachHang.id = :idKhachHang AND v.loaiDiaChi = 1")
+    Optional<DiaChi> findLocationDefaultByKhachHangId(@Param("idKhachHang") Long idKhachHang);
 
     @Modifying
     @Transactional

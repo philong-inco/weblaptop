@@ -1,8 +1,11 @@
 package com.dantn.weblaptop.util;
 
+import com.dantn.weblaptop.dto.response.AnhSanPhamResponse;
+import com.dantn.weblaptop.dto.response.SerialNumberResponse;
 import com.dantn.weblaptop.entity.sanpham.AnhSanPham;
 import com.dantn.weblaptop.entity.sanpham.SerialNumber;
 
+import java.util.List;
 import java.util.Set;
 
 public class ConvertStringToArray {
@@ -21,10 +24,10 @@ public class ConvertStringToArray {
         return arr;
     }
 
-    public static String setSeriNumberToNameString(Set<SerialNumber> set){
+    public static String setSeriNumberToNameString(List<SerialNumberResponse> set){
         StringBuilder builder = new StringBuilder();
 
-        for (SerialNumber sr : set) {
+        for (SerialNumberResponse sr : set) {
             builder.append(sr.getMa()).append(", ");
         }
         if (builder.length() > 0)
@@ -32,10 +35,11 @@ public class ConvertStringToArray {
         return builder.toString();
     }
 
-    public static String setAnhSanPhamToNameString(Set<AnhSanPham> set){
+    public static String setAnhSanPhamToNameString(List<AnhSanPhamResponse> set){
+        if (set == null || set.size() == 0) return "";
         StringBuilder builder = new StringBuilder();
 
-        for (AnhSanPham a : set) {
+        for (AnhSanPhamResponse a : set) {
             builder.append(a.getUrl()).append(", ");
         }
         if (builder.length() > 0)

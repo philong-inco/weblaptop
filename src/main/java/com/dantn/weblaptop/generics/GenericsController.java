@@ -5,6 +5,7 @@ import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -31,7 +32,7 @@ public abstract class GenericsController<E, ID, C, U, R> {
                                                             @RequestParam(name = "size", required = false, defaultValue = "5") String size) {
         Pageable pageable;
         try {
-            pageable = PageRequest.of(Integer.valueOf(page), Integer.valueOf(size));
+            pageable = PageRequest.of(Integer.valueOf(page), Integer.valueOf(size), Sort.by(Sort.Direction.DESC, "ngayTao"));
         } catch (Exception e) {
             pageable = PageRequest.of(0, 5);
         }
@@ -52,6 +53,17 @@ public abstract class GenericsController<E, ID, C, U, R> {
     public ResponseEntity<ResponseLong<List<R>>> getAllList() {
 
         List<R> listResult = genericsService.getAllList();
+        ResponseLong<List<R>> result = new ResponseLong<>(
+                200, "GET successfully", listResult,
+                null, null, null, null
+        );
+        return ResponseEntity.ok().body(result);
+    }
+
+    @GetMapping("/all-list-active")
+    public ResponseEntity<ResponseLong<List<R>>> getAllListActive() {
+
+        List<R> listResult = genericsService.getAllListActive();
         ResponseLong<List<R>> result = new ResponseLong<>(
                 200, "GET successfully", listResult,
                 null, null, null, null

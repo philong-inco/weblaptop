@@ -1,5 +1,6 @@
 package com.dantn.weblaptop.repository;
 
+import com.dantn.weblaptop.entity.sanpham.thuoctinh.BanPhim;
 import com.dantn.weblaptop.entity.sanpham.thuoctinh.CPU;
 import com.dantn.weblaptop.generics.IGenericsRepository;
 import org.springframework.data.domain.Page;
@@ -16,6 +17,9 @@ public interface CPURepository extends IGenericsRepository<CPU, Long> {
     @Query("SELECT r FROM CPU r")
     Page<CPU> getAllPage(Pageable pageable);
 
+    @Override
+    @Query("SELECT r FROM CPU r WHERE r.trangThai = 1")
+    List<CPU> getAllListActive();
     @Override
     @Query("SELECT r FROM CPU r")
     List<CPU> getAllList();

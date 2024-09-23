@@ -3,21 +3,19 @@ package com.dantn.weblaptop.controller;
 import com.dantn.weblaptop.dto.request.create_request.CreatePhieuGiamGiaRequest;
 import com.dantn.weblaptop.dto.request.update_request.UpdatePhieuGiamGiaRequest;
 import com.dantn.weblaptop.dto.response.ApiResponse;
-import com.dantn.weblaptop.entity.hoadon.HoaDon;
 import com.dantn.weblaptop.entity.phieugiamgia.PhieuGiamGia;
 import com.dantn.weblaptop.exception.AppException;
 import com.dantn.weblaptop.service.impl.PhieuGiamGiaService;
 import com.turkraft.springfilter.boot.Filter;
+import jakarta.mail.MessagingException;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -59,8 +57,7 @@ public class PhieuGiamGiaController {
     }
 
     @PutMapping("/update/{id}")
-    public ResponseEntity<ApiResponse> updatePhieuGiamGia(@Valid @RequestBody UpdatePhieuGiamGiaRequest request, @PathVariable Long id) throws AppException {
-//        return phieuGiamGiaService.update(phieuGiamGia, id);
+    public ResponseEntity<ApiResponse> updatePhieuGiamGia(@Valid @RequestBody UpdatePhieuGiamGiaRequest request, @PathVariable Long id) throws AppException, MessagingException {
         ApiResponse apiResponse = new ApiResponse();
         apiResponse.setStatusCode(HttpStatus.OK.value());
         apiResponse.setMessage("Update success");
@@ -100,7 +97,6 @@ public class PhieuGiamGiaController {
             @PathVariable(name = "id") Long id,
             @RequestParam(name = "status") Integer status
     ) throws AppException {
-        // 0 chưa dung 1 : dung : 2 : hết hạn
         phieuGiamGiaService.updateStatusKhachHangPhieuGiamGia(id, status);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }

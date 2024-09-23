@@ -1,5 +1,6 @@
 package com.dantn.weblaptop.repository;
 
+import com.dantn.weblaptop.entity.sanpham.thuoctinh.BanPhim;
 import com.dantn.weblaptop.entity.sanpham.thuoctinh.RAM;
 import com.dantn.weblaptop.generics.IGenericsRepository;
 import org.springframework.data.domain.Page;
@@ -20,6 +21,10 @@ public interface RAMRepository extends IGenericsRepository<RAM, Long>, JpaSpecif
     @Override
     @Query("SELECT r FROM RAM r")
     List<RAM> getAllList();
+
+    @Override
+    @Query("SELECT r FROM RAM r WHERE r.trangThai = 1")
+    List<RAM> getAllListActive();
 
     @Override
     @Query("SELECT r FROM RAM r WHERE r.trangThai = :status")

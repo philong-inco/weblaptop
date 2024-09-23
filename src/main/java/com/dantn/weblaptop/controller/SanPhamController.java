@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,7 +25,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
-
+// commit by long
 @RestController
 @CrossOrigin(origins = "*")
 @RequestMapping("/api/san-pham/")
@@ -147,7 +148,7 @@ public class SanPhamController extends GenericsController<SanPham, Long, SanPham
     ) {
         Pageable pageable;
         try {
-            pageable = PageRequest.of(Integer.valueOf(pageStr), Integer.valueOf(sizeStr));
+            pageable = PageRequest.of(Integer.valueOf(pageStr), Integer.valueOf(sizeStr), Sort.by(Sort.Direction.DESC, "ngayTao"));
         } catch (Exception e) {
             pageable = PageRequest.of(0, 10);
         }
