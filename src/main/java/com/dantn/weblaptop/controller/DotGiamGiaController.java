@@ -3,6 +3,7 @@ package com.dantn.weblaptop.controller;
 import com.dantn.weblaptop.dto.request.create_request.CreateDotGiamGiaRequest;
 import com.dantn.weblaptop.dto.request.update_request.UpdateGotGiamGiaRequest;
 import com.dantn.weblaptop.dto.response.DotGiamGiaResponse;
+import com.dantn.weblaptop.exception.AppException;
 import com.dantn.weblaptop.service.DotGiamGiaService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,9 +25,8 @@ public class DotGiamGiaController {
     }
 
     @PostMapping("/add")
-    public ResponseEntity<?> add(@Valid @RequestBody CreateDotGiamGiaRequest request, BindingResult bindingResult) {
+    public ResponseEntity<?> add(@Valid @RequestBody CreateDotGiamGiaRequest request, BindingResult bindingResult) throws AppException {
         if (bindingResult.hasErrors()) {
-            // Xử lý lỗi validation ở đây (nếu cần)
             return ResponseEntity.badRequest().body(bindingResult.getFieldError().getDefaultMessage());
         }
         DotGiamGiaResponse response = dotGiamGiaService.save(request);
@@ -34,7 +34,7 @@ public class DotGiamGiaController {
     }
 
     @PutMapping("/update/{id}")
-    public ResponseEntity<?> update(@Valid @RequestBody UpdateGotGiamGiaRequest request, @PathVariable Long id, BindingResult bindingResult) {
+    public ResponseEntity<?> update(@Valid @RequestBody UpdateGotGiamGiaRequest request, @PathVariable Long id, BindingResult bindingResult) throws AppException {
         if (bindingResult.hasErrors()) {
             // Xử lý lỗi validation ở đây (nếu cần)
             return ResponseEntity.badRequest().body(bindingResult.getFieldError().getDefaultMessage());
@@ -94,21 +94,4 @@ public class DotGiamGiaController {
         return ResponseEntity.ok("Bạn đã update trạng thái thành công");
     }
 
-//    @GetMapping("/find-product-detail")
-//    public ResponseEntity<?> getProductsDetail(
-//            @RequestParam(value = " v", required = false) List<Long> idSanPham,
-//            @RequestParam(value = "page", required = false, defaultValue = "0") String pageStr,
-//            @RequestParam(value = "size", required = false, defaultValue = "4") String sizeStr
-//    ) {
-//        Integer page, size;
-//        try {
-//            page = Integer.valueOf(pageStr);
-//            size = Integer.valueOf(sizeStr);
-//        } catch (NumberFormatException e) {
-//            page = 0;
-//            size = 4;
-//        }
-//        Page<DotGiamGiaSanPhamChiTietResponse> result = dotGiamGiaService.timKiemSanPhamChiTietTheoIdSanPham(idSanPham, page, size);
-//        return ResponseEntity.ok(result);
-//    }
 }

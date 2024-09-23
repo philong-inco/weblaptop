@@ -24,15 +24,13 @@ public class DotGiamGiaMapperImpl implements DotGiamGiaMapper {
     @Override
     public DotGiamGia createRequestToDotGiamGia(CreateDotGiamGiaRequest request) {
         DotGiamGia dotGiamGia = new DotGiamGia();
-        dotGiamGia.setMa(request.getMa());
         dotGiamGia.setTen(request.getTen());
         dotGiamGia.setMoTa(request.getMoTa());
-        dotGiamGia.setTrangThai(Integer.parseInt(request.getTrangThai()));
-        dotGiamGia.setLoaiChietKhau(Integer.parseInt(request.getLoaiChietKhau()));
+        dotGiamGia.setTrangThai(request.getTrangThai());
+        dotGiamGia.setLoaiChietKhau(request.getLoaiChietKhau());
         dotGiamGia.setThoiGianBatDau(request.getThoiGianBatDau());
         dotGiamGia.setThoiGianKetthuc(request.getThoiGianKetThuc());
         dotGiamGia.setGiaTriGiam(request.getGiaTriGiam());
-        dotGiamGia.setGiamToiDa(request.getGiamToiDa());
         dotGiamGia.setNgayTao(autoSetTime.getCurrentTimes());
         return dotGiamGia;
     }
@@ -45,7 +43,6 @@ public class DotGiamGiaMapperImpl implements DotGiamGiaMapper {
         dotGiamGiaResponse.setTen(dotGiamGia.getTen());
         dotGiamGiaResponse.setMoTa(dotGiamGia.getMoTa());
         dotGiamGiaResponse.setTrangThai(dotGiamGia.getTrangThai());
-        dotGiamGiaResponse.setGiamToiDa(dotGiamGia.getGiamToiDa());
         dotGiamGiaResponse.setLoaiChietKhau(dotGiamGia.getLoaiChietKhau());
         dotGiamGiaResponse.setThoiGianBatDau(dotGiamGia.getThoiGianBatDau());
         dotGiamGiaResponse.setThoiGianKetthuc(dotGiamGia.getThoiGianKetthuc());
@@ -69,7 +66,6 @@ public class DotGiamGiaMapperImpl implements DotGiamGiaMapper {
             dotGiamGiaResponse.setTrangThai(dotGiamGia.getTrangThai());
             dotGiamGiaResponse.setThoiGianBatDau(dotGiamGia.getThoiGianBatDau());
             dotGiamGiaResponse.setThoiGianKetthuc(dotGiamGia.getThoiGianKetthuc());
-            dotGiamGiaResponse.setGiamToiDa(dotGiamGia.getGiamToiDa());
             dotGiamGiaResponse.setLoaiChietKhau(dotGiamGia.getLoaiChietKhau());
             dotGiamGiaResponse.setGiaTriGiam(dotGiamGia.getGiaTriGiam());
             return dotGiamGiaResponse;
@@ -80,15 +76,13 @@ public class DotGiamGiaMapperImpl implements DotGiamGiaMapper {
 
     @Override
     public DotGiamGia updateDotGiamGia(DotGiamGia dotGiamGia, UpdateGotGiamGiaRequest request) {
-        dotGiamGia.setMa(request.getMa());
         dotGiamGia.setTen(request.getTen());
         dotGiamGia.setMoTa(request.getMoTa());
-        dotGiamGia.setTrangThai(Integer.parseInt(request.getTrangThai()));
-        dotGiamGia.setLoaiChietKhau(Integer.parseInt(request.getLoaiChietKhau()));
+        dotGiamGia.setTrangThai(request.getTrangThai());
+        dotGiamGia.setLoaiChietKhau(request.getLoaiChietKhau());
         dotGiamGia.setThoiGianBatDau(request.getThoiGianBatDau());
-        dotGiamGia.setThoiGianKetthuc(request.getThoiGianKetthuc());
+        dotGiamGia.setThoiGianKetthuc(request.getThoiGianKetThuc());
         dotGiamGia.setGiaTriGiam(request.getGiaTriGiam());
-        dotGiamGia.setGiamToiDa(request.getGiamToiDa());
         dotGiamGia.setNgayTao(autoSetTime.getCurrentTimes());
         return dotGiamGia;
     }
