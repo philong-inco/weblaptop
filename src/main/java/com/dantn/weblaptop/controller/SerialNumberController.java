@@ -246,4 +246,12 @@ public class SerialNumberController {
                 404, "Not have serials", null
         ));
     }
+
+    @GetMapping("change-status-to-serial-da-ban/{id}")
+    public ResponseEntity<ResponseLong<String>> changeStatusSerialToDaBan(@PathVariable("id")Long id){
+        serialNumberService.changeStatusToSeriNumberDaBan(id);
+        return ResponseEntity.ok().body(new ResponseLong<>(
+                200, "Change succesfully",null
+        ));
+    }
 }
