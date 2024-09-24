@@ -22,7 +22,9 @@ public class PhieuGiamGiaSchedulerImpl implements PhieuGiamGiaScheduler {
         List<PhieuGiamGia> allPhieuGiamGia = phieuGiamGiaRepo.findAll();
 
         for (PhieuGiamGia phieuGiamGia : allPhieuGiamGia) {
-            if (phieuGiamGia.getTrangThai() != 3) { // Chỉ cập nhật nếu phiếu giảm giá không bị hủy
+            if(phieuGiamGia.getSoLuong() ==0){
+                phieuGiamGia.setTrangThai(2);
+            }else if (phieuGiamGia.getTrangThai() != 3) { // Chỉ cập nhật nếu phiếu giảm giá không bị hủy
                 if (phieuGiamGia.getNgayHetHan().isBefore(now)) {
                     phieuGiamGia.setTrangThai(2); // Cập nhật trạng thái thành "Hết hạn"
                 } else if (phieuGiamGia.getNgayBatDau().isAfter(now)) {
