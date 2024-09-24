@@ -194,6 +194,7 @@ public class SerialNumberDaBanServiceImpl implements SerialNumberDaBanService {
         // Nếu đã có phiếu giảm giá
         if (newBill.get().getPhieuGiamGia() != null) {
             Optional<PhieuGiamGia> optional = getPhieuGiamGia(hoaDon, tongTien);
+            // hàm xóa nếu tiền ko đủ
             if (optional.isPresent()) {
                 phieuGiamGia = optional.get();
                 hoaDon.setPhieuGiamGia(phieuGiamGia);

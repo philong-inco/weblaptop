@@ -315,6 +315,9 @@ public class HoaDonServiceImpl implements HoaDonService {
         HoaDon bill = billRepository.findHoaDonByMa(billCode.trim()).orElseThrow(
                 () -> new AppException(ErrorCode.BILL_NOT_FOUND)
         );
+        if (bill.getTrangThai() != HoaDonStatus.XAC_NHAN) {
+            throw new AppException(ErrorCode.BILL_NOT_STATUS);
+        }
         List<Long> serialInBill = serialNumberDaBanRepository.getSerialNumberInBillId(bill.getId());
 
         // up lại các trạng thái của serial sang đã bán
