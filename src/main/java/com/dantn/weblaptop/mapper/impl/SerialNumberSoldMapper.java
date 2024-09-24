@@ -15,7 +15,7 @@ public class SerialNumberSoldMapper {
         String oCung = serialNumberSold.getSerialNumber().getSanPhamChiTiet().getOCung().getTen();
         String color = serialNumberSold.getSerialNumber().getSanPhamChiTiet().getMauSac().getTen();
         response.setProductName(name + " " + color + " [ " + ram + " - " + oCung + " ]");
-        response.setGia(serialNumberSold.getGiaBan() == null ?
+        response.setPrice(serialNumberSold.getGiaBan() == null ?
                 serialNumberSold.getSerialNumber().getSanPhamChiTiet().getGiaBan() :
                 serialNumberSold.getGiaBan());
         return response;

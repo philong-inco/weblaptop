@@ -5,10 +5,12 @@ import com.dantn.weblaptop.entity.sanpham.SerialNumber;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -24,6 +26,7 @@ public interface SerialNumberRepository extends JpaRepository<SerialNumber, Long
 
     @Query("SELECT s FROM SerialNumber s WHERE lower(s.ma) = :ma")
     List<SerialNumber> existByMaForAdd(@Param("ma") String ma);
+
     @Query("SELECT s FROM SerialNumber s WHERE lower(s.ma) = :ma AND s.id <> :id")
     List<SerialNumber> existByMaForUpdate(@Param("ma") String ma, @Param("id") Long id);
 
@@ -44,6 +47,16 @@ public interface SerialNumberRepository extends JpaRepository<SerialNumber, Long
 
 
     List<SerialNumber> findBySanPhamChiTietIdAndTrangThai(Long productDetailId, Integer status);
+
     Page<SerialNumber> findBySanPhamChiTietIdAndTrangThai(Long productDetailId, Integer status, Pageable pageable);
+
+    Page<SerialNumber> findBySanPhamChiTietId(Long productDetailId, Pageable pageable);
+
+    @Modifying
+    @Transactional
+    @Query(value = "UPDATE serial_number sn " +
+            "SET sn.trang_thai = 1 " +
+            "WHERE sn.id IN (:serialsId)", nativeQuery = true)
+    void updateStatusByInIds(@Param("serialsId") List<Long> serialsId);
 
 }

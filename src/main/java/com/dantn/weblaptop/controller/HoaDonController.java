@@ -28,7 +28,6 @@ public class HoaDonController {
 
     LichSuHoaDonService billHistoryService;
     HoaDonService billService;
-
     HoaDonServiceImpl hoaDonService;
 
     // code test 1 2 3
@@ -82,6 +81,61 @@ public class HoaDonController {
                         .statusCode(HttpStatus.CREATED.value())
                         .message("Tạo mới hóa đơn thành công")
                         .data(billService.createBill())
+                        .build()
+        );
+    }
+
+    @PostMapping("add-customer-to-bill")
+    public ResponseEntity<ApiResponse> addCustomerToBill(
+            @RequestParam(name = "customerId") Long customerId,
+            @RequestParam(name = "codeBill") String codeBill
+    ) throws AppException {
+        return ResponseEntity.status(HttpStatus.CREATED).body(
+                ApiResponse.builder()
+                        .statusCode(HttpStatus.CREATED.value())
+                        .message("Add customer to bill success")
+                        .data(billService.addCustomerToBill(customerId, codeBill))
+                        .build()
+        );
+    }
+
+    @PostMapping("add-coupon-by-id")
+    public ResponseEntity<ApiResponse> addCouponToBill(
+            @RequestParam(name = "couponId") Long couponId,
+            @RequestParam(name = "codeBill") String codeBill
+    ) throws AppException {
+        return ResponseEntity.status(HttpStatus.CREATED).body(
+                ApiResponse.builder()
+                        .statusCode(HttpStatus.CREATED.value())
+                        .message("Add coupon to bill success")
+                        .data(billService.addCouponToBill(couponId, codeBill))
+                        .build()
+        );
+    }
+
+    @PostMapping("add-coupon-by-code")
+    public ResponseEntity<ApiResponse> addCouponToBillByCouponCode(
+            @RequestParam(name = "couponCode") String couponCode,
+            @RequestParam(name = "codeBill") String codeBill
+    ) throws AppException {
+        return ResponseEntity.status(HttpStatus.CREATED).body(
+                ApiResponse.builder()
+                        .statusCode(HttpStatus.CREATED.value())
+                        .message("Add coupon to bill success")
+                        .data(billService.addCouponToBillByCode(couponCode, codeBill))
+                        .build()
+        );
+    }
+
+    @PostMapping("pay-counter/{billCode}")
+    public ResponseEntity<ApiResponse> payCounter(
+            @PathVariable(name = "billCode") String billCode
+    ) throws AppException {
+        return ResponseEntity.status(HttpStatus.CREATED).body(
+                ApiResponse.builder()
+                        .statusCode(HttpStatus.CREATED.value())
+                        .message("Pay counter success")
+                        .data(billService.payCounter(billCode))
                         .build()
         );
     }

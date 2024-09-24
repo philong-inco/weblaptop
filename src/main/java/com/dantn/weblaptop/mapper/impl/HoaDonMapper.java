@@ -10,7 +10,7 @@ import java.math.BigDecimal;
 
 public class HoaDonMapper {
 
-    public static HoaDonResponse  toHoaDonResponse (HoaDon hoaDon){
+    public static HoaDonResponse   toHoaDonResponse (HoaDon hoaDon){
         HoaDonResponse response = new HoaDonResponse();
         KhachHang customer = hoaDon.getKhachHang();
         response.setId(hoaDon.getId());
@@ -18,6 +18,8 @@ public class HoaDonMapper {
         response.setIdNhanVien(hoaDon.getNhanVien().getId());
         response.setTenKhachHang(
                 customer !=null ? customer.getHo()+" " + customer.getTen() : null);
+        response.setIdKhachHang(
+                customer !=null ? customer.getId() : null);
         response.setLoaiHoaDon(hoaDon.getLoaiHoaDon());
         response.setTongTienPhaiTra(hoaDon.getTongTienPhaiTra());
         response.setLoaiHoaDon(hoaDon.getLoaiHoaDon());
@@ -28,12 +30,14 @@ public class HoaDonMapper {
         // xem lại
         response.setSdt(hoaDon.getSdt());
         response.setEmail(hoaDon.getEmail() );
+        response.setDiaChi(hoaDon.getDiaChi());
         response.setNguoiSua(hoaDon.getNguoiSua());
         response.setNguoiTao(hoaDon.getNguoiTao());
         response.setNgayTao(ConvertTime.convert(hoaDon.getNgayTao()+""));
         response.setTrangThai(hoaDon.getTrangThai());
         PhieuGiamGia phieuGiamGia = hoaDon.getPhieuGiamGia();
         if(phieuGiamGia!=null){
+            response.setIdPhieuGiamGia(phieuGiamGia.getId());
             response.setGiaTriPhieuGiamGia(phieuGiamGia.getGiaTriGiamGia());
             response.setLoaiPGG(phieuGiamGia.getLoaiGiamGia());
             response.setMaPGG(phieuGiamGia.getMa());

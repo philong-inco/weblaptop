@@ -41,6 +41,8 @@ public class HoaDonResponse {
 
     String email;
 
+    String diaChi;
+
     String ghiChu;
 
     HoaDonStatus trangThai;
@@ -51,6 +53,7 @@ public class HoaDonResponse {
 
     String ngayTao;
 // PGG
+    Long idPhieuGiamGia;
     BigDecimal giaTriPhieuGiamGia;
     Integer loaiPGG;
     String maPGG;
