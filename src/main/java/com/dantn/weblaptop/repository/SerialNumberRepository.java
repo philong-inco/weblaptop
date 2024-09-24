@@ -36,7 +36,7 @@ public interface SerialNumberRepository extends JpaRepository<SerialNumber, Long
     @Query("DELETE FROM SerialNumber s WHERE s.sanPhamChiTiet.id = :idSPCT AND s.trangThai = 1")
     void deleteAllByIdSPCT(@Param("idSPCT") Long idSPCT);
 
-    @Query("UPDATE SerialNumber s SET s.trangThai = 0 WHERE s.id = :id")
+    @Query("UPDATE SerialNumber s SET s.trangThai = 1 WHERE s.id = :id")
     void changeStatusToSeriNumberDaBan(Long id);
 
 

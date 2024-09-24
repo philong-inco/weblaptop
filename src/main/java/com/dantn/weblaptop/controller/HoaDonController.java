@@ -183,9 +183,9 @@ public class HoaDonController {
         billService.updateStatus(code, status);
         ApiResponse<Object> apiResponse = ApiResponse
                 .builder()
-                .statusCode(HttpStatus.NO_CONTENT.value())
+                .statusCode(HttpStatus.OK.value())
                 .build();
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).body(apiResponse);
+        return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
     }
 
     @PostMapping("/bill-history/{code}/revert-status")

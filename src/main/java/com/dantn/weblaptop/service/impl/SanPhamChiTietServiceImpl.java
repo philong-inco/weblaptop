@@ -108,7 +108,7 @@ public class SanPhamChiTietServiceImpl implements SanPhamChiTietService {
             for (int i = 0; i < serinumberList.length; i++) {
                 SerialNumberCreate newSeriNumber = SerialNumberCreate.builder()
                         .ngayNhap(LocalDateTime.now())
-                        .trangThai(1)
+                        .trangThai(0) // Mạnh đang get 0 là chưa bán 1 là đã bán
                         .ma(serinumberList[i])
                         .sanPhamChiTietId(entity.getId())
                         .build();

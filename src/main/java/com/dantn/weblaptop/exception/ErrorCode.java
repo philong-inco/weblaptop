@@ -41,7 +41,8 @@ public enum ErrorCode {
     SERIAL_NUMBER_NOT_FOUND(4000, "Serial Number không tồn tại"),
 
     //
-    PAY_NO_FOUND(5000, "Phương thức thanh toán không tồn tại");
+    PAY_NO_FOUND(5000, "Phương thức thanh toán không tồn tại"),
+    BILL_NOT_STATUS(50001,"Hóa đơn chưa được xác nhân");
     private Integer code;
     private String message;
 
