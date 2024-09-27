@@ -22,7 +22,10 @@ public class PhieuGiamGiaSchedulerImpl implements PhieuGiamGiaScheduler {
         List<PhieuGiamGia> allPhieuGiamGia = phieuGiamGiaRepo.findAll();
 
         for (PhieuGiamGia phieuGiamGia : allPhieuGiamGia) {
-            if(phieuGiamGia.getSoLuong() ==0){
+            if (phieuGiamGia.getTrangThai() == 4) {
+                continue; // Bỏ qua phiếu giảm giá với trạng thái 4
+            }
+            if(phieuGiamGia.getSoLuong() == 0){
                 phieuGiamGia.setTrangThai(2);
             }else if (phieuGiamGia.getTrangThai() != 3) { // Chỉ cập nhật nếu phiếu giảm giá không bị hủy
                 if (phieuGiamGia.getNgayHetHan().isBefore(now)) {

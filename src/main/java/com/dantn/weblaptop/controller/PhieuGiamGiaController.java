@@ -134,4 +134,26 @@ public class PhieuGiamGiaController {
                         .build()
         );
     }
+
+    @PutMapping("/updateStatusStart/{id}")
+    public ResponseEntity<ApiResponse> updateStatusStart(@PathVariable Long id) {
+        phieuGiamGiaService.updateStatusPhieuGiamGiaStart(id);
+        return ResponseEntity.ok().body(
+                ApiResponse.builder()
+                        .statusCode(HttpStatus.OK.value())
+                        .message("Update status for PhieuGiamGia success.")
+                        .build()
+        );
+    }
+
+    @PutMapping("/updateStatusPause/{id}")
+    public ResponseEntity<ApiResponse> updateStatusStop(@PathVariable Long id) {
+        phieuGiamGiaService.updateStatusPhieuGiamGiaPause(id);
+        return ResponseEntity.ok().body(
+                ApiResponse.builder()
+                        .statusCode(HttpStatus.OK.value())
+                        .message("Update status for PhieuGiamGia success.")
+                        .build()
+        );
+    }
 }

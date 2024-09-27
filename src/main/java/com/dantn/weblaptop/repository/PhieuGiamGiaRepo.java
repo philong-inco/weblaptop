@@ -3,9 +3,11 @@ package com.dantn.weblaptop.repository;
 import com.dantn.weblaptop.entity.phieugiamgia.PhieuGiamGia;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -112,4 +114,16 @@ public interface PhieuGiamGiaRepo extends JpaRepository<PhieuGiamGia, Long>, Jpa
             nativeQuery = true)
     Optional<PhieuGiamGia> getHighestDiscountVoucherByTotalAmountAndCustomer(
             @Param("totalAmount") BigDecimal totalAmount, @Param("customerId") Long customerId);
+
+
+
+    @Modifying
+    @Transactional
+    @Query(value = "UPDATE PhieuGiamGia pgg  SET pgg.trangThai = 1 WHERE pgg.id = :id")
+    void changeStatusPhieuGiamGiaPause(Long id);
+
+    @Modifying
+    @Transactional
+    @Query(value = "UPDATE PhieuGiamGia pgg  SET pgg.trangThai = 5 WHERE pgg.id = :id")
+    void changeStatusPhieuGiamGiaStart(Long id);
 }

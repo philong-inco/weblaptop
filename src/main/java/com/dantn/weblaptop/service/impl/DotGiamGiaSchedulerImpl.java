@@ -23,6 +23,9 @@ public class DotGiamGiaSchedulerImpl implements DotGiamGiaScheduler {
         List<DotGiamGia> allDotGiamGia = dotGiamGiaRepository.findAll();
 
         for (DotGiamGia dotGiamGia : allDotGiamGia) {
+            if(dotGiamGia.getTrangThai() == 4){
+                continue;
+            }
             if (dotGiamGia.getTrangThai() != 3) { // Chỉ cập nhật nếu phiếu giảm giá không bị hủy
                 if (dotGiamGia.getThoiGianKetthuc().isBefore(now)) {
                     dotGiamGia.setTrangThai(2); // Cập nhật trạng thái thành "Hết hạn"

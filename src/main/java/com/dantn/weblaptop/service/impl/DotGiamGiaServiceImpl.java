@@ -64,7 +64,7 @@ public class DotGiamGiaServiceImpl implements DotGiamGiaService {
         DotGiamGia newDotGiamGia = dotGiamGiaMapper.createRequestToDotGiamGia(request);
         validateFormDataCreate(newDotGiamGia, request);
         newDotGiamGia.setMa(generateUniqueCode());
-        if(request.getGiaTriGiam() != null){
+        if (request.getGiaTriGiam() != null) {
             newDotGiamGia.setTrangThai(0);
         }
         DotGiamGia saveDotGiamGia = dotGiamGiaRepository.save(newDotGiamGia);
@@ -88,22 +88,22 @@ public class DotGiamGiaServiceImpl implements DotGiamGiaService {
         validateFormDataUpdate(findDotGiamGia, request);
         dotGiamGiaMapper.updateDotGiamGia(findDotGiamGia, request);
         Set<DotGiamGiaSanPhamChiTiet> existingRelations = dotGiamGiaSanPhamChiTietRepository.findByDotGiamGiaId(findDotGiamGia.getId());
-        List<Long> existingSpctIds =  existingRelations.stream().map(relation -> relation.getSanPhamChiTiet().getId()).toList();
+        List<Long> existingSpctIds = existingRelations.stream().map(relation -> relation.getSanPhamChiTiet().getId()).toList();
         List<Long> newSpctIds = request.getListSanPhamChiTiet();
         if (newSpctIds != null) {
             findDotGiamGia.setTrangThai(0);
         }
         DotGiamGia saveDotGiamGia = dotGiamGiaRepository.save(findDotGiamGia);
-        for(DotGiamGiaSanPhamChiTiet relation : existingRelations){
-            if (!newSpctIds.contains(relation.getSanPhamChiTiet().getId())){
+        for (DotGiamGiaSanPhamChiTiet relation : existingRelations) {
+            if (!newSpctIds.contains(relation.getSanPhamChiTiet().getId())) {
                 dotGiamGiaSanPhamChiTietRepository.delete(relation);
             }
         }
 
         for (Long sanPhamChiTietId : newSpctIds) {
-            if (!existingRelations.contains(sanPhamChiTietId)){
+            if (!existingRelations.contains(sanPhamChiTietId)) {
                 addSpct(findDotGiamGia, sanPhamChiTietId);
-            }else {
+            } else {
                 System.out.println(error);
             }
         }
@@ -111,9 +111,9 @@ public class DotGiamGiaServiceImpl implements DotGiamGiaService {
     }
 
     @Override
-    public Page<DotGiamGiaResponse> filter(String tenOrMa, Integer giaTri, Integer trangThai, LocalDateTime startDay, LocalDateTime endDay, Integer page, Integer size) {
+    public Page<DotGiamGiaResponse> filter(String tenOrMa, Integer trangThai, LocalDateTime startDay, LocalDateTime endDay, Integer page, Integer size) {
         Pageable pageable = PageRequest.of(page, size);
-        Page<DotGiamGia> dotGiamGiaPage = dotGiamGiaRepository.filterAllDiscount(pageable, tenOrMa, giaTri, trangThai, startDay, endDay);
+        Page<DotGiamGia> dotGiamGiaPage = dotGiamGiaRepository.filterAllDiscount(pageable, tenOrMa, trangThai, startDay, endDay);
         Page<DotGiamGiaResponse> responses = dotGiamGiaMapper.findAllRequestToDotGiamGiaResponse(dotGiamGiaPage);
         return responses;
     }
@@ -123,9 +123,20 @@ public class DotGiamGiaServiceImpl implements DotGiamGiaService {
         dotGiamGiaRepository.updateStatusDGG(id);
     }
 
+    @Override
+    public void changeStatusDotGiamGiaStart(Long id) {
+        dotGiamGiaRepository.updateStatusDGGStart(id);
+    }
+
+    @Override
+    public void changeStatusDotGiamGiaStop(Long id) {
+        dotGiamGiaRepository.updateStatusDGGStop(id);
+    }
+
     private String generateUniqueCode() {
         return "DGG" + System.currentTimeMillis();
     }
+
     private void validateFormDataCreate(DotGiamGia dotGiamGia, CreateDotGiamGiaRequest request) throws AppException {
         if (request.getMa() != null && dotGiamGiaRepository.existsByMa(request.getMa())) {
             throw new AppException(ErrorCode.COUPON_CODE_ALREADY_EXISTS);
@@ -165,9 +176,9 @@ public class DotGiamGiaServiceImpl implements DotGiamGiaService {
         dotGiamGia.setTrangThai(status);
     }
 
-    private void addSpct (DotGiamGia dotGiamGia, Long id){
+    private void addSpct(DotGiamGia dotGiamGia, Long id) {
         SanPhamChiTiet sanPhamChiTiet = sanPhamChiTietRepository.findById(id).orElse(null);
-        if(sanPhamChiTiet != null){
+        if (sanPhamChiTiet != null) {
             DotGiamGiaSanPhamChiTiet dotGiamGiaSanPhamChiTiet = new DotGiamGiaSanPhamChiTiet();
             dotGiamGiaSanPhamChiTiet.setDotGiamGia(dotGiamGia);
             dotGiamGiaSanPhamChiTiet.setSanPhamChiTiet(sanPhamChiTiet);

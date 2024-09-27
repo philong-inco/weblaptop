@@ -12,9 +12,11 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 @RestController
 @RequestMapping("/api/v1/discounts")
+@CrossOrigin(origins = "*")
 public class DotGiamGiaController {
     @Autowired
     private DotGiamGiaService dotGiamGiaService;
@@ -43,18 +45,23 @@ public class DotGiamGiaController {
         return ResponseEntity.ok(response);
     }
 
+    @GetMapping("/pageAll")
+    public ResponseEntity<?> getPageAll(@RequestParam Integer page, @RequestParam Integer size) {
+
+        return ResponseEntity.ok(dotGiamGiaService.findAll(page, size));
+    }
+
     @GetMapping("/all")
     public ResponseEntity<?> filterDotGiamGia(
             @RequestParam(value = "tenOrMa", required = false, defaultValue = "") String tenOrMa,
-            @RequestParam(value = "giaTri", required = false, defaultValue = "") String giaTriStr,
             @RequestParam(value = "trangThai", required = false, defaultValue = "") String trangThaiStr,
             @RequestParam(value = "ngayBatDau", required = false, defaultValue = "") String ngayBatDauStr,
             @RequestParam(value = "ngayKetThuc", required = false, defaultValue = "") String ngayKetThucStr,
             @RequestParam(value = "page", required = false, defaultValue = "0") String pageStr,
             @RequestParam(value = "size", required = false, defaultValue = "4") String sizeStr
     ) {
-        Integer page, size, giaTri, trangThai;
-        LocalDateTime start = null, end = null;
+        Integer page, size, trangThai;
+        LocalDateTime ngayBatDau = null, ngayKetThuc = null;
         try {
             page = Integer.valueOf(pageStr);
             size = Integer.valueOf(sizeStr);
@@ -63,35 +70,43 @@ public class DotGiamGiaController {
             size = 4;
         }
         try {
-            giaTri = giaTriStr.isEmpty() ? null : Integer.valueOf(giaTriStr);
             trangThai = trangThaiStr.isEmpty() ? null : Integer.valueOf(trangThaiStr);
         } catch (NumberFormatException e) {
-            giaTri = null;
             trangThai = null;
         }
-
         try {
-            start = ngayBatDauStr.isEmpty() ? null : LocalDateTime.parse(ngayBatDauStr);
+            ngayBatDau = ngayBatDauStr.isEmpty() ? null : LocalDateTime.parse(ngayBatDauStr);
         } catch (Exception e) {
-            start = null;
+            System.out.println("Lỗi parse ngày bắt đầu: " + e.getMessage());
+            ngayBatDau = null;
         }
-
         try {
-            end = ngayKetThucStr.isEmpty() ? null : LocalDateTime.parse(ngayKetThucStr);
+            ngayKetThuc = ngayKetThucStr.isEmpty() ? null : LocalDateTime.parse(ngayKetThucStr);
         } catch (Exception e) {
-            end = null;
+            System.out.println("Lỗi parse ngày kết thúc: " + e.getMessage());
+            ngayKetThuc = null;
         }
-        return ResponseEntity.ok(dotGiamGiaService.filter(tenOrMa, giaTri, trangThai, start, end, page, size));
+        return ResponseEntity.ok(dotGiamGiaService.filter(tenOrMa, trangThai, ngayBatDau, ngayKetThuc, page, size));
     }
 
     @PutMapping("/changestatus/{id}")
     public ResponseEntity<?> changeStatusDotGiamGia(@PathVariable Long id, BindingResult bindingResult){
         if (bindingResult.hasErrors()) {
-            // Xử lý lỗi validation ở đây (nếu cần)
             return ResponseEntity.badRequest().body(bindingResult.getFieldError().getDefaultMessage());
         }
         dotGiamGiaService.changeStatusDotGiamGia(id);
         return ResponseEntity.ok("Bạn đã update trạng thái thành công");
     }
 
+    @PutMapping("/changestatusStart/{id}")
+    public ResponseEntity<?> changeStatusDotGiamGiaStart(@PathVariable Long id) {
+        dotGiamGiaService.changeStatusDotGiamGiaStart(id);
+        return ResponseEntity.ok("Bạn đã update trạng thái thành công");
+    }
+
+    @PutMapping("/changestatusStop/{id}")
+    public ResponseEntity<?> changeStatusDotGiamGiaStop(@PathVariable Long id) {
+        dotGiamGiaService.changeStatusDotGiamGiaStop(id);
+        return ResponseEntity.ok("Bạn đã update trạng thái thành công");
+    }
 }

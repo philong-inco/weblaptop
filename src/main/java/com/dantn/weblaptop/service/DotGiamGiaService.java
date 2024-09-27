@@ -21,7 +21,11 @@ public interface DotGiamGiaService {
 
     DotGiamGiaResponse update(Long id, UpdateGotGiamGiaRequest request) throws AppException;
 
-    Page<DotGiamGiaResponse> filter(String tenOrMa, Integer giaTri, Integer trangThai, LocalDateTime startDay, LocalDateTime endDay, Integer page, Integer size);
+    Page<DotGiamGiaResponse> filter(String tenOrMa, Integer trangThai, LocalDateTime startDay, LocalDateTime endDay, Integer page, Integer size);
 
     void changeStatusDotGiamGia(Long id);
+
+    void changeStatusDotGiamGiaStart(Long id);
+
+    void changeStatusDotGiamGiaStop(Long id);
 }

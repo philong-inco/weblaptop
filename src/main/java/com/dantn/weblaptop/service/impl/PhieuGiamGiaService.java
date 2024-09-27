@@ -282,4 +282,21 @@ public class PhieuGiamGiaService {
                 .stream().map(PhieuGiamGiaMapper::toPhieuGiamGiaResponse).toList();
     }
 
+    public void updateStatusPhieuGiamGiaStart(Long idPGG){
+        Optional<PhieuGiamGia> optional = phieuGiamGiaRepo.findById(idPGG);
+        if (optional.isPresent()) {
+            PhieuGiamGia phieuGiamGia = optional.get();
+            phieuGiamGia.setTrangThai(1);
+            phieuGiamGiaRepo.save(phieuGiamGia);
+        }
+    }
+
+    public void updateStatusPhieuGiamGiaPause(Long idPGG){
+        Optional<PhieuGiamGia> optional = phieuGiamGiaRepo.findById(idPGG);
+        if (optional.isPresent()) {
+            PhieuGiamGia phieuGiamGia = optional.get();
+            phieuGiamGia.setTrangThai(4);
+            phieuGiamGiaRepo.save(phieuGiamGia);
+        }
+    }
 }
