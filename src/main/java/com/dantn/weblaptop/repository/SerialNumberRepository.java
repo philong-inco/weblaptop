@@ -59,4 +59,9 @@ public interface SerialNumberRepository extends JpaRepository<SerialNumber, Long
             "WHERE sn.id IN (:serialsId)", nativeQuery = true)
     void updateStatusByInIds(@Param("serialsId") List<Long> serialsId);
 
+    @Modifying
+    @Transactional
+    @Query(value = "UPDATE serial_number sn SET sn.trang_thai = :status WHERE sn.id IN (:ids)", nativeQuery = true)
+    void updateStatusByIdsNative(@Param("status") Integer status, @Param("ids") List<Long> ids);
+
 }

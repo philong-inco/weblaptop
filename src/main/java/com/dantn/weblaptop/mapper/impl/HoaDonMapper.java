@@ -26,7 +26,7 @@ public class HoaDonMapper {
 //        response.setNgayMongMuonNhanHang(ConvertTime.convert(hoaDon.getNguoiTao()));
         response.setTongTienPhaiTra(hoaDon.getTongTienPhaiTra());
         response.setTongTienBanDau(hoaDon.getTongTienBanDau());
-        response.setTongSanPham(1000);
+//        response.setTongSanPham(1000);
         // xem lại
         response.setSdt(hoaDon.getSdt());
         response.setEmail(hoaDon.getEmail() );
