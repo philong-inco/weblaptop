@@ -109,4 +109,10 @@ public class DotGiamGiaController {
         dotGiamGiaService.changeStatusDotGiamGiaStop(id);
         return ResponseEntity.ok("Bạn đã update trạng thái thành công");
     }
+
+    @PutMapping("/changestatusdelete/{id}")
+    public ResponseEntity<?> deleteDotGiamGiaStop(@PathVariable Long id) {
+        dotGiamGiaService.deleteDotGiamGia(id);
+        return ResponseEntity.ok("Bạn đã delete trạng thái thành công");
+    }
 }

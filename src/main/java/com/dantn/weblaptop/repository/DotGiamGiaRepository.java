@@ -57,4 +57,9 @@ public interface DotGiamGiaRepository extends JpaRepository<DotGiamGia, Long>, J
     @Transactional
     @Query(value = "UPDATE DotGiamGia dgg SET dgg.trangThai = 4 WHERE dgg.id = :id")
     void updateStatusDGGStop(@Param("id") Long id);
+
+    @Modifying
+    @Transactional
+    @Query(value = "UPDATE DotGiamGia dgg SET dgg.trangThai = 3 WHERE dgg.id = :id")
+    void deleteStatusDGGStop(@Param("id") Long id);
 }

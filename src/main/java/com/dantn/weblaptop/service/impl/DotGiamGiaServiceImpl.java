@@ -133,6 +133,11 @@ public class DotGiamGiaServiceImpl implements DotGiamGiaService {
         dotGiamGiaRepository.updateStatusDGGStop(id);
     }
 
+    @Override
+    public void deleteDotGiamGia(Long id) {
+        dotGiamGiaRepository.deleteStatusDGGStop(id);
+    }
+
     private String generateUniqueCode() {
         return "DGG" + System.currentTimeMillis();
     }

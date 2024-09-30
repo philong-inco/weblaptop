@@ -28,4 +28,6 @@ public interface DotGiamGiaService {
     void changeStatusDotGiamGiaStart(Long id);
 
     void changeStatusDotGiamGiaStop(Long id);
+
+    void deleteDotGiamGia(Long id);
 }
