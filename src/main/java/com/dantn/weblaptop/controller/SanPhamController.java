@@ -3,6 +3,7 @@ package com.dantn.weblaptop.controller;
 import com.dantn.weblaptop.dto.request.create_request.FindSanPhamFilterByName;
 import com.dantn.weblaptop.dto.request.create_request.SanPhamCreate;
 import com.dantn.weblaptop.dto.request.update_request.SanPhamUpdate;
+import com.dantn.weblaptop.dto.request.update_request.UpdateSPAndSPCTDTO;
 import com.dantn.weblaptop.dto.response.ResponseLong;
 import com.dantn.weblaptop.dto.response.SanPhamClientDTO;
 import com.dantn.weblaptop.dto.response.SanPhamResponse;
@@ -22,6 +23,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -203,7 +207,8 @@ public class SanPhamController extends GenericsController<SanPham, Long, SanPham
             @RequestParam(value = "idOCung", required = false, defaultValue = "") String tenOCung,
             @RequestParam(value = "idManHinh", required = false, defaultValue = "") String tenManHinh,
             @RequestParam(value = "idHeDieuHanh", required = false, defaultValue = "") String tenHeDieuHanh,
-            @RequestParam(value = "idBanPhim", required = false, defaultValue = "") String tenBanPhim
+            @RequestParam(value = "idBanPhim", required = false, defaultValue = "") String tenBanPhim,
+            @RequestParam(value = "dangKhuyenMai", required = false, defaultValue = "") boolean dangKhuyenMai
     ) {
         Pageable pageable;
         try {
@@ -249,6 +254,16 @@ public class SanPhamController extends GenericsController<SanPham, Long, SanPham
                 sizeStr,
                 String.valueOf(totalPagesss),
                 String.valueOf(100));
+        return ResponseEntity.ok().body(result);
+    }
+
+    @PutMapping("/updateSanPhamAndSPCT/{id}")
+    public ResponseEntity<ResponseLong<SanPhamResponse>> updateSPAndSPCT(@RequestBody UpdateSPAndSPCTDTO request,
+                                                                         @PathVariable("id") Long idSP){
+        SanPhamResponse response = sanPhamService.updateSPAndSPCT(request, idSP);
+        ResponseLong<SanPhamResponse> result = new ResponseLong<>(
+                200, "Update successfully",
+                response);
         return ResponseEntity.ok().body(result);
     }
 }
