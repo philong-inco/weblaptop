@@ -118,7 +118,7 @@ public class SanPhamChiTiet extends BaseEntity {
     @OneToMany(mappedBy = "sanPhamChiTiet",
             cascade = {CascadeType.DETACH, CascadeType.PERSIST,
                     CascadeType.MERGE, CascadeType.REFRESH},
-            fetch = FetchType.LAZY)
+            fetch = FetchType.EAGER)
     @ToString.Exclude
     Set<AnhSanPham> anhSanPhams;
     @OneToMany(mappedBy = "sanPhamChiTiet",
@@ -130,7 +130,7 @@ public class SanPhamChiTiet extends BaseEntity {
     @OneToMany(mappedBy = "sanPhamChiTiet",
             cascade = {CascadeType.DETACH, CascadeType.PERSIST,
                     CascadeType.MERGE, CascadeType.REFRESH},
-            fetch = FetchType.LAZY)
+            fetch = FetchType.EAGER)
     @ToString.Exclude
     Set<SerialNumber> serialNumbers;
     @OneToMany(mappedBy = "sanPhamChiTiet",

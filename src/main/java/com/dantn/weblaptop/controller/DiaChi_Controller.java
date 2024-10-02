@@ -50,6 +50,12 @@ public class DiaChi_Controller {
         return new ResponseEntity<>(diaChiPage, HttpStatus.OK);
     }
 
+    @GetMapping("/getDiaChiDefauldByIdKhachHang/{id}")
+    public ResponseEntity<?> getDiaChiDefauldByIdKhachHang(@PathVariable("id") Long idKhachHang) {
+        DiaChi_Response diaChiDefauldOfIdKhachHang = diaChiService.getDiaChiDefauldOfIdKhachHang(idKhachHang);
+        return new ResponseEntity<>(diaChiDefauldOfIdKhachHang, HttpStatus.OK);
+    }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteDiaChi(@PathVariable Long id) {
         diaChiService.deleteDiaChi(id);

@@ -21,6 +21,10 @@ public interface BanPhimRepository extends IGenericsRepository<BanPhim, Long> {
     List<BanPhim> getAllList();
 
     @Override
+    @Query("SELECT r FROM BanPhim r WHERE r.trangThai = 1")
+    List<BanPhim> getAllListActive();
+
+    @Override
     @Query("SELECT r FROM BanPhim r WHERE r.trangThai = :status")
     Page<BanPhim> findByStatusPage(@Param("status") Integer status, Pageable pageable);
 

@@ -55,4 +55,7 @@ public interface KhachHang_Repository extends JpaRepository<KhachHang, Integer> 
 
     @Query(value = "SELECT kh FROM KhachHang kh")
     List<KhachHang> findAllKhachHang();
+
+    @Query(value = "SELECT kh FROM KhachHang kh WHERE kh.sdt = :phone")
+    Optional<KhachHang> findCustomerByPhone(String phone);
 }

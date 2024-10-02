@@ -5,12 +5,12 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.FieldDefaults;
 
+import java.util.List;
+
 @Getter
 @Setter
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class CreateSerialNumberDaBanRequest {
-// bỏ
-    Long idHoaDon;
-    Long idSanPham;
-    Long idSerialNumber;
+    String billCode;
+    List<Long> listSerialNumberId;
 }

@@ -8,7 +8,7 @@ import java.util.Random;
 public class GenerateCode {
     public static final String CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
     public static final String RAM_PREFIX = "RAM";
-    public static final String VGA_PREFIX = "GVA";
+    public static final String VGA_PREFIX = "VGA";
     public static final String CPU_PREFIX = "CPU";
     public static final String MAN_HINH_PREFIX = "SCR";
     public static final String O_CUNG_PREFIX = "DIS";

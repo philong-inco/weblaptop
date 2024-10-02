@@ -2,10 +2,12 @@ package com.dantn.weblaptop.controller;
 
 import com.dantn.weblaptop.dto.request.update_request.UpdateHoaDonRequest;
 import com.dantn.weblaptop.dto.response.ApiResponse;
+import com.dantn.weblaptop.dto.response.HoaDonResponse;
 import com.dantn.weblaptop.entity.hoadon.HoaDon;
 import com.dantn.weblaptop.exception.AppException;
 import com.dantn.weblaptop.service.HoaDonService;
 import com.dantn.weblaptop.service.LichSuHoaDonService;
+import com.dantn.weblaptop.service.impl.HoaDonServiceImpl;
 import com.turkraft.springfilter.boot.Filter;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -19,13 +21,21 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("api/v1/bills")
+@RequestMapping("api/bills")
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class HoaDonController {
 
     LichSuHoaDonService billHistoryService;
     HoaDonService billService;
+    HoaDonServiceImpl hoaDonService;
+
+    // code test 1 2 3
+    @GetMapping("test/{code}")
+    public ResponseEntity<ApiResponse> a(@PathVariable(name = "code") String code) throws AppException {
+        return ResponseEntity.ok(ApiResponse.builder().statusCode(HttpStatus.OK.value())
+                .data(hoaDonService.prepareTheBill(code)).build());
+    }
 
 
     @GetMapping("all")
@@ -36,10 +46,11 @@ public class HoaDonController {
         ApiResponse apiResponse = new ApiResponse();
         apiResponse.setStatusCode(HttpStatus.OK.value());
         apiResponse.setMessage("Oke");
-        apiResponse.setData(billService.filterHoaDon(specification , pageable));
+        apiResponse.setData(billService.filterHoaDon(specification, pageable));
         return ResponseEntity.ok(apiResponse);
     }
 
+    // Lấy thông tin hd thoe ID
     @GetMapping("{id}")
     public ResponseEntity<ApiResponse> getBillPage(
             @PathVariable(name = "id") Long id
@@ -51,13 +62,83 @@ public class HoaDonController {
         return ResponseEntity.ok(apiResponse);
     }
 
+    //    Lấy thông tin hóa đơn vói mã
+    @GetMapping("/code/{code}")
+    public ResponseEntity<ApiResponse> getBillPageByCode(
+            @PathVariable(name = "code") String code
+    ) throws AppException {
+        return ResponseEntity.ok(ApiResponse.builder()
+                .statusCode(HttpStatus.OK.value())
+                .message("Lấy thông tin hóa đơn theo mã")
+                .data(billService.getBillByCode(code)).build());
+    }
+
+
     @PostMapping("create")
     public ResponseEntity<ApiResponse> createBill() throws AppException {
-        ApiResponse apiResponse = new ApiResponse();
-        apiResponse.setStatusCode(HttpStatus.CREATED.value());
-        apiResponse.setMessage("Tạo mới hóa đơn thành công");
-        apiResponse.setData(billService.createBill());
-        return ResponseEntity.status(HttpStatus.CREATED).body(apiResponse);
+        return ResponseEntity.status(HttpStatus.CREATED).body(
+                ApiResponse.builder()
+                        .statusCode(HttpStatus.CREATED.value())
+                        .message("Tạo mới hóa đơn thành công")
+                        .data(billService.createBill())
+                        .build()
+        );
+    }
+
+    @PostMapping("add-customer-to-bill")
+    public ResponseEntity<ApiResponse> addCustomerToBill(
+            @RequestParam(name = "customerId") Long customerId,
+            @RequestParam(name = "codeBill") String codeBill
+    ) throws AppException {
+        return ResponseEntity.status(HttpStatus.CREATED).body(
+                ApiResponse.builder()
+                        .statusCode(HttpStatus.CREATED.value())
+                        .message("Add customer to bill success")
+                        .data(billService.addCustomerToBill(customerId, codeBill))
+                        .build()
+        );
+    }
+
+    @PostMapping("add-coupon-by-id")
+    public ResponseEntity<ApiResponse> addCouponToBill(
+            @RequestParam(name = "couponId") Long couponId,
+            @RequestParam(name = "codeBill") String codeBill
+    ) throws AppException {
+        return ResponseEntity.status(HttpStatus.CREATED).body(
+                ApiResponse.builder()
+                        .statusCode(HttpStatus.CREATED.value())
+                        .message("Add coupon to bill success")
+                        .data(billService.addCouponToBill(couponId, codeBill))
+                        .build()
+        );
+    }
+
+    @PostMapping("add-coupon-by-code")
+    public ResponseEntity<ApiResponse> addCouponToBillByCouponCode(
+            @RequestParam(name = "couponCode") String couponCode,
+            @RequestParam(name = "codeBill") String codeBill
+    ) throws AppException {
+        return ResponseEntity.status(HttpStatus.CREATED).body(
+                ApiResponse.builder()
+                        .statusCode(HttpStatus.CREATED.value())
+                        .message("Add coupon to bill success")
+                        .data(billService.addCouponToBillByCode(couponCode, codeBill))
+                        .build()
+        );
+    }
+
+    @PostMapping("pay-counter/{billCode}")
+    public ResponseEntity<ApiResponse> payCounter(
+            @PathVariable(name = "billCode") String billCode,
+            @RequestBody UpdateHoaDonRequest request
+    ) throws AppException {
+        return ResponseEntity.status(HttpStatus.CREATED).body(
+                ApiResponse.builder()
+                        .statusCode(HttpStatus.CREATED.value())
+                        .message("Pay counter success")
+                        .data(billService.payCounter(billCode , request))
+                        .build()
+        );
     }
 
     @PostMapping("update/{id}")
@@ -65,15 +146,15 @@ public class HoaDonController {
         return ResponseEntity.status(HttpStatus.OK).body(null);
     }
 
-    @GetMapping("/bill-history/{billId}")
-    public ResponseEntity<ApiResponse> getBillHistoryByBillId(
-            @PathVariable Long billId
+    @GetMapping("/bill-history/{code}")
+    public ResponseEntity<ApiResponse> getBillHistoryByBillCode(
+            @PathVariable String code
     ) {
         ApiResponse<Object> apiResponse = ApiResponse
                 .builder()
                 .statusCode(HttpStatus.OK.value())
                 .message("Call api success")
-                .data(billHistoryService.getBillHistoryByBillId(billId))
+                .data(billHistoryService.getBillHistoryByBillCode(code))
                 .build();
         return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
     }
@@ -95,23 +176,23 @@ public class HoaDonController {
 
     /// Lôi FE chưa lấy đc code
     /// thay lại phương thức bên FE
-    @PostMapping("update-status/{id}")
+    @PostMapping("update-status/{code}")
     public ResponseEntity<ApiResponse> updateStatus(
-            @PathVariable(name = "id") Long id,
+            @PathVariable(name = "code") String code,
             @RequestParam(name = "status") String status
     ) throws AppException {
-        billService.updateStatus(id, status);
+        billService.updateStatus(code, status);
         ApiResponse<Object> apiResponse = ApiResponse
                 .builder()
-                .statusCode(HttpStatus.NO_CONTENT.value())
+                .statusCode(HttpStatus.OK.value())
                 .build();
         return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
     }
 
-    @PostMapping("/bill-history/{billId}/revert-status")
-    public ResponseEntity<ApiResponse>  revertBillStatus (
-            @PathVariable Long billId) throws AppException {
-        billHistoryService.revertBillStatus(billId);
+    @PostMapping("/bill-history/{code}/revert-status")
+    public ResponseEntity<ApiResponse> revertBillStatus(
+            @PathVariable String code) throws AppException {
+        billHistoryService.revertBillStatus(code);
         ApiResponse<Object> apiResponse = ApiResponse
                 .builder()
                 .statusCode(HttpStatus.CREATED.value())

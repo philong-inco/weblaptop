@@ -159,7 +159,7 @@ public class NhanVienService_Implement implements NhanVien_Service {
     private void sendSignupEmailAsync(NhanVien nhanVien, Set<VaiTro> vaiTros) {
         new Thread(() -> {
             try {
-                emailSender.signupNhanVienSendEmail(nhanVien, nhanVien.getMatKhau(), vaiTros);
+                emailSender.newEmployeeSendEmail(nhanVien, nhanVien.getMatKhau(), vaiTros);
             } catch (Exception e) {
                 // Log lỗi nhưng không làm gián đoạn quá trình chính
                 System.out.println(e);
@@ -293,7 +293,7 @@ public class NhanVienService_Implement implements NhanVien_Service {
             String newPlainTextPassword = GenerateCode.generatePassWordNhanVien();
             nhanVien.setMatKhau(newPlainTextPassword);
             nhanVienRepositoy.save(nhanVien);
-            emailSender.sendForgotPasswordEmailForNhanVien(nhanVien, newPlainTextPassword);
+            emailSender.sendForgotPasswordEmail(nhanVien, newPlainTextPassword);
         } else {
             throw new RuntimeException("Không tìm thấy thông tin nhân viên trong hệ thống.");
         }

@@ -1,6 +1,7 @@
 package com.dantn.weblaptop.repository;
 
 import com.dantn.weblaptop.entity.sanpham.NhuCau;
+import com.dantn.weblaptop.entity.sanpham.thuoctinh.BanPhim;
 import com.dantn.weblaptop.generics.IGenericsRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -19,6 +20,10 @@ public interface NhuCauRepository extends IGenericsRepository<NhuCau, Long> {
     @Override
     @Query("SELECT r FROM NhuCau r")
     List<NhuCau> getAllList();
+
+    @Override
+    @Query("SELECT r FROM NhuCau r WHERE r.trangThai = 1")
+    List<NhuCau> getAllListActive();
 
     @Override
     @Query("SELECT r FROM NhuCau r WHERE r.trangThai = :status")

@@ -108,4 +108,11 @@ public class DiaChiService_Implement implements DiaChi_Service {
     public void unDefauldiaChi(Long id, long idKhachHang) {
         diaChiRepository.unDefaultDiaChi(id, idKhachHang);
     }
+
+    @Override
+    public DiaChi_Response getDiaChiDefauldOfIdKhachHang(Long id) {
+        Optional<DiaChi> diaChiMacDinh = diaChiRepository.findLocationDefaultByKhachHangId(id);
+        return diaChiMacDinh.map(diaChiMapper::EntiyToResponse)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy địa chỉ mặc định với ID là" + id));
+    }
 }

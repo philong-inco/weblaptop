@@ -22,14 +22,29 @@ public interface SerialNumberService {
     Page<SerialNumberResponse> getAllPage(Pageable pageable);
     boolean existByAdd(String ma);
     boolean existByUpdate(String ma, Long id);
+
     SerialNumberResponse findById(Long id);
     SerialNumberResponse findByMa(String ma);
+
     void deleteAllByIdSPCT(Long idSPCT);
     void changeStatusToSeriNumberDaBan(Long idSerialNumber);
+
+
+
+    List<SerialNumberResponse> findAllBySanPhamChiTietId(Long id);
+    List<SerialNumberResponse> findAllBySanPhamChiTietIdActive(Long id);
+
+
+
     //mạnh
     List<SerialNumber> getSerialNumberByProductIdAndStatus(Long productId, Integer status);
     // page
     ResultPaginationResponse getAllSerialNumberByProductDetailIdAndStatus(
             Long productId, Integer status, Optional<String> page, Optional<String> size);
+
+
+    ResultPaginationResponse getAllSerialNumberByProductDetailId(
+            Long productId, Optional<String> page, Optional<String> size);
+
 
 }

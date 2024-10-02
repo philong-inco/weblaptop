@@ -33,7 +33,7 @@ import java.util.Set;
 @Getter
 @ToString
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class PhieuGiamGia extends BaseEntity {
+public class  PhieuGiamGia extends BaseEntity {
 
     String ma;
     @Column(name = "trang_thai")
@@ -43,10 +43,10 @@ public class PhieuGiamGia extends BaseEntity {
     @Column(name = "mo_ta")
     String moTa;
     @Column(name = "ngay_bat_dau")
-    LocalDate ngayBatDau;
+    LocalDateTime ngayBatDau;
     @Column(name = "ngay_het_han")
-    @JsonFormat(pattern = "dd-MM-yyyy")
-    LocalDate ngayHetHan;
+//    @JsonFormat(pattern = "dd-MM-yyyy")
+    LocalDateTime ngayHetHan;
     @Column(name = "loai_giam_gia")
     Integer loaiGiamGia;
     @Column(name = "gia_tri_giam_gia")

@@ -22,14 +22,12 @@ public class HoaDonResponse {
     Long idKhachHang;
 
     String tenKhachHang;
-    
-    BigDecimal giaTriPhieuGiamGia;
 
     String ma;
 
     Integer tongSanPham;
 
-    Integer tongTien;
+//    BigDecimal tongTien;
 
     Integer loaiHoaDon;
 
@@ -43,6 +41,8 @@ public class HoaDonResponse {
 
     String email;
 
+    String diaChi;
+
     String ghiChu;
 
     HoaDonStatus trangThai;
@@ -52,5 +52,12 @@ public class HoaDonResponse {
     String nguoiSua;
 
     String ngayTao;
+// PGG
+    Long idPhieuGiamGia;
+    BigDecimal giaTriPhieuGiamGia;
+    Integer loaiPGG;
+    String maPGG;
+
+
 
 }

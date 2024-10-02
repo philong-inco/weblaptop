@@ -1,5 +1,6 @@
 package com.dantn.weblaptop.repository;
 
+import com.dantn.weblaptop.entity.sanpham.thuoctinh.BanPhim;
 import com.dantn.weblaptop.entity.sanpham.thuoctinh.VGA;
 import com.dantn.weblaptop.generics.IGenericsRepository;
 import org.springframework.data.domain.Page;
@@ -19,6 +20,10 @@ public interface VGARepository extends IGenericsRepository<VGA, Long> {
     @Override
     @Query("SELECT r FROM VGA r")
     List<VGA> getAllList();
+
+    @Override
+    @Query("SELECT r FROM VGA r WHERE r.trangThai = 1")
+    List<VGA> getAllListActive();
 
     @Override
     @Query("SELECT r FROM VGA r WHERE r.trangThai = :status")

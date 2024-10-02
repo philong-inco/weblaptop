@@ -24,6 +24,10 @@ public interface SanPhamRepository extends IGenericsRepository<SanPham, Long>, J
     List<SanPham> getAllList();
 
     @Override
+    @Query("SELECT r FROM SanPham r WHERE r.trangThai = 1")
+    List<SanPham> getAllListActive();
+
+    @Override
     @Query("SELECT r FROM SanPham r WHERE r.trangThai = :status")
     Page<SanPham> findByStatusPage(@Param("status") Integer status, Pageable pageable);
 

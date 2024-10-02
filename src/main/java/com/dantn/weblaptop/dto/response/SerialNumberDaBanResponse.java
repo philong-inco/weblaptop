@@ -1,27 +1,35 @@
 package com.dantn.weblaptop.dto.response;
 
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.math.BigDecimal;
+import java.util.Set;
 
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class SerialNumberDaBanResponse {
 
-    Long id;
+    Long billId;
+    Long productDetailId;
+    String productDetailCode;
+    String productName;
+    BigDecimal price;
+    Integer quantity;
+    Set<SerialInfo> serialNumbers;
 
-    Long hoaDonId;
+//    String anh;
 
-    Long serialNumberId;
-
-    String tenSanPham;
-
-    BigDecimal gia;
-
-    String anh;
-    // sau theem cac trường cần thiết
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @FieldDefaults(level = AccessLevel.PRIVATE)
+    public static class SerialInfo {
+        Long serialNumberId;
+        String serialNumberCode;
+    }
 }

@@ -4,8 +4,10 @@ import com.dantn.weblaptop.dto.request.create_request.FindSanPhamChiTietByFilter
 import com.dantn.weblaptop.dto.request.create_request.SanPhamChiTietCreate;
 import com.dantn.weblaptop.dto.request.update_request.SanPhamChiTietUpdate;
 import com.dantn.weblaptop.dto.response.ResponseLong;
+import com.dantn.weblaptop.dto.response.SanPhamChiTietClientDTO;
 import com.dantn.weblaptop.dto.response.SanPhamChiTietResponse;
 import com.dantn.weblaptop.service.SanPhamChiTietService;
+import com.dantn.weblaptop.util.FakeDataForClient;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -15,16 +17,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -32,6 +25,7 @@ import java.util.List;
 @RequestMapping("/api/san-pham-chi-tiet/")
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @RequiredArgsConstructor
+@CrossOrigin(origins = "*")
 public class SanPhamChiTietController {
     SanPhamChiTietService service;
 
@@ -230,5 +224,27 @@ public class SanPhamChiTietController {
         ));
     }
 
+    @GetMapping("get-SPCT-for-client/{idSP}")
+    public ResponseEntity<ResponseLong<SanPhamChiTietClientDTO>> getSPCTForClient(@PathVariable("idSP") Long idSP){
+        SanPhamChiTietClientDTO spct = FakeDataForClient.fakeDataSPCTForClient();
+        return ResponseEntity.status(HttpStatus.OK).body(new ResponseLong<>(
+                200, "Get thành công", spct
+        ));
+    }
+
+    @GetMapping("get-SPCT-for-client-checked{idSP}")
+    public ResponseEntity<ResponseLong<SanPhamChiTietClientDTO>> getSPCTForClientChecked(
+                    @PathVariable("idSP") Long idSP,
+                    @RequestParam("idMauSac") Long idMauSac,
+                    @RequestParam("idCPU") Long idCPU,
+                    @RequestParam("idRam") Long idRam,
+                    @RequestParam("idOCung") Long idOCung
+    ){
+        SanPhamChiTietClientDTO spct = FakeDataForClient.fakeDataSPCTForClient();
+        spct.setListUrlAnhSanPham("https://thegioiso365.vn/wp-content/uploads/2022/10/23-1-1536x864.jpg,https://thegioiso365.vn/wp-content/uploads/2022/10/7-5-1536x864.jpg,https://thegioiso365.vn/wp-content/uploads/2022/10/5-6-1536x864.jpg");
+        return ResponseEntity.status(HttpStatus.OK).body(new ResponseLong<>(
+                200, "Lấy biến thể thành công", spct
+        ));
+    }
 
 }

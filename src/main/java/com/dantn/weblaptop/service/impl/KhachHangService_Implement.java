@@ -7,6 +7,8 @@ import com.dantn.weblaptop.dto.request.update_request.UpdateKhachHang;
 import com.dantn.weblaptop.dto.response.KhachHangResponse;
 import com.dantn.weblaptop.entity.khachhang.DiaChi;
 import com.dantn.weblaptop.entity.khachhang.KhachHang;
+import com.dantn.weblaptop.exception.AppException;
+import com.dantn.weblaptop.exception.ErrorCode;
 import com.dantn.weblaptop.mapper.KhachHang_Mapper;
 import com.dantn.weblaptop.repository.DiaChi_Repository;
 import com.dantn.weblaptop.repository.KhachHang_Repository;
@@ -108,6 +110,7 @@ public class KhachHangService_Implement implements KhachHang_Service {
             khachHang.setMa(GenerateCode.generateKhachHangCode());
             khachHang.setNgayTao(LocalDateTime.now().toInstant(ZoneOffset.UTC).toEpochMilli());
             khachHang.setTrangThai(1);
+            khachHang.setHangKhachHang(0);
             // Lấy session ID từ request
             String sessionId = request.getSession().getId();
             khachHang.setSessionId(sessionId);
@@ -134,7 +137,7 @@ public class KhachHangService_Implement implements KhachHang_Service {
                 diaChi.setKhachHang(khSave);
                 diaChiRepository.save(diaChi);
             }
-            emailSender.newEmployeeSendEmail(khachHang);
+            emailSender.newCustomerSendEmail(khachHang);
             return khachHangMapper.entityToResponseKhachHang(khSave);
         } catch (Exception ex) {
             throw new RuntimeException("Failed to create khach hang. Possibly duplicate record." + ex);
@@ -239,5 +242,14 @@ public class KhachHangService_Implement implements KhachHang_Service {
     @Override
     public void updateImage(String image, String email) {
         khachHangRepository.updateImageKhachHang(image, email);
+    }
+
+    @Override
+    public KhachHangResponse findCustomerByPhone(String phone) throws AppException {
+        Optional<KhachHang> optional = khachHangRepository.findCustomerByPhone(phone);
+        if(optional.isPresent()){
+            return khachHangMapper.entityToResponseKhachHang(optional.get());
+        }
+        throw new  AppException(ErrorCode.CUSTOMER_NOT_FOUND);
     }
 }

@@ -2,17 +2,16 @@ package com.dantn.weblaptop.controller;
 
 import com.dantn.weblaptop.dto.request.create_request.SerialNumberCreate;
 import com.dantn.weblaptop.dto.request.update_request.SerialNumberUpdate;
+import com.dantn.weblaptop.dto.response.ApiResponse;
 import com.dantn.weblaptop.dto.response.ResponseLong;
+import com.dantn.weblaptop.dto.response.ResultPaginationResponse;
 import com.dantn.weblaptop.dto.response.SerialNumberResponse;
-import com.dantn.weblaptop.entity.sanpham.SanPham;
-import com.dantn.weblaptop.repository.SerialNumberRepository;
 import com.dantn.weblaptop.service.SanPhamChiTietService;
 import com.dantn.weblaptop.service.SerialNumberService;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.apache.commons.lang3.IntegerRange;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -29,6 +28,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/serial-number")
@@ -176,7 +176,7 @@ public class SerialNumberController {
         Long id = null;
         try {
             id = Long.valueOf(idStr.trim());
-        } catch (Exception e){
+        } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseLong<>(
                     999, "Id invalid!", true, null, null, null, null
             ));
@@ -192,12 +192,80 @@ public class SerialNumberController {
                 ));
     }
 
-    @PutMapping("chang-status-to-serial-da-ban")
-    public ResponseEntity<ResponseLong<String>> changeStatusToSeriNumberDaBan(@RequestParam(value = "idSerialNumber")Long id){
-        serialNumberService.changeStatusToSeriNumberDaBan(id);
-        return ResponseEntity.ok().body(new ResponseLong<>(
-                200, "Successfully", null, null, null, null, null
+    @GetMapping("/product-detail/{productId}")
+    public ApiResponse<ResultPaginationResponse> getSerialNumberByProductAndStatus
+    (@PathVariable("productId") Long productId,
+     @RequestParam(name = "status", defaultValue = "0") Integer status,
+     @RequestParam(name = "page", defaultValue = "0") Optional<String> page,
+     @RequestParam(name = "size", defaultValue = "5") Optional<String> size
+    ) {
+        return ApiResponse.<ResultPaginationResponse>builder()
+                .statusCode(HttpStatus.OK.value())
+                .message("Get SerialNumber By Product Success")
+                .data(serialNumberService.getAllSerialNumberByProductDetailIdAndStatus(productId, status, page, size))
+                .build();
+    }
+
+
+    @GetMapping("find-by-spct-id/{id}")
+    public ResponseEntity<ResponseLong<List<SerialNumberResponse>>> findAllBySPCTId(@PathVariable("id")Long id)
+    {
+        List<SerialNumberResponse> result = serialNumberService.findAllBySanPhamChiTietId(id);
+        if (result != null || result.size() > 0)
+            return ResponseEntity.ok().body(new ResponseLong<>(
+                    200, "Get successfully", result
+            ));
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseLong<>(
+                404, "Not have serials", null
         ));
     }
 
+    @GetMapping("find-by-spct-id-active/{id}")
+    public ResponseEntity<ResponseLong<List<SerialNumberResponse>>> findAllBySPCTIdAcitve(@PathVariable("id")Long id)
+    {
+        List<SerialNumberResponse> result = serialNumberService.findAllBySanPhamChiTietIdActive(id);
+        if (result != null || result.size() > 0)
+            return ResponseEntity.ok().body(new ResponseLong<>(
+                    200, "Get successfully", result
+            ));
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseLong<>(
+                404, "Not have serials", null
+        ));
+    }
+
+
+    @GetMapping("find-by-ma/{ma}")
+    public ResponseEntity<ResponseLong<SerialNumberResponse>> findByMa(@PathVariable("ma")String ma)
+    {
+        SerialNumberResponse result = serialNumberService.findByMa(ma.trim());
+        if (result != null)
+            return ResponseEntity.ok().body(new ResponseLong<>(
+                    200, "Get successfully", result
+            ));
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseLong<>(
+                404, "Not have serials", null
+        ));
+    }
+
+
+    @GetMapping("change-status-to-serial-da-ban/{id}")
+    public ResponseEntity<ResponseLong<String>> changeStatusSerialToDaBan(@PathVariable("id")Long id) {
+        serialNumberService.changeStatusToSeriNumberDaBan(id);
+        return ResponseEntity.ok().body(new ResponseLong<>(
+                200, "Change succesfully", null
+        ));
+    }
+
+    @GetMapping("/product-detail-/{productId}")
+    public ApiResponse<ResultPaginationResponse> getSerialNumberByProduct
+            (@PathVariable("productId") Long productId,
+             @RequestParam(name = "page", defaultValue = "0") Optional<String> page,
+             @RequestParam(name = "size", defaultValue = "5") Optional<String> size
+            ) {
+        return ApiResponse.<ResultPaginationResponse>builder()
+                .statusCode(HttpStatus.OK.value())
+                .message("Get SerialNumber By Product Success")
+                .data(serialNumberService.getAllSerialNumberByProductDetailId(productId, page, size))
+                .build();
+    }
 }

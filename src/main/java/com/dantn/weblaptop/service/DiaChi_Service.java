@@ -25,4 +25,6 @@ public interface DiaChi_Service {
     void defauldiaChi(Long id, long idKhachHang);
 
     void unDefauldiaChi(Long id, long idKhachHang);
+
+    DiaChi_Response getDiaChiDefauldOfIdKhachHang(Long id);
 }

@@ -1,8 +1,8 @@
 package com.dantn.weblaptop.service.impl;
 
-
 import com.dantn.weblaptop.dto.request.create_request.SerialNumberCreate;
 import com.dantn.weblaptop.dto.request.update_request.SerialNumberUpdate;
+
 import com.dantn.weblaptop.dto.response.Meta;
 import com.dantn.weblaptop.dto.response.ResultPaginationResponse;
 import com.dantn.weblaptop.dto.response.SerialNumberResponse;
@@ -18,13 +18,16 @@ import lombok.experimental.FieldDefaults;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+
 import org.springframework.data.domain.Sort;
+
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 
 @Service
+
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @RequiredArgsConstructor
 public class SerialNumberServiceImpl implements SerialNumberService {
@@ -70,6 +73,7 @@ public class SerialNumberServiceImpl implements SerialNumberService {
         return mapper.listEntityToListResponse(serialNumberRepository.getAllList());
     }
 
+
     @Override
     public Page<SerialNumberResponse> getAllPage(Pageable pageable) {
         return mapper.pageEntityToPageResponse(serialNumberRepository.getAllPage(pageable));
@@ -98,6 +102,7 @@ public class SerialNumberServiceImpl implements SerialNumberService {
         if (entity == null) return null;
         return mapper.entityToResponse(entity);
 
+
     }
 
     // mạnh
@@ -110,12 +115,12 @@ public class SerialNumberServiceImpl implements SerialNumberService {
     @Override
     public ResultPaginationResponse getAllSerialNumberByProductDetailIdAndStatus(
             Long productDetailId, Integer status, Optional<String> page, Optional<String> size) {
-        String sPage = page.isPresent() ? page.get() : "0";
-        String sSize = size.isPresent() ? size.get() : "5";
+        String sPage = page.orElse("0");
+        String sSize = size.orElse("5");
         Pageable pageable = PageRequest.of(Integer.parseInt(sPage), Integer.parseInt(sSize), Sort.by("id").descending());
         Page<SerialNumberResponse> responses = serialNumberRepository
                 .findBySanPhamChiTietIdAndTrangThai(productDetailId, status , pageable).
-                map(serialNumber -> mapper.entityToResponse(serialNumber));
+                map(mapper::entityToResponse);
 
         Meta meta = Meta.builder()
                 .page(responses.getNumber())
@@ -124,12 +129,35 @@ public class SerialNumberServiceImpl implements SerialNumberService {
                 .total(responses.getTotalElements())
                 .build();
 
-        ResultPaginationResponse response = ResultPaginationResponse
+        return ResultPaginationResponse
                 .builder()
                 .meta(meta)
                 .result(responses.getContent())
                 .build();
-        return response;
+
+    }
+
+    @Override
+    public ResultPaginationResponse getAllSerialNumberByProductDetailId(Long productDetailId, Optional<String> page, Optional<String> size) {
+        String sPage = page.orElse("0");
+        String sSize = size.orElse("5");
+        Pageable pageable = PageRequest.of(Integer.parseInt(sPage), Integer.parseInt(sSize), Sort.by("id").descending());
+        Page<SerialNumberResponse> responses = serialNumberRepository
+                .findBySanPhamChiTietId(productDetailId , pageable).
+                map(mapper::entityToResponse);
+
+        Meta meta = Meta.builder()
+                .page(responses.getNumber())
+                .pageSize(responses.getSize())
+                .pages(responses.getTotalPages())
+                .total(responses.getTotalElements())
+                .build();
+
+        return ResultPaginationResponse
+                .builder()
+                .meta(meta)
+                .result(responses.getContent())
+                .build();
     }
 
     @Override
@@ -140,5 +168,15 @@ public class SerialNumberServiceImpl implements SerialNumberService {
     @Override
     public void changeStatusToSeriNumberDaBan(Long idSerialNumber) {
         serialNumberRepository.changeStatusToSeriNumberDaBan(idSerialNumber);
+    }
+
+    @Override
+    public List<SerialNumberResponse> findAllBySanPhamChiTietId(Long id) {
+        return mapper.listEntityToListResponse(serialNumberRepository.findBySanPhamChiTietId(id));
+    }
+
+    @Override
+    public List<SerialNumberResponse> findAllBySanPhamChiTietIdActive(Long id) {
+        return mapper.listEntityToListResponse(serialNumberRepository.findBySanPhamChiTietIdActive(id));
     }
 }
