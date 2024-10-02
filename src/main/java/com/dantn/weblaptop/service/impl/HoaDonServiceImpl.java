@@ -329,14 +329,14 @@ public class HoaDonServiceImpl implements HoaDonService {
                 () -> new AppException(ErrorCode.BILL_NOT_FOUND)
         );
 
-        List<Long> serialInBill = serialNumberDaBanRepository.getSerialNumberInBillId(bill.getId());
+//        List<Long> serialInBill = serialNumberDaBanRepository.getSerialNumberInBillId(bill.getId());
 
         // up lại các trạng thái của serial sang đã bán
 //        serialNumberRepository.updateStatusByInIds(serialInBill);
         // up lại tổng tiền
-        billRepository.updateTotalMoneyByBillCode(bill.getMa());
+//        billRepository.updateTotalMoneyByBillCode(bill.getMa());
         // xóa các serial ở hóa đươn khác khác
-        serialNumberDaBanRepository.deleteAllNotBillId(bill.getId(), serialInBill);
+//        serialNumberDaBanRepository.deleteAllNotBillId(bill.getId(), serialInBill);
         // xóa phiếu pgg ở bill !=
         billRepository.deleteCouponInBill();
 
@@ -347,7 +347,11 @@ public class HoaDonServiceImpl implements HoaDonService {
                 PhieuGiamGia coupon = couponOptional.get();
                 Integer quantity = coupon.getSoLuong() - 1;
                 coupon.setSoLuong(quantity);
-                couponRepository.save(coupon);
+                PhieuGiamGia exitingCoupon = couponRepository.save(coupon);
+                if (exitingCoupon.getSoLuong() == 0) {
+                    exitingCoupon.setTrangThai(3);
+                    couponRepository.save(exitingCoupon);
+                }
             }
         }
         savePaymentMethod(request.getChuyenKhoan(), bill);
@@ -367,11 +371,18 @@ public class HoaDonServiceImpl implements HoaDonService {
             billHistoryRepository.save(billHistory);
             return true;
         }
-        if(request.getLoaiHoaDon()==1){
+        if (request.getLoaiHoaDon() == 1) {
             bill.setTrangThai(HoaDonStatus.CHO_GIAO);
             bill.setSdt(request.getSdt());
             bill.setEmail(request.getEmail());
-            bill.setDiaChi(request.getDiaChi() + " | " + request.getPhuong() +" | " +request.getHuyen() + " | " + request.getTinh() );
+            bill.setDiaChi(
+                    request.getDiaChi() + " , "
+                    + request.getTenPhuong() + " , "
+                    + request.getTenHuyen() + " , "
+                    + request.getTenTinh() + " | "
+                    + request.getPhuong() + " | "
+                    + request.getHuyen() + " | "
+                    + request.getTinh());
             bill.setGhiChu(request.getGhiChu());
             billRepository.save(bill);
             LichSuHoaDon billHistory = new LichSuHoaDon();
