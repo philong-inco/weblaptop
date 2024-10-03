@@ -3,10 +3,7 @@ package com.dantn.weblaptop.service.impl;
 import com.dantn.weblaptop.constant.HoaDonStatus;
 import com.dantn.weblaptop.dto.request.create_request.CreateLichSuHoaDonRequest;
 import com.dantn.weblaptop.dto.request.update_request.UpdateHoaDonRequest;
-import com.dantn.weblaptop.dto.response.HoaDonResponse;
-import com.dantn.weblaptop.dto.response.Meta;
-import com.dantn.weblaptop.dto.response.ResultPaginationResponse;
-import com.dantn.weblaptop.dto.response.SerialNumberDaBanResponse;
+import com.dantn.weblaptop.dto.response.*;
 import com.dantn.weblaptop.entity.hoadon.HinhThucThanhToan;
 import com.dantn.weblaptop.entity.hoadon.HoaDon;
 import com.dantn.weblaptop.entity.hoadon.HoaDonHinhThucThanhToan;
@@ -18,15 +15,18 @@ import com.dantn.weblaptop.exception.AppException;
 import com.dantn.weblaptop.exception.ErrorCode;
 import com.dantn.weblaptop.mapper.impl.HoaDonMapper;
 import com.dantn.weblaptop.repository.*;
+import com.dantn.weblaptop.service.DiaChi_Service;
 import com.dantn.weblaptop.service.HoaDonService;
 import com.dantn.weblaptop.service.LichSuHoaDonService;
 import com.dantn.weblaptop.service.SerialNumberDaBanService;
 import com.dantn.weblaptop.util.BillUtils;
 import com.dantn.weblaptop.util.GenerateCode;
+import jakarta.persistence.Column;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -36,6 +36,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -56,7 +57,6 @@ public class HoaDonServiceImpl implements HoaDonService {
     HinhThucThanhToanRepository hinhThucThanhToanRepository;
     HoaDonHinhThucThanhToanRepository hoaDonHinhThucThanhToanRepository;
     SerialNumberRepository serialNumberRepository;
-    private final HoaDonRepository hoaDonRepository;
 
     @Override
     public ResultPaginationResponse getBillPage(Optional<String> page, Optional<String> size) {
@@ -96,6 +96,9 @@ public class HoaDonServiceImpl implements HoaDonService {
         newBill.setTongTienBanDau(BigDecimal.ZERO);
         newBill.setTrangThai(HoaDonStatus.DON_MOI);
         newBill.setLoaiHoaDon(0);// 0 : Tại quầy - 1 : Online
+        newBill.setTienShip(BigDecimal.ZERO);
+        newBill.setTienGiamHangKhachHang(BigDecimal.ZERO);
+        newBill.setThanhToanSau(0);// 0 tt luôn : 1 là sau
         Optional<HoaDon> exitingBill = billRepository.findHoaDonByMa(newBill.getMa());
         if (exitingBill.isPresent()) {
             newBill.setMa(GenerateCode.generateHoaDon());
@@ -104,14 +107,12 @@ public class HoaDonServiceImpl implements HoaDonService {
 
         CreateLichSuHoaDonRequest billHistoryRequest = new CreateLichSuHoaDonRequest();
         billHistoryRequest.setIdHoaDon(response.getId());
-        // TT LSHD : 0 -tạo mới | 1 - Cập nhập : 2 - thanh toán :
+        // TT LSHD : 0 -tạo mới | 1 - Cập nhập : ||  2 - thanh toán :
         billHistoryRequest.setTrangThai(0);
         // sủa khi có security
         billHistoryRequest.setIdNhanVien(1L);
         // save
         billHistoryService.create(billHistoryRequest);
-
-        log.info("Bill History : " + billHistoryRequest);
         return response;
     }
 
@@ -129,7 +130,6 @@ public class HoaDonServiceImpl implements HoaDonService {
     public HoaDonResponse getBillById(Long id) throws AppException {
         HoaDon existingBill = billRepository.findById(id).orElseThrow(
                 () -> new AppException(ErrorCode.BILL_NOT_FOUND));
-
         return HoaDonMapper.toHoaDonResponse(existingBill);
     }
 
@@ -137,7 +137,10 @@ public class HoaDonServiceImpl implements HoaDonService {
     public HoaDonResponse getBillByCode(String code) throws AppException {
         HoaDon existingBill = billRepository.findHoaDonByMa(code).orElseThrow(
                 () -> new AppException(ErrorCode.BILL_NOT_FOUND));
-        return HoaDonMapper.toHoaDonResponse(existingBill);
+        HoaDonResponse response = HoaDonMapper.toHoaDonResponse(existingBill);
+        Optional<Integer> quantity = serialNumberDaBanRepository.getQuantityByHoaDonId(existingBill.getId());
+        response.setTongSanPham(quantity.orElse(0));
+        return response;
     }
 
     @Override
@@ -236,9 +239,15 @@ public class HoaDonServiceImpl implements HoaDonService {
                 KhachHang existingCustomer = customer.get();
                 HoaDon existingBill = bill.get();
                 existingBill.setKhachHang(existingCustomer);
-                existingBill.setEmail(existingCustomer.getEmail());
-                existingBill.setSdt(existingCustomer.getSdt());
-//                Optional<DiaChi> address = addressRepository.findByKhachHangId(existingCustomer.getId());
+
+                DiaChi_Response diaChiResponse = diaChiService.getDiaChiDefauldOfIdKhachHang(existingCustomer.getId());
+                existingBill.setEmail(diaChiResponse.getEmailNguoiNhan());
+                existingBill.setSdt(diaChiResponse.getSdtNguoiNhan());
+                existingBill.setDiaChi(
+                        diaChiResponse.getDiaChiNhanHang() + " | "
+                                + diaChiResponse.getIdPhuongXa() + " | "
+                                + diaChiResponse.getIdQuanHuyen() + " | "
+                                + diaChiResponse.getIdTinhThanhPho());
                 return HoaDonMapper.toHoaDonResponse(billRepository.save(bill.get()));
             } else {
                 throw new AppException(ErrorCode.BILL_NOT_FOUND);
@@ -316,10 +325,8 @@ public class HoaDonServiceImpl implements HoaDonService {
         HoaDon bill = billRepository.findHoaDonByMa(billCode.trim()).orElseThrow(
                 () -> new AppException(ErrorCode.BILL_NOT_FOUND)
         );
-        if (bill.getTrangThai() != HoaDonStatus.XAC_NHAN) {
-            throw new AppException(ErrorCode.BILL_NOT_STATUS);
-        }
-        List<Long> serialInBill = serialNumberDaBanRepository.getSerialNumberInBillId(bill.getId());
+
+//        List<Long> serialInBill = serialNumberDaBanRepository.getSerialNumberInBillId(bill.getId());
 
         // up lại các trạng thái của serial sang đã bán
         serialNumberRepository.updateStatusByInIds(serialInBill);
@@ -337,35 +344,55 @@ public class HoaDonServiceImpl implements HoaDonService {
                 PhieuGiamGia coupon = couponOptional.get();
                 Integer quantity = coupon.getSoLuong() - 1;
                 coupon.setSoLuong(quantity);
-                couponRepository.save(coupon);
+                PhieuGiamGia exitingCoupon = couponRepository.save(coupon);
+                if (exitingCoupon.getSoLuong() == 0) {
+                    exitingCoupon.setTrangThai(3);
+                    couponRepository.save(exitingCoupon);
+                }
             }
         }
+        savePaymentMethod(request.getChuyenKhoan(), bill);
+        savePaymentMethod(request.getTienMat(), bill);
 
-        HoaDonHinhThucThanhToan hoaDonHinhThucThanhToan = new HoaDonHinhThucThanhToan();
-        hoaDonHinhThucThanhToan.setHoaDon(bill);
-        hoaDonHinhThucThanhToan.setHinhThucThanhToan(httt);
-        hoaDonHinhThucThanhToanRepository.save(hoaDonHinhThucThanhToan);
-        bill.setTrangThai(HoaDonStatus.HOAN_THANH);
-        billRepository.save(bill);
-        LichSuHoaDon billHistory = new LichSuHoaDon();
-        billHistory.setHoaDon(bill);
-        billHistory.setTrangThai(6);
-        billHistory.setGhiChuChoCuaHang("Thanh toán thành công");
-        billHistory.setGhiChuChoKhachHang("Thanh toán thành công");
-        NhanVien nhanVien = employeeRepository.findById(1L).get();
-        billHistory.setNhanVien(nhanVien);
-        billHistoryRepository.save(billHistory);
+//        tại quầy ko ship
+        if (request.getLoaiHoaDon() == 0) {
+            bill.setTrangThai(HoaDonStatus.HOAN_THANH);
+            billRepository.save(bill);
+            LichSuHoaDon billHistory = new LichSuHoaDon();
+            billHistory.setHoaDon(bill);
+            billHistory.setTrangThai(6);
+            billHistory.setGhiChuChoCuaHang("Thanh toán thành công");
+            billHistory.setGhiChuChoKhachHang("Thanh toán thành công");
+            NhanVien nhanVien = employeeRepository.findById(1L).get();
+            billHistory.setNhanVien(nhanVien);
+            billHistoryRepository.save(billHistory);
+            return true;
+        }
+        if (request.getLoaiHoaDon() == 1) {
+            bill.setTrangThai(HoaDonStatus.CHO_GIAO);
+            bill.setSdt(request.getSdt());
+            bill.setEmail(request.getEmail());
+            bill.setDiaChi(
+                    request.getDiaChi() + " , "
+                    + request.getTenPhuong() + " , "
+                    + request.getTenHuyen() + " , "
+                    + request.getTenTinh() + " | "
+                    + request.getPhuong() + " | "
+                    + request.getHuyen() + " | "
+                    + request.getTinh());
+            bill.setGhiChu(request.getGhiChu());
+            billRepository.save(bill);
+            LichSuHoaDon billHistory = new LichSuHoaDon();
+            billHistory.setHoaDon(bill);
+            billHistory.setTrangThai(6);
+            billHistory.setGhiChuChoCuaHang("Hóa đơn được xác nhận và chờ giao");
+            billHistory.setGhiChuChoKhachHang("Hóa đơn được xác nhận và chờ giao");
+            NhanVien nhanVien = employeeRepository.findById(1L).get();
+            billHistory.setNhanVien(nhanVien);
+            billHistoryRepository.save(billHistory);
+            return true;
+        }
         return true;
-    }
-
-    @Override
-    public Long countBillByDate(Long startDate, Long endDate) {
-        return hoaDonRepository.countBillByDate(startDate,endDate);
-    }
-
-    @Override
-    public BigDecimal sumBillByDate(Long startDate, Long endDate) {
-        return hoaDonRepository.totalPriceInBillByDate(startDate, endDate);
     }
 
     private BigDecimal calculateDiscount(HoaDon existingBill, PhieuGiamGia coupon) {

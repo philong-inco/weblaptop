@@ -268,4 +268,18 @@ public class SerialNumberController {
                 .data(serialNumberService.getAllSerialNumberByProductDetailId(productId, page, size))
                 .build();
     }
+
+    @GetMapping("/product-detail-code-serial/{productId}")
+    public ApiResponse<ResultPaginationResponse> getSerialNumberByProductAndCode
+            (@PathVariable("productId") Long productId,
+             @RequestParam("codeSerial") String codeSerial,
+             @RequestParam(name = "page", defaultValue = "0") Optional<String> page,
+             @RequestParam(name = "size", defaultValue = "5") Optional<String> size
+            ) {
+        return ApiResponse.<ResultPaginationResponse>builder()
+                .statusCode(HttpStatus.OK.value())
+                .message("Get SerialNumber By Product Success")
+                .data(serialNumberService.getAllSerialNumberByProductDetailIdAndCodeSerial( productId,codeSerial, page, size))
+                .build();
+    }
 }

@@ -52,6 +52,13 @@ public interface SerialNumberRepository extends JpaRepository<SerialNumber, Long
 
     Page<SerialNumber> findBySanPhamChiTietId(Long productDetailId, Pageable pageable);
 
+    @Query("SELECT sn FROM " +
+            "SerialNumber sn " +
+            "WHERE (:codeSerial = '' " +
+            "OR sn.ma LIKE %:codeSerial%) " +
+            "AND sn.sanPhamChiTiet.id = :productDetailId")
+    Page<SerialNumber> findByMaContainingAndSanPhamChiTietId(String codeSerial , Long productDetailId, Pageable pageable);
+
     @Modifying
     @Transactional
     @Query(value = "UPDATE serial_number sn " +

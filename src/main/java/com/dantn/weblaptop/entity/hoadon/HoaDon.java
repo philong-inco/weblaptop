@@ -53,8 +53,19 @@ public class HoaDon extends BaseEntity {
     BigDecimal tongTienBanDau;
     @Column(name = "tong_tien_phai_tra")
     BigDecimal tongTienPhaiTra;
-    @Column(name = "ngay_nhan_hang_mong_muon")
-    LocalDateTime ngayNhanHangMongMuon;
+
+    @Column(name = "tien_ship")
+    BigDecimal tienShip;
+    @Column(name = "tien_giam_hang_khach_hang")
+    BigDecimal tienGiamHangKhachHang;
+    @Column(name = "thanh_toan_sau")
+    Integer thanhToanSau; // 0 tt luôn : 1 là sau
+    @Column(name = "ngay_giao_hang")
+    LocalDateTime ngayGiaoHang;
+    @Column(name = "ngay_nhan_hang")
+    LocalDateTime ngayNhanHang;
+    //    @Column(name = "ngay_nhan_hang_mong_muon")
+//    LocalDateTime ngayNhanHangMongMuon;
     @Column(name = "sdt")
     String sdt;
     @Column(name = "email")

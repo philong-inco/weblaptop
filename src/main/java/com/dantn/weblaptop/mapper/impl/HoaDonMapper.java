@@ -7,6 +7,7 @@ import com.dantn.weblaptop.entity.phieugiamgia.PhieuGiamGia;
 import com.dantn.weblaptop.util.ConvertTime;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 public class HoaDonMapper {
 
@@ -23,11 +24,8 @@ public class HoaDonMapper {
         response.setLoaiHoaDon(hoaDon.getLoaiHoaDon());
         response.setTongTienPhaiTra(hoaDon.getTongTienPhaiTra());
         response.setLoaiHoaDon(hoaDon.getLoaiHoaDon());
-//        response.setNgayMongMuonNhanHang(ConvertTime.convert(hoaDon.getNguoiTao()));
         response.setTongTienPhaiTra(hoaDon.getTongTienPhaiTra());
         response.setTongTienBanDau(hoaDon.getTongTienBanDau());
-        response.setTongSanPham(1000);
-        // xem lại
         response.setSdt(hoaDon.getSdt());
         response.setEmail(hoaDon.getEmail() );
         response.setDiaChi(hoaDon.getDiaChi());
@@ -35,6 +33,13 @@ public class HoaDonMapper {
         response.setNguoiTao(hoaDon.getNguoiTao());
         response.setNgayTao(ConvertTime.convert(hoaDon.getNgayTao()+""));
         response.setTrangThai(hoaDon.getTrangThai());
+
+        response.setTienShip(hoaDon.getTienShip());
+        response.setTienGiamHangKhachHang(hoaDon.getTienGiamHangKhachHang());
+        response.setThanhToanSau(hoaDon.getThanhToanSau());
+        response.setNgayGiaoHang(hoaDon.getNgayGiaoHang());
+        response.setNgayNhanHang(hoaDon.getNgayNhanHang());
+
         PhieuGiamGia phieuGiamGia = hoaDon.getPhieuGiamGia();
         if(phieuGiamGia!=null){
             response.setIdPhieuGiamGia(phieuGiamGia.getId());
