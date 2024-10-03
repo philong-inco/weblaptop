@@ -137,7 +137,7 @@ public class DotGiamGiaServiceImpl implements DotGiamGiaService {
     @Override
     public void deleteDotGiamGia(Long id) {
         dotGiamGiaRepository.deleteStatusDGGStop(id);
-
+    }
     public List<DotGiamGia> getDotGiamGiaBySPCTId(Long idSPCT) {
         return dotGiamGiaRepository.getDotGiamGiaBySPCTId(idSPCT);
 

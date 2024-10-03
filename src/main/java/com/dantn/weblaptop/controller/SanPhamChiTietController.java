@@ -4,6 +4,7 @@ import com.dantn.weblaptop.dto.request.create_request.FindSanPhamChiTietByFilter
 import com.dantn.weblaptop.dto.request.create_request.SanPhamChiTietCreate;
 import com.dantn.weblaptop.dto.request.update_request.SanPhamChiTietUpdate;
 import com.dantn.weblaptop.dto.response.ResponseLong;
+import com.dantn.weblaptop.dto.response.SanPhamChiTietClientDTO;
 import com.dantn.weblaptop.dto.response.SanPhamChiTietResponse;
 import com.dantn.weblaptop.service.SanPhamChiTietService;
 import jakarta.validation.Valid;
