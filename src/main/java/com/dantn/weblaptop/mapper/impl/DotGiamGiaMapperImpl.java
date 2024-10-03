@@ -31,6 +31,7 @@ public class DotGiamGiaMapperImpl implements DotGiamGiaMapper {
         dotGiamGia.setThoiGianBatDau(request.getThoiGianBatDau());
         dotGiamGia.setThoiGianKetthuc(request.getThoiGianKetThuc());
         dotGiamGia.setGiaTriGiam(request.getGiaTriGiam());
+        dotGiamGia.setGiamToiDa(request.getGiamToiDa());
         dotGiamGia.setNgayTao(autoSetTime.getCurrentTimes());
         return dotGiamGia;
     }
@@ -47,6 +48,7 @@ public class DotGiamGiaMapperImpl implements DotGiamGiaMapper {
         dotGiamGiaResponse.setThoiGianBatDau(dotGiamGia.getThoiGianBatDau());
         dotGiamGiaResponse.setThoiGianKetthuc(dotGiamGia.getThoiGianKetthuc());
         dotGiamGiaResponse.setGiaTriGiam(dotGiamGia.getGiaTriGiam());
+        dotGiamGiaResponse.setGiamToiDa(dotGiamGia.getGiamToiDa());
         if(dotGiamGia.getDotGiamGiaSanPhamChiTiets() != null){
             Set<Long> spctIds = dotGiamGia.getDotGiamGiaSanPhamChiTiets().stream()
                     .map(spctDotGiamGia -> spctDotGiamGia.getSanPhamChiTiet().getId())
@@ -68,6 +70,7 @@ public class DotGiamGiaMapperImpl implements DotGiamGiaMapper {
             dotGiamGiaResponse.setThoiGianKetthuc(dotGiamGia.getThoiGianKetthuc());
             dotGiamGiaResponse.setLoaiChietKhau(dotGiamGia.getLoaiChietKhau());
             dotGiamGiaResponse.setGiaTriGiam(dotGiamGia.getGiaTriGiam());
+            dotGiamGia.setGiamToiDa(dotGiamGia.getGiamToiDa());
             return dotGiamGiaResponse;
         }).collect(Collectors.toList());
         return new PageImpl<>(responses, PageRequest.of(page.getNumber(), page.getSize()), page.getTotalElements());
@@ -84,6 +87,7 @@ public class DotGiamGiaMapperImpl implements DotGiamGiaMapper {
         dotGiamGia.setThoiGianKetthuc(request.getThoiGianKetThuc());
         dotGiamGia.setGiaTriGiam(request.getGiaTriGiam());
         dotGiamGia.setNgayTao(autoSetTime.getCurrentTimes());
+        dotGiamGia.setGiamToiDa(request.getGiamToiDa());
         return dotGiamGia;
     }
 }
