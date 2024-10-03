@@ -7,16 +7,15 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 
 import java.util.Arrays;
+import java.util.Collections;
 
 
 @Configuration
 public class CrossConfig {
-
     @Bean
     public CorsFilter corsFilter() {
         CorsConfiguration corsConfiguration = new CorsConfiguration();
-        // Cho phép cả localhost:3000 và localhost:3001
-        corsConfiguration.setAllowedOrigins(Arrays.asList("http://localhost:3000", "http://localhost:3001"));
+        corsConfiguration.setAllowedOrigins(Collections.singletonList("*"));  // Cho phép tất cả các nguồn
         corsConfiguration.addAllowedMethod("*");  // Cho phép tất cả các phương thức (GET, POST, PUT, DELETE, v.v.)
         corsConfiguration.addAllowedHeader("*");  // Cho phép tất cả các headers
 
@@ -26,5 +25,6 @@ public class CrossConfig {
 
         return new CorsFilter(urlBasedCorsConfigurationSource);
     }
+
 
 }
