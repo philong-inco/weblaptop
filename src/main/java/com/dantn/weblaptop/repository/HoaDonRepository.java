@@ -13,6 +13,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
@@ -26,8 +27,14 @@ public interface HoaDonRepository extends JpaRepository<HoaDon, Long>, JpaSpecif
 
     Optional<HoaDon> findByIdAndTrangThai(Long id, HoaDonStatus status);
 
-    @Query(value = "SELECT ma FROM hoa_don WHERE trang_thai IN (0)", nativeQuery = true)
+    @Query(value = "SELECT ma FROM hoa_don WHERE trang_thai IN (0,1, 7)", nativeQuery = true)
     List<String> getAllByStatus();
+
+    @Query(value = "SELECT COUNT(hd) FROM HoaDon hd WHERE  hd.ngayTao BETWEEN :startDate AND :endDate")
+    Long countBillByDate(@Param("startDate") Long startDate, @Param("endDate") Long endDate);
+
+    @Query(value = "SELECT SUM(hd.tongTienPhaiTra) FROM HoaDon hd WHERE  hd.ngayTao BETWEEN :startDate AND :endDate")
+    BigDecimal totalPriceInBillByDate(@Param("startDate") Long startDate, @Param("endDate") Long endDate);
 
     @Modifying
     @Transactional

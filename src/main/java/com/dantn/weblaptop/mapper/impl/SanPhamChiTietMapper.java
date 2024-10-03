@@ -1,9 +1,11 @@
 package com.dantn.weblaptop.mapper.impl;
 
+
 import com.dantn.weblaptop.dto.response.AnhSanPhamResponse;
 import com.dantn.weblaptop.dto.response.SanPhamChiTietClientDTO;
 import com.dantn.weblaptop.dto.response.SerialNumberResponse;
 import com.dantn.weblaptop.entity.dotgiamgia.DotGiamGia;
+
 import com.dantn.weblaptop.entity.sanpham.SanPhamChiTiet;
 import com.dantn.weblaptop.entity.sanpham.SerialNumber;
 import com.dantn.weblaptop.generics.GenericsMapper;
@@ -15,9 +17,6 @@ import com.dantn.weblaptop.service.AnhSanPhamService;
 import com.dantn.weblaptop.service.DotGiamGiaService;
 import com.dantn.weblaptop.service.SerialNumberService;
 import com.dantn.weblaptop.util.ConvertStringToArray;
-import lombok.AccessLevel;
-import lombok.RequiredArgsConstructor;
-import lombok.experimental.FieldDefaults;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.stereotype.Service;
@@ -30,14 +29,14 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
-@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
-@RequiredArgsConstructor
 public class SanPhamChiTietMapper extends GenericsMapper<SanPhamChiTiet, SanPhamChiTietCreate, SanPhamChiTietUpdate, SanPhamChiTietResponse> {
+
 
     SerialNumberService serialNumberService;
     AnhSanPhamService anhSanPhamService;
 
     DotGiamGiaService dotGiamGiaService;
+
 
     @Override
     public SanPhamChiTiet createToEntity(SanPhamChiTietCreate create) {
@@ -46,8 +45,6 @@ public class SanPhamChiTietMapper extends GenericsMapper<SanPhamChiTiet, SanPham
                 .trangThai(create.getTrangThai())
                 .build();
         return spct;
-
-
     }
 
     @Override
@@ -91,14 +88,6 @@ public class SanPhamChiTietMapper extends GenericsMapper<SanPhamChiTiet, SanPham
                 .nguoiSua(entity.getNguoiSua())
                 .build();
         response.convertTime();
-
-        List<SerialNumberResponse> listSeri = serialNumberService.findAllBySanPhamChiTietIdActive(entity.getId());
-        List<AnhSanPhamResponse> listAnh = anhSanPhamService.getAllBySPCTId(entity.getId());
-        response.setListUrlAnhSanPham(ConvertStringToArray.setAnhSanPhamToNameString(listAnh));
-        response.setListSerialNumber(ConvertStringToArray.setSeriNumberToNameString(listSeri));
-
-
-
         return response;
     }
 

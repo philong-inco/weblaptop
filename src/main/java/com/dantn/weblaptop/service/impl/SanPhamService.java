@@ -1,37 +1,17 @@
 package com.dantn.weblaptop.service.impl;
 
-import com.dantn.weblaptop.dto.request.create_request.BanPhimCreate;
 import com.dantn.weblaptop.dto.request.create_request.FindSanPhamFilterByName;
-import com.dantn.weblaptop.dto.request.create_request.HeDieuHanhCreate;
-import com.dantn.weblaptop.dto.request.create_request.ManHinhCreate;
 import com.dantn.weblaptop.dto.request.create_request.NhuCauCreate;
-import com.dantn.weblaptop.dto.request.create_request.RAMCreate;
 import com.dantn.weblaptop.dto.request.create_request.SanPhamCreate;
 import com.dantn.weblaptop.dto.request.create_request.ThuongHieuCreate;
-import com.dantn.weblaptop.dto.request.create_request.VGACreate;
-import com.dantn.weblaptop.dto.request.create_request.WebcamCreate;
-import com.dantn.weblaptop.dto.request.update_request.BanPhimUpdate;
-import com.dantn.weblaptop.dto.request.update_request.HeDieuHanhUpdate;
-import com.dantn.weblaptop.dto.request.update_request.ManHinhUpdate;
 import com.dantn.weblaptop.dto.request.update_request.NhuCauUpdate;
-import com.dantn.weblaptop.dto.request.update_request.RAMUpdate;
 import com.dantn.weblaptop.dto.request.update_request.SanPhamUpdate;
 import com.dantn.weblaptop.dto.request.update_request.ThuongHieuUpdate;
-import com.dantn.weblaptop.dto.request.update_request.UpdateSPAndSPCTDTO;
-import com.dantn.weblaptop.dto.request.update_request.VGAUpdate;
-import com.dantn.weblaptop.dto.request.update_request.WebcamUpdate;
-import com.dantn.weblaptop.dto.response.BanPhimResponse;
-import com.dantn.weblaptop.dto.response.HeDieuHanhResponse;
-import com.dantn.weblaptop.dto.response.ManHinhResponse;
 import com.dantn.weblaptop.dto.response.NhuCauResponse;
-import com.dantn.weblaptop.dto.response.RAMResponse;
 import com.dantn.weblaptop.dto.response.SanPhamResponse;
 import com.dantn.weblaptop.dto.response.ThuongHieuResponse;
-import com.dantn.weblaptop.dto.response.VGAResponse;
-import com.dantn.weblaptop.dto.response.WebcamResponse;
 import com.dantn.weblaptop.entity.sanpham.NhuCau;
 import com.dantn.weblaptop.entity.sanpham.SanPham;
-import com.dantn.weblaptop.entity.sanpham.SanPhamChiTiet;
 import com.dantn.weblaptop.entity.sanpham.ThuongHieu;
 import com.dantn.weblaptop.entity.sanpham.thuoctinh.BanPhim;
 import com.dantn.weblaptop.entity.sanpham.thuoctinh.CPU;
@@ -45,9 +25,7 @@ import com.dantn.weblaptop.entity.sanpham.thuoctinh.Webcam;
 import com.dantn.weblaptop.generics.GenericsService;
 import com.dantn.weblaptop.generics.IGenericsMapper;
 import com.dantn.weblaptop.generics.IGenericsRepository;
-import com.dantn.weblaptop.repository.SanPhamChiTietRepository;
 import com.dantn.weblaptop.repository.SanPhamRepository;
-import com.dantn.weblaptop.service.SanPhamChiTietService;
 import com.dantn.weblaptop.util.ConvertStringToArray;
 import com.dantn.weblaptop.util.GenerateCode;
 import org.springframework.data.domain.Page;
@@ -64,39 +42,17 @@ public class SanPhamService extends GenericsService<SanPham, Long, SanPhamCreate
     private final GenericsService<ThuongHieu, Long, ThuongHieuCreate, ThuongHieuUpdate, ThuongHieuResponse> serviceThuongHieu;
     private final GenericsService<NhuCau, Long, NhuCauCreate, NhuCauUpdate, NhuCauResponse> serviceNhuCau;
 
-    private final GenericsService<VGA, Long, VGACreate, VGAUpdate, VGAResponse> serviceVGA;
-    private final GenericsService<Webcam, Long, WebcamCreate, WebcamUpdate, WebcamResponse> serviceWebcam;
-    private final GenericsService<ManHinh, Long, ManHinhCreate, ManHinhUpdate, ManHinhResponse> serviceManHinh;
-    private final GenericsService<BanPhim, Long, BanPhimCreate, BanPhimUpdate, BanPhimResponse> serviceBanPhim;
-    private final GenericsService<HeDieuHanh, Long, HeDieuHanhCreate, HeDieuHanhUpdate, HeDieuHanhResponse> serviceHeDieuHanh;
     private final SanPhamRepository sanPhamRepository;
-    private final SanPhamChiTietRepository spctRepo;
 
     public SanPhamService(IGenericsRepository<SanPham, Long> genericsRepository,
                           IGenericsMapper<SanPham, SanPhamCreate, SanPhamUpdate, SanPhamResponse> genericsMapper,
                           GenericsService<ThuongHieu, Long, ThuongHieuCreate, ThuongHieuUpdate, ThuongHieuResponse> serviceThuongHieu,
                           GenericsService<NhuCau, Long, NhuCauCreate, NhuCauUpdate, NhuCauResponse> serviceNhuCau,
-                          SanPhamRepository sanPhamRepository,
-                          SanPhamChiTietRepository spctRepo,
-
-                          GenericsService<VGA, Long, VGACreate, VGAUpdate, VGAResponse> serviceVGA,
-                          GenericsService<Webcam, Long, WebcamCreate, WebcamUpdate, WebcamResponse> serviceWebcam,
-                          GenericsService<ManHinh, Long, ManHinhCreate, ManHinhUpdate, ManHinhResponse> serviceManHinh,
-                          GenericsService<BanPhim, Long, BanPhimCreate, BanPhimUpdate, BanPhimResponse> serviceBanPhim,
-                          GenericsService<HeDieuHanh, Long, HeDieuHanhCreate, HeDieuHanhUpdate, HeDieuHanhResponse> serviceHeDieuHanh
-
-    ) {
+                          SanPhamRepository sanPhamRepository) {
         super(genericsRepository, genericsMapper);
         this.serviceThuongHieu = serviceThuongHieu;
         this.serviceNhuCau = serviceNhuCau;
         this.sanPhamRepository = sanPhamRepository;
-        this.spctRepo = spctRepo;
-        this.serviceVGA = serviceVGA;
-        this.serviceWebcam = serviceWebcam;
-        this.serviceManHinh = serviceManHinh;
-        this.serviceBanPhim = serviceBanPhim;
-        this.serviceHeDieuHanh = serviceHeDieuHanh;
-
     }
 
     @Override
@@ -197,33 +153,5 @@ public class SanPhamService extends GenericsService<SanPham, Long, SanPhamCreate
                 return true;
         }
         return false;
-    }
-
-    public SanPhamResponse updateSPAndSPCT(UpdateSPAndSPCTDTO request, Long idSP){
-        SanPham entitySP = sanPhamRepository.findById(idSP).get();
-        entitySP.setTen(request.getTenSP().trim());
-        entitySP.setMoTa(request.getMoTa());
-        entitySP.setNhuCau(serviceNhuCau.findEntityById(Long.valueOf(request.getIdNhuCau())));
-        entitySP.setThuongHieu(serviceThuongHieu.findEntityById(Long.valueOf(request.getIdThuongHieu())));
-        entitySP = sanPhamRepository.save(entitySP);
-
-        List<SanPhamChiTiet> listSPCT = spctRepo.findByProductIdList(idSP);
-        for (SanPhamChiTiet spct : listSPCT) {
-            spct.setVga(serviceVGA.findEntityById(Long.valueOf(request.getIdVGA())));
-            spct.setWebcam(serviceWebcam.findEntityById(Long.valueOf(request.getIdWebcam())));
-            spct.setManHinh(serviceManHinh.findEntityById(Long.valueOf(request.getIdManHinh())));
-            spct.setBanPhim(serviceBanPhim.findEntityById(Long.valueOf(request.getIdBanPhim())));
-            spct.setHeDieuHanh(serviceHeDieuHanh.findEntityById(Long.valueOf(request.getIdHeDieuHanh())));
-            spctRepo.save(spct);
-        }
-        return genericsMapper.entityToResponse(entitySP);
-    }
-
-    public Boolean existNameForUpdate(String ten, Long id){
-        Boolean check = false;
-        List<SanPham> result = sanPhamRepository.existNameForUpdate(ten.trim().toLowerCase(), id);
-        if (result != null && result.size() > 0)
-            check = true;
-        return check;
     }
 }

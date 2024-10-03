@@ -1,15 +1,10 @@
 package com.dantn.weblaptop.mapper.impl;
 
-import com.dantn.weblaptop.dto.response.SerialNumberResponse;
 import com.dantn.weblaptop.entity.sanpham.SanPham;
 import com.dantn.weblaptop.generics.GenericsMapper;
 import com.dantn.weblaptop.dto.request.create_request.SanPhamCreate;
 import com.dantn.weblaptop.dto.request.update_request.SanPhamUpdate;
 import com.dantn.weblaptop.dto.response.SanPhamResponse;
-import com.dantn.weblaptop.service.SerialNumberService;
-import lombok.AccessLevel;
-import lombok.RequiredArgsConstructor;
-import lombok.experimental.FieldDefaults;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.stereotype.Service;
@@ -18,10 +13,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-@RequiredArgsConstructor
-@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class SanPhamMapper extends GenericsMapper<SanPham, SanPhamCreate, SanPhamUpdate, SanPhamResponse> {
-    SerialNumberService serialNumberService;
+
     @Override
     public SanPham createToEntity(SanPhamCreate create) {
         SanPham sanPham = SanPham.builder()
@@ -56,10 +49,6 @@ public class SanPhamMapper extends GenericsMapper<SanPham, SanPhamCreate, SanPha
                 .nguoiSua(entity.getNguoiSua())
                 .build();
         response.convertTime();
-
-        List<SerialNumberResponse> countSeriActive = serialNumberService.findAllByProductIdActive(entity.getId());
-        int amount = (countSeriActive == null) ? 0 : countSeriActive.size();
-        response.setAmount(amount+"");
         return response;
     }
 

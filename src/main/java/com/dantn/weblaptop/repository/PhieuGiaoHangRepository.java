@@ -1,9 +1,9 @@
 package com.dantn.weblaptop.repository;
 
-import com.dantn.weblaptop.entity.nhanvien.NhanVien;
+import com.dantn.weblaptop.entity.hoadon.PhieuGiaoHang;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface NhanVienRepository extends JpaRepository<NhanVien, Long> {
+public interface PhieuGiaoHangRepository extends JpaRepository<PhieuGiaoHang, Long> {
 }

@@ -92,7 +92,7 @@ public class SanPhamChiTietServiceImpl implements SanPhamChiTietService {
         beforeAdd(spct, create);
         SanPhamChiTiet entity = spctRepository.save(spct);
         afterAdd(create, entity);
-        List<SerialNumberResponse> listSeri = serialNumberService.findAllBySanPhamChiTietIdActive(entity.getId());
+        List<SerialNumberResponse> listSeri = serialNumberService.findAllBySanPhamChiTietId(entity.getId());
         List<AnhSanPhamResponse> listAnh = anhSanPhamService.getAllBySPCTId(entity.getId());
         SanPhamChiTietResponse response = spctMapper.entityToResponse(entity);
         response.setListUrlAnhSanPham(ConvertStringToArray.setAnhSanPhamToNameString(listAnh));
@@ -147,7 +147,7 @@ public class SanPhamChiTietServiceImpl implements SanPhamChiTietService {
         SanPhamChiTiet entityNew = spctRepository.save(entity);
         afterUpdate(entityNew, update);
         SanPhamChiTietResponse response = spctMapper.entityToResponse(entityNew);
-        List<SerialNumberResponse> listSeri = serialNumberService.findAllBySanPhamChiTietIdActive(entity.getId());
+        List<SerialNumberResponse> listSeri = serialNumberService.findAllBySanPhamChiTietId(entity.getId());
         List<AnhSanPhamResponse> listAnh = anhSanPhamService.getAllBySPCTId(entity.getId());
         response.setListUrlAnhSanPham(ConvertStringToArray.setAnhSanPhamToNameString(listAnh));
         response.setListSerialNumber(ConvertStringToArray.setSeriNumberToNameString(listSeri));

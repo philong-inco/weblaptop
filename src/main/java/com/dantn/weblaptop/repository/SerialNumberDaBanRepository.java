@@ -1,6 +1,9 @@
 package com.dantn.weblaptop.repository;
 
+import com.dantn.weblaptop.dto.response.SerialNumberDaBanResponse;
+import com.dantn.weblaptop.dto.response.SerialNumberDaBanResponse2;
 import com.dantn.weblaptop.entity.hoadon.SerialNumberDaBan;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -9,7 +12,6 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 
 @Repository
 public interface SerialNumberDaBanRepository extends JpaRepository<SerialNumberDaBan, Long> {
@@ -17,12 +19,6 @@ public interface SerialNumberDaBanRepository extends JpaRepository<SerialNumberD
 
 
     List<SerialNumberDaBan> findAllByHoaDonMa(String code);
-
-    @Query(value = "" +
-            "select count(serial_number_id) " +
-            "from serial_number_da_ban where " +
-            "hoa_don_id = :billId",nativeQuery = true)
-    Optional<Integer> getQuantityByHoaDonId(@Param("billId") Long billId);
 
     @Query("SELECT sndb FROM SerialNumberDaBan sndb " +
             "WHERE sndb.serialNumber.id IN :serialNumberIds " +

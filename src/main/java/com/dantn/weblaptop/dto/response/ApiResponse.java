@@ -5,6 +5,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.math.BigDecimal;
+
 @Getter
 @Setter
 @Builder
@@ -18,4 +20,13 @@ public class ApiResponse<T> {
     String error;
     Object message;
     T data;
+
+    public ApiResponse(String s, Long count) {
+    }
+
+    public ApiResponse(boolean b, String s, Object o) {
+    }
+
+    public ApiResponse(String s, BigDecimal sum) {
+    }
 }

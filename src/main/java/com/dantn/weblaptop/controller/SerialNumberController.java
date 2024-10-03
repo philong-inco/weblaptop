@@ -27,10 +27,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/serial-number")
@@ -164,11 +162,11 @@ public class SerialNumberController {
     public ResponseEntity<ResponseLong<Boolean>> existForAdd(@RequestParam("ma") String ma) {
         boolean check = serialNumberService.existByAdd(ma);
         return (check) ?
-                ResponseEntity.status(HttpStatus.OK).body(new ResponseLong<>(
+                ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseLong<>(
                         999, "Existed!", true, null, null, null, null
                 ))
                 :
-                ResponseEntity.status(HttpStatus.OK).body(new ResponseLong<>(
+                ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseLong<>(
                         200, "Valid", false, null, null, null, null
                 ));
     }
@@ -213,12 +211,9 @@ public class SerialNumberController {
     public ResponseEntity<ResponseLong<List<SerialNumberResponse>>> findAllBySPCTId(@PathVariable("id")Long id)
     {
         List<SerialNumberResponse> result = serialNumberService.findAllBySanPhamChiTietId(id);
-        List<SerialNumberResponse> sortedResult = result.stream()
-                .sorted(Comparator.comparing(SerialNumberResponse::getTrangThai))
-                .collect(Collectors.toList());
         if (result != null || result.size() > 0)
             return ResponseEntity.ok().body(new ResponseLong<>(
-                    200, "Get successfully", sortedResult
+                    200, "Get successfully", result
             ));
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseLong<>(
                 404, "Not have serials", null
@@ -271,6 +266,20 @@ public class SerialNumberController {
                 .statusCode(HttpStatus.OK.value())
                 .message("Get SerialNumber By Product Success")
                 .data(serialNumberService.getAllSerialNumberByProductDetailId(productId, page, size))
+                .build();
+    }
+
+    @GetMapping("/product-detail-code-serial/{productId}")
+    public ApiResponse<ResultPaginationResponse> getSerialNumberByProductAndCode
+            (@PathVariable("productId") Long productId,
+             @RequestParam("codeSerial") String codeSerial,
+             @RequestParam(name = "page", defaultValue = "0") Optional<String> page,
+             @RequestParam(name = "size", defaultValue = "5") Optional<String> size
+            ) {
+        return ApiResponse.<ResultPaginationResponse>builder()
+                .statusCode(HttpStatus.OK.value())
+                .message("Get SerialNumber By Product Success")
+                .data(serialNumberService.getAllSerialNumberByProductDetailIdAndCodeSerial( productId,codeSerial, page, size))
                 .build();
     }
 }

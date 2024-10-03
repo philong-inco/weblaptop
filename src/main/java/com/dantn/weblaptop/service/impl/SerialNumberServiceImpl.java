@@ -64,8 +64,7 @@ public class SerialNumberServiceImpl implements SerialNumberService {
     public boolean delete(Long id) {
         SerialNumber entity = serialNumberRepository.findById(id).get();
         if (entity == null) return false;
-        if (entity.getTrangThai() == 1) return false;
-        serialNumberRepository.deleteByIdSeri(id);
+        serialNumberRepository.deleteById(id);
         return true;
     }
 
@@ -162,6 +161,30 @@ public class SerialNumberServiceImpl implements SerialNumberService {
     }
 
     @Override
+    public ResultPaginationResponse getAllSerialNumberByProductDetailIdAndCodeSerial(
+            Long productDetailId, String codeSerial, Optional<String> page, Optional<String> size) {
+        String sPage = page.orElse("0");
+        String sSize = size.orElse("5");
+        Pageable pageable = PageRequest.of(Integer.parseInt(sPage), Integer.parseInt(sSize), Sort.by("id").descending());
+        Page<SerialNumberResponse> responses = serialNumberRepository
+                .findByMaContainingAndSanPhamChiTietId(codeSerial.trim(), productDetailId, pageable).
+                map(mapper::entityToResponse);
+
+        Meta meta = Meta.builder()
+                .page(responses.getNumber())
+                .pageSize(responses.getSize())
+                .pages(responses.getTotalPages())
+                .total(responses.getTotalElements())
+                .build();
+
+        return ResultPaginationResponse
+                .builder()
+                .meta(meta)
+                .result(responses.getContent())
+                .build();
+    }
+
+    @Override
     public void deleteAllByIdSPCT(Long idSPCT) {
         serialNumberRepository.deleteAllByIdSPCT(idSPCT);
     }
@@ -169,11 +192,6 @@ public class SerialNumberServiceImpl implements SerialNumberService {
     @Override
     public void changeStatusToSeriNumberDaBan(Long idSerialNumber) {
         serialNumberRepository.changeStatusToSeriNumberDaBan(idSerialNumber);
-    }
-
-    @Override
-    public List<SerialNumberResponse> findAllByProductIdActive(Long idProduct) {
-        return mapper.listEntityToListResponse(serialNumberRepository.findAllByProductIdActive(idProduct));
     }
 
     @Override

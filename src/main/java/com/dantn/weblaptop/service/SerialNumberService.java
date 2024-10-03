@@ -29,7 +29,7 @@ public interface SerialNumberService {
     void deleteAllByIdSPCT(Long idSPCT);
     void changeStatusToSeriNumberDaBan(Long idSerialNumber);
 
-    List<SerialNumberResponse> findAllByProductIdActive(Long idProduct);
+
 
     List<SerialNumberResponse> findAllBySanPhamChiTietId(Long id);
     List<SerialNumberResponse> findAllBySanPhamChiTietIdActive(Long id);
@@ -45,6 +45,9 @@ public interface SerialNumberService {
 
     ResultPaginationResponse getAllSerialNumberByProductDetailId(
             Long productId, Optional<String> page, Optional<String> size);
+
+    ResultPaginationResponse getAllSerialNumberByProductDetailIdAndCodeSerial(
+            Long productId, String codeSerial, Optional<String> page, Optional<String> size);
 
 
 }

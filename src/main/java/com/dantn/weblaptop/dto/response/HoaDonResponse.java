@@ -1,11 +1,13 @@
 package com.dantn.weblaptop.dto.response;
 
 import com.dantn.weblaptop.constant.HoaDonStatus;
+import jakarta.persistence.Column;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -16,32 +18,28 @@ import java.time.LocalDate;
 public class HoaDonResponse {
 
     Long id;
-
     Long idNhanVien;
-
     Long idKhachHang;
-
     String tenKhachHang;
-
     String ma;
-
     Integer tongSanPham;
-
 //    BigDecimal tongTien;
-
     Integer loaiHoaDon;
-
     BigDecimal tongTienBanDau;
-
     BigDecimal tongTienPhaiTra;
-
     String ngayMongMuonNhanHang;
-
     String sdt;
-
     String email;
-
     String diaChi;
+    String tinh;
+    String huyen;
+    String phuong;
+
+    BigDecimal tienShip;
+    BigDecimal tienGiamHangKhachHang;
+    Integer thanhToanSau; // 0 tt luôn : 1 là sau
+    LocalDateTime ngayGiaoHang;
+    LocalDateTime ngayNhanHang;
 
     String ghiChu;
 
