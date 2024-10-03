@@ -111,7 +111,7 @@ public class SerialNumberDaBanServiceImpl implements SerialNumberDaBanService {
         }
 
         // Lấy tất cả các SerialNumberDaBan hiện có cho hóa đơn
-        List<SerialNumberDaBan> existingSerialNumbersDaBan = serialNumberDaBanRepository.findAllByHoaDonId(existingBill.getId());
+//        List<SerialNumberDaBan> existingSerialNumbersDaBan = serialNumberDaBanRepository.findAllByHoaDonId(existingBill.getId());
 
         // Lọc serialNumbers bỏ serialNumbe đã bị xóa
         List<SerialNumber> updatedSerialNumbers = serialNumbers.stream()
@@ -137,10 +137,8 @@ public class SerialNumberDaBanServiceImpl implements SerialNumberDaBanService {
             serialNumberDaBanRepository.saveAll(newSerialNumberDaBans);
         }
 
-        List<LichSuHoaDonResponse> existingHistories = billHistoryService.getBillHistoryByBillId(existingBill.getId());
-        boolean hasStatus = existingHistories.stream().anyMatch(history -> history.getTrangThai() == 1);
+//        List<LichSuHoaDonResponse> existingHistories = billHistoryService.getBillHistoryByBillId(existingBill.getId());
 
-//        if (!hasStatus) {
             CreateLichSuHoaDonRequest billHistoryRequest = new CreateLichSuHoaDonRequest();
             billHistoryRequest.setIdHoaDon(existingBill.getId());
             billHistoryRequest.setGhiChuChoCuaHang("Cập nhập sản phẩm của đơn hàng");
@@ -150,7 +148,6 @@ public class SerialNumberDaBanServiceImpl implements SerialNumberDaBanService {
             // Lưu lịch sử hóa đơn
             try {
                 billHistoryService.create(billHistoryRequest);
-//                existingBill.setTrangThai(HoaDonStatus.CHO_THANH_TOAN);
                 hoaDonRepository.save(existingBill);
             } catch (AppException e) {
                 e.printStackTrace();
@@ -158,7 +155,6 @@ public class SerialNumberDaBanServiceImpl implements SerialNumberDaBanService {
 //        }
 //        tính tiền và check phiếu pgg
         prepareTheBill(existingBill.getMa());
-
         return true;
     }
 

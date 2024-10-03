@@ -46,5 +46,8 @@ public interface SerialNumberService {
     ResultPaginationResponse getAllSerialNumberByProductDetailId(
             Long productId, Optional<String> page, Optional<String> size);
 
+    ResultPaginationResponse getAllSerialNumberByProductDetailIdAndCodeSerial(
+            Long productId, String codeSerial, Optional<String> page, Optional<String> size);
+
 
 }

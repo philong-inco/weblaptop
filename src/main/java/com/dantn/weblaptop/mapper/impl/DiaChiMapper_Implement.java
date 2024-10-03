@@ -64,7 +64,7 @@ public class DiaChiMapper_Implement implements DiaChi_Mapper {
                 .emailNguoiNhan(entity.getEmailNguoiNhan())
                 .diaChiNhanHang(entity.getDiaChiNhanHang())
                 .idPhuongXa(entity.getIdPhuongXa())
-                .idQuanHuyen(entity.getIdPhuongXa())
+                .idQuanHuyen(entity.getIdQuanHuyen())
                 .idTinhThanhPho(entity.getIdTinhThanhPho())
                 .build();
     }
