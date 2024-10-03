@@ -208,7 +208,7 @@ public class SanPhamController extends GenericsController<SanPham, Long, SanPham
             @RequestParam(value = "idManHinh", required = false, defaultValue = "") String tenManHinh,
             @RequestParam(value = "idHeDieuHanh", required = false, defaultValue = "") String tenHeDieuHanh,
             @RequestParam(value = "idBanPhim", required = false, defaultValue = "") String tenBanPhim,
-            @RequestParam(value = "dangKhuyenMai", required = false, defaultValue = "") boolean dangKhuyenMai
+            @RequestParam(value = "dangKhuyenMai", required = false, defaultValue = "") String dangKhuyenmai // 1: true 0:false
     ) {
         Pageable pageable;
         try {
@@ -264,6 +264,15 @@ public class SanPhamController extends GenericsController<SanPham, Long, SanPham
         ResponseLong<SanPhamResponse> result = new ResponseLong<>(
                 200, "Update successfully",
                 response);
+        return ResponseEntity.ok().body(result);
+    }
+
+    @GetMapping("/exist-name-for-update")
+    public ResponseEntity<ResponseLong<Boolean>> updateSPAndSPCT(@RequestParam("ten") String ten,
+                                                                 @RequestParam("id") Long id){
+        Boolean check = sanPhamService.existNameForUpdate(ten, id);
+        ResponseLong<Boolean> result = new ResponseLong<>(
+                200, "Check done",check);
         return ResponseEntity.ok().body(result);
     }
 }
