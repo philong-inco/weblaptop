@@ -124,6 +124,7 @@ public class DotGiamGiaServiceImpl implements DotGiamGiaService {
     }
 
     @Override
+
     public void changeStatusDotGiamGiaStart(Long id) {
         dotGiamGiaRepository.updateStatusDGGStart(id);
     }
@@ -136,6 +137,10 @@ public class DotGiamGiaServiceImpl implements DotGiamGiaService {
     @Override
     public void deleteDotGiamGia(Long id) {
         dotGiamGiaRepository.deleteStatusDGGStop(id);
+
+    public List<DotGiamGia> getDotGiamGiaBySPCTId(Long idSPCT) {
+        return dotGiamGiaRepository.getDotGiamGiaBySPCTId(idSPCT);
+
     }
 
     private String generateUniqueCode() {

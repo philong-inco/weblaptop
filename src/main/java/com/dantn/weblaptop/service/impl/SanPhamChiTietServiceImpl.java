@@ -8,6 +8,7 @@ import com.dantn.weblaptop.dto.request.update_request.AnhSanPhamUpdate;
 import com.dantn.weblaptop.dto.request.update_request.SanPhamChiTietUpdate;
 import com.dantn.weblaptop.dto.request.update_request.SerialNumberUpdate;
 import com.dantn.weblaptop.dto.response.AnhSanPhamResponse;
+import com.dantn.weblaptop.dto.response.SanPhamChiTietClientDTO;
 import com.dantn.weblaptop.dto.response.SanPhamChiTietResponse;
 import com.dantn.weblaptop.dto.response.SerialNumberResponse;
 import com.dantn.weblaptop.entity.sanpham.SanPham;
@@ -205,7 +206,7 @@ public class SanPhamChiTietServiceImpl implements SanPhamChiTietService {
     }
 
     @Override
-    public List<SanPhamChiTietResponse> findByFilter(FindSanPhamChiTietByFilter filter) {
+    public List<SanPhamChiTietClientDTO> findByFilter(FindSanPhamChiTietByFilter filter) {
         Specification<SanPhamChiTiet> spec = Specification.where(specificationInner.listIntegerEquals("trangThai", ConvertStringToArray.toArray(filter.getTrangThai())))
                 .and(specificationInner.timestampBefore("ngayTao", filter.getNgayTaoTruoc()))
                 .and(specificationInner.timestampAfter("ngayTao", filter.getNgayTaoSau()))
@@ -231,7 +232,7 @@ public class SanPhamChiTietServiceImpl implements SanPhamChiTietService {
                 .and(specificationJoin.listLongEquals(HeDieuHanh.class, "heDieuHanh", "id", ConvertStringToArray.toArray(filter.getHeDieuHanh())))
                 .and(specificationJoin.listLongEquals(BanPhim.class, "banPhim", "id", ConvertStringToArray.toArray(filter.getBanPhim())));
         List<SanPhamChiTiet> list = spctRepository.findAll(spec);
-        return spctMapper.listEntityToListResponse(list);
+        return spctMapper.listEntityToClient(list);
     }
 
     @Override

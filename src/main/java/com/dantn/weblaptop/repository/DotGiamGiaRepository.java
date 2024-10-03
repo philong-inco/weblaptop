@@ -48,6 +48,7 @@ public interface DotGiamGiaRepository extends JpaRepository<DotGiamGia, Long>, J
 
     Boolean existsByMa(String ma);
 
+
     @Modifying
     @Transactional
     @Query(value = "UPDATE DotGiamGia dgg SET dgg.trangThai = 1 WHERE dgg.id = :id")
@@ -62,4 +63,8 @@ public interface DotGiamGiaRepository extends JpaRepository<DotGiamGia, Long>, J
     @Transactional
     @Query(value = "UPDATE DotGiamGia dgg SET dgg.trangThai = 3 WHERE dgg.id = :id")
     void deleteStatusDGGStop(@Param("id") Long id);
+
+    @Query("SELECT dgg FROM DotGiamGia dgg JOIN dgg.dotGiamGiaSanPhamChiTiets dggct WHERE dggct.sanPhamChiTiet.id = :idSPCT AND dgg.trangThai = 1")
+    public List<DotGiamGia> getDotGiamGiaBySPCTId(@Param("idSPCT")Long idSPCT);
+
 }

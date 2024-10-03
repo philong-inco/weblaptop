@@ -107,7 +107,7 @@ public class SanPhamChiTietController {
     }
 
     @GetMapping("find/filter")
-    public ResponseEntity<ResponseLong<List<SanPhamChiTietResponse>>> findByFilter(
+    public ResponseEntity<ResponseLong<List<SanPhamChiTietClientDTO>>> findByFilter(
             @RequestParam(value = "tenSP", required = false, defaultValue = "") String tenSP,
             @RequestParam(value = "maSP", required = false, defaultValue = "") String maSP,
             @RequestParam(value = "maSPCT", required = false, defaultValue = "") String maSPCT,
