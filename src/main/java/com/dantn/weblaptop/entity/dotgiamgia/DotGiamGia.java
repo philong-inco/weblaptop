@@ -49,5 +49,32 @@ public class DotGiamGia extends BaseEntity {
     Set<DotGiamGiaSanPhamChiTiet> dotGiamGiaSanPhamChiTiets;
     @OneToMany(mappedBy = "dotGiamGia", fetch = FetchType.LAZY)
     Set<SerialNumberDaBan> serialNumberDaBans;
+
+    // add by philonginco
+    public BigDecimal getTienGiamGia(BigDecimal price){
+        BigDecimal hundred = new BigDecimal("100");
+        if (price != null && price.compareTo(BigDecimal.ZERO) <= 0) return BigDecimal.ZERO;
+        if (loaiChietKhau == 1 && giaTriGiam.compareTo(hundred) > 0) return BigDecimal.ZERO;
+
+        Float result = 0f;
+        BigDecimal temp = BigDecimal.ZERO;
+        switch (loaiChietKhau){
+            case 1: // giảm %
+                temp = (price.multiply(giaTriGiam)).divide(hundred);
+                temp = (temp.compareTo(giamToiDa) > 0) ? giamToiDa : temp;
+                break;
+            case 2: // giảm tiền
+                temp = giaTriGiam;
+                break;
+            default:
+                break;
+        }
+        return temp;
+    }
+
+    public BigDecimal getTienSauKhiGiam(BigDecimal price){
+        if (price != null && price.compareTo(BigDecimal.ZERO) <= 0) return BigDecimal.ZERO;
+        return price.subtract(getTienGiamGia(price));
+    }
 }
 
