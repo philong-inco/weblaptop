@@ -64,7 +64,8 @@ public class SerialNumberServiceImpl implements SerialNumberService {
     public boolean delete(Long id) {
         SerialNumber entity = serialNumberRepository.findById(id).get();
         if (entity == null) return false;
-        serialNumberRepository.deleteById(id);
+        if (entity.getTrangThai() == 1) return false;
+        serialNumberRepository.deleteByIdSeri(id);
         return true;
     }
 
@@ -168,6 +169,11 @@ public class SerialNumberServiceImpl implements SerialNumberService {
     @Override
     public void changeStatusToSeriNumberDaBan(Long idSerialNumber) {
         serialNumberRepository.changeStatusToSeriNumberDaBan(idSerialNumber);
+    }
+
+    @Override
+    public List<SerialNumberResponse> findAllByProductIdActive(Long idProduct) {
+        return mapper.listEntityToListResponse(serialNumberRepository.findAllByProductIdActive(idProduct));
     }
 
     @Override
