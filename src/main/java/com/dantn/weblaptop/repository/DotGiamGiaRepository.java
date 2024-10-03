@@ -44,4 +44,7 @@ public interface DotGiamGiaRepository extends JpaRepository<DotGiamGia, Long>, J
     void updateStatusDGG(@Param("id") Long id);
 
     Boolean existsByMa(String ma);
+
+    @Query("SELECT dgg FROM DotGiamGia dgg JOIN dgg.dotGiamGiaSanPhamChiTiets dggct WHERE dggct.sanPhamChiTiet.id = :idSPCT AND dgg.trangThai = 1")
+    public List<DotGiamGia> getDotGiamGiaBySPCTId(@Param("idSPCT")Long idSPCT);
 }

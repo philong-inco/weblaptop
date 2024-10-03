@@ -123,6 +123,11 @@ public class DotGiamGiaServiceImpl implements DotGiamGiaService {
         dotGiamGiaRepository.updateStatusDGG(id);
     }
 
+    @Override
+    public List<DotGiamGia> getDotGiamGiaBySPCTId(Long idSPCT) {
+        return dotGiamGiaRepository.getDotGiamGiaBySPCTId(idSPCT);
+    }
+
     private String generateUniqueCode() {
         return "DGG" + System.currentTimeMillis();
     }

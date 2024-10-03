@@ -32,8 +32,8 @@ public class FakeDataForClient {
     public static SanPhamChiTietClientDTO fakeDataSPCTForClient(){
 
             SanPhamChiTietClientDTO sp = SanPhamChiTietClientDTO.builder()
-                    .idSPCT(1l)
-                    .tenSP("Laptop Thinkpad Carbon Gen10 16GB-256GB 14\" siêu mỏng văn phòng")
+                    .id(1l)
+                    .tenSanPham("Laptop Thinkpad Carbon Gen10 16GB-256GB 14\" siêu mỏng văn phòng")
                     .moTaSP("Laptop Thinkpad Carbon Gen10 16GB-256GB 14\" siêu mỏng văn phòng Laptop Thinkpad Carbon Gen10 16GB-256GB 14\" siêu mỏng văn phòng Laptop Thinkpad Carbon Gen10 16GB-256GB 14\" siêu mỏng văn phòng")
                     .nhuCau("Văn phòng")
                     .thuongHieu("Thinkpad")
@@ -49,7 +49,7 @@ public class FakeDataForClient {
                     .vga("NIVIDIA GTX")
                     .webcam("5MP")
                     .tonKhoConLai("Còn 9 sản phẩm")
-                    .sanPhamId("1")
+                    .sanPhamId(1l)
                     .giaSauKhuyenMai("12.000.000")
                     .soTienDuocGiam("2.000.000")
                     .tenKhuyenMai("Giảm 12%")

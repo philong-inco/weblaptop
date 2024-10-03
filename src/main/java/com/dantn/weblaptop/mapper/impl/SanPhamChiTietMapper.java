@@ -161,7 +161,7 @@ public class SanPhamChiTietMapper extends GenericsMapper<SanPhamChiTiet, SanPham
         // dùng stream gọi hàm tính giảm giá
 
 
-        List<DotGiamGia> listDotGiamGia = new ArrayList<>();
+        List<DotGiamGia> listDotGiamGia = dotGiamGiaService.getDotGiamGiaBySPCTId(entity.getId());
         Optional<DotGiamGia> bestPromo = listDotGiamGia.stream()
                 .max((promo1, promo2) -> {
                     BigDecimal value1 = promo1.getTienGiamGia(entity.getGiaBan());
@@ -181,7 +181,6 @@ public class SanPhamChiTietMapper extends GenericsMapper<SanPhamChiTiet, SanPham
             }
 
         }
-
         return client;
     }
 
