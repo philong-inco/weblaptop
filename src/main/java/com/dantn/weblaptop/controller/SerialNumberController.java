@@ -164,11 +164,11 @@ public class SerialNumberController {
     public ResponseEntity<ResponseLong<Boolean>> existForAdd(@RequestParam("ma") String ma) {
         boolean check = serialNumberService.existByAdd(ma);
         return (check) ?
-                ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseLong<>(
+                ResponseEntity.status(HttpStatus.OK).body(new ResponseLong<>(
                         999, "Existed!", true, null, null, null, null
                 ))
                 :
-                ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseLong<>(
+                ResponseEntity.status(HttpStatus.OK).body(new ResponseLong<>(
                         200, "Valid", false, null, null, null, null
                 ));
     }

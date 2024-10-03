@@ -19,6 +19,8 @@ public interface SanPhamRepository extends IGenericsRepository<SanPham, Long>, J
     @Query("SELECT r FROM SanPham r")
     Page<SanPham> getAllPage(Pageable pageable);
 
+
+
     @Override
     @Query("SELECT r FROM SanPham r")
     List<SanPham> getAllList();
@@ -56,4 +58,7 @@ public interface SanPhamRepository extends IGenericsRepository<SanPham, Long>, J
     List<SanPham> isExistNameAndDifferentId(@Param("name") String name, @Param("id") Long id);
 
 //    List<SanPham> findWithFilter(Specification<SanPham> specification);
+
+    @Query("SELECT r FROM SanPham r WHERE LOWER(r.ten) = :ten AND r.id <> :id ")
+    List<SanPham> existNameForUpdate(@Param("ten") String ten, @Param("id") Long id);
 }

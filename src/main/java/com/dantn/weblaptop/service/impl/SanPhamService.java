@@ -218,4 +218,12 @@ public class SanPhamService extends GenericsService<SanPham, Long, SanPhamCreate
         }
         return genericsMapper.entityToResponse(entitySP);
     }
+
+    public Boolean existNameForUpdate(String ten, Long id){
+        Boolean check = false;
+        List<SanPham> result = sanPhamRepository.existNameForUpdate(ten.trim().toLowerCase(), id);
+        if (result != null && result.size() > 0)
+            check = true;
+        return check;
+    }
 }
