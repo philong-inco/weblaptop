@@ -133,13 +133,14 @@ public class HoaDonController {
 
     @PostMapping("pay-counter/{billCode}")
     public ResponseEntity<ApiResponse> payCounter(
-            @PathVariable(name = "billCode") String billCode
+            @PathVariable(name = "billCode") String billCode,
+            @RequestBody UpdateHoaDonRequest request
     ) throws AppException {
         return ResponseEntity.status(HttpStatus.CREATED).body(
                 ApiResponse.builder()
                         .statusCode(HttpStatus.CREATED.value())
                         .message("Pay counter success")
-                        .data(billService.payCounter(billCode))
+                        .data(billService.payCounter(billCode , request))
                         .build()
         );
     }

@@ -44,11 +44,7 @@ public class SerialNumberDaBan extends BaseEntity {
             fetch = FetchType.EAGER)
     @JoinColumn(name = "hoa_don_id")
     HoaDon hoaDon;
-    @ManyToOne(cascade = {CascadeType.DETACH, CascadeType.MERGE,
-            CascadeType.REFRESH, CascadeType.PERSIST},
-            fetch = FetchType.EAGER)
-    @JoinColumn(name = "phieu_giao_hang_id")
-    PhieuGiaoHang phieuGiaoHang;
+
     @ManyToOne(cascade = {CascadeType.DETACH, CascadeType.MERGE,
             CascadeType.REFRESH, CascadeType.PERSIST},
             fetch = FetchType.EAGER)

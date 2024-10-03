@@ -43,7 +43,8 @@ public enum ErrorCode {
     //
     PAY_NO_FOUND(5000, "Phương thức thanh toán không tồn tại"),
     BILL_NOT_STATUS(50001,"Hóa đơn chưa được xác nhân"),
-    BILL_WITHOUT_PRODUCT (5002,"Hóa đơn chưa có sản phẩm")
+    BILL_WITHOUT_PRODUCT (5002,"Hóa đơn chưa có sản phẩm"),
+    EMAIL_INVALID(5003, "Email không hợp lệ")
     ;
 
     private Integer code;

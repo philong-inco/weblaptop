@@ -42,7 +42,7 @@ public interface HoaDonService {
 
     HoaDonResponse addCouponToBillByCode (String couponCode, String billCode) throws AppException;
 
-    Boolean payCounter(String billCode) throws AppException;
+    Boolean payCounter(String billCode, UpdateHoaDonRequest request) throws AppException;
 
     Long countBillByDate(Long startDate, Long endDate);
 

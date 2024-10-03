@@ -7,6 +7,8 @@ import com.dantn.weblaptop.dto.request.update_request.UpdateKhachHang;
 import com.dantn.weblaptop.dto.response.KhachHangResponse;
 import com.dantn.weblaptop.entity.khachhang.DiaChi;
 import com.dantn.weblaptop.entity.khachhang.KhachHang;
+import com.dantn.weblaptop.exception.AppException;
+import com.dantn.weblaptop.exception.ErrorCode;
 import com.dantn.weblaptop.mapper.KhachHang_Mapper;
 import com.dantn.weblaptop.repository.DiaChi_Repository;
 import com.dantn.weblaptop.repository.KhachHang_Repository;
@@ -247,5 +249,14 @@ public class KhachHangService_Implement implements KhachHang_Service {
     @Override
     public Long countKhachHangByDate(Long startDate, Long endDate) {
         return khachHang_Repository.countKhachHangByDate(startDate,endDate);
+    }
+
+    @Override
+    public KhachHangResponse findCustomerByPhone(String phone) throws AppException {
+        Optional<KhachHang> optional = khachHangRepository.findCustomerByPhone(phone);
+        if(optional.isPresent()){
+            return khachHangMapper.entityToResponseKhachHang(optional.get());
+        }
+        throw new  AppException(ErrorCode.CUSTOMER_NOT_FOUND);
     }
 }

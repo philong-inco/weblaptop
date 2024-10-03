@@ -5,6 +5,7 @@ import com.dantn.weblaptop.dto.request.create_request.CreateKhachHang;
 import com.dantn.weblaptop.dto.request.update_request.UpdateKhachHang;
 import com.dantn.weblaptop.dto.response.KhachHangResponse;
 import com.dantn.weblaptop.entity.khachhang.KhachHang;
+import com.dantn.weblaptop.exception.AppException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.repository.query.Param;
@@ -50,4 +51,7 @@ public interface KhachHang_Service {
     void updateImage(String image, String email);
 
     Long countKhachHangByDate(Long startDate, Long endDate);
+
+    KhachHangResponse findCustomerByPhone(String phone) throws AppException;
+
 }
