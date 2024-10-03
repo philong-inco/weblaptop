@@ -7,6 +7,7 @@ import com.dantn.weblaptop.dto.response.KhachHangResponse;
 import com.dantn.weblaptop.entity.khachhang.KhachHang;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.data.domain.Page;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -48,4 +49,5 @@ public interface KhachHang_Service {
 
     void updateImage(String image, String email);
 
+    Long countKhachHangByDate(Long startDate, Long endDate);
 }

@@ -47,7 +47,7 @@ public class HoaDonServiceImpl implements HoaDonService {
     HoaDonRepository billRepository;
     LichSuHoaDonService billHistoryService;
     LichSuHoaDonRepository billHistoryRepository;
-    NhanVienRepository employeeRepository;
+    NhanVien_Repositoy employeeRepository;
     SerialNumberDaBanService serialNumberDaBanService;
     SerialNumberDaBanRepository serialNumberDaBanRepository;
     KhachHangRepository customerRepository;
@@ -56,6 +56,7 @@ public class HoaDonServiceImpl implements HoaDonService {
     HinhThucThanhToanRepository hinhThucThanhToanRepository;
     HoaDonHinhThucThanhToanRepository hoaDonHinhThucThanhToanRepository;
     SerialNumberRepository serialNumberRepository;
+    private final HoaDonRepository hoaDonRepository;
 
     @Override
     public ResultPaginationResponse getBillPage(Optional<String> page, Optional<String> size) {
@@ -355,6 +356,16 @@ public class HoaDonServiceImpl implements HoaDonService {
         billHistory.setNhanVien(nhanVien);
         billHistoryRepository.save(billHistory);
         return true;
+    }
+
+    @Override
+    public Long countBillByDate(Long startDate, Long endDate) {
+        return hoaDonRepository.countBillByDate(startDate,endDate);
+    }
+
+    @Override
+    public BigDecimal sumBillByDate(Long startDate, Long endDate) {
+        return hoaDonRepository.totalPriceInBillByDate(startDate, endDate);
     }
 
     private BigDecimal calculateDiscount(HoaDon existingBill, PhieuGiamGia coupon) {

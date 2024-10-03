@@ -8,6 +8,7 @@ import com.dantn.weblaptop.exception.AppException;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 
+import java.math.BigDecimal;
 import java.util.Optional;
 
 public interface HoaDonService {
@@ -43,4 +44,7 @@ public interface HoaDonService {
 
     Boolean payCounter(String billCode) throws AppException;
 
+    Long countBillByDate(Long startDate, Long endDate);
+
+    BigDecimal sumBillByDate(Long startDate, Long endDate);
 }

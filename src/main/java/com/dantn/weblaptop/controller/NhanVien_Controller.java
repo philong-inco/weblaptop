@@ -136,6 +136,4 @@ public class NhanVien_Controller {
         this.nhanVienService.updateImageNV(image, id);
         return ResponseEntity.ok("Image was updated");
     }
-
-
 }
