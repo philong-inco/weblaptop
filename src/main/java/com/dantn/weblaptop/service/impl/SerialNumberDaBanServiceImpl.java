@@ -102,6 +102,10 @@ public class SerialNumberDaBanServiceImpl implements SerialNumberDaBanService {
         // Xóa các SerialNumber không còn tồn tại từ cơ sở dữ liệu
         if (!serialNumbersToDelete.isEmpty()) {
             List<SerialNumberDaBan> serialNumberDaBansToDelete = serialNumberDaBanRepository.findAllBySerialNumberIdIn(serialNumbersToDelete);
+            List<Long> idsToDelete = serialNumberDaBansToDelete.stream()
+                    .map(serialNumberDaBan -> serialNumberDaBan.getSerialNumber().getId())
+                    .collect(Collectors.toList());
+            serialNumberRepository.updateStatusByIdsNative(0,idsToDelete );
             serialNumberDaBanRepository.deleteAll(serialNumberDaBansToDelete);
         }
 
@@ -124,25 +128,30 @@ public class SerialNumberDaBanServiceImpl implements SerialNumberDaBanService {
                 .collect(Collectors.toList());
 
         if (!newSerialNumberDaBans.isEmpty()) {
+            // update ở đây
+            List<Long> idsToCreate = newSerialNumberDaBans.stream()
+                    .map(serialNumberDaBan -> serialNumberDaBan.getSerialNumber().getId())
+                    .collect(Collectors.toList());
+            serialNumberRepository.updateStatusByIdsNative(1,idsToCreate );
             serialNumberDaBanRepository.saveAll(newSerialNumberDaBans);
         }
 
 //        List<LichSuHoaDonResponse> existingHistories = billHistoryService.getBillHistoryByBillId(existingBill.getId());
 
-            CreateLichSuHoaDonRequest billHistoryRequest = new CreateLichSuHoaDonRequest();
-            billHistoryRequest.setIdHoaDon(existingBill.getId());
-            billHistoryRequest.setGhiChuChoCuaHang("Cập nhập sản phẩm");
-            billHistoryRequest.setTrangThai(1);
-            // Cần sửa khi có security
-            billHistoryRequest.setIdNhanVien(1L);
-            // Lưu lịch sử hóa đơn
-            try {
-                billHistoryService.create(billHistoryRequest);
-                hoaDonRepository.save(existingBill);
-            } catch (AppException e) {
-                e.printStackTrace();
-            }
+        CreateLichSuHoaDonRequest billHistoryRequest = new CreateLichSuHoaDonRequest();
+        billHistoryRequest.setIdHoaDon(existingBill.getId());
+        billHistoryRequest.setGhiChuChoCuaHang("Cập nhập sản phẩm của đơn hàng");
+        billHistoryRequest.setTrangThai(1);
+        // Cần sửa khi có security
+        billHistoryRequest.setIdNhanVien(1L);
+        // Lưu lịch sử hóa đơn
+        try {
+            billHistoryService.create(billHistoryRequest);
+            hoaDonRepository.save(existingBill);
+        } catch (AppException e) {
+            e.printStackTrace();
         }
+//        }
 //        tính tiền và check phiếu pgg
         prepareTheBill(existingBill.getMa());
         return true;

@@ -3,6 +3,8 @@ package com.dantn.weblaptop.controller;
 import com.dantn.weblaptop.dto.InfomationKhachHang;
 import com.dantn.weblaptop.dto.request.create_request.CreateKhachHang;
 import com.dantn.weblaptop.dto.request.update_request.UpdateKhachHang;
+import com.dantn.weblaptop.dto.response.ApiResponse;
+import com.dantn.weblaptop.exception.AppException;
 import com.dantn.weblaptop.service.KhachHang_Service;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
@@ -178,6 +180,17 @@ public class KhachHangController {
 
         Integer count = Math.toIntExact(this.khachHangService.countKhachHangByDate(startDate, endDate));
         return ResponseEntity.ok(count);
+    }
+    @GetMapping("/phone-number/{phoneNumber}")
+    public ResponseEntity<ApiResponse> findCustomerByPhoneNumber(
+            @PathVariable("phoneNumber") String phoneNumber) throws AppException {
+        return ResponseEntity.ok(
+                ApiResponse.builder()
+                        .statusCode(HttpStatus.OK.value())
+                        .message("Get customer by phone number success")
+                        .data(khachHangService.findCustomerByPhone(phoneNumber))
+                        .build()
+        );
     }
 
 }
