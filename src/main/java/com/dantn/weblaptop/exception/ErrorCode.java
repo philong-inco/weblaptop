@@ -43,7 +43,18 @@ public enum ErrorCode {
     //
     PAY_NO_FOUND(5000, "Phương thức thanh toán không tồn tại"),
     BILL_NOT_STATUS(50001,"Hóa đơn chưa được xác nhân"),
-    BILL_WITHOUT_PRODUCT (5002,"Hóa đơn chưa có sản phẩm")
+    BILL_WITHOUT_PRODUCT (5002,"Hóa đơn chưa có sản phẩm"),
+
+    NOTE_NOT_BLANK(6000,"Ghi chú không được để trống"),
+    NOTE_MIN_20(6001,"Ghi chú ít nhất 20 kí tự"),
+
+    EMAIL_NOT_BLANK(6002, "Email chưa có"),
+    EMAIL_INVALID(6003, "Email không đúng địng dạng"),
+    PHONE_NOT_BLANK(6004,"Số điện thoại chưa có"),
+    PHONE_INVALID(6005, "Số điện thoại ko đúng định dạng"),
+    NAME_NOT_BLANK(6006, "Tên chưa có"),
+    NAME_INVALID(6007,"Tên chỉ được là các chữ cái")
+
     ;
     private Integer code;
     private String message;
