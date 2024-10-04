@@ -156,4 +156,16 @@ public class PhieuGiamGiaController {
                         .build()
         );
     }
+
+    @GetMapping("/allcouponbystatus")
+    public ResponseEntity<ApiResponse> getAllPhieuGiamGiaActive(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "5") int size,
+            @PathVariable(name = "trangThai") Integer trangThai) {
+        ApiResponse apiResponse = new ApiResponse();
+        apiResponse.setStatusCode(HttpStatus.OK.value());
+        apiResponse.setMessage("Call api success");
+        apiResponse.setData(phieuGiamGiaService.getAllPhieuGiamGiaByStatusActive(page, size, trangThai));
+        return ResponseEntity.ok(apiResponse);
+    }
 }
