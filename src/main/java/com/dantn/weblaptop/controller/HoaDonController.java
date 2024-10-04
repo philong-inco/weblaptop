@@ -4,6 +4,7 @@ import com.dantn.weblaptop.dto.request.create_request.CreateLichSuHoaDon;
 import com.dantn.weblaptop.dto.request.update_request.UpdateDiaChiHoaDonRequest;
 import com.dantn.weblaptop.dto.request.update_request.UpdateHoaDonRequest;
 import com.dantn.weblaptop.dto.response.ApiResponse;
+import com.dantn.weblaptop.dto.response.HoaDonResponse;
 import com.dantn.weblaptop.entity.hoadon.HoaDon;
 import com.dantn.weblaptop.exception.AppException;
 import com.dantn.weblaptop.service.HoaDonService;
@@ -20,6 +21,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Optional;
 
 @RestController
@@ -212,6 +217,34 @@ public class HoaDonController {
                 .build();
         return ResponseEntity.status(HttpStatus.CREATED).body(apiResponse);
     }
-    // bill detail
 
+    @GetMapping("/countbill")
+    public ResponseEntity<ApiResponse> getCountBill(@RequestParam("startDate") Long startDate, @RequestParam("endDate") Long endDate) {
+        try {
+
+            Long count = hoaDonService.countBillByDate(startDate, endDate);
+
+            // Create a successful ApiResponse
+            ApiResponse response = new ApiResponse("Số lượng hóa đơn:", count);
+
+            return ResponseEntity.status(HttpStatus.OK).body(response);
+        } catch (Exception e) {
+            // Handle exceptions and create an error ApiResponse
+            ApiResponse errorResponse = new ApiResponse(false, "Đã xảy ra lỗi: " + e.getMessage(), null);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
+        }
+    }
+
+    @GetMapping("/sumpricebill")
+    public ResponseEntity<ApiResponse> sumPriceBill(@RequestParam("startDate") Long startDate, @RequestParam("endDate") Long endDate) {
+        try {
+            BigDecimal sum = hoaDonService.sumBillByDate(startDate, endDate);
+            ApiResponse response = new ApiResponse("Tổng tiền hóa đơn:", sum);
+
+            return ResponseEntity.status(HttpStatus.OK).body(response);
+        } catch (Exception e) {
+            ApiResponse errorResponse = new ApiResponse(false, "Đã xảy ra lỗi: " + e.getMessage(), null);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
+        }
+    }
 }

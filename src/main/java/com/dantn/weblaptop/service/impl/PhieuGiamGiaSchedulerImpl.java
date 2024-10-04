@@ -16,7 +16,7 @@ public class PhieuGiamGiaSchedulerImpl implements PhieuGiamGiaScheduler {
     private PhieuGiamGiaRepo phieuGiamGiaRepo;
 
     @Override
-    @Scheduled(fixedRate = 999999) // Chạy mỗi 60 giây
+    @Scheduled(fixedRate = 2000) // Chạy mỗi 60 giây
     public void updateDiscountsStatus() {
         LocalDateTime now = LocalDateTime.now();
         List<PhieuGiamGia> allPhieuGiamGia = phieuGiamGiaRepo.findAll();

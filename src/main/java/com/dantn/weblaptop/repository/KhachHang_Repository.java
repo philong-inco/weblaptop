@@ -56,6 +56,9 @@ public interface KhachHang_Repository extends JpaRepository<KhachHang, Integer> 
     @Query(value = "SELECT kh FROM KhachHang kh")
     List<KhachHang> findAllKhachHang();
 
+    @Query("SELECT COUNT(k) FROM KhachHang k WHERE k.ngayTao BETWEEN :startDate AND :endDate")
+    Long countKhachHangByDate(@Param("startDate") Long startDate, @Param("endDate") Long endDate);
+
     @Query(value = "SELECT kh FROM KhachHang kh WHERE kh.sdt = :phone")
     Optional<KhachHang> findCustomerByPhone(String phone);
 }

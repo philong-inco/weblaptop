@@ -9,6 +9,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -20,7 +21,7 @@ public class UpdateHoaDonRequest {
     Integer loaiHoaDon;
     String ten;
     String sdt;
-    @Email(message = "Email ko hợp lệ")
+    @Email(message = "EMAIL_INVALID")
     String email;
     String diaChi;
     String tinh;
@@ -32,5 +33,4 @@ public class UpdateHoaDonRequest {
     String ghiChu;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     LocalDateTime ngayNhanHang;
-
 }

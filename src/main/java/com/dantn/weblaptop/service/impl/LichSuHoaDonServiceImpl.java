@@ -14,7 +14,7 @@ import com.dantn.weblaptop.mapper.impl.LichSuHoaDonMapper;
 import com.dantn.weblaptop.repository.HoaDonRepository;
 import com.dantn.weblaptop.repository.KhachHangRepository;
 import com.dantn.weblaptop.repository.LichSuHoaDonRepository;
-import com.dantn.weblaptop.repository.NhanVienRepository;
+import com.dantn.weblaptop.repository.NhanVien_Repositoy;
 import com.dantn.weblaptop.service.LichSuHoaDonService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -32,7 +32,7 @@ public class LichSuHoaDonServiceImpl implements LichSuHoaDonService {
     LichSuHoaDonRepository billHistoryRepository;
     HoaDonRepository billRepository;
     KhachHangRepository customerRepository;
-    NhanVienRepository employeeRepository;
+    NhanVien_Repositoy employeeRepository;
 
     @Override
     public LichSuHoaDonResponse create(CreateLichSuHoaDonRequest request) throws AppException {

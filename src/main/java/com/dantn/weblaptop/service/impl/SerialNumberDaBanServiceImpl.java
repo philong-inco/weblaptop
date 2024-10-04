@@ -56,7 +56,6 @@ public class SerialNumberDaBanServiceImpl implements SerialNumberDaBanService {
             );
             SerialNumberDaBanResponse response =
                     SerialNumberSoldMapper.toSerialNumberDaBanResponse(serialNumberDaBan);
-//            check phiếu giảm giá
             String key = response.getBillId() + "-" + response.getProductDetailId();
             if (responseMap.containsKey(key)) {
                 SerialNumberDaBanResponse existingResponse = responseMap.get(key);
@@ -139,19 +138,19 @@ public class SerialNumberDaBanServiceImpl implements SerialNumberDaBanService {
 
 //        List<LichSuHoaDonResponse> existingHistories = billHistoryService.getBillHistoryByBillId(existingBill.getId());
 
-            CreateLichSuHoaDonRequest billHistoryRequest = new CreateLichSuHoaDonRequest();
-            billHistoryRequest.setIdHoaDon(existingBill.getId());
-            billHistoryRequest.setGhiChuChoCuaHang("Cập nhập sản phẩm của đơn hàng");
-            billHistoryRequest.setTrangThai(1);
-            // Cần sửa khi có security
-            billHistoryRequest.setIdNhanVien(1L);
-            // Lưu lịch sử hóa đơn
-            try {
-                billHistoryService.create(billHistoryRequest);
-                hoaDonRepository.save(existingBill);
-            } catch (AppException e) {
-                e.printStackTrace();
-            }
+        CreateLichSuHoaDonRequest billHistoryRequest = new CreateLichSuHoaDonRequest();
+        billHistoryRequest.setIdHoaDon(existingBill.getId());
+        billHistoryRequest.setGhiChuChoCuaHang("Cập nhập sản phẩm của đơn hàng");
+        billHistoryRequest.setTrangThai(1);
+        // Cần sửa khi có security
+        billHistoryRequest.setIdNhanVien(1L);
+        // Lưu lịch sử hóa đơn
+        try {
+            billHistoryService.create(billHistoryRequest);
+            hoaDonRepository.save(existingBill);
+        } catch (AppException e) {
+            e.printStackTrace();
+        }
 //        }
 //        tính tiền và check phiếu pgg
         prepareTheBill(existingBill.getMa());
@@ -163,10 +162,6 @@ public class SerialNumberDaBanServiceImpl implements SerialNumberDaBanService {
         List<SerialNumberDaBan> serialNumbersToDelete = serialNumberDaBanRepository.findAllByIdInAndHoaDonMa(request.getSerialNumberIds(), request.getBillCode());
         if (!serialNumbersToDelete.isEmpty()) {
             String billCode = serialNumbersToDelete.get(0).getHoaDon().getMa();
-            List<Long> idsToDelete = serialNumbersToDelete.stream()
-                    .map(serialNumberDaBan -> serialNumberDaBan.getSerialNumber().getId())
-                    .collect(Collectors.toList());
-            serialNumberRepository.updateStatusByIdsNative(0,idsToDelete );
             serialNumberDaBanRepository.deleteAll(serialNumbersToDelete);
             prepareTheBill(billCode);
         }
@@ -182,8 +177,8 @@ public class SerialNumberDaBanServiceImpl implements SerialNumberDaBanService {
                     int soLuong = response.getQuantity() != null ? response.getQuantity() : 0;
                     return gia.multiply(BigDecimal.valueOf(soLuong));
                 })
-                .reduce(BigDecimal.ZERO, BigDecimal::add)
-                .setScale(1, RoundingMode.HALF_UP);;
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        System.out.println("Tổng tiền : " + tongTien);
         hoaDon.setTongTienBanDau(tongTien);
 
             // Nếu chưa có phiếu giảm giá, tìm và gán
@@ -216,7 +211,7 @@ public class SerialNumberDaBanServiceImpl implements SerialNumberDaBanService {
             // Check điều kiện PGG
             Integer loaiPGG = phieuGiamGia.getLoaiGiamGia();
             Integer trangThai = phieuGiamGia.getTrangThai();
-            BigDecimal giaTriPhieuGiam = phieuGiamGia.getGiaTriGiamGia().setScale(1, RoundingMode.HALF_UP);
+            BigDecimal giaTriPhieuGiam = phieuGiamGia.getGiaTriGiamGia();
 
             if (trangThai == 3 || trangThai == 2 || trangThai == 0) {
                 System.out.println("PGG được hủy");
@@ -229,22 +224,22 @@ public class SerialNumberDaBanServiceImpl implements SerialNumberDaBanService {
             if (loaiPGG == 2) {
                 tienGiam = giaTriPhieuGiam;
             } else {
-                tienGiam = tongTien.multiply(giaTriPhieuGiam).divide(BigDecimal.valueOf(100), RoundingMode.HALF_UP).setScale(1, RoundingMode.HALF_UP);
+                tienGiam = tongTien.multiply(giaTriPhieuGiam).divide(BigDecimal.valueOf(100), RoundingMode.HALF_UP);
             }
 
             System.out.println("Quy đổi : " + tienGiam);
 
             // Kiểm tra tông tiền sau giảm và giá trị giảm tối đa
             if (phieuGiamGia.getGiamToiDa().compareTo(tienGiam) < 0) {
-                tienGiam = phieuGiamGia.getGiamToiDa().setScale(1, RoundingMode.HALF_UP);
+                tienGiam = phieuGiamGia.getGiamToiDa();
             }
             if (tongTien.compareTo(tienGiam) < 0) {
                 tongTien = BigDecimal.ZERO;
             } else {
-                tongTien = tongTien.subtract(tienGiam).setScale(1, RoundingMode.HALF_UP);
+                tongTien = tongTien.subtract(tienGiam);
             }
         }
-        hoaDon.setTongTienPhaiTra(tongTien.setScale(1, RoundingMode.HALF_UP));
+        hoaDon.setTongTienPhaiTra(tongTien);
         hoaDonRepository.save(hoaDon);
         return tongTien;
     }

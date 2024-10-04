@@ -46,7 +46,7 @@ public class HoaDonServiceImpl implements HoaDonService {
     HoaDonRepository billRepository;
     LichSuHoaDonService billHistoryService;
     LichSuHoaDonRepository billHistoryRepository;
-    NhanVienRepository employeeRepository;
+    NhanVien_Repositoy employeeRepository;
     SerialNumberDaBanService serialNumberDaBanService;
     SerialNumberDaBanRepository serialNumberDaBanRepository;
     KhachHangRepository customerRepository;
@@ -63,7 +63,6 @@ public class HoaDonServiceImpl implements HoaDonService {
         String sSize = size.isPresent() ? size.get() : "5";
         Pageable pageable = PageRequest.of(Integer.parseInt(sPage), Integer.parseInt(sSize), Sort.by("id").descending());
         Page<HoaDon> billHistoryPage = billRepository.findAll(pageable);
-//        Page<HoaDonResponse> responses = billHistoryPage.map(bill -> HoaDonMapper.toHoaDonResponse(bill));
         Page<HoaDonResponse> responses = billHistoryPage.map(bill -> {
             HoaDonResponse response = HoaDonMapper.toHoaDonResponse(bill);
             Optional<Integer> quantity = serialNumberDaBanRepository.getQuantityByHoaDonId(bill.getId());
@@ -221,10 +220,6 @@ public class HoaDonServiceImpl implements HoaDonService {
     @Override
     public ResultPaginationResponse filterHoaDon(Specification<HoaDon> specification, Pageable pageable) {
         Page<HoaDon> billPage = billRepository.findAll(specification, pageable);
-//        Page<HoaDonResponse> responses = billPage.map(
-//                HoaDonMapper::toHoaDonResponse
-//        );
-
         Page<HoaDonResponse> responses = billPage.map(bill -> {
             HoaDonResponse response = HoaDonMapper.toHoaDonResponse(bill);
             Optional<Integer> quantity = serialNumberDaBanRepository.getQuantityByHoaDonId(bill.getId());
@@ -431,6 +426,7 @@ public class HoaDonServiceImpl implements HoaDonService {
         return true;
     }
 
+
     @Override
     public void updateAddressInBill(String billCode, UpdateDiaChiHoaDonRequest request) throws AppException {
         HoaDon bill = billRepository.findHoaDonByMa(billCode.trim()).orElseThrow(
@@ -465,6 +461,15 @@ public class HoaDonServiceImpl implements HoaDonService {
         createLichSuHoaDonRequest.setGhiChuChoKhachHang(request.getGhiChu());
         billHistoryService.create(createLichSuHoaDonRequest);
         billRepository.save(bill);
+    }
+    @Override
+    public Long countBillByDate(Long startDate, Long endDate) {
+        return 0L;
+    }
+
+    @Override
+    public BigDecimal sumBillByDate(Long startDate, Long endDate) {
+        return null;
     }
 
     private BigDecimal calculateDiscount(HoaDon existingBill, PhieuGiamGia coupon) {
@@ -513,4 +518,5 @@ public class HoaDonServiceImpl implements HoaDonService {
             hoaDonHinhThucThanhToanRepository.save(hoaDonHinhThucThanhToan);
         }
     }
+
 }

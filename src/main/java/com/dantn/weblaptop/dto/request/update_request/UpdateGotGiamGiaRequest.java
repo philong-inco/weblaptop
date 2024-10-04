@@ -33,6 +33,7 @@ public class UpdateGotGiamGiaRequest {
     LocalDateTime thoiGianKetThuc;
     @DecimalMin(value = "1.00", message = "COUPONS_MIN_DISCOUNT_VALUE")
     BigDecimal giaTriGiam;
+    BigDecimal giamToiDa;
 
     List<Long> listSanPhamChiTiet;
 }

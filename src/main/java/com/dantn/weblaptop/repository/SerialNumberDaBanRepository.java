@@ -1,6 +1,9 @@
 package com.dantn.weblaptop.repository;
 
+import com.dantn.weblaptop.dto.response.SerialNumberDaBanResponse;
+import com.dantn.weblaptop.dto.response.SerialNumberDaBanResponse2;
 import com.dantn.weblaptop.entity.hoadon.SerialNumberDaBan;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;

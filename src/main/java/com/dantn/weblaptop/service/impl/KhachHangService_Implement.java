@@ -47,6 +47,8 @@ public class KhachHangService_Implement implements KhachHang_Service {
 
     @Autowired
     EmailSender emailSender;
+    @Autowired
+    private KhachHang_Repository khachHang_Repository;
 
     @Override
     public Page<KhachHangResponse> pageKhachHang(Integer pageNo, Integer size) {
@@ -242,6 +244,11 @@ public class KhachHangService_Implement implements KhachHang_Service {
     @Override
     public void updateImage(String image, String email) {
         khachHangRepository.updateImageKhachHang(image, email);
+    }
+
+    @Override
+    public Long countKhachHangByDate(Long startDate, Long endDate) {
+        return khachHang_Repository.countKhachHangByDate(startDate,endDate);
     }
 
     @Override

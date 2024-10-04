@@ -173,6 +173,14 @@ public class KhachHangController {
         return ResponseEntity.ok("Updated image");
     }
 
+    @GetMapping("/countcustomerbydate")
+    public ResponseEntity<Integer> countKhachHangByDate(
+            @RequestParam("startDate") Long startDate,
+            @RequestParam("endDate") Long endDate) {
+
+        Integer count = Math.toIntExact(this.khachHangService.countKhachHangByDate(startDate, endDate));
+        return ResponseEntity.ok(count);
+    }
     @GetMapping("/phone-number/{phoneNumber}")
     public ResponseEntity<ApiResponse> findCustomerByPhoneNumber(
             @PathVariable("phoneNumber") String phoneNumber) throws AppException {

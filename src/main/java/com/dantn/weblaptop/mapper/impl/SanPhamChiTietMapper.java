@@ -1,23 +1,43 @@
 package com.dantn.weblaptop.mapper.impl;
 
+
+import com.dantn.weblaptop.dto.response.AnhSanPhamResponse;
+import com.dantn.weblaptop.dto.response.SanPhamChiTietClientDTO;
+import com.dantn.weblaptop.dto.response.SerialNumberResponse;
+import com.dantn.weblaptop.entity.dotgiamgia.DotGiamGia;
+
 import com.dantn.weblaptop.entity.sanpham.SanPhamChiTiet;
 import com.dantn.weblaptop.entity.sanpham.SerialNumber;
 import com.dantn.weblaptop.generics.GenericsMapper;
 import com.dantn.weblaptop.dto.request.create_request.SanPhamChiTietCreate;
 import com.dantn.weblaptop.dto.request.update_request.SanPhamChiTietUpdate;
 import com.dantn.weblaptop.dto.response.SanPhamChiTietResponse;
+import com.dantn.weblaptop.repository.SerialNumberRepository;
+import com.dantn.weblaptop.service.AnhSanPhamService;
+import com.dantn.weblaptop.service.DotGiamGiaService;
+import com.dantn.weblaptop.service.SerialNumberService;
 import com.dantn.weblaptop.util.ConvertStringToArray;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
 public class SanPhamChiTietMapper extends GenericsMapper<SanPhamChiTiet, SanPhamChiTietCreate, SanPhamChiTietUpdate, SanPhamChiTietResponse> {
+
+
+    SerialNumberService serialNumberService;
+    AnhSanPhamService anhSanPhamService;
+
+    DotGiamGiaService dotGiamGiaService;
+
+
     @Override
     public SanPhamChiTiet createToEntity(SanPhamChiTietCreate create) {
         SanPhamChiTiet spct = SanPhamChiTiet.builder()
@@ -42,16 +62,26 @@ public class SanPhamChiTietMapper extends GenericsMapper<SanPhamChiTiet, SanPham
                 .giaBan(entity.getGiaBan() + "")
                 .trangThai(entity.getTrangThai())
                 .sanPham(entity.getSanPham().getTen())
+                .maSanPham(entity.getSanPham().getMa())
                 .sanPhamId(entity.getSanPham().getId()+"")
                 .ram(entity.getRam().getTen())
+                .idRam(entity.getRam().getId())
                 .cpu(entity.getCpu().getTen())
+                .idCPU(entity.getCpu().getId())
                 .webcam(entity.getWebcam().getTen())
+                .idWebcam(entity.getWebcam().getId())
                 .banPhim(entity.getBanPhim().getTen())
+                .idBanPhim(entity.getBanPhim().getId())
                 .heDieuHanh(entity.getHeDieuHanh().getTen())
+                .idHeDieuHanh(entity.getHeDieuHanh().getId())
                 .manHinh(entity.getManHinh().getTen())
+                .idManHinh(entity.getManHinh().getId())
                 .mauSac(entity.getMauSac().getTen())
+                .idMauSac(entity.getMauSac().getId())
                 .oCung(entity.getOCung().getTen())
+                .idOCung(entity.getOCung().getId())
                 .vga(entity.getVga().getTen())
+                .idVGA(entity.getVga().getId())
                 .ngayTao(entity.getNgayTao() + "")
                 .ngaySua(entity.getNgaySua() + "")
                 .nguoiTao(entity.getNguoiTao())
@@ -71,6 +101,86 @@ public class SanPhamChiTietMapper extends GenericsMapper<SanPhamChiTiet, SanPham
     public Page<SanPhamChiTietResponse> pageEntityToPageResponse(Page<SanPhamChiTiet> entityPage) {
         List<SanPhamChiTietResponse> list = entityPage.getContent().stream()
                 .map(this::entityToResponse).collect(Collectors.toList());
+        return new PageImpl<>(list, entityPage.getPageable(), entityPage.getTotalElements());
+    }
+
+    public SanPhamChiTietClientDTO entityToClient(SanPhamChiTiet entity){
+        SanPhamChiTietClientDTO client = SanPhamChiTietClientDTO.builder()
+                .id(entity.getId())
+                .maSPCT(entity.getMa())
+                .sanPhamId(entity.getSanPham().getId())
+                .maSP(entity.getSanPham().getMa())
+                .tenSanPham(entity.getSanPham().getTen())
+                .moTaSP(entity.getSanPham().getMoTa())
+                .idNhuCau(entity.getSanPham().getNhuCau().getId())
+                .nhuCau(entity.getSanPham().getNhuCau().getTen())
+                .idThuongHieu(entity.getSanPham().getThuongHieu().getId())
+                .giaBan(entity.getGiaBan()+"")
+                .idBanPhim(entity.getBanPhim().getId())
+                .banPhim(entity.getBanPhim().getTen())
+                .idCPU(entity.getCpu().getId())
+                .cpu(entity.getCpu().getTen())
+                .idHeDieuHanh(entity.getHeDieuHanh().getId())
+                .heDieuHanh(entity.getHeDieuHanh().getTen())
+                .idManHinh(entity.getManHinh().getId())
+                .manHinh(entity.getManHinh().getTen())
+                .idMauSac(entity.getMauSac().getId())
+                .mauSac(entity.getMauSac().getTen())
+                .idOcung(entity.getOCung().getId())
+                .oCung(entity.getOCung().getTen())
+                .idRam(entity.getRam().getId())
+                .ram(entity.getRam().getTen())
+                .idVGA(entity.getVga().getId())
+                .vga(entity.getVga().getTen())
+                .idWebcam(entity.getWebcam().getId())
+                .webcam(entity.getWebcam().getTen())
+                .build();
+
+        // check cac gia tri con lai
+        // check anh
+        List<AnhSanPhamResponse> listAnh = anhSanPhamService.getAllBySPCTId(entity.getId());
+        listAnh = (listAnh != null && listAnh.size() > 3) ? listAnh.subList(0, 3) : listAnh;
+        client.setListUrlAnhSanPham(ConvertStringToArray.setAnhSanPhamToNameString(listAnh));
+
+        // check seri count -  tonkho
+        List<SerialNumberResponse> listSeri = serialNumberService.findAllBySanPhamChiTietIdActive(entity.getId());
+        client.setTonKhoConLai(listSeri.size()+"");
+
+        // check khuyen mai
+        // dùng stream gọi hàm tính giảm giá
+
+
+        List<DotGiamGia> listDotGiamGia = new ArrayList<>();
+        Optional<DotGiamGia> bestPromo = listDotGiamGia.stream()
+                .max((promo1, promo2) -> {
+                    BigDecimal value1 = promo1.getTienGiamGia(entity.getGiaBan());
+                    BigDecimal value2 = promo2.getTienGiamGia(entity.getGiaBan());
+                    return value1.compareTo(value2);
+                });
+        if (bestPromo.isPresent()){
+            DotGiamGia dotGiamGia = bestPromo.get();
+            client.setSoTienDuocGiam(dotGiamGia.getTienGiamGia(entity.getGiaBan()) +"");
+            client.setTonKhoConLai(dotGiamGia.getTienSauKhiGiam(entity.getGiaBan()) +"");
+            client.setIdKhuyenMai(dotGiamGia.getId());
+            client.setMaKhuyenMai(dotGiamGia.getMa());
+            if (dotGiamGia.getLoaiChietKhau() == 1){
+                client.setTenKhuyenMai("Giảm " + dotGiamGia.getGiaTriGiam() + "%");
+            } else if (dotGiamGia.getLoaiChietKhau() == 2){
+                client.setTenKhuyenMai("Giảm " + dotGiamGia.getGiaTriGiam() + "đ");
+            }
+
+        }
+
+        return client;
+    }
+
+    public List<SanPhamChiTietClientDTO> listEntityToClient(List<SanPhamChiTiet> list){
+        return list.stream().map(this::entityToClient).collect(Collectors.toList());
+    }
+
+    public Page<SanPhamChiTietClientDTO> pageEntityToClient(Page<SanPhamChiTiet> entityPage) {
+        List<SanPhamChiTietClientDTO> list = entityPage.getContent().stream()
+                .map(this::entityToClient).collect(Collectors.toList());
         return new PageImpl<>(list, entityPage.getPageable(), entityPage.getTotalElements());
     }
 }
