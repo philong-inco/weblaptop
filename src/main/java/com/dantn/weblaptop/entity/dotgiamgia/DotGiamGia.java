@@ -62,9 +62,11 @@ public class DotGiamGia extends BaseEntity {
             case 1: // giảm %
                 temp = (price.multiply(giaTriGiam)).divide(hundred);
                 temp = (temp.compareTo(giamToiDa) > 0) ? giamToiDa : temp;
+                temp = (temp.compareTo(price) > 0) ? price : temp;
                 break;
             case 2: // giảm tiền
                 temp = giaTriGiam;
+                temp = (temp.compareTo(price) > 0) ? price : temp;
                 break;
             default:
                 break;

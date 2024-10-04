@@ -164,7 +164,7 @@ public class SanPhamChiTietMapper extends GenericsMapper<SanPhamChiTiet, SanPham
         if (bestPromo.isPresent()){
             DotGiamGia dotGiamGia = bestPromo.get();
             client.setSoTienDuocGiam(dotGiamGia.getTienGiamGia(entity.getGiaBan()) +"");
-            client.setTonKhoConLai(dotGiamGia.getTienSauKhiGiam(entity.getGiaBan()) +"");
+            client.setGiaSauKhuyenMai(dotGiamGia.getTienSauKhiGiam(entity.getGiaBan()) +"");
             client.setIdKhuyenMai(dotGiamGia.getId());
             client.setMaKhuyenMai(dotGiamGia.getMa());
             if (dotGiamGia.getLoaiChietKhau() == 1){
