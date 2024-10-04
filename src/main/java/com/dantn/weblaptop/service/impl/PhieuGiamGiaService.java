@@ -72,7 +72,7 @@ public class PhieuGiamGiaService {
 
     public ResultPaginationResponse getAllPhieuGiamGiaByStatusActive(int page, int size, Integer trangThai){
         Pageable pageable = PageRequest.of(page, size, Sort.by("ngayTao").descending());
-        Page<PhieuGiamGia> phieuGiamGiaPage = phieuGiamGiaRepo.getPhieuGiamGiaPageActive(trangThai);
+        Page<PhieuGiamGia> phieuGiamGiaPage = phieuGiamGiaRepo.getPhieuGiamGiaPageActive(pageable, trangThai);
         Page<PhieuGiamGiaResponse> responses = phieuGiamGiaPage.map(
                 PhieuGiamGiaMapper::toPhieuGiamGiaResponse);
         Meta meta = Meta.builder()

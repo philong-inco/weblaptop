@@ -2,6 +2,7 @@ package com.dantn.weblaptop.repository;
 
 import com.dantn.weblaptop.entity.phieugiamgia.PhieuGiamGia;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Modifying;
@@ -117,7 +118,7 @@ public interface PhieuGiamGiaRepo extends JpaRepository<PhieuGiamGia, Long>, Jpa
             @Param("totalAmount") BigDecimal totalAmount, @Param("customerId") Long customerId);
 
     @Query(value = "SELECT pgg FROM PhieuGiamGia  pgg WHERE pgg.trangThai = :trangThai")
-    Page<PhieuGiamGia> getPhieuGiamGiaPageActive(@Param("trangThai") Integer trangThai);
+    Page<PhieuGiamGia> getPhieuGiamGiaPageActive(Pageable pageable, @Param("trangThai") Integer trangThai);
 
     @Modifying
     @Transactional
