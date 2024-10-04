@@ -40,6 +40,7 @@ public class HoaDonResponse {
     Integer thanhToanSau; // 0 tt luôn : 1 là sau
     LocalDateTime ngayGiaoHang;
     LocalDateTime ngayNhanHang;
+    LocalDateTime ngayThanhToan;
 
     String ghiChu;
 

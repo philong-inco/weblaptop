@@ -27,7 +27,7 @@ public interface HoaDonRepository extends JpaRepository<HoaDon, Long>, JpaSpecif
 
     Optional<HoaDon> findByIdAndTrangThai(Long id, HoaDonStatus status);
 
-    @Query(value = "SELECT ma FROM hoa_don WHERE trang_thai IN (0,1, 7)", nativeQuery = true)
+    @Query(value = "SELECT ma FROM hoa_don WHERE trang_thai IN (0)", nativeQuery = true)
     List<String> getAllByStatus();
 
     @Query(value = "SELECT COUNT(hd) FROM HoaDon hd WHERE  hd.ngayTao BETWEEN :startDate AND :endDate")

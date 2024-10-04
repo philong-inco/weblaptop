@@ -17,8 +17,7 @@ public class HoaDonMapper {
         response.setId(hoaDon.getId());
         response.setMa(hoaDon.getMa());
         response.setIdNhanVien(hoaDon.getNhanVien().getId());
-        response.setTenKhachHang(
-                customer !=null ? customer.getHo()+" " + customer.getTen() : null);
+        response.setTenKhachHang(hoaDon.getTenKhachHang());
         response.setIdKhachHang(
                 customer !=null ? customer.getId() : null);
         response.setLoaiHoaDon(hoaDon.getLoaiHoaDon());
@@ -39,6 +38,7 @@ public class HoaDonMapper {
         response.setThanhToanSau(hoaDon.getThanhToanSau());
         response.setNgayGiaoHang(hoaDon.getNgayGiaoHang());
         response.setNgayNhanHang(hoaDon.getNgayNhanHang());
+        response.setNgayThanhToan(hoaDon.getNgayThanhToan());
 
         PhieuGiamGia phieuGiamGia = hoaDon.getPhieuGiamGia();
         if(phieuGiamGia!=null){

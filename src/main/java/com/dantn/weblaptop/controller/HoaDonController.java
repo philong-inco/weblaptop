@@ -1,5 +1,7 @@
 package com.dantn.weblaptop.controller;
 
+import com.dantn.weblaptop.dto.request.create_request.CreateLichSuHoaDon;
+import com.dantn.weblaptop.dto.request.update_request.UpdateDiaChiHoaDonRequest;
 import com.dantn.weblaptop.dto.request.update_request.UpdateHoaDonRequest;
 import com.dantn.weblaptop.dto.response.ApiResponse;
 import com.dantn.weblaptop.dto.response.HoaDonResponse;
@@ -9,6 +11,7 @@ import com.dantn.weblaptop.service.HoaDonService;
 import com.dantn.weblaptop.service.LichSuHoaDonService;
 import com.dantn.weblaptop.service.impl.HoaDonServiceImpl;
 import com.turkraft.springfilter.boot.Filter;
+import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -145,9 +148,17 @@ public class HoaDonController {
         );
     }
 
-    @PostMapping("update/{id}")
-    public ResponseEntity<ApiResponse> updateBillById(@RequestBody UpdateHoaDonRequest request) {
-        return ResponseEntity.status(HttpStatus.OK).body(null);
+    @PostMapping("update-address-in-bill/{billCode}")
+    public ResponseEntity<ApiResponse> updateAddressInBill(
+            @PathVariable(name = "billCode") String billCode,
+            @RequestBody @Valid UpdateDiaChiHoaDonRequest request) throws AppException {
+        billService.updateAddressInBill(billCode,request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(
+                ApiResponse.builder()
+                        .statusCode(HttpStatus.CREATED.value())
+                        .message("Cập nhập địa chỉ đơn hàng thành công")
+                        .build()
+        );
     }
 
     @GetMapping("/bill-history/{code}")
@@ -183,14 +194,16 @@ public class HoaDonController {
     @PostMapping("update-status/{code}")
     public ResponseEntity<ApiResponse> updateStatus(
             @PathVariable(name = "code") String code,
-            @RequestParam(name = "status") String status
-    ) throws AppException {
-        billService.updateStatus(code, status);
+            @RequestParam(name = "status") String status,
+            @RequestBody @Valid CreateLichSuHoaDon request
+            ) throws AppException {
+        billService.updateStatus(code, status, request);
         ApiResponse<Object> apiResponse = ApiResponse
                 .builder()
-                .statusCode(HttpStatus.OK.value())
+                .statusCode(HttpStatus.CREATED.value())
+                .message("Cập nhập hóa đơn thành công")
                 .build();
-        return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
+        return ResponseEntity.status(HttpStatus.CREATED).body(apiResponse);
     }
 
     @PostMapping("/bill-history/{code}/revert-status")
