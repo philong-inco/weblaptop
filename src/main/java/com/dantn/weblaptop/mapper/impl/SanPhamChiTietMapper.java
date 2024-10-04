@@ -17,6 +17,9 @@ import com.dantn.weblaptop.service.AnhSanPhamService;
 import com.dantn.weblaptop.service.DotGiamGiaService;
 import com.dantn.weblaptop.service.SerialNumberService;
 import com.dantn.weblaptop.util.ConvertStringToArray;
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.stereotype.Service;
@@ -29,12 +32,13 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
+@RequiredArgsConstructor
 public class SanPhamChiTietMapper extends GenericsMapper<SanPhamChiTiet, SanPhamChiTietCreate, SanPhamChiTietUpdate, SanPhamChiTietResponse> {
 
 
     SerialNumberService serialNumberService;
     AnhSanPhamService anhSanPhamService;
-
     DotGiamGiaService dotGiamGiaService;
 
 
