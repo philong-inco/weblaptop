@@ -36,7 +36,6 @@ public class CreatePhieuGiamGiaRequest {
     BigDecimal giaTriGiamGia;
     @Min(value = 1, message = "COUPONS_MIN_ORDER_VALUE")
     BigDecimal giaTriDonToiThieu;
-    @Min(value = 1, message = "COUPONS_MAX_DISCOUNT")
     BigDecimal giamToiDa;
     @NotNull(message = "COUPONS_APPLICABLE_SCOPE_NOT_NULL")
     Integer phamViApDung;
