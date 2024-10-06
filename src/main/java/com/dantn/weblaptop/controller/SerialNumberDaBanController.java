@@ -20,12 +20,12 @@ public class SerialNumberDaBanController {
     SerialNumberDaBanService serialNumberDaBanService;
     @GetMapping
     public ResponseEntity<ApiResponse> getSerialNumberSold(
-            @RequestParam(name = "code") String code) {
+            @RequestParam(name = "code") String billCode) {
         return ResponseEntity.ok(
                 ApiResponse.builder()
                         .statusCode(HttpStatus.OK.value())
                         .message("Get product list and serial number sold by bill code")
-                        .data(serialNumberDaBanService.getSerialNumberDaBanPage(code))
+                        .data(serialNumberDaBanService.getSerialNumberDaBanPage(billCode))
                         .build());
     }
 

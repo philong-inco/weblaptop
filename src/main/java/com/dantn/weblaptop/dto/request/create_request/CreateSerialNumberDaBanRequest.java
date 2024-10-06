@@ -12,5 +12,6 @@ import java.util.List;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class CreateSerialNumberDaBanRequest {
     String billCode;
+    Long productId;
     List<Long> listSerialNumberId;
 }
