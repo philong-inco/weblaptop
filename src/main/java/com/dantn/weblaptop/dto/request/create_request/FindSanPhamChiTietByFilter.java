@@ -36,4 +36,6 @@ public class FindSanPhamChiTietByFilter {
     String banPhim;
     String giaNhoHon;
     String giaLonHon;
+    String idSPCT;
+    String idSP;
 }

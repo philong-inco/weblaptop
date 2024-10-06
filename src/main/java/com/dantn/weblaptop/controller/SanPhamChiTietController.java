@@ -7,6 +7,7 @@ import com.dantn.weblaptop.dto.response.ResponseLong;
 import com.dantn.weblaptop.dto.response.SanPhamChiTietClientDTO;
 import com.dantn.weblaptop.dto.response.SanPhamChiTietResponse;
 import com.dantn.weblaptop.service.SanPhamChiTietService;
+import com.dantn.weblaptop.util.FakeDataForClient;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -129,7 +130,9 @@ public class SanPhamChiTietController {
             @RequestParam(value = "heDieuHanh", required = false, defaultValue = "") String heDieuHanh,
             @RequestParam(value = "banPhim", required = false, defaultValue = "") String banPhim,
             @RequestParam(value = "giaNhoHon", required = false, defaultValue = "") String giaNhoHon,
-            @RequestParam(value = "giaLonHon", required = false, defaultValue = "") String giaLonHon
+            @RequestParam(value = "giaLonHon", required = false, defaultValue = "") String giaLonHon,
+            @RequestParam(value = "idSPCT", required = false, defaultValue = "") String idSPCT,
+            @RequestParam(value = "idSP", required = false, defaultValue = "") String idSP
     ) {
 
         FindSanPhamChiTietByFilter filter = FindSanPhamChiTietByFilter.builder()
@@ -154,6 +157,8 @@ public class SanPhamChiTietController {
                 .banPhim(banPhim)
                 .giaLonHon(giaLonHon)
                 .giaNhoHon(giaNhoHon)
+                .idSP(idSP)
+                .idSPCT(idSPCT)
                 .build();
         return ResponseEntity.ok().body(new ResponseLong<>(
                 200, "Find successfully",
@@ -220,6 +225,29 @@ public class SanPhamChiTietController {
         return ResponseEntity.status(HttpStatus.OK).body(new ResponseLong<>(
                 200, "Get thành công",
                 responses, null, null, null, null
+        ));
+    }
+
+    @GetMapping("get-SPCT-for-client/{idSP}")
+    public ResponseEntity<ResponseLong<SanPhamChiTietClientDTO>> getSPCTForClient(@PathVariable("idSP") Long idSP){
+        SanPhamChiTietClientDTO spct = FakeDataForClient.fakeDataSPCTForClient();
+        return ResponseEntity.status(HttpStatus.OK).body(new ResponseLong<>(
+                200, "Get thành công", spct
+        ));
+    }
+
+    @GetMapping("get-SPCT-for-client-checked{idSP}")
+    public ResponseEntity<ResponseLong<SanPhamChiTietClientDTO>> getSPCTForClientChecked(
+            @PathVariable("idSP") Long idSP,
+            @RequestParam("idMauSac") Long idMauSac,
+            @RequestParam("idCPU") Long idCPU,
+            @RequestParam("idRam") Long idRam,
+            @RequestParam("idOCung") Long idOCung
+    ){
+        SanPhamChiTietClientDTO spct = FakeDataForClient.fakeDataSPCTForClient();
+        spct.setListUrlAnhSanPham("https://thegioiso365.vn/wp-content/uploads/2022/10/23-1-1536x864.jpg,https://thegioiso365.vn/wp-content/uploads/2022/10/7-5-1536x864.jpg,https://thegioiso365.vn/wp-content/uploads/2022/10/5-6-1536x864.jpg");
+        return ResponseEntity.status(HttpStatus.OK).body(new ResponseLong<>(
+                200, "Lấy biến thể thành công", spct
         ));
     }
 

@@ -208,6 +208,7 @@ public class SanPhamChiTietServiceImpl implements SanPhamChiTietService {
     @Override
     public List<SanPhamChiTietClientDTO> findByFilter(FindSanPhamChiTietByFilter filter) {
         Specification<SanPhamChiTiet> spec = Specification.where(specificationInner.listIntegerEquals("trangThai", ConvertStringToArray.toArray(filter.getTrangThai())))
+                .and(specificationInner.listLongEquals("id", ConvertStringToArray.toArray(filter.getIdSPCT())))
                 .and(specificationInner.timestampBefore("ngayTao", filter.getNgayTaoTruoc()))
                 .and(specificationInner.timestampAfter("ngayTao", filter.getNgayTaoSau()))
                 .and(specificationInner.timestampBefore("ngaySua", filter.getNgaySuaTruoc()))
@@ -218,6 +219,7 @@ public class SanPhamChiTietServiceImpl implements SanPhamChiTietService {
 //                //san pham
                 .and(specificationJoin.listStringEquals(SanPham.class, "sanPham", "ma", ConvertStringToArray.toArray(filter.getMaSanPham())))
                 .and(specificationJoin.listStringLike(SanPham.class, "sanPham", "ten", ConvertStringToArray.toArray(filter.getTenSanPham())))
+                .and(specificationJoin.listLongEquals(SanPham.class, "sanPham", "id", ConvertStringToArray.toArray(filter.getIdSP())))
 //                // nhu cau - thuong hieu
                 .and(specificationJoin.hasNhuCau(ConvertStringToArray.toArray(filter.getNhuCau())))
                 .and(specificationJoin.hasThuongHieu(ConvertStringToArray.toArray(filter.getThuongHieu())))

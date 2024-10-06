@@ -17,6 +17,13 @@ public class ConvertStringToArray {
         return trimArray(array);
     }
 
+    public static String[] toArraySplitImageUrl(String str) {
+        if (str == null || str.isBlank())
+            return null;
+        String[] array = str.split(",");
+        return trimArray(array);
+    }
+
     public static String[] trimArray(String[] arr) {
         for (int i = 0; i < arr.length; i++) {
             arr[i] = arr[i].trim();

@@ -26,6 +26,7 @@ import com.dantn.weblaptop.dto.response.HeDieuHanhResponse;
 import com.dantn.weblaptop.dto.response.ManHinhResponse;
 import com.dantn.weblaptop.dto.response.NhuCauResponse;
 import com.dantn.weblaptop.dto.response.RAMResponse;
+import com.dantn.weblaptop.dto.response.SanPhamClientDTO;
 import com.dantn.weblaptop.dto.response.SanPhamResponse;
 import com.dantn.weblaptop.dto.response.ThuongHieuResponse;
 import com.dantn.weblaptop.dto.response.VGAResponse;
@@ -46,6 +47,7 @@ import com.dantn.weblaptop.entity.sanpham.thuoctinh.Webcam;
 import com.dantn.weblaptop.generics.GenericsService;
 import com.dantn.weblaptop.generics.IGenericsMapper;
 import com.dantn.weblaptop.generics.IGenericsRepository;
+import com.dantn.weblaptop.mapper.impl.SanPhamMapper;
 import com.dantn.weblaptop.repository.SanPhamChiTietRepository;
 import com.dantn.weblaptop.repository.SanPhamRepository;
 import com.dantn.weblaptop.service.SanPhamChiTietService;
@@ -73,6 +75,8 @@ public class SanPhamService extends GenericsService<SanPham, Long, SanPhamCreate
     private final SanPhamRepository sanPhamRepository;
     private final SanPhamChiTietRepository spctRepo;
 
+    private final SanPhamMapper sanPhamMapper;
+
     public SanPhamService(IGenericsRepository<SanPham, Long> genericsRepository,
                           IGenericsMapper<SanPham, SanPhamCreate, SanPhamUpdate, SanPhamResponse> genericsMapper,
                           GenericsService<ThuongHieu, Long, ThuongHieuCreate, ThuongHieuUpdate, ThuongHieuResponse> serviceThuongHieu,
@@ -84,7 +88,9 @@ public class SanPhamService extends GenericsService<SanPham, Long, SanPhamCreate
                           GenericsService<Webcam, Long, WebcamCreate, WebcamUpdate, WebcamResponse> serviceWebcam,
                           GenericsService<ManHinh, Long, ManHinhCreate, ManHinhUpdate, ManHinhResponse> serviceManHinh,
                           GenericsService<BanPhim, Long, BanPhimCreate, BanPhimUpdate, BanPhimResponse> serviceBanPhim,
-                          GenericsService<HeDieuHanh, Long, HeDieuHanhCreate, HeDieuHanhUpdate, HeDieuHanhResponse> serviceHeDieuHanh
+                          GenericsService<HeDieuHanh, Long, HeDieuHanhCreate, HeDieuHanhUpdate, HeDieuHanhResponse> serviceHeDieuHanh,
+
+                          SanPhamMapper sanPhamMapper
 
     ) {
         super(genericsRepository, genericsMapper);
@@ -97,7 +103,7 @@ public class SanPhamService extends GenericsService<SanPham, Long, SanPhamCreate
         this.serviceManHinh = serviceManHinh;
         this.serviceBanPhim = serviceBanPhim;
         this.serviceHeDieuHanh = serviceHeDieuHanh;
-
+        this.sanPhamMapper = sanPhamMapper;
     }
 
     @Override
@@ -187,6 +193,35 @@ public class SanPhamService extends GenericsService<SanPham, Long, SanPhamCreate
                 .and(SanPhamSpecifications.hasGiaLonHon(attribute.getGiaLonHon()));
 
         return genericsMapper.pageEntityToPageResponse(sanPhamRepository.findAll(spec, pageable));
+    }
+
+    public Page<SanPhamClientDTO> findWithFilterByIdClient(FindSanPhamFilterByName attribute, Pageable pageable) {
+        Specification<SanPham> spec = Specification
+                .where(SanPhamSpecifications.hasTen(ConvertStringToArray.toArray(attribute.getTenSanPham())))
+                .and(SanPhamSpecifications.hasMa(ConvertStringToArray.toArray(attribute.getMa())))
+                .and(SanPhamSpecifications.hasTrangThai(ConvertStringToArray.toArray(attribute.getTrangThai())))
+                .and(SanPhamSpecifications.ngayTaoTruoc(attribute.getNgayTaoTruoc()))
+                .and(SanPhamSpecifications.ngayTaoSau(attribute.getNgayTaoSau()))
+                .and(SanPhamSpecifications.ngaySuaTruoc(attribute.getNgaySuaTruoc()))
+                .and(SanPhamSpecifications.ngaySuaSau(attribute.getNgaySuaSau()))
+                // điều kiện các bảng cha của sản phẩm
+                .and(SanPhamSpecifications.hasNhuCauId(attribute.getTenNhuCau()))
+                .and(SanPhamSpecifications.hasThuongHieuId(attribute.getTenThuongHieu()))
+                // điều kiện các bảng thuộc tính sản phẩm chi tiết
+                .and(SanPhamSpecifications.hasIdAttribute(RAM.class, "ram", attribute.getTenRam()))
+                .and(SanPhamSpecifications.hasIdAttribute(CPU.class, "cpu", attribute.getTenCPU()))
+                .and(SanPhamSpecifications.hasIdAttribute(VGA.class, "vga", attribute.getTenVGA()))
+                .and(SanPhamSpecifications.hasIdAttribute(ManHinh.class, "manHinh", attribute.getTenManHinh()))
+                .and(SanPhamSpecifications.hasIdAttribute(BanPhim.class, "banPhim", attribute.getTenBanPhim()))
+                .and(SanPhamSpecifications.hasIdAttribute(MauSac.class, "mauSac", attribute.getTenMau()))
+                .and(SanPhamSpecifications.hasIdAttribute(Webcam.class, "webcam", attribute.getTenWebcam()))
+                .and(SanPhamSpecifications.hasIdAttribute(HeDieuHanh.class, "heDieuHanh", attribute.getTenHeDieuHanh()))
+                .and(SanPhamSpecifications.hasIdAttribute(OCung.class, "oCung", attribute.getTenOCung()))
+                .and(SanPhamSpecifications.hasGiaNhoHon(attribute.getGiaNhoHon()))
+                .and(SanPhamSpecifications.hasGiaLonHon(attribute.getGiaLonHon()));
+
+
+        return sanPhamMapper.pageEntityToClient(sanPhamRepository.findAll(spec, pageable));
     }
 
     public boolean setStatus(Long id, Integer status) {
