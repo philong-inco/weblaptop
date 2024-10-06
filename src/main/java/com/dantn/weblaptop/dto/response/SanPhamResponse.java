@@ -28,6 +28,8 @@ public class SanPhamResponse {
     String ngaySua;
     String nguoiSua;
 
+    String soLuong;
+
     public void convertTime() {
         this.ngayTao = ConvertTime.convert(this.ngayTao);
         this.ngaySua = ConvertTime.convert(this.ngaySua);

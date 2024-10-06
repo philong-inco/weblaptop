@@ -38,6 +38,9 @@ public interface SanPhamChiTietRepository extends JpaRepository<SanPhamChiTiet, 
     @Query("SELECT s FROM SanPhamChiTiet s WHERE s.sanPham.id = :id")
     List<SanPhamChiTiet> findByProductIdList(@Param("id") Long productId);
 
+    @Query("SELECT s FROM SanPhamChiTiet s WHERE s.sanPham.id = :id AND s.trangThai = 1")
+    List<SanPhamChiTiet> findByProductIdListActive(@Param("id") Long productId);
+
     @Query("SELECT s FROM SanPhamChiTiet s WHERE LOWER(s.ma) = :code")
     List<SanPhamChiTiet> isExistCode(@Param("code") String code);
 

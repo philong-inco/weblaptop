@@ -92,6 +92,17 @@ public class SanPhamChiTietMapper extends GenericsMapper<SanPhamChiTiet, SanPham
                 .nguoiSua(entity.getNguoiSua())
                 .build();
         response.convertTime();
+        List<SerialNumberResponse> listSeri = serialNumberService.findAllBySanPhamChiTietIdActive(entity.getId());
+        List<AnhSanPhamResponse> listAnh = anhSanPhamService.getAllBySPCTId(entity.getId());
+        String listSeriStr = "";
+        String listAnhStr = "";
+        if (listSeri != null && listSeri.size() > 0)
+            listSeriStr = ConvertStringToArray.setSeriNumberToNameString(listSeri);
+        if (listAnh != null && listAnh.size() > 0)
+            listAnhStr = ConvertStringToArray.setAnhSanPhamToNameString(listAnh);
+        response.setListSerialNumber(listSeriStr);
+        response.setListUrlAnhSanPham(listAnhStr);
+
         return response;
     }
 
@@ -142,9 +153,11 @@ public class SanPhamChiTietMapper extends GenericsMapper<SanPhamChiTiet, SanPham
 
         // check cac gia tri con lai
         // check anh
-        List<AnhSanPhamResponse> listAnh = anhSanPhamService.getAllBySPCTId(entity.getId());
-        listAnh = (listAnh != null && listAnh.size() > 3) ? listAnh.subList(0, 3) : listAnh;
-        client.setListUrlAnhSanPham(ConvertStringToArray.setAnhSanPhamToNameString(listAnh));
+//        List<AnhSanPhamResponse> listAnh = anhSanPhamService.getAllBySPCTId(entity.getId());
+//        listAnh = (listAnh != null && listAnh.size() > 3) ? listAnh.subList(0, 3) : listAnh;
+//        client.setListUrlAnhSanPham(ConvertStringToArray.setAnhSanPhamToNameString(listAnh));
+        // tạm
+        client.setListUrlAnhSanPham("https://macstores.vn/wp-content/uploads/2023/04/thinkpad_x1_carbon_gen_11_1.png,https://thegioiso365.vn/wp-content/uploads/2022/10/x1-gen-10-13-768x766.jpg,https://thegioiso365.vn/wp-content/uploads/2022/10/17-1-1536x864.jpg");
 
         // check seri count -  tonkho
         List<SerialNumberResponse> listSeri = serialNumberService.findAllBySanPhamChiTietIdActive(entity.getId());

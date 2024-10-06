@@ -1,15 +1,18 @@
 package com.dantn.weblaptop.controller;
 
+import com.dantn.weblaptop.dto.request.create_request.FindSanPhamChiTietByFilter;
 import com.dantn.weblaptop.dto.request.create_request.FindSanPhamFilterByName;
 import com.dantn.weblaptop.dto.request.create_request.SanPhamCreate;
 import com.dantn.weblaptop.dto.request.update_request.SanPhamUpdate;
 import com.dantn.weblaptop.dto.request.update_request.UpdateSPAndSPCTDTO;
 import com.dantn.weblaptop.dto.response.ResponseLong;
+import com.dantn.weblaptop.dto.response.SanPhamChiTietClientDTO;
 import com.dantn.weblaptop.dto.response.SanPhamClientDTO;
 import com.dantn.weblaptop.dto.response.SanPhamResponse;
 import com.dantn.weblaptop.entity.sanpham.SanPham;
 import com.dantn.weblaptop.generics.GenericsController;
 import com.dantn.weblaptop.generics.GenericsService;
+import com.dantn.weblaptop.service.SanPhamChiTietService;
 import com.dantn.weblaptop.service.impl.SanPhamService;
 import com.dantn.weblaptop.util.ConvertStringToArray;
 import com.dantn.weblaptop.util.FakeDataForClient;
@@ -31,7 +34,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
+
 // commit by long
 @RestController
 @CrossOrigin(origins = "*")
@@ -39,11 +45,13 @@ import java.util.List;
 public class SanPhamController extends GenericsController<SanPham, Long, SanPhamCreate, SanPhamUpdate, SanPhamResponse> {
 
     private final SanPhamService sanPhamService;
+    private final SanPhamChiTietService spctService;
 
     public SanPhamController(@Qualifier("sanPhamService") GenericsService<SanPham, Long, SanPhamCreate, SanPhamUpdate, SanPhamResponse> genericsService,
-                             SanPhamService sanPhamService) {
+                             SanPhamService sanPhamService, @Qualifier("sanPhamChiTietServiceImpl") SanPhamChiTietService spctService) {
         super(genericsService);
         this.sanPhamService = sanPhamService;
+        this.spctService = spctService;
     }
 
     @GetMapping("/change-status")
@@ -216,45 +224,96 @@ public class SanPhamController extends GenericsController<SanPham, Long, SanPham
         } catch (Exception e) {
             pageable = PageRequest.of(0, 10);
         }
-//        FindSanPhamFilterByName filter = FindSanPhamFilterByName.builder()
-//                .tenSanPham(tenSanPham)
-//                .tenNhuCau(ConvertStringToArray.toArray(tenNhuCau))
-//                .tenThuongHieu(ConvertStringToArray.toArray(tenThuongHieu))
-//                .tenRam(ConvertStringToArray.toArray(tenRam))
-//                .tenMau(ConvertStringToArray.toArray(tenMau))
-//                .tenCPU(ConvertStringToArray.toArray(tenCPU))
-//                .tenVGA(ConvertStringToArray.toArray(tenVGA))
-//                .tenWebcam(ConvertStringToArray.toArray(tenWebcam))
-//                .tenOCung(ConvertStringToArray.toArray(tenOCung))
-//                .tenManHinh(ConvertStringToArray.toArray(tenManHinh))
-//                .tenHeDieuHanh(ConvertStringToArray.toArray(tenHeDieuHanh))
-//                .tenBanPhim(ConvertStringToArray.toArray(tenBanPhim))
-//                .build();
+        FindSanPhamFilterByName filter = FindSanPhamFilterByName.builder()
+                .tenSanPham(tenSanPham)
+                .tenNhuCau(ConvertStringToArray.toArray(tenNhuCau))
+                .tenThuongHieu(ConvertStringToArray.toArray(tenThuongHieu))
+                .tenRam(ConvertStringToArray.toArray(tenRam))
+                .tenMau(ConvertStringToArray.toArray(tenMau))
+                .tenCPU(ConvertStringToArray.toArray(tenCPU))
+                .tenVGA(ConvertStringToArray.toArray(tenVGA))
+                .tenWebcam(ConvertStringToArray.toArray(tenWebcam))
+                .tenOCung(ConvertStringToArray.toArray(tenOCung))
+                .tenManHinh(ConvertStringToArray.toArray(tenManHinh))
+                .tenHeDieuHanh(ConvertStringToArray.toArray(tenHeDieuHanh))
+                .tenBanPhim(ConvertStringToArray.toArray(tenBanPhim))
+                .build();
 
 
 
-//        Page<SanPhamResponse> pageResult = sanPhamService.findWithFilterById(filter, pageable);
+        Page<SanPhamClientDTO> pageResult = sanPhamService.findWithFilterByIdClient(filter, pageable);
+        List<SanPhamClientDTO> listResult = fillDataPromo(pageResult);
 
-
-        List<SanPhamClientDTO> dataFake = FakeDataForClient.fakeDataSanPhamForClient();
-        List<SanPhamClientDTO> listResult = new ArrayList<>();
-        int indexElement = Integer.valueOf(pageStr) * Integer.valueOf(sizeStr);
-        if (indexElement + Integer.valueOf(sizeStr) > dataFake.size()){
-            listResult = dataFake.subList(indexElement, dataFake.size() - 1);
-        } else {
-            listResult = dataFake.subList(indexElement, indexElement + Integer.valueOf(sizeStr));
-        }
-        int totalPagesss = 100 / Integer.valueOf(sizeStr);
-        if (100 % Integer.valueOf(sizeStr) != 0) totalPagesss++;
+//        List<SanPhamClientDTO> dataFake = FakeDataForClient.fakeDataSanPhamForClient();
+//        List<SanPhamClientDTO> listResult = new ArrayList<>();
+//        int indexElement = Integer.valueOf(pageStr) * Integer.valueOf(sizeStr);
+//        if (indexElement + Integer.valueOf(sizeStr) > dataFake.size()){
+//            listResult = dataFake.subList(indexElement, dataFake.size() - 1);
+//        } else {
+//            listResult = dataFake.subList(indexElement, indexElement + Integer.valueOf(sizeStr));
+//        }
+//        int totalPagesss = 100 / Integer.valueOf(sizeStr);
+//        if (100 % Integer.valueOf(sizeStr) != 0) totalPagesss++;
 
         ResponseLong<List<SanPhamClientDTO>> result = new ResponseLong<>(
                 200, "Find successfully",
                 listResult,
-                pageStr,
-                sizeStr,
-                String.valueOf(totalPagesss),
-                String.valueOf(100));
+                String.valueOf(pageResult.getNumber()),
+                String.valueOf(pageResult.getSize()),
+                String.valueOf(pageResult.getTotalPages()),
+                String.valueOf(pageResult.getTotalElements()));
         return ResponseEntity.ok().body(result);
+    }
+
+    public List<SanPhamClientDTO> fillDataPromo(Page<SanPhamClientDTO> pageResult){
+        List<SanPhamClientDTO> listResult = pageResult.getContent();
+        List<SanPhamClientDTO> listConverted = new ArrayList<>();
+        for (SanPhamClientDTO dto: listResult) {
+            // lặp từng cái add dữ liệu vào
+            FindSanPhamChiTietByFilter filter = FindSanPhamChiTietByFilter.builder().idSP(dto.getId() + "").build();
+            List<SanPhamChiTietClientDTO> spctClient = spctService.findByFilter(filter);
+            Optional<SanPhamChiTietClientDTO> minGiaBan = spctClient.stream()
+                .filter(sp -> sp.getGiaBan() != null && !sp.getGiaBan().isEmpty()) // Lọc những sản phẩm có giá bán hợp lệ
+                .min(Comparator.comparing(sp -> Float.parseFloat(sp.getGiaBan())));
+            Optional<SanPhamChiTietClientDTO> maxGiaBan = spctClient.stream()
+                .filter(sp -> sp.getGiaBan() != null && !sp.getGiaBan().isEmpty()) // Lọc những sản phẩm có giá bán hợp lệ
+                .max(Comparator.comparing(sp -> Float.parseFloat(sp.getGiaBan())));
+
+            // tính các trường bên dưới
+            // ảnh
+            String image = "";
+            String[] listImage = ConvertStringToArray.toArraySplitImageUrl(maxGiaBan.get().getListUrlAnhSanPham());
+            if (listImage != null && listImage.length > 0)
+                image = listImage[0];
+
+            Optional<SanPhamChiTietClientDTO> spctWithBestPromo = spctClient.stream()
+                    .filter(spct -> spct.getSoTienDuocGiam() != null && !spct.getSoTienDuocGiam().isEmpty())
+                    .max(Comparator.comparing(spctMoney -> Float.parseFloat(spctMoney.getSoTienDuocGiam())));
+
+            // bán chạy
+            Boolean banChay = true;
+
+            // tên khuyến mãi
+            String tenKhuyenMai =spctWithBestPromo.get().getTenKhuyenMai();
+
+            // số tiền giảm
+            String soTienGiam =spctWithBestPromo.get().getSoTienDuocGiam();
+
+            // giá sau khuyến mãi
+            String giaSauKhuyenMai = spctWithBestPromo.get().getGiaSauKhuyenMai();
+            // set
+            dto.setGiaMin(minGiaBan.get().getGiaBan());
+            dto.setGiaMax(maxGiaBan.get().getGiaBan());
+
+            dto.setGiaSauKhuyenMai(giaSauKhuyenMai);
+            dto.setSoTienGiam(soTienGiam);
+            dto.setTenKhuyenMai(tenKhuyenMai);
+            dto.setBanChay(banChay);
+            dto.setImage(image);
+
+            listConverted.add(dto);
+        }
+        return listConverted;
     }
 
     @PutMapping("/updateSanPhamAndSPCT/{id}")

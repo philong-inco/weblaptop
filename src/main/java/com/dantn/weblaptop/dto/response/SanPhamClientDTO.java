@@ -27,7 +27,6 @@ public class SanPhamClientDTO {
     String soTienGiam;
     String tenKhuyenMai;
     Boolean banChay;
-
     String image;
 
 
