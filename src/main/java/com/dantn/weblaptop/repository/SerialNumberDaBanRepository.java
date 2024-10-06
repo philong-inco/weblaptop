@@ -11,6 +11,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
@@ -57,4 +58,10 @@ public interface SerialNumberDaBanRepository extends JpaRepository<SerialNumberD
             "join hoa_don as hd on hd.id = sndb.hoa_don_id\n" +
             "where sndb.hoa_don_id = :billId", nativeQuery = true)
     List<Long> getSerialNumberInBillId(@Param("billId") Long billId);
+
+    @Query(value = "SELECT " +
+            "SUM(gia_ban) AS gia " +
+            "FROM serial_number_da_ban " +
+            "WHERE hoa_don_id = :billId", nativeQuery = true)
+    Optional<BigDecimal> sumGiaBanByHoaDonId(@Param("billId") Long billId);
 }

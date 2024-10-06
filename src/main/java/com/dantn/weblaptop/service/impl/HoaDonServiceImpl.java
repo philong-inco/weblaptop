@@ -36,6 +36,7 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -275,6 +276,12 @@ public class HoaDonServiceImpl implements HoaDonService {
                                 + diaChiResponse.getIdPhuongXa() + " | "
                                 + diaChiResponse.getIdQuanHuyen() + " | "
                                 + diaChiResponse.getIdTinhThanhPho());
+                Optional<PhieuGiamGia> optional = couponRepository.getVoucherByTotalAmountCustomerAndCoupon(
+                        existingBill.getTongTienBanDau(), customerId, existingBill.getPhieuGiamGia().getId());
+                if (!optional.isPresent()) {
+                    existingBill.setPhieuGiamGia(null);
+                    existingBill.setTongTienPhaiTra(existingBill.getTongTienBanDau());
+                }
                 return HoaDonMapper.toHoaDonResponse(billRepository.save(bill.get()));
             } else {
                 throw new AppException(ErrorCode.BILL_NOT_FOUND);
@@ -320,11 +327,19 @@ public class HoaDonServiceImpl implements HoaDonService {
 
     @Override
     public HoaDonResponse addCouponToBillByCode(String couponCode, String billCode) throws AppException {
+        if (couponCode.trim().isEmpty()) {
+            throw new AppException(ErrorCode.COUPON_CODE_NOT_BLANK);
+        }
         HoaDon existingBill = billRepository.findHoaDonByMa(billCode).orElseThrow(
                 () -> new AppException(ErrorCode.BILL_NOT_FOUND)
         );
         PhieuGiamGia coupon = couponRepository.findByMa(couponCode.trim().toUpperCase()).orElseThrow(
                 () -> new AppException(ErrorCode.COUPONS_NOT_FOUND));
+        if (existingBill.getPhieuGiamGia() != null) {
+            if (Objects.equals(existingBill.getPhieuGiamGia().getId(), coupon.getId())) {
+                throw new AppException(ErrorCode.COUPON_ALREADY_EXISTS_IN_BILL);
+            }
+        }
         boolean isCustomerNull = existingBill.getKhachHang() == null;
         Optional<PhieuGiamGia> optional = isCustomerNull
                 ? couponRepository.getByTotalAmountAndCouponCode(existingBill.getTongTienBanDau(), coupon.getMa())
@@ -403,14 +418,15 @@ public class HoaDonServiceImpl implements HoaDonService {
             request.getTen();
             bill.setSdt(request.getSdt());
             bill.setEmail(request.getEmail());
-            bill.setDiaChi(
-                    request.getDiaChi() + " , "
-                            + request.getTenPhuong() + " , "
-                            + request.getTenHuyen() + " , "
-                            + request.getTenTinh() + " | "
-                            + request.getPhuong() + " | "
-                            + request.getHuyen() + " | "
-                            + request.getTinh());
+
+            String diaChi = (request.getDiaChi() != null && !request.getDiaChi().isEmpty() ? request.getDiaChi() + " , " : "")
+                    + request.getTenPhuong() + " , "
+                    + request.getTenHuyen() + " , "
+                    + request.getTenTinh() + " | "
+                    + request.getPhuong() + " | "
+                    + request.getHuyen() + " | "
+                    + request.getTinh();
+            bill.setDiaChi(diaChi);
             bill.setGhiChu(request.getGhiChu());
             billRepository.save(bill);
             LichSuHoaDon billHistory = new LichSuHoaDon();
@@ -433,7 +449,7 @@ public class HoaDonServiceImpl implements HoaDonService {
                 () -> new AppException(ErrorCode.BILL_NOT_FOUND)
         );
 // check trạng thái
-        String diaChi = request.getDiaChi() + " , "
+        String diaChi = (request.getDiaChi() != null && !request.getDiaChi().isEmpty() ? request.getDiaChi() + " , " : "")
                 + request.getTenPhuong() + " , "
                 + request.getTenHuyen() + " , "
                 + request.getTenTinh() + " | "
@@ -446,7 +462,7 @@ public class HoaDonServiceImpl implements HoaDonService {
         bill.setGhiChu(request.getGhiChu());
         bill.setSdt(request.getSdt());
         bill.setEmail(request.getEmail());
-        bill.setLoaiHoaDon(bill.getLoaiHoaDon()!=1? 1:0);
+        bill.setLoaiHoaDon(bill.getLoaiHoaDon() != 1 ? 1 : 0);
 
         CreateLichSuHoaDonRequest createLichSuHoaDonRequest = new CreateLichSuHoaDonRequest();
         createLichSuHoaDonRequest.setIdHoaDon(bill.getId());
@@ -462,6 +478,7 @@ public class HoaDonServiceImpl implements HoaDonService {
         billHistoryService.create(createLichSuHoaDonRequest);
         billRepository.save(bill);
     }
+
     @Override
     public Long countBillByDate(Long startDate, Long endDate) {
         return 0L;
