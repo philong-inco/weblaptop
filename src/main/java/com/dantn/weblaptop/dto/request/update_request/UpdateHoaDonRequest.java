@@ -16,12 +16,14 @@ import java.util.List;
 @AllArgsConstructor
 @FieldDefaults(level =  AccessLevel.PRIVATE)
 public class UpdateHoaDonRequest {
-    Long chuyenKhoan;
-    Long tienMat;
+//    Long idChuyenKhoan;
+//    Long idTienMat;
+//    BigDecimal soTienChuyenKhoan;
+//    BigDecimal soTienMat;
+    Integer thanhToanSau;
     Integer loaiHoaDon;
     String ten;
     String sdt;
-    @Email(message = "EMAIL_INVALID")
     String email;
     String diaChi;
     String tinh;
@@ -31,6 +33,7 @@ public class UpdateHoaDonRequest {
     String phuong;
     String tenPhuong;
     String ghiChu;
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    LocalDateTime ngayNhanHang;
+    BigDecimal tienShip;
+//    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+//    LocalDateTime ngayNhanHangDuKien;
 }

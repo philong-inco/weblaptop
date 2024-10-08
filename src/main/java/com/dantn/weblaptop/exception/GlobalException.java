@@ -75,7 +75,7 @@ public class GlobalException {
                 }).toList();
         ApiResponse<List<ApiResponseError>> apiResponse = new ApiResponse<>();
         apiResponse.setStatusCode(HttpStatus.BAD_REQUEST.value());
-        apiResponse.setError("Validation failed");
+        apiResponse.setError("Validation failed 1");
         apiResponse.setMessage(errors);
         return ResponseEntity.badRequest().body(apiResponse);
     }

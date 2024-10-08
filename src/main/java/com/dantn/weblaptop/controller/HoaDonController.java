@@ -137,7 +137,7 @@ public class HoaDonController {
     @PostMapping("pay-counter/{billCode}")
     public ResponseEntity<ApiResponse> payCounter(
             @PathVariable(name = "billCode") String billCode,
-            @RequestBody UpdateHoaDonRequest request
+            @RequestBody @Valid UpdateHoaDonRequest request
     ) throws AppException {
         return ResponseEntity.status(HttpStatus.CREATED).body(
                 ApiResponse.builder()

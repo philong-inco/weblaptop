@@ -36,32 +36,35 @@ public enum ErrorCode {
     COUPONS_MIN_QUANTITY(3011, "Số lượng phải lớn hơn 0"),
     COUPON_CODE_ALREADY_EXISTS(3012, "Mã phiếu đã tồn tại"),
     COUPON_DOES_NOT_APPLY(3013, "Không thể áp dụng phiếu giảm giá này"),
-    COUPON_CODE_NOT_BLANK(3014,"Hãy nhập mã phiếu giảm giá"),
+    COUPON_CODE_NOT_BLANK(3014, "Hãy nhập mã phiếu giảm giá"),
 
     // Đầu 4 Serial Number
     SERIAL_NUMBER_NOT_FOUND(4000, "Serial Number không tồn tại"),
 
     //
     PAY_NO_FOUND(5000, "Phương thức thanh toán không tồn tại"),
-    BILL_NOT_STATUS(50001,"Hóa đơn chưa được xác nhân"),
-    BILL_WITHOUT_PRODUCT (5002,"Hóa đơn chưa có sản phẩm"),
-    NOTE_NOT_BLANK(6000,"Ghi chú không được để trống"),
-    NOTE_MIN_20(6001,"Ghi chú ít nhất 20 kí tự"),
+    BILL_NOT_STATUS(50001, "Hóa đơn chưa được xác nhân"),
+    BILL_WITHOUT_PRODUCT(5002, "Hóa đơn chưa có sản phẩm"),
+    NOTE_NOT_BLANK(6000, "Ghi chú không được để trống"),
+    NOTE_MIN_20(6001, "Ghi chú ít nhất 20 kí tự"),
 
     EMAIL_NOT_BLANK(6002, "Email không được để trống"),
     EMAIL_INVALID(6003, "Email không đúng địng dạng"),
-    PHONE_NOT_BLANK(6004,"Số điện thoại không được để trốnǵ"),
+    PHONE_NOT_BLANK(6004, "Số điện thoại không được để trốnǵ"),
     PHONE_INVALID(6005, "Số điện thoại ko đúng định dạng"),
     NAME_NOT_BLANK(6006, "Tên không được để trống"),
-    NAME_INVALID(6007,"Tên chỉ được là các chữ cái"),
-    NAME_MIN_MAXIMUM(6011,"Tên từ 5 đến 25  ký tự"),
-    PROVINCIAL_CITY_NOT_BLANK(6008,"Vui lòng chọn Tỉnh Thành"),
-    DISTRICT_NOT_BLANK(6009,"Vui lòng chọn Quận Huyện"),
-    WARD_NOT_BLANK(6010,"Vui lòng chọn Phường Xã"),
-    COUPON_ALREADY_EXISTS_IN_BILL (6010, "Phiếu giảm giá đã có trong hóa đơn"),
+    NAME_INVALID(6007, "Tên chỉ được là các chữ cái"),
+    NAME_MIN_MAXIMUM(6011, "Tên từ 5 đến 25  ký tự"),
+    PROVINCIAL_CITY_NOT_BLANK(6008, "Vui lòng chọn Tỉnh Thành"),
+    DISTRICT_NOT_BLANK(6009, "Vui lòng chọn Quận Huyện"),
+    WARD_NOT_BLANK(6010, "Vui lòng chọn Phường Xã"),
+    COUPON_ALREADY_EXISTS_IN_BILL(6010, "Phiếu giảm giá đã có trong hóa đơn"),
 
     PRODUCT_DETAIL_NOT_FOUND(7000, "Sản phẩm chia tiết không tồn tại"),
-    ;
+    AMOUNT_INVALID(7001, "Số tiền không hợp lệ lớn hơn 0"),
+    AMOUNT_NOT_NULL(7002, "Hãy nhập số tiền"),
+    PAYMENT_HISTORY_NOT_FOUND(7003, "Không tìm thấy lịch sử thanh toán"),
+    TIEN_KO_DU(7004, "Tiền nhập chưa đủ");
 
     private Integer code;
     private String message;
