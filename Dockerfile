@@ -1,21 +1,22 @@
-# Build stage
-FROM maven:3-openjdk-17 AS build
+# Stage 1 - Build
+FROM maven:3.8.5-openjdk-17 AS build
 WORKDIR /app
 
-COPY pom.xml .
-RUN mvn dependency:go-offline -B
-
+# Copy toàn bộ project vào image
 COPY . .
-RUN mvn clean package -DskipTests --no-transfer-progress
 
-# Kiểm tra nội dung thư mục target
-RUN ls /app/target
+# Build project và tạo file JAR
+RUN mvn clean package -DskipTests
 
-# Run stage
-FROM openjdk:17-slim
+# Stage 2 - Run
+FROM openjdk:17-jdk-slim
 WORKDIR /app
 
+# Copy file JAR từ stage build sang stage run
 COPY --from=build /app/target/demo-0.0.1-SNAPSHOT.jar demo.jar
+
+# Mở port 8080
 EXPOSE 8080
 
-ENTRYPOINT ["java", "-jar", "demo.jar"]
+# Khởi chạy ứng dụng
+CMD ["java", "-jar", "demo.jar"]
