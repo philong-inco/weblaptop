@@ -13,7 +13,7 @@ FROM openjdk:17-jdk-slim
 WORKDIR /app
 
 # Copy file JAR từ stage build sang stage run
-COPY --from=build /app/target/demo-0.0.1-SNAPSHOT.jar demo.jar
+COPY --from=build /app/target/*.jar demo.jar
 
 # Mở port 8080
 EXPOSE 8080
