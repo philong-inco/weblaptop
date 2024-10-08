@@ -1,12 +1,7 @@
 package com.dantn.weblaptop.entity.hoadon;
 
 import com.dantn.weblaptop.entity.base.BaseEntity;
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -14,6 +9,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.FieldDefaults;
+
+import java.math.BigDecimal;
 
 /**
  * @since 06/3/2024
@@ -40,4 +37,9 @@ public class HoaDonHinhThucThanhToan extends BaseEntity {
             fetch = FetchType.EAGER)
     @JoinColumn(name = "hoa_don_id")
     HoaDon hoaDon;
+
+    @Column(name = "so_tien")
+    BigDecimal soTien;
+    @Column(name = "loai_thanh_toan")
+    Integer loaiThanhToan; // 0 đã tt : 1 trả sau
 }

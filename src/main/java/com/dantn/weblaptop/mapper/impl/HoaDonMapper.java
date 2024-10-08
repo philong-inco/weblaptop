@@ -5,10 +5,13 @@ import com.dantn.weblaptop.entity.hoadon.HoaDon;
 import com.dantn.weblaptop.entity.khachhang.KhachHang;
 import com.dantn.weblaptop.entity.phieugiamgia.PhieuGiamGia;
 import com.dantn.weblaptop.util.ConvertTime;
+import org.hibernate.annotations.Comment;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDateTime;
-
+@Comment("hoaDonMapper")
 public class HoaDonMapper {
 
     public static HoaDonResponse   toHoaDonResponse (HoaDon hoaDon){
@@ -17,9 +20,14 @@ public class HoaDonMapper {
         response.setId(hoaDon.getId());
         response.setMa(hoaDon.getMa());
         response.setIdNhanVien(hoaDon.getNhanVien().getId());
-        response.setTenKhachHang(hoaDon.getTenKhachHang());
+        response.setTenKhachHang(
+                hoaDon.getTenKhachHang() != null ?
+                        hoaDon.getTenKhachHang() :
+                        (customer != null ? customer.getTen() : null)
+        );
         response.setIdKhachHang(
                 customer !=null ? customer.getId() : null);
+        response.setGhiChu(hoaDon.getGhiChu());
         response.setLoaiHoaDon(hoaDon.getLoaiHoaDon());
         response.setTongTienPhaiTra(hoaDon.getTongTienPhaiTra());
         response.setLoaiHoaDon(hoaDon.getLoaiHoaDon());
@@ -43,11 +51,29 @@ public class HoaDonMapper {
         PhieuGiamGia phieuGiamGia = hoaDon.getPhieuGiamGia();
         if(phieuGiamGia!=null){
             response.setIdPhieuGiamGia(phieuGiamGia.getId());
-            response.setGiaTriPhieuGiamGia(phieuGiamGia.getGiaTriGiamGia());
+            response.setGiaTriPhieuGiamGia(calculateDiscount(hoaDon, phieuGiamGia));
             response.setLoaiPGG(phieuGiamGia.getLoaiGiamGia());
             response.setMaPGG(phieuGiamGia.getMa());
         }
         return response;
+    }
+
+    private static BigDecimal calculateDiscount(HoaDon existingBill, PhieuGiamGia coupon) {
+        BigDecimal moneyReduced = BigDecimal.ZERO;
+        // 1 % : 2 VND
+        if (coupon.getLoaiGiamGia() == 2) {
+            moneyReduced = coupon.getGiaTriGiamGia();
+        } else {
+            // Tính % của phiếu giảm rồi trừ đi
+            moneyReduced = existingBill.getTongTienBanDau()
+                    .multiply(coupon.getGiaTriGiamGia())
+                    .divide(BigDecimal.valueOf(100), RoundingMode.HALF_UP);
+        }
+
+        if (coupon.getGiamToiDa().compareTo(moneyReduced) < 0) {
+            moneyReduced = coupon.getGiamToiDa();
+        }
+        return moneyReduced;
     }
 
 

@@ -9,6 +9,8 @@ import com.dantn.weblaptop.service.KhachHang_Service;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -183,7 +185,8 @@ public class KhachHangController {
     }
     @GetMapping("/phone-number/{phoneNumber}")
     public ResponseEntity<ApiResponse> findCustomerByPhoneNumber(
-            @PathVariable("phoneNumber") String phoneNumber) throws AppException {
+            @PathVariable("phoneNumber")
+            String phoneNumber) throws AppException {
         return ResponseEntity.ok(
                 ApiResponse.builder()
                         .statusCode(HttpStatus.OK.value())

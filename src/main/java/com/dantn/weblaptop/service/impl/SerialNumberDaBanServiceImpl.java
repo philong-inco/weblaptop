@@ -1,6 +1,7 @@
 package com.dantn.weblaptop.service.impl;
 
 import com.dantn.weblaptop.constant.HoaDonStatus;
+import com.dantn.weblaptop.constant.RankCustomer;
 import com.dantn.weblaptop.dto.request.create_request.CreateLichSuHoaDonRequest;
 import com.dantn.weblaptop.dto.request.create_request.CreateSerialNumberDaBanRequest;
 import com.dantn.weblaptop.dto.request.create_request.FindSanPhamChiTietByFilter;
@@ -35,6 +36,7 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
+
 public class SerialNumberDaBanServiceImpl implements SerialNumberDaBanService {
     SerialNumberService serialNumberService;
     SerialNumberDaBanRepository serialNumberDaBanRepository;
@@ -176,16 +178,17 @@ public class SerialNumberDaBanServiceImpl implements SerialNumberDaBanService {
                             phieuGiamGiaRepository.findDiscountValue(total, optional.get().getId());
                     // tru
                     existingBill.setTongTienPhaiTra(total.subtract(optionalDiscountValue.orElse(BigDecimal.ZERO)) );
-                    System.out.println("=> 0 Chọn đươc phiếu : quy đổi : "+optionalDiscountValue.get());
-                    System.out.println("=> 0 phải trả : "+ existingBill.getTongTienPhaiTra());
+                    System.out.println("=> 0 : Chọn đươc phiếu : quy đổi : "+optionalDiscountValue.get());
+                    System.out.println("=> 0 : Phải trả : "+ existingBill.getTongTienPhaiTra());
 
                 }else {
-                    System.out.println("Ko đủ điều kiện :");
+                    System.out.println("3 Ko đủ điều kiện :");
                     existingBill.setTongTienPhaiTra(total);
                 }
             } else {
                 // check khach hàng
-                Long customId = existingBill.getPhieuGiamGia().getId();
+                Long customId = existingBill.getKhachHang()!=null ? existingBill.getKhachHang().getId() : null;
+                // check đủ đk ko
                 Optional<PhieuGiamGia> optional = phieuGiamGiaRepository.getVoucherByTotalAmountCustomerAndCoupon(
                         total, customId,existingBill.getPhieuGiamGia().getId());
                 if(optional.isPresent()) {
@@ -193,19 +196,22 @@ public class SerialNumberDaBanServiceImpl implements SerialNumberDaBanService {
                     // Nếu hóa đơn đã có phiếu giảm giá, kiểm tra lại
                     Optional<PhieuGiamGia> optionalDiscountVoucher = getPhieuGiamGia(existingBill, total);
                     // Nếu không đủ tiền, xóa phiếu giảm giá
-                    if (!optionalDiscountVoucher.isPresent()) {
-                        // tổng tiền phỉa trả = ổng tiền ban đầu
-                        existingBill.setTongTienPhaiTra(total);
-                        existingBill.setPhieuGiamGia(null);
-                        System.out.println("=> 2 Xóa phiếu : ");
-                    } else {
+                    System.out.println("2 : Phiệu chọn (Ko dùng để log ktr thôi) : "+ optionalDiscountVoucher.get().getId());
+                    System.out.println("2 : Phiệu chọn 2 : "+ optional.get().getId());
+
+//                    if (!optionalDiscountVoucher.isPresent()) {
+//                        // tổng tiền phỉa trả = ổng tiền ban đầu
+//                        existingBill.setTongTienPhaiTra(total);
+//                        existingBill.setPhieuGiamGia(null);
+//                        System.out.println("=> 2 Xóa phiếu : ");
+//                    } else {
                         // quy đổi max vs tính lại
                         Optional<BigDecimal> optionalDiscountValue =
-                                phieuGiamGiaRepository.findDiscountValue(total, optionalDiscountVoucher.get().getId());
+                                phieuGiamGiaRepository.findDiscountValue(total, optional.get().getId());
                         BigDecimal totalAmountDue = total.subtract(optionalDiscountValue.get());
                         existingBill.setTongTienPhaiTra(totalAmountDue);
                         System.out.println("=> 2Quy đổi : "+ optionalDiscountValue);
-                    }
+//                    }
                 }else{
                     System.out.println("3 : Khách ko có  của phiếu : ");
                     existingBill.setPhieuGiamGia(null);
@@ -218,24 +224,21 @@ public class SerialNumberDaBanServiceImpl implements SerialNumberDaBanService {
             existingBill.setPhieuGiamGia(null);
             existingBill.setTongTienPhaiTra(BigDecimal.ZERO);
         }
-        hoaDonRepository.save(existingBill);
-//        List<LichSuHoaDonResponse> existingHistories = billHistoryService.getBillHistoryByBillId(existingBill.getId());
-
-        CreateLichSuHoaDonRequest billHistoryRequest = new CreateLichSuHoaDonRequest();
-        billHistoryRequest.setIdHoaDon(existingBill.getId());
-        billHistoryRequest.setGhiChuChoCuaHang("Cập nhập sản phẩm của đơn hàng");
-        billHistoryRequest.setTrangThai(1);
-        // Cần sửa khi có security
-        billHistoryRequest.setIdNhanVien(1L);
-        // Lưu lịch sử hóa đơn
-        try {
-            billHistoryService.create(billHistoryRequest);
-            //
-
-        } catch (AppException e) {
-            e.printStackTrace();
+        if(existingBill.getKhachHang()!=null){
+            BigDecimal rank = RankCustomer.getValueByRank(existingBill.getKhachHang().getHangKhachHang());
+            existingBill.setTienGiamHangKhachHang(rank);
+            BigDecimal newTongTienPhaiTra = existingBill.getTongTienPhaiTra().subtract(rank);
+            if (newTongTienPhaiTra.compareTo(BigDecimal.ZERO) < 0) {
+                newTongTienPhaiTra = BigDecimal.ZERO;
+                System.out.println("Vào đây 1 : "+ newTongTienPhaiTra);
+                existingBill.setTongTienPhaiTra(newTongTienPhaiTra);
+//                existingBill.setTienGiamHangKhachHang(rank);
+            }else{
+                existingBill.setTongTienPhaiTra(newTongTienPhaiTra);
+                System.out.println("Vào đây 2 : "+ newTongTienPhaiTra);
+            }
         }
-//        }
+        hoaDonRepository.save(existingBill);
 //        tính tiền và check phiếu pgg
 //        prepareTheBill(existingBill.getMa());
         return true;
@@ -245,8 +248,8 @@ public class SerialNumberDaBanServiceImpl implements SerialNumberDaBanService {
     public void delete(SerialNumberSoldDelete request) throws AppException {
         List<SerialNumberDaBan> serialNumbersToDelete = serialNumberDaBanRepository.findAllByIdInAndHoaDonMa(request.getSerialNumberIds(), request.getBillCode());
         if (!serialNumbersToDelete.isEmpty()) {
-            String billCode = serialNumbersToDelete.get(0).getHoaDon().getMa();
-
+            HoaDon existingBill = hoaDonRepository.findHoaDonByMa(request.getBillCode()).orElseThrow(
+                    () -> new AppException(ErrorCode.BILL_NOT_FOUND));
             serialNumberDaBanRepository.deleteAll(serialNumbersToDelete);
             List<Long> serialNumberIds = serialNumbersToDelete.stream()
                     .map(serialNumberDaBan -> serialNumberDaBan.getSerialNumber().getId())
@@ -256,7 +259,77 @@ public class SerialNumberDaBanServiceImpl implements SerialNumberDaBanService {
                     .peek(serialNumber -> serialNumber.setTrangThai(0))
                     .collect(Collectors.toList());
             serialNumberRepository.saveAll(updatedSerialNumbers);
-            prepareTheBill(billCode);
+            // tính lại tiền
+            // tính tiền
+            Optional<BigDecimal> totalMoney = serialNumberDaBanRepository.sumGiaBanByHoaDonId(existingBill.getId());
+            existingBill.setTongTienBanDau(totalMoney.orElse(BigDecimal.ZERO));
+            System.out.println("0 Tỏng tiền : " + totalMoney.orElse(BigDecimal.ZERO));
+            // check đổi khách hàng
+            if (totalMoney.isPresent()) {
+                BigDecimal total = totalMoney.get();
+                if (existingBill.getPhieuGiamGia() == null) {
+                    System.out.println(" 0 Vào chọn phiếu : ");
+                    Optional<PhieuGiamGia> optional = getPhieuGiamGia(existingBill, total);
+                    if (optional.isPresent()) {
+                        existingBill.setPhieuGiamGia(optional.get());
+                        Optional<BigDecimal> optionalDiscountValue =
+                                phieuGiamGiaRepository.findDiscountValue(total, optional.get().getId());
+                        // tru
+                        existingBill.setTongTienPhaiTra(total.subtract(optionalDiscountValue.orElse(BigDecimal.ZERO)) );
+                        System.out.println("=> 0 Chọn đươc phiếu : quy đổi : "+optionalDiscountValue.get());
+                        System.out.println("=> 0 phải trả : "+ existingBill.getTongTienPhaiTra());
+
+                    }else {
+                        System.out.println("3 Ko đủ điều kiện :");
+                        existingBill.setTongTienPhaiTra(total);
+                    }
+                } else {
+                    // check khach hàng
+                    Long customId = existingBill.getKhachHang()!=null ? existingBill.getKhachHang().getId() : null;
+                    // check đủ đk ko
+                    Optional<PhieuGiamGia> optional = phieuGiamGiaRepository.getVoucherByTotalAmountCustomerAndCoupon(
+                            total, customId,existingBill.getPhieuGiamGia().getId());
+                    if(optional.isPresent()) {
+                        System.out.println("=> 1 Đã có phiếu : ");
+                        // Nếu hóa đơn đã có phiếu giảm giá, kiểm tra lại
+                        Optional<PhieuGiamGia> optionalDiscountVoucher = getPhieuGiamGia(existingBill, total);
+                        // Nếu không đủ tiền, xóa phiếu giảm giá
+                        System.out.println("2 : Phiệu chọn : "+ optionalDiscountVoucher.get().getId());
+                        System.out.println("2 : Phiệu chọn 2 : "+ optional.get().getId());
+                        Optional<BigDecimal> optionalDiscountValue =
+                                phieuGiamGiaRepository.findDiscountValue(total, optional.get().getId());
+                        BigDecimal totalAmountDue = total.subtract(optionalDiscountValue.get());
+                        existingBill.setTongTienPhaiTra(totalAmountDue);
+                        System.out.println("=> 2Quy đổi : "+ optionalDiscountValue);
+//                    }
+                    }else{
+                        System.out.println("3 : Khách ko có  của phiếu : ");
+                        existingBill.setPhieuGiamGia(null);
+                        existingBill.setTongTienPhaiTra(total);
+                    }
+
+                }
+            }else{
+                System.out.println("=> Ko còn PS");
+                existingBill.setPhieuGiamGia(null);
+                existingBill.setTongTienPhaiTra(BigDecimal.ZERO);
+            }
+            if(existingBill.getKhachHang()!=null){
+                BigDecimal rank = RankCustomer.getValueByRank(existingBill.getKhachHang().getHangKhachHang());
+                existingBill.setTienGiamHangKhachHang(rank);
+                BigDecimal newTongTienPhaiTra = existingBill.getTongTienPhaiTra().subtract(rank);
+                if (newTongTienPhaiTra.compareTo(BigDecimal.ZERO) < 0) {
+                    newTongTienPhaiTra = BigDecimal.ZERO;
+                    System.out.println("Vào đây 1 : "+ newTongTienPhaiTra);
+                    existingBill.setTongTienPhaiTra(newTongTienPhaiTra);
+//                existingBill.setTienGiamHangKhachHang(rank);
+                }else{
+                    existingBill.setTongTienPhaiTra(newTongTienPhaiTra);
+                    System.out.println("Vào đây 2 : "+ newTongTienPhaiTra);
+                }
+            }
+            hoaDonRepository.save(existingBill);
+//            prepareTheBill(billCode);
         }
     }
 

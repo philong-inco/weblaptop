@@ -67,7 +67,7 @@ public class KhachHangService_Implement implements KhachHang_Service {
     @Override
     public Page<KhachHangResponse> pageSearchGioiTinh(Integer pageNo, Integer size, Integer gioiTinh) {
         Pageable pageable = PageRequest.of(pageNo, size, Sort.by(Sort.Direction.DESC, "id"));
-        Page<KhachHang> khachHangPage = khachHangRepository.pageSearchGioiTinh(pageable,gioiTinh);
+        Page<KhachHang> khachHangPage = khachHangRepository.pageSearchGioiTinh(pageable, gioiTinh);
         return khachHangPage.map(khachHangMapper::entityToResponseKhachHang);
     }
 
@@ -125,7 +125,7 @@ public class KhachHangService_Implement implements KhachHang_Service {
                 throw new RuntimeException("Email này đã tồn tại " + khachHang.getEmail());
             }
             KhachHang khSave = khachHangRepository.save(khachHang);
-            if(khSave != null){
+            if (khSave != null) {
                 DiaChi diaChi = new DiaChi();
                 diaChi.setTenNguoiNhan(createKhachHangRequest.getTen());
                 diaChi.setSdtNguoiNhan(createKhachHangRequest.getSdt());
@@ -248,15 +248,21 @@ public class KhachHangService_Implement implements KhachHang_Service {
 
     @Override
     public Long countKhachHangByDate(Long startDate, Long endDate) {
-        return khachHang_Repository.countKhachHangByDate(startDate,endDate);
+        return khachHang_Repository.countKhachHangByDate(startDate, endDate);
     }
 
     @Override
     public KhachHangResponse findCustomerByPhone(String phone) throws AppException {
+        if (phone.isEmpty()) {
+            throw new AppException(ErrorCode.PHONE_NOT_BLANK);
+        }
+        if (!phone.trim().matches("^0\\d{9}$")) {
+            throw new AppException(ErrorCode.PHONE_INVALID);
+        }
         Optional<KhachHang> optional = khachHangRepository.findCustomerByPhone(phone);
-        if(optional.isPresent()){
+        if (optional.isPresent()) {
             return khachHangMapper.entityToResponseKhachHang(optional.get());
         }
-        throw new  AppException(ErrorCode.CUSTOMER_NOT_FOUND);
+        throw new AppException(ErrorCode.CUSTOMER_NOT_FOUND);
     }
 }
