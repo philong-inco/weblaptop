@@ -65,6 +65,6 @@ public interface DotGiamGiaRepository extends JpaRepository<DotGiamGia, Long>, J
     void deleteStatusDGGStop(@Param("id") Long id);
 
     @Query("SELECT dgg FROM DotGiamGia dgg JOIN dgg.dotGiamGiaSanPhamChiTiets dggct WHERE dggct.sanPhamChiTiet.id = :idSPCT AND dgg.trangThai = 1")
-    public List<DotGiamGia> getDotGiamGiaBySPCTId(@Param("idSPCT")Long idSPCT);
+     List<DotGiamGia> getDotGiamGiaBySPCTId(@Param("idSPCT")Long idSPCT);
 
 }

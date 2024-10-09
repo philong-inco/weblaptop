@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
+import static org.springframework.data.jpa.domain.AbstractPersistable_.id;
+
 @RestController
 @RequestMapping("/api/v1/discounts")
 @CrossOrigin(origins = "*")
@@ -114,5 +116,10 @@ public class DotGiamGiaController {
     public ResponseEntity<?> deleteDotGiamGiaStop(@PathVariable Long id) {
         dotGiamGiaService.deleteDotGiamGia(id);
         return ResponseEntity.ok("Bạn đã delete trạng thái thành công");
+    }
+
+    @GetMapping("/findbyidspctandactive")
+    public ResponseEntity<?> findByIdSpctAndActive(@PathVariable Long idSpct) {
+        return ResponseEntity.ok(dotGiamGiaService.getDotGiamGiaBySPCTId(idSpct));
     }
 }
