@@ -116,6 +116,7 @@ public class NhanVienService_Implement implements NhanVien_Service {
     @Override
     public NhanVienResponse create(CreateNhanVien createNhanVienRequest) {
         try {
+            validateNhanVien(createNhanVienRequest);
             NhanVien nhanVien = prepareNhanVienEntity(createNhanVienRequest);
             validateNhanVien(createNhanVienRequest);
             nhanVien = saveNhanVien(nhanVien);
@@ -144,6 +145,7 @@ public class NhanVienService_Implement implements NhanVien_Service {
     }
 
     private void validateNhanVien(CreateNhanVien createNhanVienRequest) {
+
         if (nhanVienRepositoy.findByEmail(createNhanVienRequest.getEmail()) != null) {
             throw new RuntimeException("Email đã được sử dụng trước đó.");
         }
@@ -161,8 +163,8 @@ public class NhanVienService_Implement implements NhanVien_Service {
             try {
                 emailSender.newEmployeeSendEmail(nhanVien, nhanVien.getMatKhau(), vaiTros);
             } catch (Exception e) {
-                // Log lỗi nhưng không làm gián đoạn quá trình chính
                 System.out.println(e);
+                throw new RuntimeException("Xảy ra lỗi khi gửi email.");
             }
         }).start();
     }
