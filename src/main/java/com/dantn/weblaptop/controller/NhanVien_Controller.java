@@ -6,6 +6,7 @@ import com.dantn.weblaptop.dto.request.create_request.CreateNhanVien;
 import com.dantn.weblaptop.dto.request.update_request.UpdateNhanVien;
 import com.dantn.weblaptop.repository.NhanVien_Repositoy;
 import com.dantn.weblaptop.service.NhanVien_Service;
+import jakarta.mail.MessagingException;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -122,6 +123,8 @@ public class NhanVien_Controller {
             return ResponseEntity.ok("Mật khẩu đã được gửi lại vào email của nhân viên.");
         } catch (ConfigDataResourceNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (MessagingException e) {
+            throw new RuntimeException(e);
         }
     }
 

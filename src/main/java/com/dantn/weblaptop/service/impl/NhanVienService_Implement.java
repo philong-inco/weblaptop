@@ -16,6 +16,7 @@ import com.dantn.weblaptop.repository.NhanVien_Repositoy;
 import com.dantn.weblaptop.repository.VaiTro_Repository;
 import com.dantn.weblaptop.service.NhanVien_Service;
 import com.dantn.weblaptop.util.GenerateCode;
+import jakarta.mail.MessagingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
@@ -309,13 +310,13 @@ public class NhanVienService_Implement implements NhanVien_Service {
     }
 
     @Override
-    public void sendForgotPasswordEmailForNhanVien(String email) {
+    public void sendForgotPasswordEmailForNhanVien(String email) throws MessagingException {
         NhanVien nhanVien = nhanVienRepositoy.findByEmail(email);
         if (nhanVien != null) {
             String newPlainTextPassword = GenerateCode.generatePassWordNhanVien();
             nhanVien.setMatKhau(newPlainTextPassword);
             nhanVienRepositoy.save(nhanVien);
-            emailSender.sendForgotPasswordEmail(nhanVien, newPlainTextPassword);
+            emailSender.sendForgotPasswordEmailNhanVien(nhanVien, newPlainTextPassword);
         } else {
             throw new RuntimeException("Không tìm thấy thông tin nhân viên trong hệ thống.");
         }

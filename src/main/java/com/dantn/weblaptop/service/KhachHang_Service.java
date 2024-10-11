@@ -6,6 +6,7 @@ import com.dantn.weblaptop.dto.request.update_request.UpdateKhachHang;
 import com.dantn.weblaptop.dto.response.KhachHangResponse;
 import com.dantn.weblaptop.entity.khachhang.KhachHang;
 import com.dantn.weblaptop.exception.AppException;
+import jakarta.mail.MessagingException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.repository.query.Param;
@@ -53,5 +54,11 @@ public interface KhachHang_Service {
     Long countKhachHangByDate(Long startDate, Long endDate);
 
     KhachHangResponse findCustomerByPhone(String phone) throws AppException;
+
+    KhachHang updateForgotPassword(Long id, String newPassword);
+
+    KhachHangResponse login(String email, String password);
+
+    void sentEmailForgotPassword(String email) throws MessagingException;
 
 }

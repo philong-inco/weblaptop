@@ -14,6 +14,7 @@ import com.dantn.weblaptop.repository.DiaChi_Repository;
 import com.dantn.weblaptop.repository.KhachHang_Repository;
 import com.dantn.weblaptop.service.KhachHang_Service;
 import com.dantn.weblaptop.util.GenerateCode;
+import jakarta.mail.MessagingException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -28,10 +29,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Component
 public class KhachHangService_Implement implements KhachHang_Service {
@@ -105,6 +103,18 @@ public class KhachHangService_Implement implements KhachHang_Service {
         return khachHangInfos;
     }
 
+    public static String generateRandomPassword(int length) {
+        String charSet = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789@#$%";
+        StringBuilder password = new StringBuilder();
+        Random random = new Random();
+        for (int i = 0; i < length; i++) {
+            int index = random.nextInt(charSet.length());
+            password.append(charSet.charAt(index));
+        }
+        return password.toString();
+    }
+
+
     @Override
     public KhachHangResponse create(CreateKhachHang createKhachHangRequest, HttpServletRequest request) {
         try {
@@ -113,6 +123,7 @@ public class KhachHangService_Implement implements KhachHang_Service {
             khachHang.setNgayTao(LocalDateTime.now().toInstant(ZoneOffset.UTC).toEpochMilli());
             khachHang.setTrangThai(1);
             khachHang.setHangKhachHang(0);
+            khachHang.setMatKhau(generateRandomPassword(10));
             // Lấy session ID từ request
             String sessionId = request.getSession().getId();
             khachHang.setSessionId(sessionId);
@@ -265,4 +276,72 @@ public class KhachHangService_Implement implements KhachHang_Service {
         }
         throw new AppException(ErrorCode.CUSTOMER_NOT_FOUND);
     }
+
+    @Override
+    public KhachHang updateForgotPassword(Long id, String newPassword) {
+        KhachHang khachHang = khachHangRepository.findKhachHangById(id);
+        if (khachHang != null) {
+            khachHang.setMatKhau(newPassword);
+            khachHang.setTrangThai(1);
+            KhachHang afterForgot = khachHangRepository.save(khachHang);
+            return afterForgot;
+        } else {
+            throw new RuntimeException("Không thể tìm thấy tài khoản khách hàng. Vui lòng kiểm tra lại thông tin khách hàng.");
+        }
+    }
+
+//    @Override
+//    public boolean forgotPassword(String email, String password) throws MessagingException {
+//        KhachHang khachHang = khachHangRepository.findKhachHangByEmail(email);
+//        if (khachHang != null) {
+//            khachHang.setMatKhau(password);
+//            khachHangRepository.save(khachHang);
+//            return true;
+//        } else {
+//            throw new RuntimeException("Không thể tìm thấy tài khoản khách hàng. Vui lòng kiểm tra lại thông tin khách hàng.");
+//        }
+//    }
+
+    @Override
+    public KhachHangResponse login(String email, String password) {
+        // Tìm khách hàng từ cơ sở dữ liệu theo email
+        KhachHang khachHangOpt = khachHangRepository.findKhachHangByEmail(email);
+
+        if (khachHangOpt != null) {
+
+
+            // Kiểm tra mật khẩu có đúng không
+            if (khachHangOpt.getMatKhau().equals(password)) {
+                // Nếu đúng, tạo đối tượng KhachHangResponse và trả về
+                KhachHangResponse response = new KhachHangResponse();
+                response.setId(khachHangOpt.getId());
+                response.setEmail(khachHangOpt.getEmail());
+                response.setTen(khachHangOpt.getTen());
+                response.setStatus("Login successful");
+                return response;
+            } else {
+                // Mật khẩu không đúng
+                throw new RuntimeException("Invalid password");
+            }
+        } else {
+            // Không tìm thấy khách hàng với email này
+            throw new RuntimeException("Email not found");
+        }
+    }
+
+    @Override
+    public void sentEmailForgotPassword(String email) throws MessagingException {
+        KhachHang khachHang = khachHangRepository.findKhachHangByEmail(email);
+        if(khachHang != null){
+            String newPassword = generateRandomPassword(10);
+            khachHang.setTrangThai(3);
+            khachHang.setMatKhau(newPassword);
+            khachHangRepository.save(khachHang);
+            emailSender.sendForgotPasswordEmail(khachHang, newPassword);
+        }else {
+            throw new RuntimeException("Không thể tìm thấy tài khoản khách hàng. Vui lòng kiểm tra lại thông tin khách hàng.");
+        }
+    }
+
+
 }

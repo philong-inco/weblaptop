@@ -54,6 +54,8 @@ public class KhachHang extends BaseEntity {
     Integer hangKhachHang;
     @Column(name = "session_id")
     String sessionId;
+    @Column(name = "mat_khau")
+    String matKhau;
     @OneToMany(mappedBy = "khachHang",
             cascade = {CascadeType.DETACH, CascadeType.PERSIST,
                     CascadeType.MERGE, CascadeType.REFRESH},

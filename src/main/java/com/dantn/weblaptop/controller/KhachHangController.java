@@ -4,8 +4,10 @@ import com.dantn.weblaptop.dto.InfomationKhachHang;
 import com.dantn.weblaptop.dto.request.create_request.CreateKhachHang;
 import com.dantn.weblaptop.dto.request.update_request.UpdateKhachHang;
 import com.dantn.weblaptop.dto.response.ApiResponse;
+import com.dantn.weblaptop.dto.response.KhachHangResponse;
 import com.dantn.weblaptop.exception.AppException;
 import com.dantn.weblaptop.service.KhachHang_Service;
+import jakarta.mail.MessagingException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
@@ -194,6 +196,39 @@ public class KhachHangController {
                         .data(khachHangService.findCustomerByPhone(phoneNumber))
                         .build()
         );
+    }
+
+    @PutMapping("/update-password")
+    public ResponseEntity<?> updatePassword(@PathVariable("id") Long id, @RequestParam("newPassword") String newPassword) {
+        try {
+            khachHangService.updateForgotPassword(id, newPassword);
+            return ResponseEntity.ok("Update password success.");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error updating password: " + e.getMessage());
+        }
+    }
+
+    @GetMapping("/login")
+    public ResponseEntity<ApiResponse> login(@RequestParam("email") String email, @RequestParam("password") String password) {
+        // Gọi service để thực hiện đăng nhập
+        KhachHangResponse khachHangResponse = khachHangService.login(email, password);
+
+        // Kiểm tra phản hồi từ service
+        if (khachHangResponse.getStatus().equals("Login successful")) {
+            // Nếu thành công, trả về phản hồi 200 OK với thông tin khách hàng
+            ApiResponse response = new ApiResponse(true, "Login successful", khachHangResponse);
+            return ResponseEntity.ok(response);
+        } else {
+            // Nếu thất bại, trả về 401 Unauthorized với thông báo lỗi
+            ApiResponse response = new ApiResponse(false, khachHangResponse.getStatus(), null);
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+        }
+    }
+
+    @GetMapping("/sendemailforgotpassword")
+    public ResponseEntity<?> sentEmail(@RequestParam("email") String email) throws MessagingException {
+        khachHangService.sentEmailForgotPassword(email);
+        return ResponseEntity.ok("Đã gửi email thành công đến khách hàng.");
     }
 
 }

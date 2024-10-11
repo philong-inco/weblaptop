@@ -29,8 +29,6 @@ public class KhachHangMapper_Implement implements KhachHang_Mapper {
         khachHang.setNgaySinh(createKhachHang.getNgaySinh());
         khachHang.setGioiTinh(createKhachHang.getGioiTinh());
         khachHang.setHinhAnh(createKhachHang.getHinhAnh());
-
-
         return khachHang;
     }
 

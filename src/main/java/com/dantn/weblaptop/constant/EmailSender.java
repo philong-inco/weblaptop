@@ -32,42 +32,46 @@ public class EmailSender {
 
         String emailContent = String.format(
                 "<html>" +
-                "<head>" +
-                "<style>" +
-                "body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; margin: 0; padding: 0; }" +
-                ".header { background: linear-gradient(135deg, #ff5722, #ff9800); padding: 20px; text-align: center; color: #fff; }" +
-                ".header img { max-width: 200px; }" +
-                ".content { padding: 20px; background-color: #f4f4f4; }" +
-                ".content h2 { color: #333; font-size: 22px; }" +
-                ".content p { margin: 15px 0; font-size: 16px; }" +
-                ".footer { background-color: #e2e2e2; padding: 15px; text-align: center; font-size: 14px; color: #777; }" +
-                ".button { display: inline-block; padding: 12px 25px; margin-top: 20px; color: #fff; background-color: #ff5722; text-decoration: none; border-radius: 5px; font-size: 16px; }" +
-                "</style>" +
-                "</head>" +
-                "<body>" +
-                "<div class='header'>" +
-                "<img src='https://res.cloudinary.com/daljc2ktr/image/upload/v1723625914/af7ad9ee-03a4-4080-b809-572700a19da6.png' alt='Cửa hàng Laptop ComNoOne' />" +
-                "<h1>Chào mừng bạn đến với Cửa hàng Laptop ComNoOne!</h1>" +
-                "</div>" +
-                "<div class='content'>" +
-                "<h2>Xin chào %s,</h2>" +
-                "<p>Chúng tôi rất vui mừng thông báo rằng bạn đã trở thành một phần của gia đình Cửa hàng Laptop ComNoOne. Với sự gia nhập của bạn, chúng tôi hy vọng sẽ cung cấp cho bạn trải nghiệm mua sắm tuyệt vời nhất và dịch vụ khách hàng tận tâm.</p>" +
-                "<p>Hãy khám phá các sản phẩm và dịch vụ của chúng tôi ngay hôm nay và tận hưởng những ưu đãi đặc biệt dành riêng cho bạn!</p>" +
-                "<a href='#' class='button'>Khám Phá Ngay</a>" +
-                "</div>" +
-                "<div class='footer'>" +
-                "<p>Trân trọng,</p>" +
-                "<p>Đội ngũ Cửa hàng Laptop ComNoOne</p>" +
-                "<p>&copy; 2024 Laptop ComNoOne. All rights reserved.</p>" +
-                "</div>" +
-                "</body>" +
-                "</html>",
-                khachHang.getTen()
+                        "<head>" +
+                        "<style>" +
+                        "body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; margin: 0; padding: 0; }" +
+                        ".header { background: linear-gradient(135deg, #ff5722, #ff9800); padding: 20px; text-align: center; color: #fff; }" +
+                        ".header img { max-width: 200px; }" +
+                        ".content { padding: 20px; background-color: #f4f4f4; }" +
+                        ".content h2 { color: #333; font-size: 22px; }" +
+                        ".content p { margin: 15px 0; font-size: 16px; }" +
+                        ".footer { background-color: #e2e2e2; padding: 15px; text-align: center; font-size: 14px; color: #777; }" +
+                        ".button { display: inline-block; padding: 12px 25px; margin-top: 20px; color: #fff; background-color: #ff5722; text-decoration: none; border-radius: 5px; font-size: 16px; }" +
+                        "</style>" +
+                        "</head>" +
+                        "<body>" +
+                        "<div class='header'>" +
+                        "<img src='https://res.cloudinary.com/daljc2ktr/image/upload/v1723625914/af7ad9ee-03a4-4080-b809-572700a19da6.png' alt='Cửa hàng Laptop ComNoOne' />" +
+                        "<h1>Chào mừng bạn đến với Cửa hàng Laptop ComNoOne!</h1>" +
+                        "</div>" +
+                        "<div class='content'>" +
+                        "<h2>Xin chào %s,</h2>" +
+                        "<p>Chúng tôi rất vui mừng thông báo rằng bạn đã trở thành một phần của gia đình Cửa hàng Laptop ComNoOne. Với sự gia nhập của bạn, chúng tôi hy vọng sẽ cung cấp cho bạn trải nghiệm mua sắm tuyệt vời nhất và dịch vụ khách hàng tận tâm.</p>" +
+                        "<p>Để đăng nhập vào tài khoản của bạn, vui lòng sử dụng thông tin sau:</p>" +
+                        "<p><strong>Tên đăng nhập:</strong> %s</p>" +
+                        "<p><strong>Mật khẩu:</strong> %s</p>" +
+                        "<p>Hãy khám phá các sản phẩm và dịch vụ của chúng tôi ngay hôm nay và tận hưởng những ưu đãi đặc biệt dành riêng cho bạn!</p>" +
+                        "<a href='#' class='button'>Khám Phá Ngay</a>" +
+                        "</div>" +
+                        "<div class='footer'>" +
+                        "<p>Trân trọng,</p>" +
+                        "<p>Đội ngũ Cửa hàng Laptop ComNoOne</p>" +
+                        "<p>&copy; 2024 Laptop ComNoOne. All rights reserved.</p>" +
+                        "</div>" +
+                        "</body>" +
+                        "</html>",
+                khachHang.getTen(), khachHang.getEmail(), khachHang.getMatKhau()
         );
 
         helper.setText(emailContent, true);
         javaMailSender.send(mimeMessage);
     }
+
 
 
 
@@ -127,24 +131,113 @@ public class EmailSender {
     }
 
 
-    // Hàm gửi email khi quên mật khẩu cho nhân viên
-    public void sendForgotPasswordEmail(NhanVien nhanVien, String newPassword) {
-        SimpleMailMessage message = new SimpleMailMessage();
-        message.setTo(nhanVien.getEmail());
-        message.setSubject("Yêu cầu thay đổi mật khẩu từ ComNoOne");
+    public void sendForgotPasswordEmail(KhachHang khachHang, String newPassword) throws MessagingException {
+        MimeMessage message = javaMailSender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(message, true);
 
-        String emailContent = String.format(
-                "Xin chào %s,\n\n" +
-                "Mật khẩu mới của bạn là: %s\n\n" +
-                "Vui lòng đăng nhập và thay đổi mật khẩu ngay sau khi đăng nhập.\n\n" +
-                "Trân trọng,\n" +
-                "Cửa hàng Laptop ComNoOne",
-                nhanVien.getTen(),
-                newPassword
-        );
+        try {
+            helper.setTo(khachHang.getEmail());
+            helper.setSubject("Thông báo: Yêu cầu thay đổi mật khẩu từ Cửa hàng Laptop ComNoOne");
 
-        message.setText(emailContent);
-        javaMailSender.send(message);
+            String emailContent = String.format(
+                    "<html>" +
+                            "<head>" +
+                            "<style>" +
+                            "body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; margin: 0; padding: 0; }" +
+                            ".header { background: linear-gradient(135deg, #ff5722, #ff9800); padding: 20px; text-align: center; color: #fff; }" +
+                            ".header img { max-width: 200px; }" +
+                            ".content { padding: 20px; background-color: #f4f4f4; }" +
+                            ".content h2 { color: #333; font-size: 22px; }" +
+                            ".content p { margin: 15px 0; font-size: 16px; }" +
+                            ".footer { background-color: #e2e2e2; padding: 15px; text-align: center; font-size: 14px; color: #777; }" +
+                            ".button { display: inline-block; padding: 12px 25px; margin-top: 20px; color: #fff; background-color: #4a90e2; text-decoration: none; border-radius: 5px; font-size: 16px; }" +
+                            "</style>" +
+                            "</head>" +
+                            "<body>" +
+                            "<div class='header'>" +
+                            "<img src='https://res.cloudinary.com/daljc2ktr/image/upload/v1723625914/af7ad9ee-03a4-4080-b809-572700a19da6.png' alt='Cửa hàng Laptop ComNoOne' />" +
+                            "<h1>Thông báo thay đổi mật khẩu</h1>" +
+                            "</div>" +
+                            "<div class='content'>" +
+                            "<h2>Kính chào %s,</h2>" +
+                            "<p>Chúng tôi đã nhận được yêu cầu thay đổi mật khẩu cho tài khoản của quý khách tại <strong>Cửa hàng Laptop ComNoOne</strong>. Để bảo mật, hệ thống đã tạo mật khẩu mới cho quý khách. Quý khách vui lòng sử dụng mật khẩu này để đăng nhập vào hệ thống.</p>" +
+                            "<p><strong>Mật khẩu mới:</strong> %s</p>" +
+                            "<p>Chúng tôi khuyến khích quý khách đăng nhập và thay đổi mật khẩu ngay lập tức để đảm bảo tài khoản được bảo vệ tốt nhất. Vui lòng giữ kín thông tin mật khẩu và không chia sẻ cho bất kỳ ai.</p>" +
+                            "<a href='https://comnoone.vn/login' class='button'>Đăng nhập ngay</a>" +
+                            "<p>Nếu quý khách không yêu cầu thay đổi mật khẩu, vui lòng liên hệ ngay với bộ phận chăm sóc khách hàng của chúng tôi qua số điện thoại hoặc email bên dưới để được hỗ trợ và bảo vệ tài khoản của quý khách.</p>" +
+                            "</div>" +
+                            "<div class='footer'>" +
+                            "<p>Trân trọng,</p>" +
+                            "<p><strong>Đội ngũ Cửa hàng Laptop ComNoOne</strong></p>" +
+                            "<p>Email: support@comnoone.vn | Điện thoại: 1900-123-456</p>" +
+                            "<p>&copy; 2024 Cửa hàng Laptop ComNoOne. Mọi quyền được bảo lưu.</p>" +
+                            "</div>" +
+                            "</body>" +
+                            "</html>",
+                    khachHang.getTen(),
+                    newPassword
+            );
+
+            helper.setText(emailContent, true);
+            javaMailSender.send(message);
+        } catch (MessagingException e) {
+            e.printStackTrace(); // Ghi log lỗi khi gửi email thất bại
+        }
+    }
+
+
+    public void sendForgotPasswordEmailNhanVien(NhanVien nhanVien, String newPassword) throws MessagingException {
+        MimeMessage message = javaMailSender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(message, true);
+
+        try {
+            helper.setTo(nhanVien.getEmail());
+            helper.setSubject("Thông báo: Yêu cầu thay đổi mật khẩu từ Cửa hàng Laptop ComNoOne");
+
+            String emailContent = String.format(
+                    "<html>" +
+                            "<head>" +
+                            "<style>" +
+                            "body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; margin: 0; padding: 0; }" +
+                            ".header { background: linear-gradient(135deg, #ff5722, #ff9800); padding: 20px; text-align: center; color: #fff; }" +
+                            ".header img { max-width: 200px; }" +
+                            ".content { padding: 20px; background-color: #f4f4f4; }" +
+                            ".content h2 { color: #333; font-size: 22px; }" +
+                            ".content p { margin: 15px 0; font-size: 16px; }" +
+                            ".footer { background-color: #e2e2e2; padding: 15px; text-align: center; font-size: 14px; color: #777; }" +
+                            ".button { display: inline-block; padding: 12px 25px; margin-top: 20px; color: #fff; background-color: #4a90e2; text-decoration: none; border-radius: 5px; font-size: 16px; }" +
+                            "</style>" +
+                            "</head>" +
+                            "<body>" +
+                            "<div class='header'>" +
+                            "<img src='https://res.cloudinary.com/daljc2ktr/image/upload/v1723625914/af7ad9ee-03a4-4080-b809-572700a19da6.png' alt='Cửa hàng Laptop ComNoOne' />" +
+                            "<h1>Thông báo thay đổi mật khẩu</h1>" +
+                            "</div>" +
+                            "<div class='content'>" +
+                            "<h2>Kính chào %s,</h2>" +
+                            "<p>Chúng tôi đã nhận được yêu cầu thay đổi mật khẩu cho tài khoản của quý khách tại <strong>Cửa hàng Laptop ComNoOne</strong>. Để bảo mật, hệ thống đã tạo mật khẩu mới cho quý khách. Quý khách vui lòng sử dụng mật khẩu này để đăng nhập vào hệ thống.</p>" +
+                            "<p><strong>Mật khẩu mới:</strong> %s</p>" +
+                            "<p>Chúng tôi khuyến khích quý khách đăng nhập và thay đổi mật khẩu ngay lập tức để đảm bảo tài khoản được bảo vệ tốt nhất. Vui lòng giữ kín thông tin mật khẩu và không chia sẻ cho bất kỳ ai.</p>" +
+                            "<a href='https://comnoone.vn/login' class='button'>Đăng nhập ngay</a>" +
+                            "<p>Nếu quý khách không yêu cầu thay đổi mật khẩu, vui lòng liên hệ ngay với bộ phận chăm sóc khách hàng của chúng tôi qua số điện thoại hoặc email bên dưới để được hỗ trợ và bảo vệ tài khoản của quý khách.</p>" +
+                            "</div>" +
+                            "<div class='footer'>" +
+                            "<p>Trân trọng,</p>" +
+                            "<p><strong>Đội ngũ Cửa hàng Laptop ComNoOne</strong></p>" +
+                            "<p>Email: support@comnoone.vn | Điện thoại: 1900-123-456</p>" +
+                            "<p>&copy; 2024 Cửa hàng Laptop ComNoOne. Mọi quyền được bảo lưu.</p>" +
+                            "</div>" +
+                            "</body>" +
+                            "</html>",
+                    nhanVien.getTen(),
+                    newPassword
+            );
+
+            helper.setText(emailContent, true);
+            javaMailSender.send(message);
+        } catch (MessagingException e) {
+            e.printStackTrace(); // Ghi log lỗi khi gửi email thất bại
+        }
     }
 
     public void sendEmailCoupons(KhachHang khachHang, PhieuGiamGia phieuGiamGia) throws MessagingException {

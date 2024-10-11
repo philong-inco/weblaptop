@@ -5,6 +5,7 @@ import com.dantn.weblaptop.dto.request.create_request.CreateNhanVien;
 import com.dantn.weblaptop.dto.request.update_request.UpdateNhanVien;
 import com.dantn.weblaptop.dto.response.NhanVienResponse;
 import com.dantn.weblaptop.dto.response.VaiTro_Response;
+import jakarta.mail.MessagingException;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
@@ -40,7 +41,7 @@ public interface NhanVien_Service {
 
     boolean changeEmail(ChangeEmail_Dto changeEmailDto, String newEmailNv);
 
-    void sendForgotPasswordEmailForNhanVien(String email);
+    void sendForgotPasswordEmailForNhanVien(String email) throws MessagingException;
 
     void updatePassword(String newPassword, String email);
 
