@@ -198,7 +198,7 @@ public class KhachHangController {
         );
     }
 
-    @PutMapping("/update-password")
+    @PutMapping("/update-password/{id}")
     public ResponseEntity<?> updatePassword(@PathVariable("id") Long id, @RequestParam("newPassword") String newPassword) {
         try {
             khachHangService.updateForgotPassword(id, newPassword);
