@@ -209,21 +209,22 @@ public class KhachHangController {
     }
 
     @GetMapping("/login")
-    public ResponseEntity<ApiResponse> login(@RequestParam("email") String email, @RequestParam("password") String password) {
+    public ResponseEntity<?> login(@RequestParam("email") String email, @RequestParam("password") String password) {
         // Gọi service để thực hiện đăng nhập
         KhachHangResponse khachHangResponse = khachHangService.login(email, password);
 
         // Kiểm tra phản hồi từ service
         if (khachHangResponse.getStatus().equals("Login successful")) {
             // Nếu thành công, trả về phản hồi 200 OK với thông tin khách hàng
-            ApiResponse response = new ApiResponse(true, "Login successful", khachHangResponse);
-            return ResponseEntity.ok(response);
+            KhachHangResponse find = khachHangService.findKhachHangByEmail(khachHangResponse.getEmail());
+            return ResponseEntity.ok(find);
         } else {
             // Nếu thất bại, trả về 401 Unauthorized với thông báo lỗi
             ApiResponse response = new ApiResponse(false, khachHangResponse.getStatus(), null);
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
         }
     }
+
 
     @GetMapping("/sendemailforgotpassword")
     public ResponseEntity<?> sentEmail(@RequestParam("email") String email) throws MessagingException {
