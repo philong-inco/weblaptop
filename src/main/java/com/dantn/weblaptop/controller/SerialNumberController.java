@@ -27,6 +27,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
@@ -162,11 +163,11 @@ public class SerialNumberController {
     public ResponseEntity<ResponseLong<Boolean>> existForAdd(@RequestParam("ma") String ma) {
         boolean check = serialNumberService.existByAdd(ma);
         return (check) ?
-                ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseLong<>(
-                        999, "Existed!", true, null, null, null, null
+                ResponseEntity.status(HttpStatus.OK).body(new ResponseLong<>(
+                        200, "Existed!", true, null, null, null, null
                 ))
                 :
-                ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseLong<>(
+                ResponseEntity.status(HttpStatus.OK).body(new ResponseLong<>(
                         200, "Valid", false, null, null, null, null
                 ));
     }
@@ -177,17 +178,17 @@ public class SerialNumberController {
         try {
             id = Long.valueOf(idStr.trim());
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseLong<>(
-                    999, "Id invalid!", true, null, null, null, null
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseLong<>(
+                    200, "Id invalid!", true, null, null, null, null
             ));
         }
         boolean check = serialNumberService.existByUpdate(ma, id);
         return (check) ?
-                ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseLong<>(
-                        999, "Existed!", true, null, null, null, null
+                ResponseEntity.status(HttpStatus.OK).body(new ResponseLong<>(
+                        200, "Existed!", true, null, null, null, null
                 ))
                 :
-                ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseLong<>(
+                ResponseEntity.status(HttpStatus.OK).body(new ResponseLong<>(
                         200, "Valid", false, null, null, null, null
                 ));
     }
@@ -211,10 +212,12 @@ public class SerialNumberController {
     public ResponseEntity<ResponseLong<List<SerialNumberResponse>>> findAllBySPCTId(@PathVariable("id")Long id)
     {
         List<SerialNumberResponse> result = serialNumberService.findAllBySanPhamChiTietId(id);
-        if (result != null || result.size() > 0)
+        if (result != null || result.size() > 0) {
+            result.sort((Comparator.comparingInt(SerialNumberResponse::getTrangThai)));
             return ResponseEntity.ok().body(new ResponseLong<>(
                     200, "Get successfully", result
             ));
+        }
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseLong<>(
                 404, "Not have serials", null
         ));

@@ -23,4 +23,6 @@ public interface AnhSanPhamService {
 
     void deleteAllByIdSPCT(Long idSPCT);
 
+    List<String> getAll();
+
 }
