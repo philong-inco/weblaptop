@@ -40,6 +40,8 @@ public class HoaDonHinhThucThanhToan extends BaseEntity {
 
     @Column(name = "so_tien")
     BigDecimal soTien;
+    @Column(name = "tien_nhan")
+    BigDecimal tienNhan;
     @Column(name = "loai_thanh_toan")
     Integer loaiThanhToan; // 0 đã tt : 1 trả sau
 }

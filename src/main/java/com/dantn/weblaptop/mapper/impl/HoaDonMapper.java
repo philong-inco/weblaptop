@@ -40,6 +40,7 @@ public class HoaDonMapper {
         response.setNguoiTao(hoaDon.getNguoiTao());
         response.setNgayTao(ConvertTime.convert(hoaDon.getNgayTao()+""));
         response.setTrangThai(hoaDon.getTrangThai());
+        response.setTongSanPham(hoaDon.getTongSanPham());
 
         response.setTienShip(hoaDon.getTienShip());
         response.setTienGiamHangKhachHang(hoaDon.getTienGiamHangKhachHang());

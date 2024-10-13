@@ -67,6 +67,8 @@ public class HoaDon extends BaseEntity {
     @Column(name = "ngay_nhan_hang")
     LocalDateTime ngayNhanHang;
 
+    @Column(name = "tong_san_pham")
+    Integer tongSanPham;
     @Column(name = "ngay_thanh_toan")
     LocalDateTime ngayThanhToan;
     //

@@ -10,6 +10,7 @@ import com.dantn.weblaptop.exception.AppException;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.Optional;
 
@@ -36,6 +37,8 @@ public interface HoaDonService {
 
     ResultPaginationResponse filterHoaDon (Specification<HoaDon> specification, Pageable pageable);
 
+    byte[] export (Specification<HoaDon> specification) throws IOException;
+
     void deleteBillByCode (String code) ;
 
     HoaDonResponse addCustomerToBill (Long customerId, String billCode) throws AppException;
@@ -51,4 +54,6 @@ public interface HoaDonService {
     Long countBillByDate(Long startDate, Long endDate);
 
     BigDecimal sumBillByDate(Long startDate, Long endDate);
+
+     void updateCustomerRank(Long idKhachHang) ;
 }

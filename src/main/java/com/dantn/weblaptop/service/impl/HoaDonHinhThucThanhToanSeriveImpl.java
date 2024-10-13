@@ -17,6 +17,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.List;
 
 @Service
@@ -30,14 +32,15 @@ public class HoaDonHinhThucThanhToanSeriveImpl implements HoaDonHinhThucThanhToa
 
     @Override
     public List<HoaDonHinhThucThanhToanResponse> getAllByBillCode(String billCode) {
-        List<HoaDonHinhThucThanhToan> result = hoaDonHinhThucThanhToanRepository.findByHoaDonMa(billCode);
+        List<HoaDonHinhThucThanhToan> result = hoaDonHinhThucThanhToanRepository.findAllByHoaDonMa(billCode);
         return result.stream().map(hoaDonHinhThucThanhToan ->
         {
             return HoaDonHinhThucThanhToanResponse.builder()
                     .id(hoaDonHinhThucThanhToan.getId())
                     .soTien(hoaDonHinhThucThanhToan.getSoTien())
                     .loaiThanhToan(hoaDonHinhThucThanhToan.getLoaiThanhToan())
-                    .phuongThanhToan(hoaDonHinhThucThanhToan.getHinhThucThanhToan().getId())
+                    .phuongThanhToan(hoaDonHinhThucThanhToan.getHinhThucThanhToan() != null ? hoaDonHinhThucThanhToan.getHinhThucThanhToan().getId() : null)
+                    .tienNhan(hoaDonHinhThucThanhToan.getTienNhan())
                     .ngayTao(ConvertTime.convert(hoaDonHinhThucThanhToan.getNgayTao() + ""))
                     .ngaySua(ConvertTime.convert(hoaDonHinhThucThanhToan.getNgaySua() + ""))
                     .nguoiTao(hoaDonHinhThucThanhToan.getNguoiTao())
@@ -52,17 +55,40 @@ public class HoaDonHinhThucThanhToanSeriveImpl implements HoaDonHinhThucThanhToa
         HoaDon bill = hoaDonRepository.findHoaDonByMa(billCode).orElseThrow(
                 () -> new AppException(ErrorCode.BILL_NOT_FOUND));
         HoaDonHinhThucThanhToan paymentHistory = new HoaDonHinhThucThanhToan();
+        paymentHistory.setSoTien(request.getSoTien());
+        paymentHistory.setTienNhan(request.getTienNhan());
         paymentHistory.setHoaDon(bill);
         paymentHistory.setLoaiThanhToan(request.getLoaiThanhToan());
         paymentHistory.setHinhThucThanhToan(payment);
+        bill.setEmail(request.getEmail());
+        bill.setSdt(request.getSdt());
+        bill.setTenKhachHang(request.getTen());
         if (request.getLoaiThanhToan() == 0) {
-            // tt luoon
-            paymentHistory.setSoTien(request.getSoTien());
         } else {
             // suyx nghix theem
-            paymentHistory.setSoTien(bill.getTongTienPhaiTra().add(bill.getTienShip()));
+            System.out.println("Crete trả sau");
+        }
+
+
+        List<HoaDonHinhThucThanhToan> listHDHTT = hoaDonHinhThucThanhToanRepository.findAllByHoaDonIdAndLoaiThanhToan(bill.getId(), 0);
+        for (HoaDonHinhThucThanhToan hoaDonHinhThucThanhToan : listHDHTT) {
+            // So sánh hoaDonHinhThucThanhToan.getSoTien() với request.getSoTien()
+            if (hoaDonHinhThucThanhToan.getSoTien().compareTo(request.getSoTien()) > 0) {
+                // Nếu hoaDonHinhThucThanhToan.getSoTien() lớn hơn request.getSoTien(), set lại giá trị
+                hoaDonHinhThucThanhToan.setSoTien(request.getSoTien());
+            } else if (hoaDonHinhThucThanhToan.getSoTien().compareTo(request.getSoTien()) < 0) {
+                // Nếu nhỏ hơn, trừ đi phần chênh lệch
+                BigDecimal difference = request.getSoTien().subtract(hoaDonHinhThucThanhToan.getSoTien());
+                hoaDonHinhThucThanhToan.setSoTien(hoaDonHinhThucThanhToan.getSoTien().subtract(difference));
+            }
+
+            // Lưu lại sau khi cập nhật giá trị
+            hoaDonHinhThucThanhToanRepository.save(hoaDonHinhThucThanhToan);
         }
         hoaDonHinhThucThanhToanRepository.save(paymentHistory);
+//        bill.setLoaiHoaDon(request.getLoaiHoaDon());
+//        bill.setTienShip(request.getTienShip());
+        hoaDonRepository.save(bill);
         return null;
     }
 

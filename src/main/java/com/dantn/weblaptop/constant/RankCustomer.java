@@ -51,7 +51,7 @@ public enum RankCustomer {
                 return customerRank.getRank(); // Trả về hạng tương ứng
             }
         }
-        return null;
+        return -1;
     }
 
 }

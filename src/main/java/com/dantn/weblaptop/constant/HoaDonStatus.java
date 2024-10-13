@@ -4,13 +4,13 @@ public enum HoaDonStatus {
     DON_MOI("Đơn mới"),
     CHO_THANH_TOAN("Chờ thanh toán"),
     CHO_XAC_NHAN("Chờ xác nhận"),
-    CHO_GIAO("Chờ giao"),
-    DANG_GIAO("Đang giao"),
+    CHO_GIAO("Chờ lấy hàng"),
+    DANG_GIAO("Đang vận chuyển"),
     TRA_HANG_HOAN_TIEN("Trả hàng hoàn tiền"),
     HOAN_THANH("Hoàn thành"),
     HUY("Hủy"),
     XOA("Xóa"),// bỏ
-    XAC_NHAN("Xác nhận")
+    XAC_NHAN("Đã xác nhận")
     ;
 
     HoaDonStatus(String name) {

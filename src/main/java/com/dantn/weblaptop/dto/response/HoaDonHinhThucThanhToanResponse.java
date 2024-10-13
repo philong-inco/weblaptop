@@ -16,11 +16,11 @@ public class HoaDonHinhThucThanhToanResponse {
 
     Long id;
     BigDecimal soTien;
+    BigDecimal tienNhan;
     Integer loaiThanhToan;
     String ngayTao;
     String ngaySua;
     Long phuongThanhToan;
     String nguoiTao;
-    ;
 
 }

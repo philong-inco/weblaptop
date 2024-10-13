@@ -39,6 +39,10 @@ public interface SerialNumberDaBanRepository extends JpaRepository<SerialNumberD
             "WHERE hd.ma = :billCode", nativeQuery = true)
     List<Long> getAllSerialNumberInBillByBillCode(@Param("billCode") String billCode);
 
+    @Query(value = "SELECT sndb.serial_number_id FROM serial_number_da_ban sndb " +
+            "WHERE sndb.hoa_don_id = :billId", nativeQuery = true)
+    List<Long> getAllSerialNumberInBillByBillId(@Param("billId") Long billId);
+
     @Query(value = "SELECT * FROM serial_number_da_ban WHERE serial_number_id IN :serialNumberIds", nativeQuery = true)
     List<SerialNumberDaBan> findAllBySerialNumberIdIn(@Param("serialNumberIds") List<Long> serialNumberIds);
 

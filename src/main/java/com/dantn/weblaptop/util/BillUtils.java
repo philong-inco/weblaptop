@@ -22,6 +22,8 @@ public class BillUtils {
                 return 6;
             case HUY:
                 return 7;
+            case XOA:
+                return 8;
             case XAC_NHAN:
                 return 9;
             default:
