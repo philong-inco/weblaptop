@@ -242,7 +242,8 @@ public class SanPhamController extends GenericsController<SanPham, Long, SanPham
 
 
         Page<SanPhamClientDTO> pageResult = sanPhamService.findWithFilterByIdClient(filter, pageable);
-        List<SanPhamClientDTO> listResult = fillDataPromo(pageResult);
+        List<SanPhamClientDTO> listResult = new ArrayList<>();
+        listResult = fillDataPromo(pageResult);
 
 //        List<SanPhamClientDTO> dataFake = FakeDataForClient.fakeDataSanPhamForClient();
 //        List<SanPhamClientDTO> listResult = new ArrayList<>();
@@ -282,9 +283,12 @@ public class SanPhamController extends GenericsController<SanPham, Long, SanPham
             // tính các trường bên dưới
             // ảnh
             String image = "";
-            String[] listImage = ConvertStringToArray.toArraySplitImageUrl(maxGiaBan.get().getListUrlAnhSanPham());
-            if (listImage != null && listImage.length > 0)
-                image = listImage[0];
+            if (maxGiaBan.isPresent()){
+                String[] listImage = ConvertStringToArray.toArraySplitImageUrl(maxGiaBan.get().getListUrlAnhSanPham());
+                if (listImage != null && listImage.length > 0)
+                    image = listImage[0];
+            }
+
 
             Optional<SanPhamChiTietClientDTO> spctWithBestPromo = spctClient.stream()
                     .filter(spct -> spct.getSoTienDuocGiam() != null && !spct.getSoTienDuocGiam().isEmpty())
@@ -294,16 +298,21 @@ public class SanPhamController extends GenericsController<SanPham, Long, SanPham
             Boolean banChay = true;
 
             // tên khuyến mãi
-            String tenKhuyenMai =spctWithBestPromo.get().getTenKhuyenMai();
+            String tenKhuyenMai = "";
+            String soTienGiam = "";
+            String giaSauKhuyenMai = "";
+            if (spctWithBestPromo.isPresent()){
+                spctWithBestPromo.get().getTenKhuyenMai();
+                soTienGiam = spctWithBestPromo.get().getSoTienDuocGiam();
+                giaSauKhuyenMai = spctWithBestPromo.get().getGiaSauKhuyenMai();
+            }
 
-            // số tiền giảm
-            String soTienGiam =spctWithBestPromo.get().getSoTienDuocGiam();
 
-            // giá sau khuyến mãi
-            String giaSauKhuyenMai = spctWithBestPromo.get().getGiaSauKhuyenMai();
             // set
-            dto.setGiaMin(minGiaBan.get().getGiaBan());
-            dto.setGiaMax(maxGiaBan.get().getGiaBan());
+            if (minGiaBan.isPresent())
+                dto.setGiaMin(minGiaBan.get().getGiaBan());
+            if (maxGiaBan.isPresent())
+                dto.setGiaMax(maxGiaBan.get().getGiaBan());
 
             dto.setGiaSauKhuyenMai(giaSauKhuyenMai);
             dto.setSoTienGiam(soTienGiam);
