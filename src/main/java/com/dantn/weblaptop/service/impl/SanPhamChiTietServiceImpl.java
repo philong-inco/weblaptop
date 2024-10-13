@@ -104,7 +104,7 @@ public class SanPhamChiTietServiceImpl implements SanPhamChiTietService {
 
     private void afterAdd(SanPhamChiTietCreate create, SanPhamChiTiet entity) {
         String[] serinumberList = ConvertStringToArray.toArray(create.getListSerialNumber());
-        String[] anhSanPhamList = ConvertStringToArray.toArray(create.getListUrlAnhSanPham());
+        String[] anhSanPhamList = ConvertStringToArray.toArraySplitImageUrl(create.getListUrlAnhSanPham());
         if (serinumberList != null && serinumberList.length > 0) {
             for (int i = 0; i < serinumberList.length; i++) {
                 SerialNumberCreate newSeriNumber = SerialNumberCreate.builder()

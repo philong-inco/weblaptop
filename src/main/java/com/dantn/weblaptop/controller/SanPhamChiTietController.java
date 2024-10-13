@@ -202,7 +202,7 @@ public class SanPhamChiTietController {
             @RequestParam(value = "idProduct", required = true) Long idProduct){
         List<SanPhamChiTietResponse> responses = service.getAllListBySanPhamId(idProduct);
         if ( responses == null || responses.size() == 0)
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseLong<>(
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseLong<>(
                     404, "Không có biến thể nào trên ID Product này",
                     null, null, null, null, null
             ));
