@@ -112,7 +112,7 @@ public class SerialNumberDaBanServiceImpl implements SerialNumberDaBanService {
             List<Long> idsToDelete = serialNumberDaBansToDelete.stream()
                     .map(serialNumberDaBan -> serialNumberDaBan.getSerialNumber().getId())
                     .collect(Collectors.toList());
-            existingBill.setTongSanPham(existingBill.getTongSanPham()-idsToDelete.size());
+            existingBill.setTongSanPham(existingBill.getTongSanPham() - idsToDelete.size());
             serialNumberRepository.updateStatusByIdsNative(0, idsToDelete);
             serialNumberDaBanRepository.deleteAll(serialNumberDaBansToDelete);
         }
@@ -175,7 +175,7 @@ public class SerialNumberDaBanServiceImpl implements SerialNumberDaBanService {
 //                newHoaDonHinhThucThanhToan.setHoaDon(existingBill);
 //                hoaDonHinhThucThanhToanRepository.save(newHoaDonHinhThucThanhToan);
 //            }
-            existingBill.setTongSanPham(existingBill.getTongSanPham()+idsToCreate.size());
+            existingBill.setTongSanPham(existingBill.getTongSanPham() + idsToCreate.size());
             serialNumberRepository.updateStatusByIdsNative(1, idsToCreate);
             serialNumberDaBanRepository.saveAll(newSerialNumberDaBans);
         }
@@ -195,7 +195,7 @@ public class SerialNumberDaBanServiceImpl implements SerialNumberDaBanService {
         if (!serialNumbersToDelete.isEmpty()) {
             HoaDon existingBill = hoaDonRepository.findHoaDonByMa(request.getBillCode()).orElseThrow(
                     () -> new AppException(ErrorCode.BILL_NOT_FOUND));
-            existingBill.setTongSanPham(existingBill.getTongSanPham()-serialNumbersToDelete.size());
+            existingBill.setTongSanPham(existingBill.getTongSanPham() - serialNumbersToDelete.size());
             serialNumberDaBanRepository.deleteAll(serialNumbersToDelete);
             List<Long> serialNumberIds = serialNumbersToDelete.stream()
                     .map(serialNumberDaBan -> serialNumberDaBan.getSerialNumber().getId())
@@ -292,14 +292,6 @@ public class SerialNumberDaBanServiceImpl implements SerialNumberDaBanService {
         return tongTien;
     }
 
-    //    hàm này gọi ở hàm trên
-//    private void prepareTheBill
-//    (String codeBill) {
-//        HoaDon hoaDon = hoaDonRepository.findHoaDonByMa(codeBill).get();
-//        List<SerialNumberDaBanResponse> listSerialNumberDaBan = getSerialNumberDaBanPage(codeBill);
-//        getBigDecimal(hoaDon, listSerialNumberDaBan, hoaDonRepository);
-//    }
-
     private Optional<PhieuGiamGia> getPhieuGiamGia(HoaDon hoaDon, BigDecimal tongTien) {
         if (hoaDon.getKhachHang() == null) {
             System.out.println("Phiếu kh lẻ");
@@ -353,38 +345,48 @@ public class SerialNumberDaBanServiceImpl implements SerialNumberDaBanService {
             existingBill.setTongTienPhaiTra(newTongTienPhaiTra);
         }
         if ((existingBill.getTrangThai() != HoaDonStatus.DON_MOI) && existingBill.getLoaiHoaDon() == 1) {
-            // Tìm kiếm hình thức thanh toán
-            Optional<HoaDonHinhThucThanhToan> optionalTraSau =
-                    hoaDonHinhThucThanhToanRepository.findByHoaDonIdAndLoaiThanhToan(existingBill.getId(), 1);
-            Optional<HoaDonHinhThucThanhToan> optionalTraTruoc =
-                    hoaDonHinhThucThanhToanRepository.findByHoaDonIdAndLoaiThanhToan(existingBill.getId(), 0);
-
-            // Cập nhật trạng thái thanh toán
-            if (optionalTraTruoc.isPresent()) {
-                existingBill.setThanhToanSau(1);
-                // Tính tổng số tiền phải trả cộng với tiền ship
-                BigDecimal tongTienPhaiTraVaShip = existingBill.getTongTienPhaiTra().add(existingBill.getTienShip());
-                // Lấy số tiền đã thanh toán
-                BigDecimal soTienDaThanhToan = optionalTraTruoc.get().getSoTien();
-
-                // Tính số tiền chênh lệch
-                BigDecimal soTienChenhLech = tongTienPhaiTraVaShip.subtract(soTienDaThanhToan);
-
-                // Chỉ thực hiện lưu nếu có số tiền chênh lệch lớn hơn 0
-                if (soTienChenhLech.compareTo(BigDecimal.ZERO) <= 0) {
-                    optionalTraSau.ifPresent(hoaDonHinhThucThanhToanRepository::delete);
-                } else {
-                    // Chỉ thực hiện lưu nếu có số tiền chênh lệch lớn hơn 0
-                    HoaDonHinhThucThanhToan hoaDonHinhThucThanhToan = optionalTraSau.orElse(new HoaDonHinhThucThanhToan());
-                    hoaDonHinhThucThanhToan.setSoTien(soTienChenhLech);
-                    hoaDonHinhThucThanhToan.setTienNhan(BigDecimal.ZERO);
-                    hoaDonHinhThucThanhToan.setLoaiThanhToan(1);
-                    hoaDonHinhThucThanhToan.setHoaDon(existingBill);
-                    hoaDonHinhThucThanhToanRepository.save(hoaDonHinhThucThanhToan);
-                }
-            }
+            updatePayment(existingBill);
         }
+    }
 
+    public void updatePayment(HoaDon existingBill) {
+        System.out.println("Vào");
+        Optional<HoaDonHinhThucThanhToan> optionalTraSau =
+                hoaDonHinhThucThanhToanRepository.findByHoaDonIdAndLoaiThanhToan(existingBill.getId(), 1);
+        Optional<HoaDonHinhThucThanhToan> optionalTraTruoc =
+                hoaDonHinhThucThanhToanRepository.findByHoaDonIdAndLoaiThanhToan(existingBill.getId(), 0);
+
+        // Cập nhật trạng thái thanh toán
+        if (optionalTraTruoc.isPresent()) {
+            existingBill.setThanhToanSau(1);
+            // Tính tổng số tiền phải trả cộng với tiền ship
+            BigDecimal tongTienPhaiTraVaShip = existingBill.getTongTienPhaiTra().add(existingBill.getTienShip());
+            // Lấy số tiền đã thanh toán
+            BigDecimal soTienDaThanhToan = optionalTraTruoc.get().getSoTien();
+
+            // Tính số tiền chênh lệch
+            BigDecimal soTienChenhLech = tongTienPhaiTraVaShip.subtract(soTienDaThanhToan);
+
+            // Chỉ thực hiện lưu nếu có số tiền chênh lệch lớn hơn 0
+            if (soTienChenhLech.compareTo(BigDecimal.ZERO) <= 0) {
+                optionalTraSau.ifPresent(hoaDonHinhThucThanhToanRepository::delete);
+            } else {
+                // Chỉ thực hiện lưu nếu có số tiền chênh lệch lớn hơn 0
+                HoaDonHinhThucThanhToan hoaDonHinhThucThanhToan = optionalTraSau.orElse(new HoaDonHinhThucThanhToan());
+                hoaDonHinhThucThanhToan.setSoTien(soTienChenhLech);
+                hoaDonHinhThucThanhToan.setTienNhan(BigDecimal.ZERO);
+                hoaDonHinhThucThanhToan.setLoaiThanhToan(1);
+                hoaDonHinhThucThanhToan.setHoaDon(existingBill);
+                hoaDonHinhThucThanhToanRepository.save(hoaDonHinhThucThanhToan);
+            }
+        } else {
+            HoaDonHinhThucThanhToan hoaDonHinhThucThanhToan = optionalTraSau.orElse(new HoaDonHinhThucThanhToan());
+            hoaDonHinhThucThanhToan.setSoTien(existingBill.getTongTienPhaiTra().add(existingBill.getTienShip()));
+            hoaDonHinhThucThanhToan.setTienNhan(BigDecimal.ZERO);
+            hoaDonHinhThucThanhToan.setLoaiThanhToan(1);
+            hoaDonHinhThucThanhToan.setHoaDon(existingBill);
+            hoaDonHinhThucThanhToanRepository.save(hoaDonHinhThucThanhToan);
+        }
     }
 
 }

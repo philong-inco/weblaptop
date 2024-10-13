@@ -10,8 +10,8 @@ public enum HoaDonStatus {
     HOAN_THANH("Hoàn thành"),
     HUY("Hủy"),
     XOA("Xóa"),// bỏ
-    XAC_NHAN("Đã xác nhận")
-    ;
+    XAC_NHAN("Đã xác nhận"),
+    DA_THANH_TOAN("Đã thanh toán");
 
     HoaDonStatus(String name) {
         this.name = name;

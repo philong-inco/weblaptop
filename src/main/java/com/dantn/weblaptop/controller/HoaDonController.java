@@ -39,23 +39,6 @@ public class HoaDonController {
     HoaDonServiceImpl hoaDonService;
     SendEmailBill sendEmailBill;
 
-    // code test 1 2 3
-    @GetMapping("test/{code}")
-    public ResponseEntity<ApiResponse> a(@PathVariable(name = "code") String code) throws AppException {
-        return ResponseEntity.ok(ApiResponse.builder().statusCode(HttpStatus.OK.value())
-                .data(hoaDonService.prepareTheBill(code)).build());
-    }
-
-    @GetMapping("test-email")
-    public ResponseEntity<ApiResponse> sendMail(
-
-    ) throws AppException {
-//        sendEmailBill.sendEmailXacNhan( "BILL1679","Đơn hàng của bạn đã được : ");
-        return ResponseEntity.ok(ApiResponse.builder().statusCode(HttpStatus.OK.value())
-                .message("oke ")
-                .data(null).build());
-    }
-
     @GetMapping("all")
     public ResponseEntity<ApiResponse> filterBill(
             @Filter Specification<HoaDon> specification,
@@ -71,16 +54,10 @@ public class HoaDonController {
     @GetMapping("/export")
     public ResponseEntity<byte[]> exportHoaDonToExcel(
             @Filter Specification<HoaDon> specification) throws IOException {
-
-        // Lấy dữ liệu Excel từ service
         byte[] excelData = hoaDonService.export(specification);
-
-        // Tạo header để trả về file dưới dạng tải xuống
         HttpHeaders headers = new HttpHeaders();
         headers.set(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=hoadon_" + LocalDateTime.now().toLocalTime() + ".xlsx");
         headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
-
-        // Trả về file Excel để tải xuống
         return ResponseEntity.ok()
                 .headers(headers)
                 .body(excelData);
