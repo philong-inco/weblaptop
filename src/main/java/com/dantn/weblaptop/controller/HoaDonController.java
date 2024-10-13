@@ -4,12 +4,12 @@ import com.dantn.weblaptop.dto.request.create_request.CreateLichSuHoaDon;
 import com.dantn.weblaptop.dto.request.update_request.UpdateDiaChiHoaDonRequest;
 import com.dantn.weblaptop.dto.request.update_request.UpdateHoaDonRequest;
 import com.dantn.weblaptop.dto.response.ApiResponse;
-import com.dantn.weblaptop.dto.response.HoaDonResponse;
 import com.dantn.weblaptop.entity.hoadon.HoaDon;
 import com.dantn.weblaptop.exception.AppException;
 import com.dantn.weblaptop.service.HoaDonService;
 import com.dantn.weblaptop.service.LichSuHoaDonService;
 import com.dantn.weblaptop.service.impl.HoaDonServiceImpl;
+import com.dantn.weblaptop.util.SendEmailBill;
 import com.turkraft.springfilter.boot.Filter;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;
@@ -17,14 +17,15 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.math.BigDecimal;
-import java.time.Instant;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.Optional;
 
 @RestController
@@ -36,14 +37,7 @@ public class HoaDonController {
     LichSuHoaDonService billHistoryService;
     HoaDonService billService;
     HoaDonServiceImpl hoaDonService;
-
-    // code test 1 2 3
-    @GetMapping("test/{code}")
-    public ResponseEntity<ApiResponse> a(@PathVariable(name = "code") String code) throws AppException {
-        return ResponseEntity.ok(ApiResponse.builder().statusCode(HttpStatus.OK.value())
-                .data(hoaDonService.prepareTheBill(code)).build());
-    }
-
+    SendEmailBill sendEmailBill;
 
     @GetMapping("all")
     public ResponseEntity<ApiResponse> filterBill(
@@ -56,6 +50,19 @@ public class HoaDonController {
         apiResponse.setData(billService.filterHoaDon(specification, pageable));
         return ResponseEntity.ok(apiResponse);
     }
+
+    @GetMapping("/export")
+    public ResponseEntity<byte[]> exportHoaDonToExcel(
+            @Filter Specification<HoaDon> specification) throws IOException {
+        byte[] excelData = hoaDonService.export(specification);
+        HttpHeaders headers = new HttpHeaders();
+        headers.set(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=hoadon_" + LocalDateTime.now().toLocalTime() + ".xlsx");
+        headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+        return ResponseEntity.ok()
+                .headers(headers)
+                .body(excelData);
+    }
+
 
     // Lấy thông tin hd thoe ID
     @GetMapping("{id}")
@@ -137,13 +144,13 @@ public class HoaDonController {
     @PostMapping("pay-counter/{billCode}")
     public ResponseEntity<ApiResponse> payCounter(
             @PathVariable(name = "billCode") String billCode,
-            @RequestBody @Valid UpdateHoaDonRequest request
+            @RequestBody  UpdateHoaDonRequest request
     ) throws AppException {
         return ResponseEntity.status(HttpStatus.CREATED).body(
                 ApiResponse.builder()
                         .statusCode(HttpStatus.CREATED.value())
                         .message("Pay counter success")
-                        .data(billService.payCounter(billCode , request))
+                        .data(billService.payCounter(billCode, request))
                         .build()
         );
     }
@@ -152,7 +159,7 @@ public class HoaDonController {
     public ResponseEntity<ApiResponse> updateAddressInBill(
             @PathVariable(name = "billCode") String billCode,
             @RequestBody @Valid UpdateDiaChiHoaDonRequest request) throws AppException {
-        billService.updateAddressInBill(billCode,request);
+        billService.updateAddressInBill(billCode, request);
         return ResponseEntity.status(HttpStatus.CREATED).body(
                 ApiResponse.builder()
                         .statusCode(HttpStatus.CREATED.value())
@@ -196,7 +203,7 @@ public class HoaDonController {
             @PathVariable(name = "code") String code,
             @RequestParam(name = "status") String status,
             @RequestBody @Valid CreateLichSuHoaDon request
-            ) throws AppException {
+    ) throws AppException {
         billService.updateStatus(code, status, request);
         ApiResponse<Object> apiResponse = ApiResponse
                 .builder()

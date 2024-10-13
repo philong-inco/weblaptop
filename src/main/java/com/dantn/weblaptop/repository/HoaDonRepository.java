@@ -70,4 +70,8 @@ public interface HoaDonRepository extends JpaRepository<HoaDon, Long>, JpaSpecif
             "AND hd.phieu_giam_gia_id IS NOT NULL; ", nativeQuery = true)
     void deleteCouponInBill();
 
+    @Query(value = "SELECT sum(tong_tien_phai_tra) FROM hoa_don where khach_hang_id =:idKh and trang_thai = 6", nativeQuery = true)
+    Optional<BigDecimal> tongTienDaChiCuaKhachHang(@Param("idKh") Long idKh);
+
+
 }
