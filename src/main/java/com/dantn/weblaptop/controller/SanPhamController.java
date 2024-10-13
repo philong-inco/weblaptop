@@ -299,7 +299,7 @@ public class SanPhamController extends GenericsController<SanPham, Long, SanPham
 
             // tên khuyến mãi
             String tenKhuyenMai = "";
-            String soTienGiam = "";
+            String soTienGiam = "0";
             String giaSauKhuyenMai = "";
             if (spctWithBestPromo.isPresent()){
                 spctWithBestPromo.get().getTenKhuyenMai();
