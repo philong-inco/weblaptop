@@ -64,7 +64,7 @@ public class SerialNumberServiceImpl implements SerialNumberService {
     public boolean delete(Long id) {
         SerialNumber entity = serialNumberRepository.findById(id).get();
         if (entity == null) return false;
-        serialNumberRepository.deleteById(id);
+        serialNumberRepository.deleteByIdSeri(id);
         return true;
     }
 

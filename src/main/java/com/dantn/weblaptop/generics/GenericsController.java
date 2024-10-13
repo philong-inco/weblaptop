@@ -133,7 +133,7 @@ public abstract class GenericsController<E, ID, C, U, R> {
     public ResponseEntity<ResponseLong<Boolean>> existByName(@RequestParam("name") String name) {
         Boolean result = genericsService.existByName(name);
         if (result)
-            return ResponseEntity.ok().body(new ResponseLong<>(200, "Name is existed", result, null, null, null, null));
+            return ResponseEntity.ok().body(new ResponseLong<>(999, "Name is existed", result, null, null, null, null));
         return ResponseEntity.ok().body(new ResponseLong<>(200, "Name is unique", result, null, null, null, null));
     }
 

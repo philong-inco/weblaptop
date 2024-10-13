@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
@@ -96,5 +97,13 @@ public class AnhSanPhamServiceImpl implements AnhSanPhamService {
     @Override
     public void deleteAllByIdSPCT(Long idSPCT) {
         repository.deleteAllByIdSPCT(idSPCT);
+    }
+
+    @Override
+    public List<String> getAll() {
+        List<AnhSanPham> list = repository.findAll();
+        return list.stream().map(x -> x.getUrl())
+                .collect(Collectors.toSet())
+                .stream().toList();
     }
 }

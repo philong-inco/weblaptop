@@ -42,7 +42,8 @@ public interface SerialNumberRepository extends JpaRepository<SerialNumber, Long
     @Query("SELECT s from  SerialNumber s WHERE s.sanPhamChiTiet.sanPham.id = :idSP AND s.trangThai = 0")
     List<SerialNumber> findSerialNumberBySanPhamId(@Param("idSP") Long idSP);
 
-    List<SerialNumber> findBySanPhamChiTietId(Long id);
+    @Query("SELECT s FROM SerialNumber s WHERE s.sanPhamChiTiet.id = :id")
+    List<SerialNumber> findBySanPhamChiTietId(@Param("id") Long id);
 
     @Query("SELECT s FROM SerialNumber s WHERE s.sanPhamChiTiet.id = :id AND s.trangThai = 0")
     List<SerialNumber> findBySanPhamChiTietIdActive(@Param("id") Long id);
@@ -73,4 +74,8 @@ public interface SerialNumberRepository extends JpaRepository<SerialNumber, Long
     @Query(value = "UPDATE serial_number sn SET sn.trang_thai = :status WHERE sn.id IN (:ids)", nativeQuery = true)
     void updateStatusByIdsNative(@Param("status") Integer status, @Param("ids") List<Long> ids);
 
+    @Modifying
+    @Transactional
+    @Query("DELETE FROM SerialNumber s WHERE s.id = :id")
+    void deleteByIdSeri(@Param(("id")) Long id);
 }
