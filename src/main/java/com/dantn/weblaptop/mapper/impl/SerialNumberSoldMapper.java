@@ -12,9 +12,10 @@ public class SerialNumberSoldMapper {
         response.setProductDetailCode(serialNumberSold.getSerialNumber().getSanPhamChiTiet().getMa());
         String name =serialNumberSold.getSerialNumber().getSanPhamChiTiet().getSanPham().getTen();
         String ram =serialNumberSold.getSerialNumber().getSanPhamChiTiet().getRam().getTen();
+        String core = serialNumberSold.getSerialNumber().getSanPhamChiTiet().getCpu().getTen();
         String oCung = serialNumberSold.getSerialNumber().getSanPhamChiTiet().getOCung().getTen();
         String color = serialNumberSold.getSerialNumber().getSanPhamChiTiet().getMauSac().getTen();
-        response.setProductName(name + " " + color + " [ " + ram + " - " + oCung + " ]");
+        response.setProductName(name +  " [ " + ram + " - "+ core + "-" + oCung + "-"+color +" ]");
         response.setPrice(serialNumberSold.getGiaBan());
         return response;
     }
