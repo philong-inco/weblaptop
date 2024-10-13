@@ -12,6 +12,7 @@ import com.dantn.weblaptop.exception.ErrorCode;
 import com.dantn.weblaptop.mapper.KhachHang_Mapper;
 import com.dantn.weblaptop.repository.DiaChi_Repository;
 import com.dantn.weblaptop.repository.KhachHang_Repository;
+import com.dantn.weblaptop.service.GioHangService;
 import com.dantn.weblaptop.service.KhachHang_Service;
 import com.dantn.weblaptop.util.GenerateCode;
 import jakarta.mail.MessagingException;
@@ -47,6 +48,9 @@ public class KhachHangService_Implement implements KhachHang_Service {
     EmailSender emailSender;
     @Autowired
     private KhachHang_Repository khachHang_Repository;
+    @Autowired
+    private GioHangService gioHangService;
+
 
     @Override
     public Page<KhachHangResponse> pageKhachHang(Integer pageNo, Integer size) {
@@ -136,6 +140,7 @@ public class KhachHangService_Implement implements KhachHang_Service {
                 throw new RuntimeException("Email này đã tồn tại " + khachHang.getEmail());
             }
             KhachHang khSave = khachHangRepository.save(khachHang);
+            gioHangService.createGioHang(khSave);
             if (khSave != null) {
                 DiaChi diaChi = new DiaChi();
                 diaChi.setTenNguoiNhan(createKhachHangRequest.getTen());
@@ -332,13 +337,13 @@ public class KhachHangService_Implement implements KhachHang_Service {
     @Override
     public void sentEmailForgotPassword(String email) throws MessagingException {
         KhachHang khachHang = khachHangRepository.findKhachHangByEmail(email);
-        if(khachHang != null){
+        if (khachHang != null) {
             String newPassword = generateRandomPassword(10);
             khachHang.setTrangThai(3);
             khachHang.setMatKhau(newPassword);
             khachHangRepository.save(khachHang);
             emailSender.sendForgotPasswordEmail(khachHang, newPassword);
-        }else {
+        } else {
             throw new RuntimeException("Không thể tìm thấy tài khoản khách hàng. Vui lòng kiểm tra lại thông tin khách hàng.");
         }
     }
