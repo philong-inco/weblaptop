@@ -122,6 +122,10 @@ public class NhanVienService_Implement implements NhanVien_Service {
                 throw new RuntimeException("Email đã được sử dụng trước đó. Vui lòng sử dụng email khác.");
             }
 
+            if (nhanVienRepositoy.findByPhoneNumber(createNhanVienRequest.getSdt()) != null) {
+                throw new RuntimeException("Số điện thoại đã được sử dụng trước đó. Vui lòng sử dụng số điện thoại khác.");
+            }
+
             // Chuẩn bị thực thể NhanVien từ request
             NhanVien nhanVien = prepareNhanVienEntity(createNhanVienRequest);
 
