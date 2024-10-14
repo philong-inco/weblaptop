@@ -7,7 +7,6 @@ import com.dantn.weblaptop.dto.request.create_request.CreateLichSuHoaDonRequest;
 import com.dantn.weblaptop.dto.request.update_request.UpdateDiaChiHoaDonRequest;
 import com.dantn.weblaptop.dto.request.update_request.UpdateHoaDonRequest;
 import com.dantn.weblaptop.dto.response.*;
-import com.dantn.weblaptop.entity.hoadon.HinhThucThanhToan;
 import com.dantn.weblaptop.entity.hoadon.HoaDon;
 import com.dantn.weblaptop.entity.hoadon.HoaDonHinhThucThanhToan;
 import com.dantn.weblaptop.entity.hoadon.LichSuHoaDon;
@@ -36,16 +35,19 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.thymeleaf.context.Context;
+import org.thymeleaf.spring6.SpringTemplateEngine;
+import org.xhtmlrenderer.pdf.ITextRenderer;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDateTime;
@@ -74,6 +76,7 @@ public class HoaDonServiceImpl implements HoaDonService {
     HoaDonHinhThucThanhToanSerive hoaDonHinhThucThanhToanSerive;
     SendEmailBill sendEmailBill;
     KhachHangPhieuGiamGiaRepository khachHangPhieuGiamGiaRepository;
+    SpringTemplateEngine templateEngine;
 
     @Override
     public ResultPaginationResponse getBillPage(Optional<String> page, Optional<String> size) {
@@ -237,6 +240,8 @@ public class HoaDonServiceImpl implements HoaDonService {
                 Optional<HoaDonHinhThucThanhToan> hoaDonHinhThucThanhToan = hoaDonHinhThucThanhToanRepository.findByHoaDonIdAndLoaiThanhToan(optional.get().getId(), 1);
                 if (hoaDonHinhThucThanhToan.isPresent()) {
                     hoaDonHinhThucThanhToan.get().setLoaiThanhToan(0);
+                    hoaDonHinhThucThanhToan.get().setNguoiSua("Nguyễn Tiến Mạnh");
+                    hoaDonHinhThucThanhToan.get().setNguoiTao("Nguyễn Tiến Mạnh");
                     hoaDonHinhThucThanhToanRepository.save(hoaDonHinhThucThanhToan.get());
                 }
                 if (bill.getKhachHang() != null) {
@@ -306,13 +311,6 @@ public class HoaDonServiceImpl implements HoaDonService {
         return outputStream.toByteArray();
     }
 
-
-    //Lặp code bên .. ĐÃ bán
-    public BigDecimal prepareTheBill(String codeBill) {
-        HoaDon hoaDon = billRepository.findHoaDonByMa(codeBill).get();
-        List<SerialNumberDaBanResponse> listSerialNumberDaBan = serialNumberDaBanService.getSerialNumberDaBanPage(codeBill);
-        return serialNumberDaBanService.getBigDecimal(hoaDon, listSerialNumberDaBan, billRepository);
-    }
 
     @Override
     public void deleteBillByCode(String code) {
@@ -480,9 +478,12 @@ public class HoaDonServiceImpl implements HoaDonService {
 
             bill.setTrangThai(HoaDonStatus.HOAN_THANH);
             bill.setNgayThanhToan(LocalDateTime.now());
+            bill.setLoaiHoaDon(request.getLoaiHoaDon());
             billRepository.save(bill);
             billHistory.setHoaDon(bill);
             billHistory.setTrangThai(6);
+            billHistory.setNguoiSua("Nguyễn Tiến Mạnh");
+            billHistory.setNguoiTao("Nguyễn Tiến Mạnh");
             billHistory.setGhiChuChoCuaHang("Thanh toán thành công");
             billHistory.setGhiChuChoKhachHang("Thanh toán thành công");
             NhanVien nhanVien = employeeRepository.findById(1L).get();
@@ -496,6 +497,8 @@ public class HoaDonServiceImpl implements HoaDonService {
                 HoaDonHinhThucThanhToan hoaDonHinhThucThanhToan = new HoaDonHinhThucThanhToan();
                 hoaDonHinhThucThanhToan.setSoTien(bill.getTienShip().add(bill.getTongTienPhaiTra()));
                 hoaDonHinhThucThanhToan.setHoaDon(bill);
+                hoaDonHinhThucThanhToan.setNguoiSua("Nguyễn Tiến Mạnh");
+                hoaDonHinhThucThanhToan.setNguoiTao("Nguyễn Tiến Mạnh");
                 hoaDonHinhThucThanhToan.setLoaiThanhToan(request.getLoaiHoaDon());
                 hoaDonHinhThucThanhToanRepository.save(hoaDonHinhThucThanhToan);
             }
@@ -519,6 +522,8 @@ public class HoaDonServiceImpl implements HoaDonService {
             billRepository.save(bill);
             billHistory.setHoaDon(bill);
             billHistory.setTrangThai(2);
+            billHistory.setNguoiSua("Nguyễn Tiến Mạnh");
+            billHistory.setNguoiTao("Nguyễn Tiến Mạnh");
             billHistory.setGhiChuChoCuaHang("Hóa đơn chuyển sang chờ xác nhận");
             billHistory.setGhiChuChoKhachHang("Chờ xác nhận");
             NhanVien nhanVien = employeeRepository.findById(1L).get();
@@ -599,6 +604,27 @@ public class HoaDonServiceImpl implements HoaDonService {
                 }
             }
         }
+    }
+
+    @Override
+    public byte[] getInvoicePdf(String billCode) throws AppException {
+        Context context = new Context();
+        HoaDonResponse bill = this.getBillByCode(billCode);
+        List<SerialNumberDaBanResponse> serials = serialNumberDaBanService.getSerialNumberDaBanPage(billCode);
+        HoaDonHinhThucThanhToan paymentHistory = hoaDonHinhThucThanhToanRepository.findByHoaDonIdAndLoaiThanhToan(bill.getId(),1).orElse(null);
+        context.setVariable("bill", bill);
+        context.setVariable("serials", serials);
+        context.setVariable("paymentHistory", paymentHistory);
+        System.out.println("Processing template with invoice: " + billCode);
+
+        String processedHtml = templateEngine.process("templatesBill", context);
+        OutputStream outputStream = new ByteArrayOutputStream();
+        ITextRenderer renderer = new ITextRenderer();
+        renderer.setDocumentFromString(processedHtml);
+        renderer.layout();
+        renderer.createPDF(outputStream);
+
+        return ((ByteArrayOutputStream) outputStream).toByteArray();
     }
 
     private BigDecimal calculateDiscount(HoaDon existingBill, PhieuGiamGia coupon) {

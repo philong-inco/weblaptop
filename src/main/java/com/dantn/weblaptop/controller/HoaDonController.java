@@ -254,4 +254,38 @@ public class HoaDonController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
         }
     }
+
+    @GetMapping("/bill-pdf/{billCode}")
+    public ResponseEntity<byte[]> getBillPdf(
+            @PathVariable(name = "billCode") String billCode
+    ) {
+        try {
+            // chyền data
+            byte[] pdfBytes = billService.getInvoicePdf(billCode);
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_PDF);
+            headers.setContentDispositionFormData("filename", "invoice.pdf");
+            return ResponseEntity.ok().headers(headers).body(pdfBytes);
+        } catch (Exception e) {
+            System.out.println(e);
+            return ResponseEntity.status(500).body(null);
+        }
+    }
+
+    @GetMapping("/order-pdf/{billCode}")
+    public ResponseEntity<byte[]> getOrderPdf(
+            @PathVariable(name = "billCode") String billCode
+    ) {
+        try {
+            // chyền data
+            byte[] pdfBytes = billService.getInvoicePdf(billCode);
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_PDF);
+            headers.setContentDispositionFormData("filename", "invoice.pdf");
+            return ResponseEntity.ok().headers(headers).body(pdfBytes);
+        } catch (Exception e) {
+            System.out.println(e);
+            return ResponseEntity.status(500).body(null);
+        }
+    }
 }

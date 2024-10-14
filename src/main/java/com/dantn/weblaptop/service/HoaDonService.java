@@ -56,4 +56,6 @@ public interface HoaDonService {
     BigDecimal sumBillByDate(Long startDate, Long endDate);
 
      void updateCustomerRank(Long idKhachHang) ;
+
+    byte[] getInvoicePdf(String billCode) throws AppException;
 }

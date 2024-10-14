@@ -18,6 +18,4 @@ public interface SerialNumberDaBanService {
 
     void delete(SerialNumberSoldDelete request) throws AppException;
 
-    BigDecimal getBigDecimal(HoaDon hoaDon, List<SerialNumberDaBanResponse> listSerialNumberDaBan, HoaDonRepository hoaDonRepository);
-
 }
