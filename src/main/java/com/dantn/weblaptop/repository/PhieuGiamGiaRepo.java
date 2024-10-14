@@ -106,7 +106,6 @@ public interface PhieuGiamGiaRepo extends JpaRepository<PhieuGiamGia, Long>, Jpa
             @Param("couponId") Long couponId);
 
 
-
     // check add tay khách hệ thống
     @Query(value = "" +
             "SELECT pgg.* \n" +

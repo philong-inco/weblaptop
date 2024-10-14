@@ -23,21 +23,20 @@ public class PhieuGiamGiaSchedulerImpl implements PhieuGiamGiaScheduler {
 
         for (PhieuGiamGia phieuGiamGia : allPhieuGiamGia) {
             if (phieuGiamGia.getTrangThai() == 4) {
-                continue; // Bỏ qua phiếu giảm giá với trạng thái 4 (tạm dừng)
-            }else if (phieuGiamGia.getSoLuong() == 0) {
+                continue; // Bỏ qua phiếu giảm giá với trạng thái 4
+            }
+            if(phieuGiamGia.getSoLuong() == 0){
                 phieuGiamGia.setTrangThai(2);
-            } else if (phieuGiamGia.getTrangThai() != 3) {
-                if (phieuGiamGia.getNgayBatDau().isAfter(now)) {
-                    phieuGiamGia.setTrangThai(0);
+            }else if (phieuGiamGia.getTrangThai() != 3) { // Chỉ cập nhật nếu phiếu giảm giá không bị hủy
+                if (phieuGiamGia.getNgayHetHan().isBefore(now)) {
+                    phieuGiamGia.setTrangThai(2); // Cập nhật trạng thái thành "Hết hạn"
+                } else if (phieuGiamGia.getNgayBatDau().isAfter(now)) {
+                    phieuGiamGia.setTrangThai(0); // Cập nhật trạng thái thành "Chưa áp dụng"
                 } else if (phieuGiamGia.getNgayBatDau().isBefore(now) && phieuGiamGia.getNgayHetHan().isAfter(now)) {
-                    phieuGiamGia.setTrangThai(1);
-                } else if (phieuGiamGia.getNgayHetHan().isBefore(now) || phieuGiamGia.getNgayHetHan().isEqual(now)) {
-                    phieuGiamGia.setTrangThai(2);
+                    phieuGiamGia.setTrangThai(1); // Cập nhật trạng thái thành "Đang áp dụng"
                 }
             }
-
             phieuGiamGiaRepo.save(phieuGiamGia);
         }
     }
-
 }
