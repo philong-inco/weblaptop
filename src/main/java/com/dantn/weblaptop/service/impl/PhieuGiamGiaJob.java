@@ -2,22 +2,22 @@ package com.dantn.weblaptop.service.impl;
 
 import com.dantn.weblaptop.entity.phieugiamgia.PhieuGiamGia;
 import com.dantn.weblaptop.repository.PhieuGiamGiaRepo;
-import com.dantn.weblaptop.service.PhieuGiamGiaScheduler;
+import org.quartz.Job;
+import org.quartz.JobExecutionContext;
+import org.quartz.JobExecutionException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
-@Service
-public class PhieuGiamGiaSchedulerImpl implements PhieuGiamGiaScheduler {
+@Component
+public class PhieuGiamGiaJob implements Job {
     @Autowired
     private PhieuGiamGiaRepo phieuGiamGiaRepo;
 
     @Override
-    @Scheduled(fixedRate = 60000) // Chạy mỗi 60 giây
-    public void updateDiscountsStatus() {
+    public void execute(JobExecutionContext jobExecutionContext) throws JobExecutionException {
         LocalDateTime now = LocalDateTime.now();
         List<PhieuGiamGia> allPhieuGiamGia = phieuGiamGiaRepo.findAll();
 
@@ -27,7 +27,7 @@ public class PhieuGiamGiaSchedulerImpl implements PhieuGiamGiaScheduler {
             }
             if(phieuGiamGia.getSoLuong() == 0){
                 phieuGiamGia.setTrangThai(2);
-            }else if (phieuGiamGia.getTrangThai() != 3) { // Chỉ cập nhật nếu phiếu giảm giá không bị hủy
+            } else if (phieuGiamGia.getTrangThai() != 3) { // Chỉ cập nhật nếu phiếu giảm giá không bị hủy
                 if (phieuGiamGia.getNgayHetHan().isBefore(now)) {
                     phieuGiamGia.setTrangThai(2); // Cập nhật trạng thái thành "Hết hạn"
                 } else if (phieuGiamGia.getNgayBatDau().isAfter(now)) {
