@@ -147,6 +147,7 @@ public interface PhieuGiamGiaRepo extends JpaRepository<PhieuGiamGia, Long>, Jpa
             "LEFT JOIN khach_hang AS kh ON khpgg.khach_hang_id = kh.id\n" +
             "WHERE pgg.trang_thai = 1  \n" +
             "  AND pgg.so_luong > 0\n" +
+            "  AND (khpgg.trang_thai = 0 OR khpgg.khach_hang_id IS NULL) \n" +
             "  AND (kh.id = :customerId OR kh.id IS NULL) \n" +
             "  AND pgg.gia_tri_don_toi_thieu <= :totalAmount\n" +
             "ORDER BY discountValue DESC\n" +

@@ -215,83 +215,6 @@ public class SerialNumberDaBanServiceImpl implements SerialNumberDaBanService {
         }
     }
 
-
-    @Override
-    public BigDecimal getBigDecimal(HoaDon hoaDon, List<SerialNumberDaBanResponse> listSerialNumberDaBan, HoaDonRepository hoaDonRepository) {
-        PhieuGiamGia phieuGiamGia = hoaDon.getPhieuGiamGia();
-        BigDecimal tongTien = listSerialNumberDaBan.stream()
-                .map(response -> {
-                    BigDecimal gia = response.getPrice() != null ? response.getPrice() : BigDecimal.ZERO;
-                    int soLuong = response.getQuantity() != null ? response.getQuantity() : 0;
-                    return gia.multiply(BigDecimal.valueOf(soLuong));
-                })
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
-        System.out.println("Tổng tiền : " + tongTien);
-        hoaDon.setTongTienBanDau(tongTien);
-
-        // Nếu chưa có phiếu giảm giá, tìm và gán
-        if (hoaDon.getPhieuGiamGia() == null) {
-            Optional<PhieuGiamGia> optional = getPhieuGiamGia(hoaDon, tongTien);
-            if (optional.isPresent()) {
-                phieuGiamGia = optional.get();
-                hoaDon.setPhieuGiamGia(phieuGiamGia);
-            } else {
-                hoaDon.setPhieuGiamGia(null);
-            }
-            hoaDonRepository.save(hoaDon);
-        }
-
-        Optional<HoaDon> newBill = hoaDonRepository.findHoaDonByMa(hoaDon.getMa());
-        BigDecimal tienGiam = BigDecimal.ZERO;
-
-        // Nếu đã có phiếu giảm giá
-        if (newBill.get().getPhieuGiamGia() != null) {
-            Optional<PhieuGiamGia> optional = getPhieuGiamGia(hoaDon, tongTien);
-            // hàm xóa nếu tiền ko đủ
-            if (optional.isPresent()) {
-                phieuGiamGia = optional.get();
-                hoaDon.setPhieuGiamGia(phieuGiamGia);
-            } else {
-                hoaDon.setPhieuGiamGia(null);
-            }
-            hoaDonRepository.save(hoaDon);
-
-            // Check điều kiện PGG
-            Integer loaiPGG = phieuGiamGia.getLoaiGiamGia();
-            Integer trangThai = phieuGiamGia.getTrangThai();
-            BigDecimal giaTriPhieuGiam = phieuGiamGia.getGiaTriGiamGia();
-
-            if (trangThai == 3 || trangThai == 2 || trangThai == 0) {
-                System.out.println("PGG được hủy");
-                hoaDon.setPhieuGiamGia(null);
-                hoaDon.setTongTienPhaiTra(tongTien);
-                hoaDonRepository.save(hoaDon);
-                return tongTien;
-            }
-            // Tính tiền giảm dựa vào loại PGG
-            if (loaiPGG == 2) {
-                tienGiam = giaTriPhieuGiam;
-            } else {
-                tienGiam = tongTien.multiply(giaTriPhieuGiam).divide(BigDecimal.valueOf(100), RoundingMode.HALF_UP);
-            }
-
-            System.out.println("Quy đổi k : " + tienGiam);
-
-            // Kiểm tra tông tiền sau giảm và giá trị giảm tối đa
-            if (phieuGiamGia.getGiamToiDa().compareTo(tienGiam) < 0) {
-                tienGiam = phieuGiamGia.getGiamToiDa();
-            }
-            if (tongTien.compareTo(tienGiam) < 0) {
-                tongTien = BigDecimal.ZERO;
-            } else {
-                tongTien = tongTien.subtract(tienGiam);
-            }
-        }
-        hoaDon.setTongTienPhaiTra(tongTien);
-        hoaDonRepository.save(hoaDon);
-        return tongTien;
-    }
-
     private Optional<PhieuGiamGia> getPhieuGiamGia(HoaDon hoaDon, BigDecimal tongTien) {
         if (hoaDon.getKhachHang() == null) {
             System.out.println("Phiếu kh lẻ");
@@ -301,6 +224,7 @@ public class SerialNumberDaBanServiceImpl implements SerialNumberDaBanService {
             return phieuGiamGiaRepository.getHighestDiscountVoucherByTotalAmountAndCustomer(tongTien, hoaDon.getKhachHang().getId());
         }
     }
+
 
     public void calculateTotalAmountDue(HoaDon existingBill, Optional<BigDecimal> totalMoney) {
         System.out.println("0 Tổng tiền : " + totalMoney.orElse(BigDecimal.ZERO));
