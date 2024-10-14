@@ -16,7 +16,7 @@ public class PhieuGiamGiaSchedulerImpl implements PhieuGiamGiaScheduler {
     private PhieuGiamGiaRepo phieuGiamGiaRepo;
 
     @Override
-    @Scheduled(fixedRate = 60000) // Chạy mỗi 60 giây
+    @Scheduled(fixedRate = 2000) // Chạy mỗi 60 giây
     public void updateDiscountsStatus() {
         LocalDateTime now = LocalDateTime.now();
         List<PhieuGiamGia> allPhieuGiamGia = phieuGiamGiaRepo.findAll();
@@ -24,12 +24,9 @@ public class PhieuGiamGiaSchedulerImpl implements PhieuGiamGiaScheduler {
         for (PhieuGiamGia phieuGiamGia : allPhieuGiamGia) {
             if (phieuGiamGia.getTrangThai() == 4) {
                 continue; // Bỏ qua phiếu giảm giá với trạng thái 4 (tạm dừng)
-            }
-
-            if (phieuGiamGia.getSoLuong() == 0) {
+            }else if (phieuGiamGia.getSoLuong() == 0) {
                 phieuGiamGia.setTrangThai(2);
             } else if (phieuGiamGia.getTrangThai() != 3) {
-
                 if (phieuGiamGia.getNgayBatDau().isAfter(now)) {
                     phieuGiamGia.setTrangThai(0);
                 } else if (phieuGiamGia.getNgayBatDau().isBefore(now) && phieuGiamGia.getNgayHetHan().isAfter(now)) {
