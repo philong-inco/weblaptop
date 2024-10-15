@@ -268,6 +268,10 @@ public class SerialNumberDaBanServiceImpl implements SerialNumberDaBanService {
             }
             existingBill.setTongTienPhaiTra(newTongTienPhaiTra);
         }
+        if (existingBill.getTongTienPhaiTra().compareTo(BigDecimal.ZERO) < 0) {
+            existingBill.setTongTienPhaiTra(BigDecimal.ZERO);
+        }
+
         if ((existingBill.getTrangThai() != HoaDonStatus.DON_MOI) && existingBill.getLoaiHoaDon() == 1) {
             updatePayment(existingBill);
         }

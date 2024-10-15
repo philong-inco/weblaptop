@@ -6,6 +6,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0"></meta>
     <title>In hóa đơn</title>
     <style>
+        *{
+            font-family: Arial,serif;
+        }
         p {
             margin: 2px;
         }
@@ -81,6 +84,7 @@
                     </tr>
                 </th:block>
                 </tbody>
+                </table>
                 <table>
                     <tbody>
                     <tr>
@@ -96,7 +100,7 @@
                     </tr>
                     <tr>
                         <td class="border-0"></td>
-                        <td class="nborder-0"></td>
+                        <td class="border-0"></td>
                         <td class="border-0 " style="font-size: 16px; font-weight: 500"><strong>Phiếu giảm giá:</strong></td>
                         <td class="border-0no-line text-end" float="right" style="font-size: 18px; font-weight: 600" th:text="${bill.maPGG ==null ? '':bill.maPGG  }">ádsadasd</td>
                     </tr>
@@ -129,13 +133,52 @@
                     <tr style="margin-top: 5px">
                         <td class="border-0"></td>
                         <td class="border-0 " colspan="3"><strong style="font-weight: 500; font-size: 16px " th:text="${'Tổng số lượng sản phẩm: '+bill.tongSanPham + ' '}"></strong></td>
-                        </td>
                     </tr>
                     </tbody>
                 </table>
-            </table>
         </div>
     </div>
+    <div  style="padding: 20px 10px;border-top-style: dashed; border-width: 1px; border-color: rgb(0, 0, 0);">
+<!--        th:if="${bill.thanhToanSau==0}"-->
+        <div class="" style="margin-right: 20px; margin-bottom: 50px" >
+            <table class="table table-condensed" style="width: 100%">
+                <thead>
+                </thead>
+                <tbody>
+                <th:block th:each="item,idex : ${paymentHistory0}">
+                    <tr>
+                        <td th:text="${idex.index  + 1}"></td>
+                        <td th:text="${item.soTien}" float="right"></td>
+                        <td class="text-center" th:text="${item.loaiThanhToan ==1 ? 'Trả sau' : 'Đã thanh toán'}"></td>
+                    </tr>
+                </th:block>
+                </tbody>
+            </table>
+        </div>
+        <!--        <div class="" style="display: flex; justify-content: space-between" >-->
+        <!--            <table class="table table-condensed" style="width: 100%">-->
+        <!--                <thead>-->
+        <!--                </thead>-->
+        <!--                <tbody th:if="${bill.thanhToanSau==0}">-->
+        <!--                <tr>-->
+        <!--                    <td  float="right">Tổng thanh toán:</td>-->
+        <!--                    <td class="text-center" float="right" th:text="${invoice.totalPayment}"></td>-->
+        <!--                </tr>-->
+        <!--                <tr>-->
+        <!--                    <td  float="right">Tiền Thối lại:</td>-->
+        <!--                    <td class="text-center" float="right" th:text="${invoice.change}"></td>-->
+        <!--                </tr>-->
+        <!--                </tbody>-->
+        <!--                <tbody th:if="${invoice.checkBillTra}">-->
+        <!--                <tr>-->
+        <!--                    <td  float="right">Tổng tiền trả:</td>-->
+        <!--                    <td class="text-center" float="right" th:text="${invoice.change}"></td>-->
+        <!--                </tr>-->
+        <!--                </tbody>-->
+        <!--            </table>-->
+        <!--        </div>-->
+    </div>
+
     <div  style="padding: 20px 10px;border-top-style: dashed; border-width: 1px; border-color: rgb(0, 0, 0);">
         <div class="" style="margin-right: 20px; margin-bottom: 50px" th:if="${bill.thanhToanSau==1}">
             <table class="table table-condensed" style="width: 100%">

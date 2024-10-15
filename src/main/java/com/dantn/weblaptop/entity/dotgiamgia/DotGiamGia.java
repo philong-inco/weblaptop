@@ -47,8 +47,8 @@ public class DotGiamGia extends BaseEntity {
     BigDecimal giaTriGiam;
     @OneToMany(mappedBy = "dotGiamGia", fetch = FetchType.LAZY)
     Set<DotGiamGiaSanPhamChiTiet> dotGiamGiaSanPhamChiTiets;
-    @OneToMany(mappedBy = "dotGiamGia", fetch = FetchType.LAZY)
-    Set<SerialNumberDaBan> serialNumberDaBans;
+//    @OneToMany(mappedBy = "dotGiamGia", fetch = FetchType.LAZY)
+//    Set<SerialNumberDaBan> serialNumberDaBans;
 
     // add by philonginco
     public BigDecimal getTienGiamGia(BigDecimal price){

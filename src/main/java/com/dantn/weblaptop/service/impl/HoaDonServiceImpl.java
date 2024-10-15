@@ -611,10 +611,12 @@ public class HoaDonServiceImpl implements HoaDonService {
         Context context = new Context();
         HoaDonResponse bill = this.getBillByCode(billCode);
         List<SerialNumberDaBanResponse> serials = serialNumberDaBanService.getSerialNumberDaBanPage(billCode);
-        HoaDonHinhThucThanhToan paymentHistory = hoaDonHinhThucThanhToanRepository.findByHoaDonIdAndLoaiThanhToan(bill.getId(),1).orElse(null);
+        List<HoaDonHinhThucThanhToan> paymentHistory0 = hoaDonHinhThucThanhToanRepository.findAllByHoaDonIdAndLoaiThanhToan(bill.getId(),0);
+        List<HoaDonHinhThucThanhToan> paymentHistory = hoaDonHinhThucThanhToanRepository.findAllByHoaDonIdAndLoaiThanhToan(bill.getId(),1);
         context.setVariable("bill", bill);
         context.setVariable("serials", serials);
         context.setVariable("paymentHistory", paymentHistory);
+        context.setVariable("paymentHistory0", paymentHistory0);
         System.out.println("Processing template with invoice: " + billCode);
 
         String processedHtml = templateEngine.process("templatesBill", context);
