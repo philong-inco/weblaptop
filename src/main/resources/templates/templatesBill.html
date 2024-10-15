@@ -143,11 +143,11 @@
                 </thead>
                 <tbody>
                 <th:block th:each="item,idex : ${paymentHistory}">
-<!--                    <tr>-->
-<!--                        <td th:text="${idex.index  + 1}"></td>-->
-<!--                        <td th:text="${item.soTien}" float="right"></td>-->
-<!--                        <td class="text-center" th:text="${item.loaiThanhToan ==1 ? 'Trả sau' : 'Đã thanh toán'}"></td>-->
-<!--                    </tr>-->
+                    <tr>
+                        <td th:text="${idex.index  + 1}"></td>
+                        <td th:text="${item.soTien}" float="right"></td>
+                        <td class="text-center" th:text="${item.loaiThanhToan ==1 ? 'Trả sau' : 'Đã thanh toán'}"></td>
+                    </tr>
                 </th:block>
                 </tbody>
             </table>
