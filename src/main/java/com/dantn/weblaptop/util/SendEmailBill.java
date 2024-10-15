@@ -305,7 +305,7 @@ public class SendEmailBill {
 
         try {
             helper.setFrom("vutu8288@gmail.com");
-            helper.setTo("nguyenmanh19924@gmail.com");
+            helper.setTo(response.getEmail());
             helper.setSubject(subject + response.getTrangThai().getName());
             helper.setText(htmlBody, true);
             javaMailSender.send(message);

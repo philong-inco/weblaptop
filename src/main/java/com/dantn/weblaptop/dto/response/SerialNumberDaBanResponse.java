@@ -21,7 +21,7 @@ public class SerialNumberDaBanResponse {
     Integer quantity;
     Set<SerialInfo> serialNumbers;
 
-//    String anh;
+    String anh;
 
     @Getter
     @Setter

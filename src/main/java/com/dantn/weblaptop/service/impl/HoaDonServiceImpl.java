@@ -443,6 +443,12 @@ public class HoaDonServiceImpl implements HoaDonService {
             throw new AppException(ErrorCode.BILL_WITHOUT_PRODUCT);
         }
         bill.setTienShip(request.getTienShip());
+        if(request.getThanhToanSau()==1){
+            Optional<HoaDonHinhThucThanhToan> optional = hoaDonHinhThucThanhToanRepository.findByHoaDonIdAndLoaiThanhToan(bill.getId(),0);
+            if(optional.isPresent()){
+                throw new AppException(ErrorCode.THANH_TOAN_PHAI_TOAN_PHAM);
+            }
+        }
         // trừ phiếu giảm giá
         if (bill.getPhieuGiamGia() != null) {
             Optional<PhieuGiamGia> couponOptional = couponRepository.findById(bill.getPhieuGiamGia().getId());
@@ -479,7 +485,8 @@ public class HoaDonServiceImpl implements HoaDonService {
             bill.setTrangThai(HoaDonStatus.HOAN_THANH);
             bill.setNgayThanhToan(LocalDateTime.now());
             bill.setLoaiHoaDon(request.getLoaiHoaDon());
-            billRepository.save(bill);
+
+         HoaDonResponse response =  HoaDonMapper.toHoaDonResponse(billRepository.save(bill));
             billHistory.setHoaDon(bill);
             billHistory.setTrangThai(6);
             billHistory.setNguoiSua("Nguyễn Tiến Mạnh");
@@ -487,6 +494,7 @@ public class HoaDonServiceImpl implements HoaDonService {
             billHistory.setGhiChuChoCuaHang("Thanh toán thành công");
             billHistory.setGhiChuChoKhachHang("Thanh toán thành công");
             NhanVien nhanVien = employeeRepository.findById(1L).get();
+            sendEmailBill.sendEmailXacNhan(response, "Cảm ơn ban đã mua hàng");
             billHistory.setNhanVien(nhanVien);
             if (bill.getKhachHang() != null) {
                 updateCustomerRank(bill.getKhachHang().getId());

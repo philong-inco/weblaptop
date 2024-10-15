@@ -28,7 +28,7 @@ public class UpdateDiaChiHoaDonRequest {
     String ghiChu;
     @NotBlank(message = "NAME_NOT_BLANK")
     @Size(min = 5,max = 25,message = "NAME_MIN_MAXIMUM")
-    @Pattern(regexp = "^[\\p{L} ]+$", message = "NAME_INVALID")
+//    @Pattern(regexp = "^[\\p{L} ]+$", message = "NAME_INVALID")
     String ten;
     @NotBlank(message = "PHONE_NOT_BLANK")
     @Pattern(regexp = "^0\\d{9}$", message = "PHONE_INVALID")

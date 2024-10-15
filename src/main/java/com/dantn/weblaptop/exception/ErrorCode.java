@@ -67,8 +67,8 @@ public enum ErrorCode {
     TIEN_KO_DU(7004, "Tiền nhập chưa đủ"),
     HOA_DON_HUY(7005,"Hóa đơn đã bị hủy không thể thêm sản phm"),
     HOA_DON_DANG_GIAO(7006,"Hóa đơn đang giao không thể thêm sản phẩm"),
-    HOA_DON_DANG_THANH_CONG(7007,"Hóa đơn thành công không thể thêm sản phẩm");
-
+    HOA_DON_DANG_THANH_CONG(7007,"Hóa đơn thành công không thể thêm sản phẩm"),
+    THANH_TOAN_PHAI_TOAN_PHAM(7008, "Phải thanh toán sau cả hóa đơn");
     private Integer code;
     private String message;
 

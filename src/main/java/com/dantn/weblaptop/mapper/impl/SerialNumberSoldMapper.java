@@ -2,6 +2,9 @@ package com.dantn.weblaptop.mapper.impl;
 
 import com.dantn.weblaptop.dto.response.SerialNumberDaBanResponse;
 import com.dantn.weblaptop.entity.hoadon.SerialNumberDaBan;
+import com.dantn.weblaptop.entity.sanpham.AnhSanPham;
+
+import java.util.Set;
 
 public class SerialNumberSoldMapper {
 
@@ -17,6 +20,12 @@ public class SerialNumberSoldMapper {
         String color = serialNumberSold.getSerialNumber().getSanPhamChiTiet().getMauSac().getTen();
         response.setProductName(name +  " [ " + ram + " - "+ core + "-" + oCung + "-"+color +" ]");
         response.setPrice(serialNumberSold.getGiaBan());
-        return response;
+        Set<AnhSanPham> anhSanPhams = serialNumberSold.getSerialNumber().getSanPhamChiTiet().getAnhSanPhams();
+        if (anhSanPhams != null && !anhSanPhams.isEmpty()) {
+            AnhSanPham anhDauTien = anhSanPhams.stream().findFirst().orElse(null);
+            if (anhDauTien != null) {
+                response.setAnh(anhDauTien.getUrl());
+            }
+        }        return response;
     }
 }
