@@ -86,6 +86,19 @@ public interface PhieuGiamGiaRepo extends JpaRepository<PhieuGiamGia, Long>, Jpa
     List<PhieuGiamGia> getAllByTotalAmountAndCustomer(
             @Param("totalAmount") BigDecimal totalAmount, @Param("customerId") Long customerId);
 
+    @Query(value = "" +
+            "SELECT pgg.* \n" +
+            "FROM phieu_giam_gia AS pgg\n" +
+            "LEFT JOIN khach_hang_phieu_giam_gia AS khpgg ON khpgg.phieu_giam_gia_id = pgg.id \n" +
+            "LEFT JOIN khach_hang AS kh ON khpgg.khach_hang_id = kh.id \n" +
+            "WHERE pgg.trang_thai = 1 \n" +
+            "  AND (khpgg.trang_thai = 0 OR khpgg.khach_hang_id IS NULL) \n" +
+            "  AND pgg.so_luong > 0 \n" +
+            "  AND (kh.id = :customerId OR kh.id IS NULL) \n",
+            nativeQuery = true)
+    Page<PhieuGiamGia> getAllCouponByCustomerId(Pageable pageable, @Param("customerId") Long customerId);
+
+
     // check pgg có app cho kh ko
     @Query(value = "" +
             "SELECT pgg.* \n" +

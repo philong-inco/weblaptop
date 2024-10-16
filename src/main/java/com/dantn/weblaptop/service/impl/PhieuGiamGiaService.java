@@ -91,6 +91,27 @@ public class PhieuGiamGiaService {
                 .build();
     }
 
+    public ResultPaginationResponse getAllPhieuGiamGiaByIdCustomer(int page, int size, Long idCustomer){
+        Pageable pageable = PageRequest.of(page, size, Sort.by("id").ascending());
+        Page<PhieuGiamGia> phieuGiamGiaPage = phieuGiamGiaRepo.getAllCouponByCustomerId(pageable, idCustomer);
+        Page<PhieuGiamGiaResponse> responses = phieuGiamGiaPage.map(
+                PhieuGiamGiaMapper::toPhieuGiamGiaResponse);
+        Meta meta = Meta.builder()
+                .page(responses.getNumber())
+                .pageSize(responses.getSize())
+                .pages(responses.getTotalPages())
+                .total(responses.getTotalElements())
+                .build();
+
+        // trả về list
+
+        return ResultPaginationResponse
+                .builder()
+                .meta(meta)
+                .result(responses.getContent())// trả về list
+                .build();
+    }
+
     public ResultPaginationResponse getAll(int page, int size) {
         Pageable pageable = PageRequest.of(page, size, Sort.by("ngayTao").descending());
         Page<PhieuGiamGia> phieuGiamGiaPage = phieuGiamGiaRepo.findAll(pageable);

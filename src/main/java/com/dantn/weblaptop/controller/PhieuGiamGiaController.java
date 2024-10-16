@@ -168,4 +168,16 @@ public class PhieuGiamGiaController {
         apiResponse.setData(phieuGiamGiaService.getAllPhieuGiamGiaByStatusActive(page, size, trangThai));
         return ResponseEntity.ok(apiResponse);
     }
+
+    @GetMapping("/allcouponofcustomer/{id}")
+    public ResponseEntity<ApiResponse> getAllPhieuGiamGiaByCustomerId(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "5") int size,
+            @RequestParam Long idCustomer) {
+        ApiResponse apiResponse = new ApiResponse();
+        apiResponse.setStatusCode(HttpStatus.OK.value());
+        apiResponse.setMessage("Call api success");
+        apiResponse.setData(phieuGiamGiaService.getAllPhieuGiamGiaByIdCustomer(page, size, idCustomer));
+        return ResponseEntity.ok(apiResponse);
+    }
 }
