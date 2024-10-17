@@ -54,6 +54,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -259,6 +260,23 @@ public class HoaDonServiceImpl implements HoaDonService {
 
     }
 
+    public List<String> listHangBill() {
+        return billRepository.findAllByTrangThai(HoaDonStatus.TREO)
+                .stream()
+                .map(HoaDon::getMa)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public void changeStatus(String code, String status) throws AppException {
+        Optional<HoaDon> optional = billRepository.findHoaDonByMa(code);
+        if (optional.isPresent()) {
+            HoaDon bill = optional.get();
+            bill.setTrangThai(HoaDonStatus.getHoaDonStatusEnumByKey(status));
+            billRepository.save(bill);
+        }
+    }
+
     @Override
     public ResultPaginationResponse filterHoaDon(Specification<HoaDon> specification, Pageable pageable) {
         Page<HoaDon> billPage = billRepository.findAll(specification, pageable);
@@ -443,9 +461,9 @@ public class HoaDonServiceImpl implements HoaDonService {
             throw new AppException(ErrorCode.BILL_WITHOUT_PRODUCT);
         }
         bill.setTienShip(request.getTienShip());
-        if(request.getThanhToanSau()==1){
-            Optional<HoaDonHinhThucThanhToan> optional = hoaDonHinhThucThanhToanRepository.findByHoaDonIdAndLoaiThanhToan(bill.getId(),0);
-            if(optional.isPresent()){
+        if (request.getThanhToanSau() == 1) {
+            Optional<HoaDonHinhThucThanhToan> optional = hoaDonHinhThucThanhToanRepository.findByHoaDonIdAndLoaiThanhToan(bill.getId(), 0);
+            if (optional.isPresent()) {
                 throw new AppException(ErrorCode.THANH_TOAN_PHAI_TOAN_PHAM);
             }
         }
@@ -486,7 +504,7 @@ public class HoaDonServiceImpl implements HoaDonService {
             bill.setNgayThanhToan(LocalDateTime.now());
             bill.setLoaiHoaDon(request.getLoaiHoaDon());
 
-         HoaDonResponse response =  HoaDonMapper.toHoaDonResponse(billRepository.save(bill));
+            HoaDonResponse response = HoaDonMapper.toHoaDonResponse(billRepository.save(bill));
             billHistory.setHoaDon(bill);
             billHistory.setTrangThai(6);
             billHistory.setNguoiSua("Nguyễn Tiến Mạnh");
@@ -619,8 +637,8 @@ public class HoaDonServiceImpl implements HoaDonService {
         Context context = new Context();
         HoaDonResponse bill = this.getBillByCode(billCode);
         List<SerialNumberDaBanResponse> serials = serialNumberDaBanService.getSerialNumberDaBanPage(billCode);
-        List<HoaDonHinhThucThanhToan> paymentHistory0 = hoaDonHinhThucThanhToanRepository.findAllByHoaDonIdAndLoaiThanhToan(bill.getId(),0);
-        List<HoaDonHinhThucThanhToan> paymentHistory = hoaDonHinhThucThanhToanRepository.findAllByHoaDonIdAndLoaiThanhToan(bill.getId(),1);
+        List<HoaDonHinhThucThanhToan> paymentHistory0 = hoaDonHinhThucThanhToanRepository.findAllByHoaDonIdAndLoaiThanhToan(bill.getId(), 0);
+        List<HoaDonHinhThucThanhToan> paymentHistory = hoaDonHinhThucThanhToanRepository.findAllByHoaDonIdAndLoaiThanhToan(bill.getId(), 1);
         context.setVariable("bill", bill);
         context.setVariable("serials", serials);
         context.setVariable("paymentHistory", paymentHistory);

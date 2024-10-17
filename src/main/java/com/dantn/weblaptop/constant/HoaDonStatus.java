@@ -11,7 +11,8 @@ public enum HoaDonStatus {
     HUY("Hủy"),
     XOA("Xóa"),// bỏ
     XAC_NHAN("Đã xác nhận"),
-    DA_THANH_TOAN("Đã thanh toán");
+    DA_THANH_TOAN("Đã thanh toán"),
+    TREO("Hóa đơn treo");
 
     HoaDonStatus(String name) {
         this.name = name;
