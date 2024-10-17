@@ -213,6 +213,31 @@ public class HoaDonController {
         return ResponseEntity.status(HttpStatus.CREATED).body(apiResponse);
     }
 
+    @PostMapping("change-status/{code}")
+    public ResponseEntity<ApiResponse> changeStatus(
+            @PathVariable(name = "code") String code,
+            @RequestParam(name = "status") String status
+    ) throws AppException {
+        billService.changeStatus(code, status);
+        ApiResponse<Object> apiResponse = ApiResponse
+                .builder()
+                .statusCode(HttpStatus.CREATED.value())
+                .message("Cập nhập hóa đơn thành công")
+                .build();
+        return ResponseEntity.status(HttpStatus.CREATED).body(apiResponse);
+    }
+
+    @GetMapping("list-hang-bill")
+    public ResponseEntity<ApiResponse> getHangBill(){
+        return ResponseEntity.status(HttpStatus.OK).body(
+                ApiResponse.builder()
+                        .statusCode(HttpStatus.OK.value())
+                        .data(billService.listHangBill())
+                        .message("Danh sách hóa đơn treo")
+                        .build()
+        );
+    }
+
     @PostMapping("/bill-history/{code}/revert-status")
     public ResponseEntity<ApiResponse> revertBillStatus(
             @PathVariable String code) throws AppException {

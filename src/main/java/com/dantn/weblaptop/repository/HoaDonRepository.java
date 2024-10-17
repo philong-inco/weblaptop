@@ -73,5 +73,6 @@ public interface HoaDonRepository extends JpaRepository<HoaDon, Long>, JpaSpecif
     @Query(value = "SELECT sum(tong_tien_phai_tra) FROM hoa_don where khach_hang_id =:idKh and trang_thai = 6", nativeQuery = true)
     Optional<BigDecimal> tongTienDaChiCuaKhachHang(@Param("idKh") Long idKh);
 
+    List<HoaDon>findAllByTrangThai(HoaDonStatus status);
 
 }

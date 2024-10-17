@@ -12,6 +12,7 @@ import org.springframework.data.jpa.domain.Specification;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Optional;
 
 public interface HoaDonService {
@@ -34,6 +35,9 @@ public interface HoaDonService {
 
     void updateStatus(String code, String status, CreateLichSuHoaDon request) throws AppException;
 
+    List<String> listHangBill ();
+
+    void  changeStatus(String code, String status) throws AppException;
 
     ResultPaginationResponse filterHoaDon (Specification<HoaDon> specification, Pageable pageable);
 
