@@ -289,7 +289,7 @@ public class HoaDonController {
             byte[] pdfBytes = billService.getInvoicePdf(billCode);
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_PDF);
-            headers.setContentDispositionFormData("filename", "invoice.pdf");
+            headers.setContentDispositionFormData("filename", billCode+".pdf");
             return ResponseEntity.ok().headers(headers).body(pdfBytes);
         } catch (Exception e) {
             System.out.println(e);

@@ -3,6 +3,7 @@ package com.dantn.weblaptop.exception;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Getter
 @NoArgsConstructor
@@ -68,7 +69,13 @@ public enum ErrorCode {
     HOA_DON_HUY(7005,"Hóa đơn đã bị hủy không thể thêm sản phm"),
     HOA_DON_DANG_GIAO(7006,"Hóa đơn đang giao không thể thêm sản phẩm"),
     HOA_DON_DANG_THANH_CONG(7007,"Hóa đơn thành công không thể thêm sản phẩm"),
-    THANH_TOAN_PHAI_TOAN_PHAM(7008, "Phải thanh toán sau cả hóa đơn");
+    THANH_TOAN_PHAI_TOAN_PHAM(7008, "Phải thanh toán sau cả hóa đơn"),
+
+    CUSTOMER_NOT_FOUNT(8000, "Khach hàng không tồn tại"),
+    PRODUCT_QUANTITY_IS_NOT_ENOUGH(8001, "Số lượng sản phẩm tại của hàng không đủ"),
+    MINIMUM_NUMBER_OF_PRODUCTS_IS_1(8002, "Số lượng sản phẩm nhỏ nhất là 1");
+
+
     private Integer code;
     private String message;
 
