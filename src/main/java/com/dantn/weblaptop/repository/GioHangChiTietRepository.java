@@ -23,4 +23,13 @@ public interface GioHangChiTietRepository extends JpaRepository<GioHangChiTiet, 
             "WHERE kh.id = :idKhachHang", nativeQuery = true)
     void deleteAllCart(@Param("idKhachHang") Long idKhachHang);
 
+    @Transactional
+    @Modifying
+    @Query(value = "" +
+            "DELETE ghct\n" +
+            "FROM gio_hang_chi_tiet ghct\n" +
+            "JOIN gio_hang gh ON ghct.gio_hang_id = gh.id\n" +
+            "where gh.session_id = :sessionId", nativeQuery = true)
+    void deleteAllCartBySessionId(@Param("sessionId") String sessionId);
+
 }

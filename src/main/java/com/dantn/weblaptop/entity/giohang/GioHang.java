@@ -21,6 +21,8 @@ public class GioHang {
     @Setter(AccessLevel.NONE)
     @Column(name = "id", updatable = false)
     Long id;
+    @Column(name = "session_id")
+    String sessionId;
     @OneToOne
     @JoinColumn(name = "id_khach_hang",referencedColumnName = "id")
     KhachHang khachHang;

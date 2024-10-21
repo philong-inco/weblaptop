@@ -5,6 +5,7 @@ import com.dantn.weblaptop.dto.response.GioHangDetailResponse;
 import com.dantn.weblaptop.entity.giohang.GioHang;
 import com.dantn.weblaptop.entity.khachhang.KhachHang;
 import com.dantn.weblaptop.exception.AppException;
+import jakarta.servlet.http.HttpServletRequest;
 
 import java.util.List;
 
@@ -12,10 +13,10 @@ public interface GioHangService {
 
     void createGioHang(KhachHang khachHang);
 
-    GioHang addToCart(AddToGioHangRequest request) throws AppException;
+    GioHang addToCart(AddToGioHangRequest request, HttpServletRequest httpServletRequest) throws AppException;
 
-    List<GioHangDetailResponse> getListCart(Long idKhachHang) throws AppException;
+    List<GioHangDetailResponse> getListCart(Long idKhachHang ,  HttpServletRequest httpServletRequest) throws AppException;
 
-    Integer quantityInCart(Long idKhachHang);
+    Integer quantityInCart(Long idKhachHang ,  HttpServletRequest httpServletRequest);
 
 }

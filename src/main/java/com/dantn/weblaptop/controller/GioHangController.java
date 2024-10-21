@@ -4,6 +4,7 @@ import com.dantn.weblaptop.dto.request.create_request.AddToGioHangRequest;
 import com.dantn.weblaptop.dto.response.ApiResponse;
 import com.dantn.weblaptop.exception.AppException;
 import com.dantn.weblaptop.service.GioHangService;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -19,36 +20,41 @@ public class GioHangController {
     GioHangService gioHangService;
 
     @PostMapping("add")
-    public ResponseEntity<ApiResponse> addCart(@RequestBody AddToGioHangRequest listAddToCart) throws AppException {
+    public ResponseEntity<ApiResponse> addCart(
+            @RequestBody AddToGioHangRequest listAddToCart,
+            HttpServletRequest httpServletRequest) throws AppException {
         return ResponseEntity.status(HttpStatus.CREATED).body(
                 ApiResponse.builder()
                         .statusCode(HttpStatus.CREATED.value())
-                        .data(gioHangService.addToCart(listAddToCart))
+                        .data(gioHangService.addToCart(listAddToCart, httpServletRequest))
                         .message("Thêm sản phẩm vào giỏ hàng thành công")
                         .build()
         );
     }
 
-    @GetMapping("/{idKhachHang}")
-    public ResponseEntity<ApiResponse> getListCart(@PathVariable("idKhachHang") Long idKhachHang) throws AppException {
+    @GetMapping("/")
+    public ResponseEntity<ApiResponse> getListCart(
+            @RequestParam(name = "idKhachHang", required = false) Long idKhachHang,
+            HttpServletRequest httpServletRequest) throws AppException {
         return ResponseEntity.status(HttpStatus.OK).body(
                 ApiResponse.builder()
                         .statusCode(HttpStatus.OK.value())
-                        .data(gioHangService.getListCart(idKhachHang))
+                        .data(gioHangService.getListCart(idKhachHang, httpServletRequest))
                         .message("Lấy thành công dach sách giỏ hàng chi tiết")
                         .build()
         );
     }
 
-    @GetMapping("/quantityInCart/{idKhachHang}")
-    public ResponseEntity<ApiResponse> getQuantityInCart(@PathVariable("idKhachHang") Long idKhachHang) {
+    @GetMapping("/quantityInCart/")
+    public ResponseEntity<ApiResponse> getQuantityInCart(
+            @RequestParam(name = "idKhachHang", required = false) Long idKhachHang ,
+            HttpServletRequest httpServletRequest) {
         return ResponseEntity.status(HttpStatus.OK).body(
                 ApiResponse.builder()
                         .statusCode(HttpStatus.OK.value())
-                        .data(gioHangService.quantityInCart(idKhachHang))
+                        .data(gioHangService.quantityInCart(idKhachHang, httpServletRequest))
                         .message("Lấy thành số lượng")
                         .build()
         );
     }
-
 }

@@ -8,6 +8,7 @@ import com.dantn.weblaptop.repository.GioHangChiTietRepository;
 import com.dantn.weblaptop.repository.SanPhamChiTietRepository;
 import com.dantn.weblaptop.service.GioHangChiTietService;
 import com.dantn.weblaptop.service.SerialNumberService;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -35,7 +36,7 @@ public class GioHangChiTietServiceImpl implements GioHangChiTietService {
     public String changeQuantity(UpdateSoLongRequest changeQuantity) throws AppException {
         GioHangChiTiet cartDetail = gioHangChiTietRepository.findById(changeQuantity.getIdGioHangChiTiet()).get();
         Integer quantity = Optional.ofNullable(
-                serialNumberService.getSerialNumberByProductIdAndStatus(cartDetail.getSanPhamChiTiet().getId(), 0))
+                        serialNumberService.getSerialNumberByProductIdAndStatus(cartDetail.getSanPhamChiTiet().getId(), 0))
                 .map(List::size)
                 .orElse(0);
         if (quantity < changeQuantity.getSoLuong()) {
@@ -47,7 +48,13 @@ public class GioHangChiTietServiceImpl implements GioHangChiTietService {
     }
 
     @Override
-    public void deleteAllCart(Long idKhachHang) {
-        gioHangChiTietRepository.deleteAllCart(idKhachHang);
+    public String deleteAllCart(Long idKhachHang, HttpServletRequest httpServletRequest) {
+        if (idKhachHang == 0) {
+            gioHangChiTietRepository.deleteAllCart(idKhachHang);
+            return "ok xóa giỏ hàng của khách hàng";
+        } else {
+            gioHangChiTietRepository.deleteAllCartBySessionId(httpServletRequest.getSession().getId());
+            return "Xóa giỏ hàng session id";
+        }
     }
 }
