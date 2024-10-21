@@ -1,6 +1,7 @@
 package com.dantn.weblaptop.controller;
 
 
+import com.dantn.weblaptop.dto.request.create_request.GioHangRequest;
 import com.dantn.weblaptop.dto.request.update_request.UpdateSoLongRequest;
 import com.dantn.weblaptop.dto.response.ApiResponse;
 import com.dantn.weblaptop.exception.AppException;
@@ -44,15 +45,14 @@ public class GioHangChiTietController {
         );
     }
 
-    @DeleteMapping("/deleteAll/")
+    @PostMapping("/deleteAll/")
     public ResponseEntity<ApiResponse> deleteAllCart(
-            @RequestParam(name = "idKhachHang", defaultValue = "0") Long idKhachHang,
-            HttpServletRequest httpServletRequest
-    ) {
+            @RequestBody GioHangRequest cartRequest
+            ) {
         return ResponseEntity.status(HttpStatus.OK).body(
                 ApiResponse.builder()
                         .statusCode(HttpStatus.OK.value())
-                        .data(gioHangChiTietService.deleteAllCart(idKhachHang, httpServletRequest))
+                        .data(gioHangChiTietService.deleteAllCart(cartRequest))
                         .message("Xóa tất cả giỏ hàng chi tiết thành công")
                         .build()
         );

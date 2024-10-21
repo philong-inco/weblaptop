@@ -1,6 +1,7 @@
 package com.dantn.weblaptop.controller;
 
 import com.dantn.weblaptop.dto.request.create_request.AddToGioHangRequest;
+import com.dantn.weblaptop.dto.request.create_request.GioHangRequest;
 import com.dantn.weblaptop.dto.response.ApiResponse;
 import com.dantn.weblaptop.exception.AppException;
 import com.dantn.weblaptop.service.GioHangService;
@@ -32,27 +33,25 @@ public class GioHangController {
         );
     }
 
-    @GetMapping("/")
+    @PostMapping("/")
     public ResponseEntity<ApiResponse> getListCart(
-            @RequestParam(name = "idKhachHang", required = false) Long idKhachHang,
-            HttpServletRequest httpServletRequest) throws AppException {
+            @RequestBody GioHangRequest request) throws AppException {
         return ResponseEntity.status(HttpStatus.OK).body(
                 ApiResponse.builder()
                         .statusCode(HttpStatus.OK.value())
-                        .data(gioHangService.getListCart(idKhachHang, httpServletRequest))
+                        .data(gioHangService.getListCart(request))
                         .message("Lấy thành công dach sách giỏ hàng chi tiết")
                         .build()
         );
     }
 
-    @GetMapping("/quantityInCart/")
+    @PostMapping("/quantityInCart/")
     public ResponseEntity<ApiResponse> getQuantityInCart(
-            @RequestParam(name = "idKhachHang", required = false) Long idKhachHang ,
-            HttpServletRequest httpServletRequest) {
+            @RequestBody GioHangRequest cartRequest) {
         return ResponseEntity.status(HttpStatus.OK).body(
                 ApiResponse.builder()
                         .statusCode(HttpStatus.OK.value())
-                        .data(gioHangService.quantityInCart(idKhachHang, httpServletRequest))
+                        .data(gioHangService.quantityInCart(cartRequest))
                         .message("Lấy thành số lượng")
                         .build()
         );

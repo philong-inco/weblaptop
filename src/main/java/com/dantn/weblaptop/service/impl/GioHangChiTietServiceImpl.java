@@ -1,5 +1,6 @@
 package com.dantn.weblaptop.service.impl;
 
+import com.dantn.weblaptop.dto.request.create_request.GioHangRequest;
 import com.dantn.weblaptop.dto.request.update_request.UpdateSoLongRequest;
 import com.dantn.weblaptop.entity.giohang.GioHangChiTiet;
 import com.dantn.weblaptop.exception.AppException;
@@ -22,7 +23,6 @@ import java.util.Optional;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class GioHangChiTietServiceImpl implements GioHangChiTietService {
     GioHangChiTietRepository gioHangChiTietRepository;
-    SanPhamChiTietRepository sanPhamChiTietRepository;
     SerialNumberService serialNumberService;
 
 
@@ -48,13 +48,15 @@ public class GioHangChiTietServiceImpl implements GioHangChiTietService {
     }
 
     @Override
-    public String deleteAllCart(Long idKhachHang, HttpServletRequest httpServletRequest) {
-        if (idKhachHang == 0) {
-            gioHangChiTietRepository.deleteAllCart(idKhachHang);
+    public String deleteAllCart(GioHangRequest cartRequest) {
+        if (cartRequest.getIdKhachHang()!=null) {
+            gioHangChiTietRepository.deleteAllCart(cartRequest.getIdKhachHang());
             return "ok xóa giỏ hàng của khách hàng";
-        } else {
-            gioHangChiTietRepository.deleteAllCartBySessionId(httpServletRequest.getSession().getId());
+        } else if(cartRequest.getSessionId()!=null && !cartRequest.getSessionId().isEmpty()) {
+            gioHangChiTietRepository.deleteAllCartBySessionId(cartRequest.getSessionId());
             return "Xóa giỏ hàng session id";
+        }else {
+            return "Không tìm thấy giỏ hàng";
         }
     }
 }

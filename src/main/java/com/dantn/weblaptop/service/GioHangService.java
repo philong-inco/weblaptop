@@ -1,6 +1,8 @@
 package com.dantn.weblaptop.service;
 
 import com.dantn.weblaptop.dto.request.create_request.AddToGioHangRequest;
+import com.dantn.weblaptop.dto.request.create_request.GioHangRequest;
+import com.dantn.weblaptop.dto.response.CartResponse;
 import com.dantn.weblaptop.dto.response.GioHangDetailResponse;
 import com.dantn.weblaptop.entity.giohang.GioHang;
 import com.dantn.weblaptop.entity.khachhang.KhachHang;
@@ -13,10 +15,10 @@ public interface GioHangService {
 
     void createGioHang(KhachHang khachHang);
 
-    GioHang addToCart(AddToGioHangRequest request, HttpServletRequest httpServletRequest) throws AppException;
+    CartResponse addToCart(AddToGioHangRequest request, HttpServletRequest httpServletRequest) throws AppException;
 
-    List<GioHangDetailResponse> getListCart(Long idKhachHang ,  HttpServletRequest httpServletRequest) throws AppException;
+    List<GioHangDetailResponse> getListCart(GioHangRequest cartRequest ) throws AppException;
 
-    Integer quantityInCart(Long idKhachHang ,  HttpServletRequest httpServletRequest);
+    Integer quantityInCart(GioHangRequest cartRequest);
 
 }

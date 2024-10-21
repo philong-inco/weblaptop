@@ -1,6 +1,8 @@
 package com.dantn.weblaptop.service.impl;
 
 import com.dantn.weblaptop.dto.request.create_request.AddToGioHangRequest;
+import com.dantn.weblaptop.dto.request.create_request.GioHangRequest;
+import com.dantn.weblaptop.dto.response.CartResponse;
 import com.dantn.weblaptop.dto.response.GioHangDetailResponse;
 import com.dantn.weblaptop.entity.giohang.GioHang;
 import com.dantn.weblaptop.entity.giohang.GioHangChiTiet;
@@ -22,6 +24,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.swing.text.html.Option;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -48,25 +51,32 @@ public class GioHangServiceImpl implements GioHangService {
     }
 
     @Override
-    public GioHang addToCart(AddToGioHangRequest request, HttpServletRequest httpServletRequest) throws AppException {
+    public CartResponse addToCart(AddToGioHangRequest request, HttpServletRequest httpServletRequest) throws AppException {
         Integer quantity = Optional.ofNullable(serialNumberService.getSerialNumberByProductIdAndStatus(request.getIdSanPham(), 0))
                 .map(List::size)
                 .orElse(0);
         if (quantity < request.getSoLuong()) {
             throw new AppException(ErrorCode.PRODUCT_QUANTITY_IS_NOT_ENOUGH);
         }
-
+        GioHang cart = new GioHang();
         Optional<GioHang> cartCustomerOption = Optional.empty();
+        Optional<GioHang> cartSessionIdOption = Optional.empty();
         if(request.getIdKhachHang()!=null){
             cartCustomerOption=   gioHangRepository.findByKhachHangId(request.getIdKhachHang());
+        }else if(request.getSessionId()!=null && !request.getSessionId().isEmpty()){
+            cartSessionIdOption= gioHangRepository.findBySessionId(request.getSessionId());
+        }else{
+            cartSessionIdOption = gioHangRepository.findBySessionId(httpServletRequest.getSession().getId());
         }
-        Optional<GioHang> cartSessionIdOption = gioHangRepository.findBySessionId(httpServletRequest.getSession().getId());
+
         if (!cartCustomerOption.isPresent() && !cartSessionIdOption.isPresent() ) {
-            GioHang cart = new GioHang();
+
             if(request.getIdKhachHang()!=null){
                 cart.setKhachHang(khachHangRepository.findById(request.getIdKhachHang()).get());
-            }else{
-                cart.setKhachHang(null);
+            }else if(request.getSessionId()!=null && !request.getSessionId().isEmpty()){
+                cart.setSessionId(request.getSessionId());
+            }
+            else{
                 cart.setSessionId(httpServletRequest.getSession().getId());
             }
             gioHangRepository.save(cart);
@@ -78,7 +88,6 @@ public class GioHangServiceImpl implements GioHangService {
             cartDetail.setTrangThai(0);// 0 đang sử dụng
             gioHangChiTIetRepository.save(cartDetail);
         } else {
-            GioHang cart = new GioHang();
             if (request.getIdKhachHang() != null) {
                 cart = cartCustomerOption.get();
             } else {
@@ -124,26 +133,32 @@ public class GioHangServiceImpl implements GioHangService {
                 gioHangChiTIetRepository.save(cartDetail);
             }
         }
-        return null;
+        return CartResponse.builder()
+                .sessionId(cart.getSessionId())
+                .idKhachHang(cart.getKhachHang()!=null ? cart.getKhachHang().getId() : null)
+//                .idSanPham(request.getIdSanPham())
+//                .gia(request.getGia())
+                .build();
     }
 
     @Override
-    public List<GioHangDetailResponse> getListCart(Long idKhachHang , HttpServletRequest httpServletRequest) throws AppException {
+    public List<GioHangDetailResponse> getListCart(GioHangRequest cartRequest ) throws AppException {
         GioHang gioHang = new GioHang();
-        if(idKhachHang!=null){
-            Optional<KhachHang> optional = khachHangRepository.findById(idKhachHang);
+        if(cartRequest.getIdKhachHang()!=null){
+            Optional<KhachHang> optional = khachHangRepository.findById(cartRequest.getIdKhachHang());
             if (optional.isEmpty()) {
                 throw new AppException(ErrorCode.CUSTOMER_NOT_FOUNT);
             }
-            gioHang = gioHangRepository.findByKhachHangId(idKhachHang).get();
-        }else{
-            Optional<GioHang> cartSessionIdOption = gioHangRepository.findBySessionId(httpServletRequest.getSession().getId());
-            if(cartSessionIdOption.isEmpty()){
-                gioHang.setSessionId(httpServletRequest.getSession().getId());
-                gioHang = gioHangRepository.save(gioHang);
-            }else{
+            gioHang = gioHangRepository.findByKhachHangId(cartRequest.getIdKhachHang()).get();
+        }else if(cartRequest.getSessionId()!=null && !cartRequest.getSessionId().isEmpty()){
+            Optional<GioHang> cartSessionIdOption = gioHangRepository.findBySessionId(cartRequest.getSessionId());
+            if(!cartSessionIdOption.isEmpty()){
                 gioHang = cartSessionIdOption.get();
+            }else{
+                System.out.println("Lỗi giỏ hàng SessionId");
             }
+        }else {
+            return new ArrayList<GioHangDetailResponse>();
         }
         List<GioHangChiTiet> listCartDetail = gioHangChiTIetRepository.getGioHangChiTietByGioHangId(gioHang.getId());
         return listCartDetail.stream().map(
@@ -152,10 +167,14 @@ public class GioHangServiceImpl implements GioHangService {
     }
 
     @Override
-    public Integer quantityInCart(Long idKhachHang ,  HttpServletRequest httpServletRequest) {
-        if(idKhachHang!=null){
-            return gioHangRepository.quantityInCart(idKhachHang);
+    public Integer quantityInCart(GioHangRequest cartRequest) {
+        if(cartRequest.getIdKhachHang()!=null){
+            return gioHangRepository.quantityInCart(cartRequest.getIdKhachHang());
+        }else if(cartRequest.getSessionId()!=null && !cartRequest.getSessionId().isEmpty()){
+            return gioHangRepository.quantityInCartBySessionId(cartRequest.getSessionId());
+        }else {
+            return 0;
         }
-        return gioHangRepository.quantityInCartBySessionId(httpServletRequest.getSession().getId());
+
     }
 }
