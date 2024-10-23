@@ -35,7 +35,8 @@ public class GioHangChiTietController {
     }
 
     @PostMapping("/change-quantity")
-    public ResponseEntity<ApiResponse> changeQuantity(@RequestBody @Valid UpdateSoLongRequest request) throws AppException {
+    public ResponseEntity<ApiResponse> changeQuantity(
+            @RequestBody @Valid UpdateSoLongRequest request) throws AppException {
         return ResponseEntity.status(HttpStatus.CREATED).body(
                 ApiResponse.builder()
                         .statusCode(HttpStatus.CREATED.value())
@@ -45,10 +46,9 @@ public class GioHangChiTietController {
         );
     }
 
-    @PostMapping("/deleteAll/")
+    @DeleteMapping("/deleteAll/")
     public ResponseEntity<ApiResponse> deleteAllCart(
-            @RequestBody GioHangRequest cartRequest
-            ) {
+          GioHangRequest cartRequest) {
         return ResponseEntity.status(HttpStatus.OK).body(
                 ApiResponse.builder()
                         .statusCode(HttpStatus.OK.value())

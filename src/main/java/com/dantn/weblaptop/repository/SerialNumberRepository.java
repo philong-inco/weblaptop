@@ -78,4 +78,12 @@ public interface SerialNumberRepository extends JpaRepository<SerialNumber, Long
     @Transactional
     @Query("DELETE FROM SerialNumber s WHERE s.id = :id")
     void deleteByIdSeri(@Param(("id")) Long id);
+
+    @Query(value = "" +
+            "SELECT * FROM serial_number " +
+            "WHERE san_pham_chi_tiet_id = :productDetailId " +
+            "AND trang_thai = 0 LIMIT :limit", nativeQuery = true)
+    List<SerialNumber> findBySanPhamChiTietIdAndTrangThaiWithLimit(
+            @Param("productDetailId") Long productDetailId,
+            @Param("limit") int limit);
 }

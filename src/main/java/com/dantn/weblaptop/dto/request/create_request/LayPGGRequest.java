@@ -10,10 +10,7 @@ import java.math.BigDecimal;
 @Getter
 @Setter
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class AddToGioHangRequest {
-    String sessionId;
-    Long idKhachHang;
-    Long idSPCT;
-    Integer soLuong;
-    BigDecimal gia;
+public class LayPGGRequest {
+    Long idKH;
+    BigDecimal tongTienBanDau;
 }

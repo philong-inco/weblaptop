@@ -1,13 +1,16 @@
 package com.dantn.weblaptop.controller;
 
 import com.dantn.weblaptop.dto.request.create_request.CreatePhieuGiamGiaRequest;
+import com.dantn.weblaptop.dto.request.create_request.LayPGGRequest;
 import com.dantn.weblaptop.dto.request.update_request.UpdatePhieuGiamGiaRequest;
 import com.dantn.weblaptop.dto.response.ApiResponse;
 import com.dantn.weblaptop.dto.response.PhieuGiamGiaResponse;
 import com.dantn.weblaptop.entity.hoadon.HoaDon;
+import com.dantn.weblaptop.entity.khachhang.KhachHang;
 import com.dantn.weblaptop.entity.phieugiamgia.PhieuGiamGia;
 import com.dantn.weblaptop.exception.AppException;
 import com.dantn.weblaptop.repository.HoaDonRepository;
+import com.dantn.weblaptop.repository.KhachHangRepository;
 import com.dantn.weblaptop.service.impl.PhieuGiamGiaService;
 import com.turkraft.springfilter.boot.Filter;
 import jakarta.mail.MessagingException;
@@ -32,6 +35,9 @@ public class PhieuGiamGiaController {
 
     @Autowired
     private HoaDonRepository hoaDonRepository;
+
+    @Autowired
+    private KhachHangRepository khachHangRepository;
 
     @GetMapping("all")
     public ResponseEntity<ApiResponse> filterCoupons(
@@ -125,6 +131,30 @@ public class PhieuGiamGiaController {
                                 optional.get().getTongTienBanDau(),
                                 optional.get().getKhachHang().getId());
             }
+        }
+        return ResponseEntity.ok().body(
+                ApiResponse.builder()
+                        .statusCode(HttpStatus.OK.value())
+                        .message("Get all coupons to bill success")
+                        .data(result)
+                        .build()
+        );
+    }
+    // api lấy pgg client
+    @GetMapping("get-coupons/bill-client/")
+    public ResponseEntity<ApiResponse> getAllCouponsToBillClient(
+            LayPGGRequest request
+    ) {
+        List<PhieuGiamGiaResponse> result = new ArrayList<>();
+        if (request.getIdKH() != null) {
+            Optional<KhachHang> optionalCustomer = khachHangRepository.findById(request.getIdKH());
+            if (optionalCustomer.isPresent()) {
+                result = phieuGiamGiaService.getAllByTotalAmountAndCustomer(
+                        request.getTongTienBanDau(),
+                        optionalCustomer.get().getId());
+            }
+        } else {
+            result = phieuGiamGiaService.getAllByTotalAmount(request.getTongTienBanDau());
         }
         return ResponseEntity.ok().body(
                 ApiResponse.builder()

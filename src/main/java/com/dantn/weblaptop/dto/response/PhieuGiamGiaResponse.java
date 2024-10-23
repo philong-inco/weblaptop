@@ -49,4 +49,6 @@ public class PhieuGiamGiaResponse {
     Integer soLuong;
 
     Set<Long> khachHangPhieuGiamGias;
+
+    BigDecimal giaTriQuyDoi;
 }

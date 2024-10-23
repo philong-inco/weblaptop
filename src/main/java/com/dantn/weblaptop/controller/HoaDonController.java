@@ -1,5 +1,6 @@
 package com.dantn.weblaptop.controller;
 
+import com.dantn.weblaptop.dto.request.create_request.CreateHoaDonClientRequest;
 import com.dantn.weblaptop.dto.request.create_request.CreateLichSuHoaDon;
 import com.dantn.weblaptop.dto.request.update_request.UpdateDiaChiHoaDonRequest;
 import com.dantn.weblaptop.dto.request.update_request.UpdateHoaDonRequest;
@@ -312,5 +313,16 @@ public class HoaDonController {
             System.out.println(e);
             return ResponseEntity.status(500).body(null);
         }
+    }
+
+    @PostMapping("client/create-bill")
+    public ResponseEntity<ApiResponse> createBillClient(
+            @RequestBody @Valid CreateHoaDonClientRequest request
+            ) throws AppException {
+        return ResponseEntity.ok(ApiResponse.builder()
+                        .data(hoaDonService.createBillClient(request))
+//                        .data(request)
+                        .statusCode(HttpStatus.CREATED.value())
+                .build());
     }
 }

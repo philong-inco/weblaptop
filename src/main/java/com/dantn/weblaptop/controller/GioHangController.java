@@ -33,9 +33,9 @@ public class GioHangController {
         );
     }
 
-    @PostMapping("/")
+    @GetMapping("/")
     public ResponseEntity<ApiResponse> getListCart(
-            @RequestBody GioHangRequest request) throws AppException {
+            GioHangRequest request) throws AppException {
         return ResponseEntity.status(HttpStatus.OK).body(
                 ApiResponse.builder()
                         .statusCode(HttpStatus.OK.value())
@@ -45,9 +45,9 @@ public class GioHangController {
         );
     }
 
-    @PostMapping("/quantityInCart/")
+    @GetMapping("/quantityInCart/")
     public ResponseEntity<ApiResponse> getQuantityInCart(
-            @RequestBody GioHangRequest cartRequest) {
+            GioHangRequest cartRequest) {
         return ResponseEntity.status(HttpStatus.OK).body(
                 ApiResponse.builder()
                         .statusCode(HttpStatus.OK.value())

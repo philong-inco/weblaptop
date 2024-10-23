@@ -50,7 +50,7 @@ public enum ErrorCode {
     NOTE_MIN_20(6001, "Ghi chú ít nhất 20 kí tự"),
 
     EMAIL_NOT_BLANK(6002, "Email không được để trống"),
-    EMAIL_INVALID(6003, "Email không đúng địng dạng"),
+    EMAIL_INVALID(6003, "Email không đúng định dạng"),
     PHONE_NOT_BLANK(6004, "Số điện thoại không được để trốnǵ"),
     PHONE_INVALID(6005, "Số điện thoại ko đúng định dạng"),
     NAME_NOT_BLANK(6006, "Tên không được để trống"),
@@ -73,7 +73,9 @@ public enum ErrorCode {
 
     CUSTOMER_NOT_FOUNT(8000, "Khach hàng không tồn tại"),
     PRODUCT_QUANTITY_IS_NOT_ENOUGH(8001, "Số lượng sản phẩm tại của hàng không đủ"),
-    MINIMUM_NUMBER_OF_PRODUCTS_IS_1(8002, "Số lượng sản phẩm nhỏ nhất là 1");
+    MINIMUM_NUMBER_OF_PRODUCTS_IS_1(8002, "Số lượng sản phẩm nhỏ nhất là 1"),
+    PRICE_NOT_NULL(8003, "Giá sản phẩm chưa có"),
+    PRODUCT_DETAIL_IS_NULL(8004, "Id sản phẩm chi tiết chưa có");
 
 
     private Integer code;
