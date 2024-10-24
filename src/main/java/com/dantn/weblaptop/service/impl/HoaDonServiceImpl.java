@@ -6,10 +6,9 @@ import com.dantn.weblaptop.dto.request.create_request.*;
 import com.dantn.weblaptop.dto.request.update_request.UpdateDiaChiHoaDonRequest;
 import com.dantn.weblaptop.dto.request.update_request.UpdateHoaDonRequest;
 import com.dantn.weblaptop.dto.response.*;
-import com.dantn.weblaptop.entity.hoadon.HoaDon;
-import com.dantn.weblaptop.entity.hoadon.HoaDonHinhThucThanhToan;
-import com.dantn.weblaptop.entity.hoadon.LichSuHoaDon;
-import com.dantn.weblaptop.entity.hoadon.SerialNumberDaBan;
+import com.dantn.weblaptop.entity.giohang.GioHang;
+import com.dantn.weblaptop.entity.giohang.GioHangChiTiet;
+import com.dantn.weblaptop.entity.hoadon.*;
 import com.dantn.weblaptop.entity.khachhang.KhachHang;
 import com.dantn.weblaptop.entity.nhanvien.NhanVien;
 import com.dantn.weblaptop.entity.phieugiamgia.KhachHangPhieuGiamGia;
@@ -20,10 +19,7 @@ import com.dantn.weblaptop.exception.AppException;
 import com.dantn.weblaptop.exception.ErrorCode;
 import com.dantn.weblaptop.mapper.impl.HoaDonMapper;
 import com.dantn.weblaptop.repository.*;
-import com.dantn.weblaptop.service.HoaDonHinhThucThanhToanSerive;
-import com.dantn.weblaptop.service.HoaDonService;
-import com.dantn.weblaptop.service.LichSuHoaDonService;
-import com.dantn.weblaptop.service.SerialNumberDaBanService;
+import com.dantn.weblaptop.service.*;
 import com.dantn.weblaptop.util.BillUtils;
 import com.dantn.weblaptop.util.GenerateCode;
 import com.dantn.weblaptop.util.SendEmailBill;
@@ -42,6 +38,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.thymeleaf.context.Context;
 import org.thymeleaf.spring6.SpringTemplateEngine;
 import org.xhtmlrenderer.pdf.ITextRenderer;
@@ -80,7 +77,10 @@ public class HoaDonServiceImpl implements HoaDonService {
     SendEmailBill sendEmailBill;
     KhachHangPhieuGiamGiaRepository khachHangPhieuGiamGiaRepository;
     SanPhamChiTietRepository sanPhamChiTietRepository;
+    GioHangChiTietService gioHangChiTietService;
     SpringTemplateEngine templateEngine;
+    GioHangRepository gioHangRepository;
+    private final GioHangChiTietRepository gioHangChiTietRepository;
 
     @Override
     public ResultPaginationResponse getBillPage(Optional<String> page, Optional<String> size) {
@@ -663,6 +663,7 @@ public class HoaDonServiceImpl implements HoaDonService {
         return ((ByteArrayOutputStream) outputStream).toByteArray();
     }
 
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public HoaDonResponse createBillClient(CreateHoaDonClientRequest request) throws AppException {
 
@@ -671,11 +672,9 @@ public class HoaDonServiceImpl implements HoaDonService {
         // sp
         // tiền
         bill.setTongTienBanDau(request.getTongTienBanDau());
-
-        bill.setTongTienPhaiTra(request.getTongTienPhaiTra());
+        bill.setTongTienPhaiTra(request.getTongTienPhaiTra().subtract(request.getTienShip()));
         //
-
-        bill.setLoaiHoaDon(request.getLoaiHoaDon());
+        bill.setLoaiHoaDon(1);
         bill.setThanhToanSau(request.getThanhToanSau());
         bill.setTenKhachHang(request.getTenKhachHang());
         bill.setSdt(request.getSdt());
@@ -700,6 +699,7 @@ public class HoaDonServiceImpl implements HoaDonService {
                 throw new AppException(ErrorCode.COUPONS_NOT_FOUND);
             }
         }
+        // khách hàng
         if (request.getIdKhacHang() != null) {
             Optional<KhachHang> optional = customerRepository.findById(request.getIdKhacHang());
             if (optional.isPresent()) {
@@ -709,19 +709,40 @@ public class HoaDonServiceImpl implements HoaDonService {
                 throw new AppException(ErrorCode.CUSTOMER_NOT_FOUND);
             }
         }
-        // thanh toán
-        if (request.getThanhToanSau() == 0) {
+        // thanh toán , ls tt
+        //
+        HinhThucThanhToan payment = hinhThucThanhToanRepository.findById(request.getPhuongThucThanhToan()).orElseThrow(
+                () -> new AppException(ErrorCode.PAY_NO_FOUND));
+        if (request.getThanhToanSau() == 1) {
             bill.setTrangThai(HoaDonStatus.CHO_XAC_NHAN);
+            HoaDonHinhThucThanhToan paymentHistory = new HoaDonHinhThucThanhToan();
+            paymentHistory.setSoTien(request.getTongTienPhaiTra());
+            paymentHistory.setTienNhan(BigDecimal.ZERO);
+            paymentHistory.setHoaDon(bill);
+            paymentHistory.setNguoiTao("Nguyễn Tiến Mạnh");
+            paymentHistory.setNguoiSua("Nguyễn Tiến Mạnh");
+            paymentHistory.setLoaiThanhToan(request.getThanhToanSau());
+            paymentHistory.setHinhThucThanhToan(payment);
+            hoaDonHinhThucThanhToanRepository.save(paymentHistory);
             // tạo lịch sử hóa đơn
         }
+        if(request.getThanhToanSau()==0){
+            System.out.println("Đã thanh toán chuyển khoản rồi");
+            // ko đc up rank ở đây phải thanh toán mới đ up
+        }
         billRepository.save(bill);
+        LichSuHoaDon billHistory = new LichSuHoaDon();
+        billHistory.setTrangThai(2);
+        billHistory.setGhiChuChoKhachHang(request.getGhiChu());
+        billHistory.setKhachHang(bill.getKhachHang());
+        billHistory.setHoaDon(bill);
+        billHistoryRepository.save(billHistory);
+
         // giỏ hàng -> serial number đã bán
-        Integer totalProduct=0;
+        Integer totalProduct = 0;
         for (GioHangChiTietRequest cartDetailRequest : request.getGioHangChiTiet()) {
             Optional<SanPhamChiTiet> optional = sanPhamChiTietRepository.findById(cartDetailRequest.getIdSPCT());
             if (!optional.isPresent()) {
-                billRepository.delete(bill);
-//                serialNumberDaBanRepository.de
                 throw new AppException(ErrorCode.PRODUCT_DETAIL_NOT_FOUND);
             }
             List<SerialNumber> listSerialNumber = serialNumberRepository
@@ -729,9 +750,7 @@ public class HoaDonServiceImpl implements HoaDonService {
                             (cartDetailRequest.getIdSPCT(), cartDetailRequest.getSoLuong());
 
             if (listSerialNumber.size() < cartDetailRequest.getSoLuong()) {
-//                throw new AppException(ErrorCode.PRODUCT_QUANTITY_IS_NOT_ENOUGH);
-                billRepository.delete(bill);
-                throw new RuntimeException("Sản phẩm "+optional.get().getMa() +" không đủ . Sản phẩm tồn kho : "+listSerialNumber.size());
+                throw new RuntimeException("Sản phẩm " + optional.get().getMa() + " không đủ . Sản phẩm tồn kho : " + listSerialNumber.size());
             }
             for (SerialNumber serialNumber : listSerialNumber) {
                 SerialNumberDaBan serialNumberDaBanSold = SerialNumberDaBan
@@ -741,22 +760,46 @@ public class HoaDonServiceImpl implements HoaDonService {
                         .giaBan(cartDetailRequest.getGia())
                         .build();
                 serialNumberDaBanRepository.save(serialNumberDaBanSold);
+                serialNumber.setTrangThai(1);
+                serialNumberRepository.save(serialNumber);
                 totalProduct++;
             }
-            bill.setTongSanPham(totalProduct);
-            billRepository.save(bill);
-
-            // lấy top 2 theo số lượng
-//            SerialNumberDaBan serialNumberDaBanSold = SerialNumberDaBan
-//                    .builder()
-//                    .serialNumber(serialNumber)
-//                    .hoaDon(bill)
-//                    .giaBan(cartDetailRequest.getGia())
-//                    .build();
+//            totalProduct+=totalProduct+cartDetailRequest.getSoLuong();
+            // up lại tt sp
+            Integer quantityProductIsActive = serialNumberRepository.getQuantitySerialIsActive(cartDetailRequest.getIdSPCT());
+            if (quantityProductIsActive != null && quantityProductIsActive == 0) {
+                optional.get().setTrangThai(0);
+                sanPhamChiTietRepository.save(optional.get());
+            }
         }
-        // phương thức thanh toán
-
-
+        bill.setTongSanPham(totalProduct);
+        billRepository.save(bill);
+        // xóa giỏ hàng
+        GioHang cart = new GioHang();
+        if (request.getIdKhacHang() != null) {
+            Optional<GioHang> optional = gioHangRepository.findByKhachHangId(request.getIdKhacHang());
+            if (optional.isPresent()) {
+                cart = optional.get();
+            } else {
+                throw new RuntimeException("Id khách hàng chuyển vào sai ko lấy được giỏ hàng");
+            }
+        } else if (request.getSessionId() != null && !request.getSessionId().isEmpty()) {
+            Optional<GioHang> optional = gioHangRepository.findBySessionId(request.getSessionId());
+            if (optional.isPresent()) {
+                cart = optional.get();
+            } else {
+                throw new RuntimeException("SessionId chuyển vào sai ko lấy được giỏ hàng");
+            }
+        } else {
+            throw new RuntimeException("Cần chuyển SessionId hoặc  Id khách hàng ");
+        }
+        for (GioHangChiTietRequest cartDetailRequest : request.getGioHangChiTiet()) {
+            Optional<GioHangChiTiet> optional = gioHangChiTietRepository
+                    .getCartDetailByCartIdAndProductDetailId(cart.getId(), cartDetailRequest.getIdSPCT());
+            if (optional.isPresent()) {
+                gioHangChiTietService.deleteCartDetail(optional.get().getId());
+            }
+        }
         return HoaDonMapper.toHoaDonResponse(bill);
     }
 

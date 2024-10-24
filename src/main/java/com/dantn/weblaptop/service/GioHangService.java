@@ -17,8 +17,8 @@ public interface GioHangService {
 
     CartResponse addToCart(AddToGioHangRequest request, HttpServletRequest httpServletRequest) throws AppException;
 
-    List<GioHangDetailResponse> getListCart(GioHangRequest cartRequest ) throws AppException;
+    List<GioHangDetailResponse> getListCart(String sessionId , Long idKhachHang) throws AppException;
 
-    Integer quantityInCart(GioHangRequest cartRequest);
+    Integer quantityInCart(String sessionId , Long idKhachHang) throws AppException;
 
 }

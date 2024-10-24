@@ -19,6 +19,7 @@ import java.util.List;
 public class CreateHoaDonClientRequest {
     // info
     Long idKhacHang;
+    String sessionId;
     @NotBlank(message = "NAME_NOT_BLANK")
     @Size(min = 5,max = 25,message = "NAME_MIN_MAXIMUM")
     String tenKhachHang;
@@ -30,8 +31,9 @@ public class CreateHoaDonClientRequest {
     String email;
     String diaChi;
     //
-    Integer thanhToanSau;
-    Integer loaiHoaDon;
+    Integer thanhToanSau;//0 ttl 1 tt
+    Long phuongThucThanhToan;// 1 tiền mặt ; 2 ck
+//    Integer loaiHoaDon;
 
     // address
     @NotBlank(message = "PROVINCIAL_CITY_NOT_BLANK")

@@ -1,7 +1,6 @@
 package com.dantn.weblaptop.controller;
 
 import com.dantn.weblaptop.dto.request.create_request.CreatePhieuGiamGiaRequest;
-import com.dantn.weblaptop.dto.request.create_request.LayPGGRequest;
 import com.dantn.weblaptop.dto.request.update_request.UpdatePhieuGiamGiaRequest;
 import com.dantn.weblaptop.dto.response.ApiResponse;
 import com.dantn.weblaptop.dto.response.PhieuGiamGiaResponse;
@@ -23,6 +22,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -143,18 +143,19 @@ public class PhieuGiamGiaController {
     // api lấy pgg client
     @GetMapping("get-coupons/bill-client/")
     public ResponseEntity<ApiResponse> getAllCouponsToBillClient(
-            LayPGGRequest request
+            @RequestParam(value = "idKhachHang", required = false) Long idKhachHang,
+            @RequestParam(value = "tongTienBanDau", required = false) BigDecimal tongTienBanDau
     ) {
         List<PhieuGiamGiaResponse> result = new ArrayList<>();
-        if (request.getIdKH() != null) {
-            Optional<KhachHang> optionalCustomer = khachHangRepository.findById(request.getIdKH());
+        if (idKhachHang != null) {
+            Optional<KhachHang> optionalCustomer = khachHangRepository.findById(idKhachHang);
             if (optionalCustomer.isPresent()) {
                 result = phieuGiamGiaService.getAllByTotalAmountAndCustomer(
-                        request.getTongTienBanDau(),
+                        tongTienBanDau,
                         optionalCustomer.get().getId());
             }
         } else {
-            result = phieuGiamGiaService.getAllByTotalAmount(request.getTongTienBanDau());
+            result = phieuGiamGiaService.getAllByTotalAmount(tongTienBanDau);
         }
         return ResponseEntity.ok().body(
                 ApiResponse.builder()

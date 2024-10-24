@@ -48,11 +48,12 @@ public class GioHangChiTietController {
 
     @DeleteMapping("/deleteAll/")
     public ResponseEntity<ApiResponse> deleteAllCart(
-          GioHangRequest cartRequest) {
+            @RequestParam(name = "sessionId", required = false) String sessionId,
+            @RequestParam(name = "idKhachHang", required = false) Long idKhachHang) {
         return ResponseEntity.status(HttpStatus.OK).body(
                 ApiResponse.builder()
                         .statusCode(HttpStatus.OK.value())
-                        .data(gioHangChiTietService.deleteAllCart(cartRequest))
+                        .data(gioHangChiTietService.deleteAllCart(sessionId, idKhachHang))
                         .message("Xóa tất cả giỏ hàng chi tiết thành công")
                         .build()
         );

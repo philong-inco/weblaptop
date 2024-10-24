@@ -8,5 +8,5 @@ import jakarta.servlet.http.HttpServletRequest;
 public interface GioHangChiTietService {
     Boolean deleteCartDetail(Long id);
     String changeQuantity(UpdateSoLongRequest changeQuantity) throws AppException;
-    String deleteAllCart(GioHangRequest cartRequest);
+    String deleteAllCart(String sessionId , Long idKhachHang);
 }

@@ -15,5 +15,5 @@ public class AddToGioHangRequest {
     Long idKhachHang;
     Long idSPCT;
     Integer soLuong;
-    BigDecimal gia;
+//    BigDecimal gia;
 }

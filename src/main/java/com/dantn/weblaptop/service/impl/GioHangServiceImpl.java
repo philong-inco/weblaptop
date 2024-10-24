@@ -67,6 +67,20 @@ public class GioHangServiceImpl implements GioHangService {
         GioHang cart = new GioHang();
         Optional<GioHang> cartCustomerOption = Optional.empty();
         Optional<GioHang> cartSessionIdOption = Optional.empty();
+        FindSanPhamChiTietByFilter filter = new FindSanPhamChiTietByFilter();
+        filter.setIdSPCT(request.getIdSPCT().toString());
+        List<SanPhamChiTietClientDTO> responseList = sanPhamChiTietService.findByFilter(filter);
+        if (responseList == null || responseList.isEmpty()) {
+            throw new AppException(ErrorCode.PRODUCT_DETAIL_NOT_FOUND);
+        }
+        SanPhamChiTietClientDTO response = responseList.get(0);
+        BigDecimal giaBan = BigDecimal.ZERO;
+        if (response.getGiaSauKhuyenMai() != null) {
+            giaBan = new BigDecimal(response.getGiaSauKhuyenMai());
+
+        } else if (response.getGiaBan() != null) {
+            giaBan = new BigDecimal(response.getGiaBan());
+        }
         if (request.getIdKhachHang() != null) {
             cartCustomerOption = gioHangRepository.findByKhachHangId(request.getIdKhachHang());
         } else if (request.getSessionId() != null && !request.getSessionId().isEmpty()) {
@@ -89,7 +103,7 @@ public class GioHangServiceImpl implements GioHangService {
             cartDetail.setGioHang(cart);
             cartDetail.setSanPhamChiTiet(sanPhamChiTietRepository.findById(request.getIdSPCT()).get());
             cartDetail.setSoLuong(request.getSoLuong());
-            cartDetail.setGia(request.getGia());
+            cartDetail.setGia(giaBan);
             cartDetail.setTrangThai(0);// 0 đang sử dụng
             gioHangChiTIetRepository.save(cartDetail);
         } else {
@@ -120,7 +134,7 @@ public class GioHangServiceImpl implements GioHangService {
                             .builder()
                             .sanPhamChiTiet(sanPhamChiTietRepository.findById(request.getIdSPCT()).get())
                             .gioHang(cart)
-                            .gia(request.getGia())
+                            .gia(giaBan)
                             .soLuong(request.getSoLuong())
                             .trangThai(0)
                             .build();
@@ -131,7 +145,7 @@ public class GioHangServiceImpl implements GioHangService {
                 GioHangChiTiet cartDetail = GioHangChiTiet.builder().sanPhamChiTiet(sanPhamChiTietRepository.findById(
                                 request.getIdSPCT()).get())
                         .gioHang(cart)
-                        .gia(request.getGia())
+                        .gia(giaBan)
                         .soLuong(request.getSoLuong())
                         .trangThai(0)
                         .build();
@@ -147,20 +161,21 @@ public class GioHangServiceImpl implements GioHangService {
     }
 
     @Override
-    public List<GioHangDetailResponse> getListCart(GioHangRequest cartRequest) throws AppException {
+    public List<GioHangDetailResponse> getListCart(String sessionId , Long idKhachHang) throws AppException {
         GioHang gioHang = new GioHang();
-        if (cartRequest.getIdKhachHang() != null) {
-            Optional<KhachHang> optional = khachHangRepository.findById(cartRequest.getIdKhachHang());
+        if (idKhachHang != null) {
+            Optional<KhachHang> optional = khachHangRepository.findById(idKhachHang);
             if (optional.isEmpty()) {
                 throw new AppException(ErrorCode.CUSTOMER_NOT_FOUNT);
             }
-            gioHang = gioHangRepository.findByKhachHangId(cartRequest.getIdKhachHang()).get();
-        } else if (cartRequest.getSessionId() != null && !cartRequest.getSessionId().isEmpty()) {
-            Optional<GioHang> cartSessionIdOption = gioHangRepository.findBySessionId(cartRequest.getSessionId());
+            gioHang = gioHangRepository.findByKhachHangId(idKhachHang).get();
+        } else if (sessionId != null && !sessionId.isEmpty()) {
+            Optional<GioHang> cartSessionIdOption = gioHangRepository.findBySessionId(sessionId);
             if (!cartSessionIdOption.isEmpty()) {
                 gioHang = cartSessionIdOption.get();
             } else {
                 System.out.println("Lỗi giỏ hàng SessionId");
+                throw new RuntimeException("SessionId hoặc Id khách hàng : chưa có hoặc sai");
             }
         } else {
             return new ArrayList<GioHangDetailResponse>();
@@ -177,7 +192,7 @@ public class GioHangServiceImpl implements GioHangService {
             SanPhamChiTietClientDTO response = responseList.get(0);
             Boolean check = false;
             if (response.getTonKhoConLai() != null && !response.getTonKhoConLai().isEmpty()) {
-                if (Integer.parseInt(response.getTonKhoConLai()) == 0 && cartDetail.getTrangThai()==0) {
+                if (Integer.parseInt(response.getTonKhoConLai()) == 0 && cartDetail.getTrangThai() == 0) {
                     cartDetail.setTrangThai(1);
                     check = true;
                 }
@@ -201,16 +216,16 @@ public class GioHangServiceImpl implements GioHangService {
                 }
             }
             if (check) {
-                checkAll= true;
+                checkAll = true;
                 gioHangChiTietRepository.save(cartDetail);
             }
         }
-        if(checkAll){
+        if (checkAll) {
             List<GioHangChiTiet> listCartDetailDone = gioHangChiTIetRepository.getGioHangChiTietByGioHangId(gioHang.getId());
             return listCartDetailDone.stream().map(
                     gioHangChiTietMapper::toResponse
             ).toList();
-        }else{
+        } else {
             return listCartDetail.stream().map(
                     gioHangChiTietMapper::toResponse
             ).toList();
@@ -218,11 +233,11 @@ public class GioHangServiceImpl implements GioHangService {
     }
 
     @Override
-    public Integer quantityInCart(GioHangRequest cartRequest) {
-        if (cartRequest.getIdKhachHang() != null) {
-            return gioHangRepository.quantityInCart(cartRequest.getIdKhachHang());
-        } else if (cartRequest.getSessionId() != null && !cartRequest.getSessionId().isEmpty()) {
-            return gioHangRepository.quantityInCartBySessionId(cartRequest.getSessionId());
+    public Integer quantityInCart(String sessionId , Long idKhachHang) {
+        if (idKhachHang != null) {
+            return gioHangRepository.quantityInCart(idKhachHang);
+        } else if (sessionId != null && !sessionId.isEmpty()) {
+            return gioHangRepository.quantityInCartBySessionId(sessionId);
         } else {
             return 0;
         }

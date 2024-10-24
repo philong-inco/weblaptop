@@ -35,11 +35,13 @@ public class GioHangController {
 
     @GetMapping("/")
     public ResponseEntity<ApiResponse> getListCart(
-            GioHangRequest request) throws AppException {
+            @RequestParam(name = "sessionId", required = false) String sessionId,
+            @RequestParam(name = "idKhachHang", required = false) Long idKhachHang
+            ) throws AppException {
         return ResponseEntity.status(HttpStatus.OK).body(
                 ApiResponse.builder()
                         .statusCode(HttpStatus.OK.value())
-                        .data(gioHangService.getListCart(request))
+                        .data(gioHangService.getListCart(sessionId, idKhachHang))
                         .message("Lấy thành công dach sách giỏ hàng chi tiết")
                         .build()
         );
@@ -47,11 +49,14 @@ public class GioHangController {
 
     @GetMapping("/quantityInCart/")
     public ResponseEntity<ApiResponse> getQuantityInCart(
-            GioHangRequest cartRequest) {
+            @RequestParam(name = "sessionId", required = false) String sessionId,
+            @RequestParam(name = "idKhachHang", required = false) Long idKhachHang
+//            GioHangRequest cartRequest
+    ) throws AppException {
         return ResponseEntity.status(HttpStatus.OK).body(
                 ApiResponse.builder()
                         .statusCode(HttpStatus.OK.value())
-                        .data(gioHangService.quantityInCart(cartRequest))
+                        .data(gioHangService.quantityInCart(sessionId, idKhachHang))
                         .message("Lấy thành số lượng")
                         .build()
         );

@@ -8,6 +8,7 @@ import com.dantn.weblaptop.entity.phieugiamgia.KhachHangPhieuGiamGia;
 import com.dantn.weblaptop.entity.phieugiamgia.PhieuGiamGia;
 import com.dantn.weblaptop.util.ConvertTime;
 
+import java.math.BigDecimal;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -38,7 +39,7 @@ public class PhieuGiamGiaMapper {
                     .collect(Collectors.toSet());
             response.setKhachHangPhieuGiamGias(khachHangIds);
         }
-
+        response.setGiaTriQuyDoi(getDiscountVoucher(phieuGiamGia));
         return response;
     }
 
@@ -92,5 +93,18 @@ public class PhieuGiamGiaMapper {
         response.setSdt(khachHangPhieuGiamGia.getKhachHang().getSdt());
         response.setMaKhachHang(khachHangPhieuGiamGia.getKhachHang().getMa());
         return response;
+    }
+
+    public static BigDecimal getDiscountVoucher(PhieuGiamGia phieuGiamGia){
+        if(phieuGiamGia.getLoaiGiamGia()==1){
+            BigDecimal maxDiscount = phieuGiamGia.getGiamToiDa();//10000000
+            BigDecimal discountPercentage = phieuGiamGia.getGiaTriGiamGia();//10 (%)
+            BigDecimal discountValue = maxDiscount.multiply(discountPercentage.divide(BigDecimal.valueOf(100)));
+            return discountValue;
+        }
+        if (phieuGiamGia.getLoaiGiamGia() == 2) {
+            return phieuGiamGia.getGiaTriGiamGia();
+        }
+        return BigDecimal.ZERO;
     }
 }

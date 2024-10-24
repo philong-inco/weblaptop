@@ -48,12 +48,12 @@ public class GioHangChiTietServiceImpl implements GioHangChiTietService {
     }
 
     @Override
-    public String deleteAllCart(GioHangRequest cartRequest) {
-        if (cartRequest.getIdKhachHang()!=null) {
-            gioHangChiTietRepository.deleteAllCart(cartRequest.getIdKhachHang());
+    public String deleteAllCart(String sessionId , Long idKhachHang) {
+        if (idKhachHang!=null) {
+            gioHangChiTietRepository.deleteAllCart(idKhachHang);
             return "ok xóa giỏ hàng của khách hàng";
-        } else if(cartRequest.getSessionId()!=null && !cartRequest.getSessionId().isEmpty()) {
-            gioHangChiTietRepository.deleteAllCartBySessionId(cartRequest.getSessionId());
+        } else if(sessionId!=null && !sessionId.isEmpty()) {
+            gioHangChiTietRepository.deleteAllCartBySessionId(sessionId);
             return "Xóa giỏ hàng session id";
         }else {
             return "Không tìm thấy giỏ hàng";

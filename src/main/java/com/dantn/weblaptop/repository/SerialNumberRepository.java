@@ -86,4 +86,11 @@ public interface SerialNumberRepository extends JpaRepository<SerialNumber, Long
     List<SerialNumber> findBySanPhamChiTietIdAndTrangThaiWithLimit(
             @Param("productDetailId") Long productDetailId,
             @Param("limit") int limit);
+    @Query(value = "" +
+            "SELECT \n" +
+            "COUNT(sr.id) \n" +
+            "AS serial_count\n" +
+            "FROM serial_number AS sr \n" +
+            "WHERE sr.san_pham_chi_tiet_id = :productDetailId  AND sr.trang_thai = 0;", nativeQuery = true)
+    Integer  getQuantitySerialIsActive(@Param("productDetailId") Long productDetailId);
 }
