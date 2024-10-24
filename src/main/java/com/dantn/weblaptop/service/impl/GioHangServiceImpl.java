@@ -9,6 +9,7 @@ import com.dantn.weblaptop.dto.response.SanPhamChiTietClientDTO;
 import com.dantn.weblaptop.entity.giohang.GioHang;
 import com.dantn.weblaptop.entity.giohang.GioHangChiTiet;
 import com.dantn.weblaptop.entity.khachhang.KhachHang;
+import com.dantn.weblaptop.entity.sanpham.SanPhamChiTiet;
 import com.dantn.weblaptop.exception.AppException;
 import com.dantn.weblaptop.exception.ErrorCode;
 import com.dantn.weblaptop.mapper.impl.GioHangChiTietMapper;
