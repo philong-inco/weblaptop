@@ -4,7 +4,6 @@ import com.dantn.weblaptop.constant.HoaDonStatus;
 import com.dantn.weblaptop.entity.hoadon.HoaDon;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Modifying;
@@ -75,4 +74,7 @@ public interface HoaDonRepository extends JpaRepository<HoaDon, Long>, JpaSpecif
 
     List<HoaDon>findAllByTrangThai(HoaDonStatus status);
 
+    Optional<HoaDon> findByMaAndSdt(String ma, String sdt);
+
+    List<HoaDon> findAllByTrangThaiAndKhachHangId(HoaDonStatus trangThai, Long khachHangId);
 }

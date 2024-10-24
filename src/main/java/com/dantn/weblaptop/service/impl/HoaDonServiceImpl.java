@@ -803,6 +803,40 @@ public class HoaDonServiceImpl implements HoaDonService {
         return HoaDonMapper.toHoaDonResponse(bill);
     }
 
+    @Override
+    public TraCuDonHangResponse lookUpOrders(String billCode, String phoneNumber) throws AppException {
+        Optional<HoaDon> optional = billRepository.findByMaAndSdt(billCode, phoneNumber);
+        if(!optional.isPresent()){
+            throw new AppException(ErrorCode.BILL_NOT_FOUND);
+        }
+        HoaDonResponse hoaDonResponse = HoaDonMapper.toHoaDonResponse(optional.get());
+        List<LichSuHoaDonResponse> lichSuHoaDonResponses = billHistoryService.getBillHistoryByBillCode(optional.get().getMa());
+        List<HoaDonHinhThucThanhToanResponse> lichSuThanhToan = hoaDonHinhThucThanhToanSerive.getAllByBillCode(optional.get().getMa());
+        return TraCuDonHangResponse.builder()
+                .hoaDon(hoaDonResponse)
+                .lichSuHoaDon(lichSuHoaDonResponses)
+                .lichSuThanhToan(lichSuThanhToan)
+                .build();
+    }
+
+    @Override
+    public List<HoaDonClientResponse> getAllByCustomerIdAndStatus(Long customerId, String status) throws AppException {
+        List<HoaDonClientResponse> result =new ArrayList<>();
+        List<HoaDon> bills = billRepository.findAllByTrangThaiAndKhachHangId(HoaDonStatus.getHoaDonStatusEnumByKey(status),customerId);
+        for (HoaDon bill : bills) {
+            List<LichSuHoaDonResponse> lichSuHoaDonResponses = billHistoryService.getBillHistoryByBillCode(bill.getMa());
+            List<SerialNumberDaBanResponse> serialNumber= serialNumberDaBanService.getSerialNumberDaBanPage(bill.getMa());
+            HoaDonClientResponse response = HoaDonClientResponse
+                    .builder()
+                    .hoaDon(HoaDonMapper.toHoaDonResponse(bill))
+                    .lichSuHoaDon(lichSuHoaDonResponses)
+                    .serialNumber(serialNumber)
+                    .build();
+            result.add(response);
+        }
+        return result;
+    }
+
     private BigDecimal calculateDiscount(HoaDon existingBill, PhieuGiamGia coupon) {
         BigDecimal moneyReduced = BigDecimal.ZERO;
         // 1 % : 2 VND
