@@ -49,10 +49,7 @@ import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -700,6 +697,150 @@ public class HoaDonServiceImpl implements HoaDonService {
             }
         }
         // khách hàng
+//        if (request.getIdKhacHang() != null) {
+//            Optional<KhachHang> optional = customerRepository.findById(request.getIdKhacHang());
+//            if (optional.isPresent()) {
+//                bill.setKhachHang(optional.get());
+//                bill.setTienGiamHangKhachHang(request.getGiamHangKhachHang());
+//            } else {
+//                throw new AppException(ErrorCode.CUSTOMER_NOT_FOUND);
+//            }
+//        }
+        // thanh toán , ls tt
+        //
+        HinhThucThanhToan payment = hinhThucThanhToanRepository.findById(request.getPhuongThucThanhToan()).orElseThrow(
+                () -> new AppException(ErrorCode.PAY_NO_FOUND));
+        if (request.getThanhToanSau() == 1) {
+            bill.setTrangThai(HoaDonStatus.CHO_XAC_NHAN);
+            HoaDonHinhThucThanhToan paymentHistory = new HoaDonHinhThucThanhToan();
+            paymentHistory.setSoTien(request.getTongTienPhaiTra());
+            paymentHistory.setTienNhan(BigDecimal.ZERO);
+            paymentHistory.setHoaDon(bill);
+            paymentHistory.setNguoiTao("Nguyễn Tiến Mạnh");
+            paymentHistory.setNguoiSua("Nguyễn Tiến Mạnh");
+            paymentHistory.setLoaiThanhToan(request.getThanhToanSau());
+            paymentHistory.setHinhThucThanhToan(payment);
+            hoaDonHinhThucThanhToanRepository.save(paymentHistory);
+            // tạo lịch sử hóa đơn
+        }
+        if(request.getThanhToanSau()==0){
+            System.out.println("Đã thanh toán chuyển khoản rồi");
+            // ko đc up rank ở đây phải thanh toán mới đ up
+        }
+        billRepository.save(bill);
+        LichSuHoaDon billHistory = new LichSuHoaDon();
+        billHistory.setTrangThai(2);
+        billHistory.setGhiChuChoKhachHang(request.getGhiChu());
+        billHistory.setKhachHang(bill.getKhachHang());
+        billHistory.setHoaDon(bill);
+        billHistoryRepository.save(billHistory);
+
+        // giỏ hàng -> serial number đã bán
+        Integer totalProduct = 0;
+        for (GioHangChiTietRequest cartDetailRequest : request.getGioHangChiTiet()) {
+            Optional<SanPhamChiTiet> optional = sanPhamChiTietRepository.findById(cartDetailRequest.getIdSPCT());
+            if (!optional.isPresent()) {
+                throw new AppException(ErrorCode.PRODUCT_DETAIL_NOT_FOUND);
+            }
+            List<SerialNumber> listSerialNumber = serialNumberRepository
+                    .findBySanPhamChiTietIdAndTrangThaiWithLimit
+                            (cartDetailRequest.getIdSPCT(), cartDetailRequest.getSoLuong());
+
+            if (listSerialNumber.size() < cartDetailRequest.getSoLuong()) {
+                throw new RuntimeException("Sản phẩm " + optional.get().getMa() + " không đủ . Sản phẩm tồn kho : " + listSerialNumber.size());
+            }
+            for (SerialNumber serialNumber : listSerialNumber) {
+                SerialNumberDaBan serialNumberDaBanSold = SerialNumberDaBan
+                        .builder()
+                        .serialNumber(serialNumber)
+                        .hoaDon(bill)
+                        .giaBan(cartDetailRequest.getGia())
+                        .build();
+                serialNumberDaBanRepository.save(serialNumberDaBanSold);
+                serialNumber.setTrangThai(1);
+                serialNumberRepository.save(serialNumber);
+                totalProduct++;
+            }
+//            totalProduct+=totalProduct+cartDetailRequest.getSoLuong();
+            // up lại tt sp
+            Integer quantityProductIsActive = serialNumberRepository.getQuantitySerialIsActive(cartDetailRequest.getIdSPCT());
+            if (quantityProductIsActive != null && quantityProductIsActive == 0) {
+                optional.get().setTrangThai(0);
+                sanPhamChiTietRepository.save(optional.get());
+            }
+        }
+        bill.setTongSanPham(totalProduct);
+        billRepository.save(bill);
+        // xóa giỏ hàng
+        GioHang cart = new GioHang();
+//        if (request.getIdKhacHang() != null) {
+//            Optional<GioHang> optional = gioHangRepository.findByKhachHangId(request.getIdKhacHang());
+//            if (optional.isPresent()) {
+//                cart = optional.get();
+//            } else {
+//                throw new RuntimeException("Id khách hàng chuyển vào sai ko lấy được giỏ hàng");
+//            }
+//        } else
+
+            if (request.getSessionId() != null && !request.getSessionId().isEmpty()) {
+            Optional<GioHang> optional = gioHangRepository.findBySessionId(request.getSessionId());
+            if (optional.isPresent()) {
+                cart = optional.get();
+            } else {
+                throw new RuntimeException("SessionId chuyển vào sai ko lấy được giỏ hàng");
+            }
+        } else {
+            throw new RuntimeException("Cần chuyển SessionId hoặc  Id khách hàng ");
+        }
+        for (GioHangChiTietRequest cartDetailRequest : request.getGioHangChiTiet()) {
+            Optional<GioHangChiTiet> optional = gioHangChiTietRepository
+                    .getCartDetailByCartIdAndProductDetailId(cart.getId(), cartDetailRequest.getIdSPCT());
+            if (optional.isPresent()) {
+                gioHangChiTietService.deleteCartDetail(optional.get().getId());
+            }
+        }
+        return HoaDonMapper.toHoaDonResponse(bill);
+    }
+
+    @Override
+    public HoaDonResponse createBillClientAccount(CreateHoaDonClientAccountRequest  request) throws AppException {
+
+        HoaDon bill = new HoaDon();
+        bill.setMa(GenerateCode.generateHoaDon());
+        // sp
+        // tiền
+        bill.setTongTienBanDau(request.getTongTienBanDau());
+        bill.setTongTienPhaiTra(request.getTongTienPhaiTra().subtract(request.getTienShip()));
+        //
+        bill.setLoaiHoaDon(1);
+        bill.setThanhToanSau(request.getThanhToanSau());
+
+        bill.setTienShip(request.getTienShip());
+        // goi
+        DiaChi_Response diaChiResponse = diaChiService.getDiaChiDefauldOfIdKhachHang(request.getIdKhacHang());
+        bill.setTenKhachHang(diaChiResponse.getTenNguoiNhan());
+        bill.setSdt(diaChiResponse.getSdtNguoiNhan());
+        bill.setEmail(diaChiResponse.getEmailNguoiNhan());
+        String diaChi = (request.getDiaChi() != null && !request.getDiaChi().isEmpty() ? request.getDiaChi() + " , " : "")
+                + request.getTenPhuongXa() + " , "
+                + request.getTenQuanHuyen() + " , "
+                + request.getTenTinhThanh() + " | "
+                + request.getIdPhuongXa() + " | "
+                + request.getIdQuanHuyen() + " | "
+                + request.getIdTinhThanh();
+        bill.setDiaChi(diaChi);
+        bill.setGhiChu(request.getGhiChu());
+
+        // pgg
+        if (request.getMaPGG() != null && !request.getMaPGG().isEmpty()) {
+            Optional<PhieuGiamGia> optional = couponRepository.findByMa(request.getMaPGG().trim());
+            if (optional.isPresent()) {
+                bill.setPhieuGiamGia(optional.get());
+            } else {
+                throw new AppException(ErrorCode.COUPONS_NOT_FOUND);
+            }
+        }
+        // khách hàng
         if (request.getIdKhacHang() != null) {
             Optional<KhachHang> optional = customerRepository.findById(request.getIdKhacHang());
             if (optional.isPresent()) {
@@ -783,14 +924,8 @@ public class HoaDonServiceImpl implements HoaDonService {
             } else {
                 throw new RuntimeException("Id khách hàng chuyển vào sai ko lấy được giỏ hàng");
             }
-        } else if (request.getSessionId() != null && !request.getSessionId().isEmpty()) {
-            Optional<GioHang> optional = gioHangRepository.findBySessionId(request.getSessionId());
-            if (optional.isPresent()) {
-                cart = optional.get();
-            } else {
-                throw new RuntimeException("SessionId chuyển vào sai ko lấy được giỏ hàng");
-            }
-        } else {
+        }
+        else {
             throw new RuntimeException("Cần chuyển SessionId hoặc  Id khách hàng ");
         }
         for (GioHangChiTietRequest cartDetailRequest : request.getGioHangChiTiet()) {
@@ -834,6 +969,7 @@ public class HoaDonServiceImpl implements HoaDonService {
                     .build();
             result.add(response);
         }
+        Collections.reverse(result);
         return result;
     }
 

@@ -1,5 +1,6 @@
 package com.dantn.weblaptop.controller;
 
+import com.dantn.weblaptop.dto.request.create_request.CreateHoaDonClientAccountRequest;
 import com.dantn.weblaptop.dto.request.create_request.CreateHoaDonClientRequest;
 import com.dantn.weblaptop.dto.request.create_request.CreateLichSuHoaDon;
 import com.dantn.weblaptop.dto.request.update_request.UpdateDiaChiHoaDonRequest;
@@ -322,6 +323,17 @@ public class HoaDonController {
     ) throws AppException {
         return ResponseEntity.ok(ApiResponse.builder()
                 .data(hoaDonService.createBillClient(request))
+//                        .data(request)
+                .statusCode(HttpStatus.CREATED.value())
+                .build());
+    }
+
+    @PostMapping("client/create-bill/account")
+    public ResponseEntity<ApiResponse> createBillClientAccount(
+            @RequestBody @Valid CreateHoaDonClientAccountRequest  request
+    ) throws AppException {
+        return ResponseEntity.ok(ApiResponse.builder()
+                .data(hoaDonService.createBillClientAccount(request))
 //                        .data(request)
                 .statusCode(HttpStatus.CREATED.value())
                 .build());

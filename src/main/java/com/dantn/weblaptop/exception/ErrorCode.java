@@ -75,7 +75,10 @@ public enum ErrorCode {
     PRODUCT_QUANTITY_IS_NOT_ENOUGH(8001, "Số lượng sản phẩm tại của hàng không đủ"),
     MINIMUM_NUMBER_OF_PRODUCTS_IS_1(8002, "Số lượng sản phẩm nhỏ nhất là 1"),
     PRICE_NOT_NULL(8003, "Giá sản phẩm chưa có"),
-    PRODUCT_DETAIL_IS_NULL(8004, "Id sản phẩm chi tiết chưa có");
+    PRODUCT_DETAIL_IS_NULL(8004, "Id sản phẩm chi tiết chưa có"),
+    CART_DETAIL_IS_NULL(8005, "Id giỏ hàng chi tiết chi tiết chưa có"),
+    CUSTOMER_ID_IS_NULL(8006, "Chưa chuyển id khách hàng"),
+    SESSION_ID_IS_NULL(8007, "Chưa chuyển sessionId");
 
 
     private Integer code;

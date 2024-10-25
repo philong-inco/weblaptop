@@ -13,6 +13,8 @@ import java.math.BigDecimal;
 @Setter
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class GioHangChiTietRequest {
+    @NotNull(message = "CART_DETAIL_IS_NULL")
+    Long idGioHangChiTiet;
     @NotNull(message = "PRODUCT_DETAIL_IS_NULL")
     Long idSPCT;
     @NotNull(message = "PRICE_NOT_NULL")

@@ -1,5 +1,6 @@
 package com.dantn.weblaptop.service;
 
+import com.dantn.weblaptop.dto.request.create_request.CreateHoaDonClientAccountRequest;
 import com.dantn.weblaptop.dto.request.create_request.CreateHoaDonClientRequest;
 import com.dantn.weblaptop.dto.request.create_request.CreateLichSuHoaDon;
 import com.dantn.weblaptop.dto.request.update_request.UpdateDiaChiHoaDonRequest;
@@ -67,6 +68,8 @@ public interface HoaDonService {
     byte[] getInvoicePdf(String billCode) throws AppException;
 
     HoaDonResponse createBillClient(CreateHoaDonClientRequest request) throws AppException;
+
+    HoaDonResponse createBillClientAccount (CreateHoaDonClientAccountRequest  request) throws AppException;
 
     TraCuDonHangResponse lookUpOrders(String billCode , String phoneNumber) throws AppException;
 
