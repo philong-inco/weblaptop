@@ -168,6 +168,7 @@ public class PhieuGiamGiaController {
 
     @GetMapping("get-coupons/add-bill-client/")
     public ResponseEntity<ApiResponse> addToBill(
+            @RequestParam(name = "idKhachHang") Long idKhachHang,
             @RequestParam(value = "maPGG", required = false) String maPGG,
             @RequestParam(value = "tongTienBanDau", required = false) BigDecimal tongTienBanDau
     ) {
