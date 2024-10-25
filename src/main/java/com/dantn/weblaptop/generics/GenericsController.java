@@ -46,6 +46,8 @@ public abstract class GenericsController<E, ID, C, U, R> {
                 String.valueOf(pageResult.getTotalPages()),
                 String.valueOf(pageResult.getTotalElements())
         );
+        
+        
         return ResponseEntity.ok().body(result);
     }
 
