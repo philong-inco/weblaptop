@@ -1,6 +1,7 @@
 package com.dantn.weblaptop.dto.request.create_request;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import io.swagger.annotations.ApiModelProperty;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
 import lombok.AccessLevel;
@@ -11,6 +12,7 @@ import lombok.experimental.FieldDefaults;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
+
 @Getter
 @Setter
 @FieldDefaults(level = AccessLevel.PRIVATE)
@@ -48,8 +50,10 @@ public class CreateHoaDonClientAccountRequest {
     String diaChi;
     // amount
     @NotNull(message = "TONG_TIEN_BAN_DAU_NOT_NULL")
+    @Min(value = 0, message = "TONG_TIEN_BAN_DAU_KHONG_AM")
     BigDecimal tongTienBanDau;
     @NotNull(message = "TONG_TIEN_PHAI_TRA_NOT_NULL")
+    @Min(value = 0, message = "TONG_TIEN_PHAI_TRA_KHONG_AM")
     BigDecimal tongTienPhaiTra;
     BigDecimal giamHangKhachHang;
     @NotNull(message = "MONEY_SHIP")

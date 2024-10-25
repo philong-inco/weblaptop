@@ -19,6 +19,7 @@ public class GioHangChiTietRequest {
     Long idSPCT;
     @NotNull(message = "PRICE_NOT_NULL")
     BigDecimal gia;
+    @NotNull(message = "QUANTITY_PRODUCT_DETAIL_IN_CART_NOT_NULL")
     @Min(value = 1, message = "MINIMUM_NUMBER_OF_PRODUCTS_IS_1")
     Integer soLuong;
 }

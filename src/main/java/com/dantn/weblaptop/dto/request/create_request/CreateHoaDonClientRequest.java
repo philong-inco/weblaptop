@@ -17,7 +17,6 @@ import java.util.List;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class CreateHoaDonClientRequest {
     // info
-//    Long idKhacHang;
     @NotNull(message = "SESSION_ID_IS_NULL")
     @NotBlank(message = "SESSION_ID_IS_NULL")
     String sessionId;
@@ -31,12 +30,10 @@ public class CreateHoaDonClientRequest {
     @Email(message = "EMAIL_INVALID")
     String email;
     String diaChi;
-    //
     @NotNull(message = "PAY_LATER_NOT_NULL")
     Integer thanhToanSau;//0 ttl 1 tt
     @NotNull(message = "PAYMENT_METHOD_NOT_NULL")
     Long phuongThucThanhToan;// 1 tiền mặt ; 2 ck
-//    Integer loaiHoaDon;
     // address
     @NotBlank(message = "PROVINCIAL_CITY_NOT_BLANK")
     String idTinhThanh;
@@ -53,16 +50,16 @@ public class CreateHoaDonClientRequest {
     String ghiChu;
     // amount
     @NotNull(message = "TONG_TIEN_BAN_DAU_NOT_NULL")
+    @Min(value = 0, message = "TONG_TIEN_PHAI_TRA_KHONG_AM")
     BigDecimal tongTienBanDau;
     @NotNull(message = "TONG_TIEN_PHAI_TRA_NOT_NULL")
+    @Min(value = 0, message = "TONG_TIEN_PHAI_TRA_KHONG_AM")
     BigDecimal tongTienPhaiTra;
-    //    BigDecimal giamHangKhachHang;
     @NotNull(message = "MONEY_SHIP")
     BigDecimal tienShip;
     // pgg
     String maPGG;
     BigDecimal giaTriPGG;
-
     @NotNull(message = "SHIPPING_DATE_NOT_NULL")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
     LocalDate ngayNhanHangDuKien;
