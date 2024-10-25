@@ -1,5 +1,6 @@
 package com.dantn.weblaptop.dto.request.create_request;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
 import lombok.AccessLevel;
@@ -8,6 +9,7 @@ import lombok.Setter;
 import lombok.experimental.FieldDefaults;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
 @Getter
 @Setter
@@ -25,7 +27,9 @@ public class CreateHoaDonClientAccountRequest {
     @NotBlank(message = "EMAIL_NOT_BLANK")
     @Email(message = "EMAIL_INVALID")
     String email;
+    @NotNull(message = "PAY_LATER_NOT_NULL")
     Integer thanhToanSau;//0 ttl 1 tt
+    @NotNull(message = "PAYMENT_METHOD_NOT_NULL")
     Long phuongThucThanhToan;// 1 tiền mặt ; 2 ck
     String ghiChu;
     // address
@@ -53,7 +57,9 @@ public class CreateHoaDonClientAccountRequest {
     // pgg
     String maPGG;
     BigDecimal giaTriPGG;
-    //    BigDecimal tienShip;
+    @NotNull(message = "SHIPPING_DATE_NOT_NULL")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
+    LocalDate ngayNhanHangDuKien;
     @Valid
     List<GioHangChiTietRequest> gioHangChiTiet;
 }

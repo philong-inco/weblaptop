@@ -3,7 +3,6 @@ package com.dantn.weblaptop.exception;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Getter
 @NoArgsConstructor
@@ -84,7 +83,12 @@ public enum ErrorCode {
     WARD_NAME_NOT_BLANK(8010, "Chưa có tên Phường Xã"),
     TONG_TIEN_BAN_DAU_NOT_NULL(8011, "Tổng tiền ban đầu chưa có̃"),
     TONG_TIEN_PHAI_TRA_NOT_NULL(8012, "Tổng tiền phải trả chưa có̃"),
-    MONEY_SHIP(8013, "Tiền ship chưa có");
+    MONEY_SHIP(8013, "Tiền ship chưa có"),
+    SHIPPING_DATE_NOT_NULL(8014, "Ngày nhận hàng dự kiến chưa co"),
+    PAY_LATER_NOT_NULL(8015,"Chưa chuyền thanhToanSau"),
+    PAYMENT_METHOD_NOT_NULL(8016,"Chưa chuyển phuongThucThanhToan")
+    ;
+
 
 
     private Integer code;

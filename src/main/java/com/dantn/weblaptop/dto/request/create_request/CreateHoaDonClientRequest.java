@@ -1,5 +1,6 @@
 package com.dantn.weblaptop.dto.request.create_request;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
 import lombok.AccessLevel;
@@ -8,6 +9,7 @@ import lombok.Setter;
 import lombok.experimental.FieldDefaults;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
 
 @Getter
@@ -30,10 +32,11 @@ public class CreateHoaDonClientRequest {
     String email;
     String diaChi;
     //
+    @NotNull(message = "PAY_LATER_NOT_NULL")
     Integer thanhToanSau;//0 ttl 1 tt
+    @NotNull(message = "PAYMENT_METHOD_NOT_NULL")
     Long phuongThucThanhToan;// 1 tiền mặt ; 2 ck
 //    Integer loaiHoaDon;
-
     // address
     @NotBlank(message = "PROVINCIAL_CITY_NOT_BLANK")
     String idTinhThanh;
@@ -53,13 +56,16 @@ public class CreateHoaDonClientRequest {
     BigDecimal tongTienBanDau;
     @NotNull(message = "TONG_TIEN_PHAI_TRA_NOT_NULL")
     BigDecimal tongTienPhaiTra;
-//    BigDecimal giamHangKhachHang;
+    //    BigDecimal giamHangKhachHang;
     @NotNull(message = "MONEY_SHIP")
     BigDecimal tienShip;
     // pgg
     String maPGG;
     BigDecimal giaTriPGG;
-    //    BigDecimal tienShip;
+
+    @NotNull(message = "SHIPPING_DATE_NOT_NULL")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
+    LocalDate ngayNhanHangDuKien;
     @Valid
     List<GioHangChiTietRequest> gioHangChiTiet;
 }
