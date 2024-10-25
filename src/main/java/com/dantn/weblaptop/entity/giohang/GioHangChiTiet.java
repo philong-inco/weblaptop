@@ -27,13 +27,17 @@ public class GioHangChiTiet {
     @JoinColumn(name = "gio_hang_id", referencedColumnName = "id")
     GioHang gioHang;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(cascade = {CascadeType.DETACH, CascadeType.MERGE,
+            CascadeType.REFRESH, CascadeType.PERSIST},
+            fetch = FetchType.EAGER)
     @JoinColumn(name = "san_pham_chi_tiet_id", referencedColumnName = "id")
     SanPhamChiTiet sanPhamChiTiet;
 
     @Column(name = "so_luong")
     Integer soLuong;
 
+    @Column(name = "gia")
+    BigDecimal gia;
     //    0: vẫn còn : 1 hết sản phẩm : 2 : số lượng ko đủ
     @Column(name = "trang_thai")
     Integer trangThai;

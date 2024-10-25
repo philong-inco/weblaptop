@@ -1,5 +1,7 @@
 package com.dantn.weblaptop.controller;
 
+import com.dantn.weblaptop.dto.request.create_request.CreateHoaDonClientAccountRequest;
+import com.dantn.weblaptop.dto.request.create_request.CreateHoaDonClientRequest;
 import com.dantn.weblaptop.dto.request.create_request.CreateLichSuHoaDon;
 import com.dantn.weblaptop.dto.request.update_request.UpdateDiaChiHoaDonRequest;
 import com.dantn.weblaptop.dto.request.update_request.UpdateHoaDonRequest;
@@ -26,6 +28,7 @@ import org.springframework.web.bind.annotation.*;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -144,7 +147,7 @@ public class HoaDonController {
     @PostMapping("pay-counter/{billCode}")
     public ResponseEntity<ApiResponse> payCounter(
             @PathVariable(name = "billCode") String billCode,
-            @RequestBody  UpdateHoaDonRequest request
+            @RequestBody UpdateHoaDonRequest request
     ) throws AppException {
         return ResponseEntity.status(HttpStatus.CREATED).body(
                 ApiResponse.builder()
@@ -228,7 +231,7 @@ public class HoaDonController {
     }
 
     @GetMapping("list-hang-bill")
-    public ResponseEntity<ApiResponse> getHangBill(){
+    public ResponseEntity<ApiResponse> getHangBill() {
         return ResponseEntity.status(HttpStatus.OK).body(
                 ApiResponse.builder()
                         .statusCode(HttpStatus.OK.value())
@@ -289,7 +292,7 @@ public class HoaDonController {
             byte[] pdfBytes = billService.getInvoicePdf(billCode);
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_PDF);
-            headers.setContentDispositionFormData("filename", "invoice.pdf");
+            headers.setContentDispositionFormData("filename", billCode + ".pdf");
             return ResponseEntity.ok().headers(headers).body(pdfBytes);
         } catch (Exception e) {
             System.out.println(e);
@@ -313,4 +316,49 @@ public class HoaDonController {
             return ResponseEntity.status(500).body(null);
         }
     }
+
+    @PostMapping("client/create-bill")
+    public ResponseEntity<ApiResponse> createBillClient(
+            @RequestBody @Valid CreateHoaDonClientRequest request
+    ) throws AppException {
+        return ResponseEntity.ok(ApiResponse.builder()
+                .data(hoaDonService.createBillClient(request))
+//                        .data(request)
+                .statusCode(HttpStatus.CREATED.value())
+                .build());
+    }
+
+    @PostMapping("client/create-bill/account")
+    public ResponseEntity<ApiResponse> createBillClientAccount(
+            @RequestBody @Valid CreateHoaDonClientAccountRequest  request
+    ) throws AppException {
+        return ResponseEntity.ok(ApiResponse.builder()
+                .data(hoaDonService.createBillClientAccount(request))
+//                        .data(request)
+                .statusCode(HttpStatus.CREATED.value())
+                .build());
+    }
+
+    @GetMapping("client/look-up-orders")
+    public ResponseEntity<ApiResponse> lookUpOrders(
+            @RequestParam(name = "billCode") String billCode,
+            @RequestParam(name = "phoneNumber") String phoneNumber
+    ) throws AppException {
+        return ResponseEntity.ok(ApiResponse.builder()
+                .data(hoaDonService.lookUpOrders(billCode, phoneNumber))
+                .statusCode(HttpStatus.CREATED.value())
+                .build());
+    }
+
+    @GetMapping("client/get-all-bills")
+    public ResponseEntity<ApiResponse> lookUpOrders(
+            @RequestParam(name = "idKhachHang") Long idKhachHang,
+            @RequestParam(name = "trangThai", required = false) String status
+    ) throws AppException {
+        return ResponseEntity.ok(ApiResponse.builder()
+                .data(hoaDonService.getAllByCustomerIdAndStatus(idKhachHang, status))
+                .statusCode(HttpStatus.CREATED.value())
+                .build());
+    }
 }
+

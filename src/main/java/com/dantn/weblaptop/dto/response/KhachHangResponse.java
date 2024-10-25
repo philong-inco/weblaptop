@@ -4,6 +4,7 @@ import jakarta.validation.constraints.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Getter
@@ -36,4 +37,6 @@ public class KhachHangResponse {
     String sessionId;
 
     String status;
+
+    BigDecimal tienGiamHang;
 }

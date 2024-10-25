@@ -5,9 +5,11 @@ import com.dantn.weblaptop.dto.request.update_request.UpdatePhieuGiamGiaRequest;
 import com.dantn.weblaptop.dto.response.ApiResponse;
 import com.dantn.weblaptop.dto.response.PhieuGiamGiaResponse;
 import com.dantn.weblaptop.entity.hoadon.HoaDon;
+import com.dantn.weblaptop.entity.khachhang.KhachHang;
 import com.dantn.weblaptop.entity.phieugiamgia.PhieuGiamGia;
 import com.dantn.weblaptop.exception.AppException;
 import com.dantn.weblaptop.repository.HoaDonRepository;
+import com.dantn.weblaptop.repository.KhachHangRepository;
 import com.dantn.weblaptop.service.impl.PhieuGiamGiaService;
 import com.turkraft.springfilter.boot.Filter;
 import jakarta.mail.MessagingException;
@@ -20,6 +22,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -32,6 +35,9 @@ public class PhieuGiamGiaController {
 
     @Autowired
     private HoaDonRepository hoaDonRepository;
+
+    @Autowired
+    private KhachHangRepository khachHangRepository;
 
     @GetMapping("all")
     public ResponseEntity<ApiResponse> filterCoupons(
@@ -131,6 +137,46 @@ public class PhieuGiamGiaController {
                         .statusCode(HttpStatus.OK.value())
                         .message("Get all coupons to bill success")
                         .data(result)
+                        .build()
+        );
+    }
+    // api lấy pgg client
+    @GetMapping("get-coupons/bill-client/")
+    public ResponseEntity<ApiResponse> getAllCouponsToBillClient(
+            @RequestParam(value = "idKhachHang", required = false) Long idKhachHang,
+            @RequestParam(value = "tongTienBanDau", required = false) BigDecimal tongTienBanDau
+    ) {
+        List<PhieuGiamGiaResponse> result = new ArrayList<>();
+        if (idKhachHang != null) {
+            Optional<KhachHang> optionalCustomer = khachHangRepository.findById(idKhachHang);
+            if (optionalCustomer.isPresent()) {
+                result = phieuGiamGiaService.getAllByTotalAmountAndCustomer(
+                        tongTienBanDau,
+                        optionalCustomer.get().getId());
+            }
+        } else {
+            result = phieuGiamGiaService.getAllByTotalAmount(tongTienBanDau);
+        }
+        return ResponseEntity.ok().body(
+                ApiResponse.builder()
+                        .statusCode(HttpStatus.OK.value())
+                        .message("Get all coupons to bill success")
+                        .data(result)
+                        .build()
+        );
+    }
+
+    @GetMapping("get-coupons/add-bill-client/")
+    public ResponseEntity<ApiResponse> addToBill(
+            @RequestParam(name = "idKhachHang", required = false) Long idKhachHang,
+            @RequestParam(value = "maPGG", required = true) String maPGG,
+            @RequestParam(value = "tongTienBanDau", required = true) BigDecimal tongTienBanDau
+    ) throws AppException {
+        return ResponseEntity.ok().body(
+                ApiResponse.builder()
+                        .statusCode(HttpStatus.OK.value())
+                        .message("Api đang xây")
+                        .data(phieuGiamGiaService.getCouponToClient(idKhachHang,maPGG,tongTienBanDau))
                         .build()
         );
     }

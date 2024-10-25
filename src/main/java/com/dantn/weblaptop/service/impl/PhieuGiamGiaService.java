@@ -341,4 +341,24 @@ public class PhieuGiamGiaService {
             phieuGiamGiaRepo.save(phieuGiamGia);
         }
     }
+
+    public  PhieuGiamGiaResponse getCouponToClient (Long idCustomer , String couponCode , BigDecimal totalMoneyAlter) throws AppException {
+         phieuGiamGiaRepo.findByMa(couponCode).orElseThrow(
+                () -> new AppException(ErrorCode.COUPONS_NOT_FOUND));
+        if(idCustomer!=null){
+            Optional<PhieuGiamGia> optionalNotCustomer =   phieuGiamGiaRepo.getAllByTotalAmountAndCustomerAndCouponCode(totalMoneyAlter,idCustomer,couponCode);
+            if(optionalNotCustomer.isPresent()){
+                return PhieuGiamGiaMapper.toPhieuGiamGiaResponse(optionalNotCustomer.get());
+            }else{
+                throw new AppException(ErrorCode.COUPON_DOES_NOT_APPLY);
+            }
+        }else{
+            Optional<PhieuGiamGia>   optionalByCustomer  = phieuGiamGiaRepo.getByTotalAmountAndCouponCode(totalMoneyAlter,couponCode);
+            if(optionalByCustomer.isPresent()){
+                return PhieuGiamGiaMapper.toPhieuGiamGiaResponse(optionalByCustomer.get());
+            }else{
+                throw new AppException(ErrorCode.COUPON_DOES_NOT_APPLY);
+            }
+        }
+    }
 }

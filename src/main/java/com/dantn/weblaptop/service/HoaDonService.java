@@ -1,10 +1,14 @@
 package com.dantn.weblaptop.service;
 
+import com.dantn.weblaptop.dto.request.create_request.CreateHoaDonClientAccountRequest;
+import com.dantn.weblaptop.dto.request.create_request.CreateHoaDonClientRequest;
 import com.dantn.weblaptop.dto.request.create_request.CreateLichSuHoaDon;
 import com.dantn.weblaptop.dto.request.update_request.UpdateDiaChiHoaDonRequest;
 import com.dantn.weblaptop.dto.request.update_request.UpdateHoaDonRequest;
+import com.dantn.weblaptop.dto.response.HoaDonClientResponse;
 import com.dantn.weblaptop.dto.response.HoaDonResponse;
 import com.dantn.weblaptop.dto.response.ResultPaginationResponse;
+import com.dantn.weblaptop.dto.response.TraCuDonHangResponse;
 import com.dantn.weblaptop.entity.hoadon.HoaDon;
 import com.dantn.weblaptop.exception.AppException;
 import org.springframework.data.domain.Pageable;
@@ -62,4 +66,12 @@ public interface HoaDonService {
      void updateCustomerRank(Long idKhachHang) ;
 
     byte[] getInvoicePdf(String billCode) throws AppException;
+
+    HoaDonResponse createBillClient(CreateHoaDonClientRequest request) throws AppException;
+
+    HoaDonResponse createBillClientAccount (CreateHoaDonClientAccountRequest  request) throws AppException;
+
+    TraCuDonHangResponse lookUpOrders(String billCode , String phoneNumber) throws AppException;
+
+    List<HoaDonClientResponse> getAllByCustomerIdAndStatus(Long customerId, String status) throws AppException;
 }

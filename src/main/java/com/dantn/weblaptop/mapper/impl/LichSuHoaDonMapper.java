@@ -21,8 +21,11 @@ public class LichSuHoaDonMapper {
             response.setIdKhachHanh(lichSuHoaDon.getKhachHang().getId());
             response.setMaKhachHang(lichSuHoaDon.getKhachHang().getMa());
         }
-        response.setIdNhanVien(lichSuHoaDon.getNhanVien().getId());
-        response.setMaNhanVien(lichSuHoaDon.getNhanVien().getMa());
+        if(lichSuHoaDon.getNhanVien()!=null){
+            response.setIdNhanVien(lichSuHoaDon.getNhanVien().getId());
+            response.setMaNhanVien(lichSuHoaDon.getNhanVien().getMa());
+        }
+
 
         response.setNgaySua(lichSuHoaDon.getNgaySua());
         response.setNgayTao(ConvertTime.convert(lichSuHoaDon.getNgayTao()+""));

@@ -80,7 +80,7 @@ public class GenerateCode {
 
     public static String generateHoaDon() {
         Random random = new Random();
-        int randomNumber = random.nextInt((int) Math.pow(10, NUMBER_LENGTH));
+        int randomNumber = random.nextInt((int) Math.pow(10, 6));
         String formattedNumber = String.format("%0" + NUMBER_LENGTH + "d", randomNumber);
         return BILL + formattedNumber;
     }

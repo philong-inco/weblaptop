@@ -19,7 +19,9 @@ public class HoaDonMapper {
         KhachHang customer = hoaDon.getKhachHang();
         response.setId(hoaDon.getId());
         response.setMa(hoaDon.getMa());
-        response.setIdNhanVien(hoaDon.getNhanVien().getId());
+        response.setIdNhanVien(hoaDon.getNhanVien() != null ?
+                        hoaDon.getNhanVien().getId() : null
+                );
         response.setTenKhachHang(
                 hoaDon.getTenKhachHang() != null ?
                         hoaDon.getTenKhachHang() :
@@ -38,7 +40,7 @@ public class HoaDonMapper {
         response.setDiaChi(hoaDon.getDiaChi());
         response.setNguoiSua(hoaDon.getNguoiSua());
         response.setNguoiTao(hoaDon.getNguoiTao());
-        response.setNgayTao(ConvertTime.convert(hoaDon.getNgayTao()+""));
+        response.setNgayTao(hoaDon.getNgayTao() !=null ? ConvertTime.convert(hoaDon.getNgayTao()+""): null);
         response.setTrangThai(hoaDon.getTrangThai());
         response.setTongSanPham(hoaDon.getTongSanPham());
 
@@ -55,6 +57,24 @@ public class HoaDonMapper {
             response.setGiaTriPhieuGiamGia(calculateDiscount(hoaDon, phieuGiamGia));
             response.setLoaiPGG(phieuGiamGia.getLoaiGiamGia());
             response.setMaPGG(phieuGiamGia.getMa());
+        }
+        if (response.getDiaChi() != null) {
+            String[] diaChiParts = response.getDiaChi().split("\\|");
+            for (int i = 0; i < diaChiParts.length; i++) {
+                diaChiParts[i] = diaChiParts[i].trim();
+            }
+            if (diaChiParts.length == 4) {
+                String diaChiChiTiet = diaChiParts[0];
+                String phuongXa = diaChiParts[1];
+                String quanHuyen = diaChiParts[2];
+                String tinhThanh = diaChiParts[3];
+                response.setDiaChi(diaChiChiTiet);
+                response.setPhuong(phuongXa);
+                response.setHuyen(quanHuyen);
+                response.setTinh(tinhThanh);
+            } else {
+                System.out.println("Chuỗi địa chỉ không có đủ 4 phần.");
+            }
         }
         return response;
     }

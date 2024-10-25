@@ -1,5 +1,6 @@
 package com.dantn.weblaptop.mapper.impl;
 
+import com.dantn.weblaptop.constant.RankCustomer;
 import com.dantn.weblaptop.dto.request.create_request.CreateKhachHang;
 import com.dantn.weblaptop.dto.request.update_request.UpdateKhachHang;
 import com.dantn.weblaptop.dto.response.KhachHangResponse;
@@ -66,6 +67,7 @@ public class KhachHangMapper_Implement implements KhachHang_Mapper {
                 .hinhAnh(khachHang.getHinhAnh())
                 .hangKhachHang(khachHang.getHangKhachHang())
                 .sessionId(khachHang.getSessionId())
+                .tienGiamHang(RankCustomer.getValueByRank(khachHang.getHangKhachHang()))
                 .build();
     }
 
