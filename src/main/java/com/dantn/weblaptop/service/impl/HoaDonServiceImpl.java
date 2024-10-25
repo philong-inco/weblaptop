@@ -817,10 +817,9 @@ public class HoaDonServiceImpl implements HoaDonService {
 
         bill.setTienShip(request.getTienShip());
         // goi
-        DiaChi_Response diaChiResponse = diaChiService.getDiaChiDefauldOfIdKhachHang(request.getIdKhacHang());
-        bill.setTenKhachHang(diaChiResponse.getTenNguoiNhan());
-        bill.setSdt(diaChiResponse.getSdtNguoiNhan());
-        bill.setEmail(diaChiResponse.getEmailNguoiNhan());
+        bill.setTenKhachHang(request.getTenKhachHang());
+        bill.setSdt(request.getSdt());
+        bill.setEmail(request.getEmail());
         String diaChi = (request.getDiaChi() != null && !request.getDiaChi().isEmpty() ? request.getDiaChi() + " , " : "")
                 + request.getTenPhuongXa() + " , "
                 + request.getTenQuanHuyen() + " , "

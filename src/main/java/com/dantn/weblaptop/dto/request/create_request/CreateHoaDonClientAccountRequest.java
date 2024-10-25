@@ -16,6 +16,15 @@ public class CreateHoaDonClientAccountRequest {
     // info
     @NotNull(message = "CUSTOMER_ID_IS_NULL")
     Long idKhacHang;
+    @NotBlank(message = "NAME_NOT_BLANK")
+    @Size(min = 5, max = 25, message = "NAME_MIN_MAXIMUM")
+    String tenKhachHang;
+    @NotBlank(message = "PHONE_NOT_BLANK")
+    @Pattern(regexp = "^0\\d{9}$", message = "PHONE_INVALID")
+    String sdt;
+    @NotBlank(message = "EMAIL_NOT_BLANK")
+    @Email(message = "EMAIL_INVALID")
+    String email;
     Integer thanhToanSau;//0 ttl 1 tt
     Long phuongThucThanhToan;// 1 tiền mặt ; 2 ck
     String ghiChu;

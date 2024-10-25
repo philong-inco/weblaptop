@@ -48,7 +48,7 @@ public class CreateHoaDonClientRequest {
     // amount
     BigDecimal tongTienBanDau;
     BigDecimal tongTienPhaiTra;
-    BigDecimal giamHangKhachHang;
+//    BigDecimal giamHangKhachHang;
     BigDecimal tienShip;
     // pgg
     String maPGG;
