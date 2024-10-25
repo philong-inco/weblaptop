@@ -171,23 +171,12 @@ public class PhieuGiamGiaController {
             @RequestParam(name = "idKhachHang", required = false) Long idKhachHang,
             @RequestParam(value = "maPGG", required = true) String maPGG,
             @RequestParam(value = "tongTienBanDau", required = true) BigDecimal tongTienBanDau
-    ) {
-//        List<PhieuGiamGiaResponse> result = new ArrayList<>();
-//        if (idKhachHang != null) {
-//            Optional<KhachHang> optionalCustomer = khachHangRepository.findById(idKhachHang);
-//            if (optionalCustomer.isPresent()) {
-//                result = phieuGiamGiaService.getAllByTotalAmountAndCustomer(
-//                        tongTienBanDau,
-//                        optionalCustomer.get().getId());
-//            }
-//        } else {
-//            result = phieuGiamGiaService.getAllByTotalAmount(tongTienBanDau);
-//        }
+    ) throws AppException {
         return ResponseEntity.ok().body(
                 ApiResponse.builder()
                         .statusCode(HttpStatus.OK.value())
                         .message("Api đang xây")
-//                        .data(result)
+                        .data(phieuGiamGiaService.getCouponToClient(idKhachHang,maPGG,tongTienBanDau))
                         .build()
         );
     }
