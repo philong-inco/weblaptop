@@ -78,7 +78,13 @@ public enum ErrorCode {
     PRODUCT_DETAIL_IS_NULL(8004, "Id sản phẩm chi tiết chưa có"),
     CART_DETAIL_IS_NULL(8005, "Id giỏ hàng chi tiết chi tiết chưa có"),
     CUSTOMER_ID_IS_NULL(8006, "Chưa chuyển id khách hàng"),
-    SESSION_ID_IS_NULL(8007, "Chưa chuyển sessionId");
+    SESSION_ID_IS_NULL(8007, "Chưa chuyển sessionId"),
+    PROVINCIAL_CITY_NAME_NOT_BLANK(8008, "Chưa có tên tỉnh thành"),
+    DISTRICT_NAME_NOT_BLANK(8009, "Chưa có tên Quận Huyện"),
+    WARD_NAME_NOT_BLANK(8010, "Chưa có tên Phường Xã"),
+    TONG_TIEN_BAN_DAU_NOT_NULL(8011, "Tổng tiền ban đầu chưa có̃"),
+    TONG_TIEN_PHAI_TRA_NOT_NULL(8012, "Tổng tiền phải trả chưa có̃"),
+    MONEY_SHIP(8013, "Tiền ship chưa có");
 
 
     private Integer code;

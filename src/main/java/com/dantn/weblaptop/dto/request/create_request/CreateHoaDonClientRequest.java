@@ -37,18 +37,24 @@ public class CreateHoaDonClientRequest {
     // address
     @NotBlank(message = "PROVINCIAL_CITY_NOT_BLANK")
     String idTinhThanh;
+    @NotBlank(message = "PROVINCIAL_CITY_NAME_NOT_BLANK")
     String tenTinhThanh;
     @NotBlank(message = "DISTRICT_NOT_BLANK")
     String idQuanHuyen;
+    @NotBlank(message = "DISTRICT_NAME_NOT_BLANK")
     String tenQuanHuyen;
     @NotBlank(message = "WARD_NOT_BLANK")
     String idPhuongXa;
+    @NotBlank(message = "WARD_NAME_NOT_BLANK")
     String tenPhuongXa;
     String ghiChu;
     // amount
+    @NotNull(message = "TONG_TIEN_BAN_DAU_NOT_NULL")
     BigDecimal tongTienBanDau;
+    @NotNull(message = "TONG_TIEN_PHAI_TRA_NOT_NULL")
     BigDecimal tongTienPhaiTra;
 //    BigDecimal giamHangKhachHang;
+    @NotNull(message = "MONEY_SHIP")
     BigDecimal tienShip;
     // pgg
     String maPGG;

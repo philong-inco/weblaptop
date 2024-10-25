@@ -166,6 +166,31 @@ public class PhieuGiamGiaController {
         );
     }
 
+    @GetMapping("get-coupons/add-bill-client/")
+    public ResponseEntity<ApiResponse> addToBill(
+            @RequestParam(value = "maPGG", required = false) String maPGG,
+            @RequestParam(value = "tongTienBanDau", required = false) BigDecimal tongTienBanDau
+    ) {
+//        List<PhieuGiamGiaResponse> result = new ArrayList<>();
+//        if (idKhachHang != null) {
+//            Optional<KhachHang> optionalCustomer = khachHangRepository.findById(idKhachHang);
+//            if (optionalCustomer.isPresent()) {
+//                result = phieuGiamGiaService.getAllByTotalAmountAndCustomer(
+//                        tongTienBanDau,
+//                        optionalCustomer.get().getId());
+//            }
+//        } else {
+//            result = phieuGiamGiaService.getAllByTotalAmount(tongTienBanDau);
+//        }
+        return ResponseEntity.ok().body(
+                ApiResponse.builder()
+                        .statusCode(HttpStatus.OK.value())
+                        .message("Api đang xây")
+//                        .data(result)
+                        .build()
+        );
+    }
+
     @PutMapping("/updateStatusStart/{id}")
     public ResponseEntity<ApiResponse> updateStatusStart(@PathVariable Long id) {
         phieuGiamGiaService.updateStatusPhieuGiamGiaStart(id);

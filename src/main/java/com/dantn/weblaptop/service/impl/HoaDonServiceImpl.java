@@ -723,7 +723,7 @@ public class HoaDonServiceImpl implements HoaDonService {
             hoaDonHinhThucThanhToanRepository.save(paymentHistory);
             // tạo lịch sử hóa đơn
         }
-        if(request.getThanhToanSau()==0){
+        if (request.getThanhToanSau() == 0) {
             System.out.println("Đã thanh toán chuyển khoản rồi");
             // ko đc up rank ở đây phải thanh toán mới đ up
         }
@@ -782,7 +782,7 @@ public class HoaDonServiceImpl implements HoaDonService {
 //            }
 //        } else
 
-            if (request.getSessionId() != null && !request.getSessionId().isEmpty()) {
+        if (request.getSessionId() != null && !request.getSessionId().isEmpty()) {
             Optional<GioHang> optional = gioHangRepository.findBySessionId(request.getSessionId());
             if (optional.isPresent()) {
                 cart = optional.get();
@@ -803,7 +803,7 @@ public class HoaDonServiceImpl implements HoaDonService {
     }
 
     @Override
-    public HoaDonResponse createBillClientAccount(CreateHoaDonClientAccountRequest  request) throws AppException {
+    public HoaDonResponse createBillClientAccount(CreateHoaDonClientAccountRequest request) throws AppException {
 
         HoaDon bill = new HoaDon();
         bill.setMa(GenerateCode.generateHoaDon());
@@ -866,7 +866,7 @@ public class HoaDonServiceImpl implements HoaDonService {
             hoaDonHinhThucThanhToanRepository.save(paymentHistory);
             // tạo lịch sử hóa đơn
         }
-        if(request.getThanhToanSau()==0){
+        if (request.getThanhToanSau() == 0) {
             System.out.println("Đã thanh toán chuyển khoản rồi");
             // ko đc up rank ở đây phải thanh toán mới đ up
         }
@@ -923,8 +923,7 @@ public class HoaDonServiceImpl implements HoaDonService {
             } else {
                 throw new RuntimeException("Id khách hàng chuyển vào sai ko lấy được giỏ hàng");
             }
-        }
-        else {
+        } else {
             throw new RuntimeException("Cần chuyển SessionId hoặc  Id khách hàng ");
         }
         for (GioHangChiTietRequest cartDetailRequest : request.getGioHangChiTiet()) {
@@ -940,7 +939,7 @@ public class HoaDonServiceImpl implements HoaDonService {
     @Override
     public TraCuDonHangResponse lookUpOrders(String billCode, String phoneNumber) throws AppException {
         Optional<HoaDon> optional = billRepository.findByMaAndSdt(billCode, phoneNumber);
-        if(!optional.isPresent()){
+        if (!optional.isPresent()) {
             throw new AppException(ErrorCode.BILL_NOT_FOUND);
         }
         HoaDonResponse hoaDonResponse = HoaDonMapper.toHoaDonResponse(optional.get());
@@ -955,11 +954,16 @@ public class HoaDonServiceImpl implements HoaDonService {
 
     @Override
     public List<HoaDonClientResponse> getAllByCustomerIdAndStatus(Long customerId, String status) throws AppException {
-        List<HoaDonClientResponse> result =new ArrayList<>();
-        List<HoaDon> bills = billRepository.findAllByTrangThaiAndKhachHangId(HoaDonStatus.getHoaDonStatusEnumByKey(status),customerId);
+        List<HoaDonClientResponse> result = new ArrayList<>();
+        List<HoaDon> bills = new ArrayList<>();
+        if (status != null && !status.isEmpty()) {
+            bills = billRepository.findAllByTrangThaiAndKhachHangId(HoaDonStatus.getHoaDonStatusEnumByKey(status), customerId);
+        } else {
+            bills = billRepository.findAllByKhachHangId(customerId);
+        }
         for (HoaDon bill : bills) {
             List<LichSuHoaDonResponse> lichSuHoaDonResponses = billHistoryService.getBillHistoryByBillCode(bill.getMa());
-            List<SerialNumberDaBanResponse> serialNumber= serialNumberDaBanService.getSerialNumberDaBanPage(bill.getMa());
+            List<SerialNumberDaBanResponse> serialNumber = serialNumberDaBanService.getSerialNumberDaBanPage(bill.getMa());
             HoaDonClientResponse response = HoaDonClientResponse
                     .builder()
                     .hoaDon(HoaDonMapper.toHoaDonResponse(bill))

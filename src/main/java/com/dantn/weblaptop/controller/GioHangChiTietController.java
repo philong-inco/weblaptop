@@ -50,9 +50,9 @@ public class GioHangChiTietController {
     public ResponseEntity<ApiResponse> deleteAllCart(
             @RequestParam(name = "sessionId", required = false) String sessionId,
             @RequestParam(name = "idKhachHang", required = false) Long idKhachHang) {
-        return ResponseEntity.status(HttpStatus.OK).body(
+        return ResponseEntity.status(HttpStatus.CREATED).body(
                 ApiResponse.builder()
-                        .statusCode(HttpStatus.OK.value())
+                        .statusCode(HttpStatus.CREATED.value())
                         .data(gioHangChiTietService.deleteAllCart(sessionId, idKhachHang))
                         .message("Xóa tất cả giỏ hàng chi tiết thành công")
                         .build()

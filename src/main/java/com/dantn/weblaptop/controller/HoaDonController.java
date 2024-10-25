@@ -353,7 +353,7 @@ public class HoaDonController {
     @GetMapping("client/get-all-bills")
     public ResponseEntity<ApiResponse> lookUpOrders(
             @RequestParam(name = "idKhachHang") Long idKhachHang,
-            @RequestParam(name = "trangThai") String status
+            @RequestParam(name = "trangThai", required = false) String status
     ) throws AppException {
         return ResponseEntity.ok(ApiResponse.builder()
                 .data(hoaDonService.getAllByCustomerIdAndStatus(idKhachHang, status))

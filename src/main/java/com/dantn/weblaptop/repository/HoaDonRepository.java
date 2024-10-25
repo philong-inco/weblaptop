@@ -77,4 +77,5 @@ public interface HoaDonRepository extends JpaRepository<HoaDon, Long>, JpaSpecif
     Optional<HoaDon> findByMaAndSdt(String ma, String sdt);
 
     List<HoaDon> findAllByTrangThaiAndKhachHangId(HoaDonStatus trangThai, Long khachHangId);
+    List<HoaDon> findAllByKhachHangId(Long khachHangId);
 }
