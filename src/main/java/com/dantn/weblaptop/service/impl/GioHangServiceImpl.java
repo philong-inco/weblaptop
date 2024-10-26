@@ -137,7 +137,10 @@ public class GioHangServiceImpl implements GioHangService {
                 gioHangChiTIetRepository.save(cartDetail);
             }
         }
-        return CartResponse.builder().sessionId(cart.getSessionId()).idKhachHang(cart.getKhachHang() != null ? cart.getKhachHang().getId() : null)
+        return CartResponse
+                .builder()
+                .sessionId(cart.getSessionId())
+                .idKhachHang(cart.getKhachHang() != null ? cart.getKhachHang().getId() : null)
 //                .idSanPham(request.getIdSanPham())
 //                .gia(request.getGia())
                 .build();

@@ -245,12 +245,11 @@ public class HoaDonController {
     public ResponseEntity<ApiResponse> revertBillStatus(
             @PathVariable String code) throws AppException {
         billHistoryService.revertBillStatus(code);
-        ApiResponse<Object> apiResponse = ApiResponse
-                .builder()
+        return ResponseEntity.status(HttpStatus.CREATED).body(
+                ApiResponse.builder()
                 .statusCode(HttpStatus.CREATED.value())
                 .message("Chuyển đổi trạng thái thành công")
-                .build();
-        return ResponseEntity.status(HttpStatus.CREATED).body(apiResponse);
+                .build());
     }
 
     @GetMapping("/countbill")
@@ -323,7 +322,6 @@ public class HoaDonController {
     ) throws AppException {
         return ResponseEntity.ok(ApiResponse.builder()
                 .data(hoaDonService.createBillClient(request))
-//                        .data(request)
                 .statusCode(HttpStatus.CREATED.value())
                 .build());
     }
@@ -334,7 +332,6 @@ public class HoaDonController {
     ) throws AppException {
         return ResponseEntity.ok(ApiResponse.builder()
                 .data(hoaDonService.createBillClientAccount(request))
-//                        .data(request)
                 .statusCode(HttpStatus.CREATED.value())
                 .build());
     }

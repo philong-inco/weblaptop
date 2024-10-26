@@ -12,8 +12,8 @@ import java.math.BigDecimal;
 public class GioHangDetailResponse {
     Long idGioHang;
     Long idGioHangChiTiet;
-
     Long idSanPham;
+    Long idSanPhamSPCT;
     String anh;
     String maSPCT;
     String tenSanPham;
