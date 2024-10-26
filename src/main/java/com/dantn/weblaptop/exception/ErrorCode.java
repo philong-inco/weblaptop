@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 public enum ErrorCode {
     UNCATEGORIZED_EXCEPTION(9999, "Không được phân loại ngoại lệ !!!"),
 
-    NOT_FOUND(1001, "Không tìm thấy"),
+    NOT_FOUND(1001, "Sai đường dẫn"),
     PAYMENT_METHOD_NOT_FOUND(1002, "Phương thức thanh toán không tồn tại"),
     BILL_NOT_FOUND(1003, "Hóa đơn không tồn tại"),
     EMPLOYEE_NOT_FOUND(1004, "Nhân viên không tồn tại"),

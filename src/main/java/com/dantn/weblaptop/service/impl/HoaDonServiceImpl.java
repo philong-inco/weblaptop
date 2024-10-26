@@ -221,6 +221,7 @@ public class HoaDonServiceImpl implements HoaDonService {
         return response;
     }
 
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public void updateStatus(String code, String status, CreateLichSuHoaDon request) throws AppException {
         Optional<HoaDon> optional = billRepository.findHoaDonByMa(code);
@@ -339,6 +340,7 @@ public class HoaDonServiceImpl implements HoaDonService {
         }
     }
 
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public HoaDonResponse addCustomerToBill(Long customerId, String billCode) throws AppException {
         Optional<KhachHang> customer = customerRepository.findById(customerId);
@@ -404,6 +406,7 @@ public class HoaDonServiceImpl implements HoaDonService {
         }
     }
 
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public HoaDonResponse addCouponToBill(Long couponId, String billCode) throws AppException {
         HoaDon existingBill = billRepository.findHoaDonByMa(billCode).orElseThrow(
@@ -418,6 +421,7 @@ public class HoaDonServiceImpl implements HoaDonService {
         return HoaDonMapper.toHoaDonResponse(billRepository.save(existingBill));
     }
 
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public HoaDonResponse addCouponToBillByCode(String couponCode, String billCode) throws AppException {
         if (couponCode.trim().isEmpty()) {
@@ -452,6 +456,7 @@ public class HoaDonServiceImpl implements HoaDonService {
         return HoaDonMapper.toHoaDonResponse(billRepository.save(existingBill));
     }
 
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public Boolean payCounter(String billCode, UpdateHoaDonRequest request) throws AppException {
         HoaDon bill = billRepository.findHoaDonByMa(billCode.trim()).orElseThrow(
@@ -560,6 +565,7 @@ public class HoaDonServiceImpl implements HoaDonService {
     }
 
 
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public void updateAddressInBill(String billCode, UpdateDiaChiHoaDonRequest request) throws AppException {
         HoaDon bill = billRepository.findHoaDonByMa(billCode.trim()).orElseThrow(
@@ -802,6 +808,7 @@ public class HoaDonServiceImpl implements HoaDonService {
         return HoaDonMapper.toHoaDonResponse(bill);
     }
 
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public HoaDonResponse createBillClientAccount(CreateHoaDonClientAccountRequest request) throws AppException {
 
