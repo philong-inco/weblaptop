@@ -151,11 +151,12 @@ public class GioHangServiceImpl implements GioHangService {
             if (optional.isEmpty()) {
 //                throw new AppException(ErrorCode.CUSTOMER_NOT_FOUNT);
                 return new ArrayList<GioHangDetailResponse>();
-
             }
             Optional<GioHang> optionalCart = gioHangRepository.findByKhachHangId(idKhachHang);
             if (optionalCart.isPresent()) {
                 gioHang = optionalCart.get();
+            } else {
+                return new ArrayList<GioHangDetailResponse>();
             }
         } else if (sessionId != null && !sessionId.isEmpty()) {
             Optional<GioHang> cartSessionIdOption = gioHangRepository.findBySessionId(sessionId);
