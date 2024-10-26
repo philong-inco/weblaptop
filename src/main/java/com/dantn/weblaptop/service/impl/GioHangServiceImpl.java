@@ -58,9 +58,7 @@ public class GioHangServiceImpl implements GioHangService {
 
     @Override
     public CartResponse addToCart(AddToGioHangRequest request, HttpServletRequest httpServletRequest) throws AppException {
-        Integer quantity = Optional.ofNullable(serialNumberService.getSerialNumberByProductIdAndStatus(request.getIdSPCT(), 0))
-                .map(List::size)
-                .orElse(0);
+        Integer quantity = Optional.ofNullable(serialNumberService.getSerialNumberByProductIdAndStatus(request.getIdSPCT(), 0)).map(List::size).orElse(0);
         if (quantity < request.getSoLuong()) {
             throw new AppException(ErrorCode.PRODUCT_QUANTITY_IS_NOT_ENOUGH);
         }
@@ -130,52 +128,44 @@ public class GioHangServiceImpl implements GioHangService {
                     }
                 }
                 if (!foundInOld) {
-                    GioHangChiTiet cartDetail = GioHangChiTiet
-                            .builder()
-                            .sanPhamChiTiet(sanPhamChiTietRepository.findById(request.getIdSPCT()).get())
-                            .gioHang(cart)
-                            .gia(giaBan)
-                            .soLuong(request.getSoLuong())
-                            .trangThai(0)
-                            .build();
+                    GioHangChiTiet cartDetail = GioHangChiTiet.builder().sanPhamChiTiet(sanPhamChiTietRepository.findById(request.getIdSPCT()).get()).gioHang(cart).gia(giaBan).soLuong(request.getSoLuong()).trangThai(0).build();
                     gioHangChiTietRepository.save(cartDetail);
                 }
             } else {
 
-                GioHangChiTiet cartDetail = GioHangChiTiet.builder().sanPhamChiTiet(sanPhamChiTietRepository.findById(
-                                request.getIdSPCT()).get())
-                        .gioHang(cart)
-                        .gia(giaBan)
-                        .soLuong(request.getSoLuong())
-                        .trangThai(0)
-                        .build();
+                GioHangChiTiet cartDetail = GioHangChiTiet.builder().sanPhamChiTiet(sanPhamChiTietRepository.findById(request.getIdSPCT()).get()).gioHang(cart).gia(giaBan).soLuong(request.getSoLuong()).trangThai(0).build();
                 gioHangChiTIetRepository.save(cartDetail);
             }
         }
-        return CartResponse.builder()
-                .sessionId(cart.getSessionId())
-                .idKhachHang(cart.getKhachHang() != null ? cart.getKhachHang().getId() : null)
+        return CartResponse.builder().sessionId(cart.getSessionId()).idKhachHang(cart.getKhachHang() != null ? cart.getKhachHang().getId() : null)
 //                .idSanPham(request.getIdSanPham())
 //                .gia(request.getGia())
                 .build();
     }
 
     @Override
-    public List<GioHangDetailResponse> getListCart(String sessionId , Long idKhachHang) throws AppException {
+    public List<GioHangDetailResponse> getListCart(String sessionId, Long idKhachHang) throws AppException {
         GioHang gioHang = new GioHang();
         if (idKhachHang != null) {
             Optional<KhachHang> optional = khachHangRepository.findById(idKhachHang);
             if (optional.isEmpty()) {
-                throw new AppException(ErrorCode.CUSTOMER_NOT_FOUNT);
+//                throw new AppException(ErrorCode.CUSTOMER_NOT_FOUNT);
+                return new ArrayList<GioHangDetailResponse>();
+
             }
-            gioHang = gioHangRepository.findByKhachHangId(idKhachHang).get();
+            Optional<GioHang> optionalCart = gioHangRepository.findByKhachHangId(idKhachHang);
+            if (optionalCart.isPresent()) {
+                gioHang = optionalCart.get();
+            }
         } else if (sessionId != null && !sessionId.isEmpty()) {
             Optional<GioHang> cartSessionIdOption = gioHangRepository.findBySessionId(sessionId);
-            if (!cartSessionIdOption.isEmpty()) {
+            if (cartSessionIdOption.isPresent()) {
                 gioHang = cartSessionIdOption.get();
             } else {
                 System.out.println("Lỗi giỏ hàng SessionId");
-                throw new RuntimeException("SessionId hoặc Id khách hàng : chưa có hoặc sai");
+//                throw new RuntimeException("SessionId hoặc Id khách hàng : chưa có hoặc sai");
+                return new ArrayList<GioHangDetailResponse>();
+
             }
         } else {
             return new ArrayList<GioHangDetailResponse>();
@@ -196,8 +186,7 @@ public class GioHangServiceImpl implements GioHangService {
                     cartDetail.setTrangThai(1);
                     check = true;
                 }
-                if ((Integer.parseInt(response.getTonKhoConLai()) < cartDetail.getSoLuong())
-                        && (Integer.parseInt(response.getTonKhoConLai()) != 0)) {
+                if ((Integer.parseInt(response.getTonKhoConLai()) < cartDetail.getSoLuong()) && (Integer.parseInt(response.getTonKhoConLai()) != 0)) {
                     cartDetail.setSoLuong(Integer.parseInt(response.getTonKhoConLai()));
                     check = true;
                 }
@@ -222,18 +211,14 @@ public class GioHangServiceImpl implements GioHangService {
         }
         if (checkAll) {
             List<GioHangChiTiet> listCartDetailDone = gioHangChiTIetRepository.getGioHangChiTietByGioHangId(gioHang.getId());
-            return listCartDetailDone.stream().map(
-                    gioHangChiTietMapper::toResponse
-            ).toList();
+            return listCartDetailDone.stream().map(gioHangChiTietMapper::toResponse).toList();
         } else {
-            return listCartDetail.stream().map(
-                    gioHangChiTietMapper::toResponse
-            ).toList();
+            return listCartDetail.stream().map(gioHangChiTietMapper::toResponse).toList();
         }
     }
 
     @Override
-    public Integer quantityInCart(String sessionId , Long idKhachHang) {
+    public Integer quantityInCart(String sessionId, Long idKhachHang) {
         if (idKhachHang != null) {
             return gioHangRepository.quantityInCart(idKhachHang);
         } else if (sessionId != null && !sessionId.isEmpty()) {
