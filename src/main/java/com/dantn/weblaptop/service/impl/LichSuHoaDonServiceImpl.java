@@ -2,6 +2,7 @@ package com.dantn.weblaptop.service.impl;
 
 import com.dantn.weblaptop.constant.HoaDonStatus;
 import com.dantn.weblaptop.dto.request.create_request.CreateLichSuHoaDon;
+import com.dantn.weblaptop.dto.request.create_request.CreateLichSuHoaDonClient;
 import com.dantn.weblaptop.dto.request.create_request.CreateLichSuHoaDonRequest;
 import com.dantn.weblaptop.dto.response.LichSuHoaDonResponse;
 import com.dantn.weblaptop.entity.hoadon.HoaDon;
@@ -86,6 +87,31 @@ public class LichSuHoaDonServiceImpl implements LichSuHoaDonService {
         return response;
     }
 
+    @Override
+    public LichSuHoaDonResponse updateStatusBillClient(CreateLichSuHoaDonClient request, String billCode, Integer status) throws AppException {
+        NhanVien existingEmployee = employeeRepository.findById(1L).orElseThrow(
+                () -> new AppException(ErrorCode.EMPLOYEE_NOT_FOUND));
+
+//        KhachHang existingCustomer = null;
+//        if (request.getIdKhachHang() != null) {
+//            existingCustomer = customerRepository.findById(request.getIdKhachHang()).orElseThrow(
+//                    () -> new AppException(ErrorCode.CUSTOMER_NOT_FOUND));
+//        }
+        HoaDon existingBill = billRepository.findHoaDonByMa(billCode).orElseThrow(
+                () -> new AppException(ErrorCode.BILL_NOT_FOUND));
+        LichSuHoaDon newBillHistory = new LichSuHoaDon();
+        newBillHistory.setNhanVien(existingEmployee);
+        newBillHistory.setKhachHang(existingBill.getKhachHang());
+        newBillHistory.setHoaDon(existingBill);
+        newBillHistory.setNguoiSua(existingEmployee.getTen());
+        newBillHistory.setNguoiTao(existingEmployee.getTen());
+        newBillHistory.setGhiChuChoKhachHang(request.getGhiChuKhachHang());
+        newBillHistory.setTrangThai(status);
+        LichSuHoaDonResponse response = LichSuHoaDonMapper.toBillHistoryResponse(billHistoryRepository.save(newBillHistory));
+
+        log.info(response.toString());
+        return response;
+    }
 
 
     @Override

@@ -46,7 +46,7 @@ public enum ErrorCode {
     BILL_NOT_STATUS(50001, "Hóa đơn chưa được xác nhân"),
     BILL_WITHOUT_PRODUCT(5002, "Hóa đơn chưa có sản phẩm"),
     NOTE_NOT_BLANK(6000, "Ghi chú không được để trống"),
-    NOTE_MIN_20(6001, "Ghi chú ít nhất 20 kí tự"),
+    NOTE_MIN_20(6001, "Ghi chú ít nhất 10 kí tự"),
 
     EMAIL_NOT_BLANK(6002, "Email không được để trống"),
     EMAIL_INVALID(6003, "Email không đúng định dạng"),

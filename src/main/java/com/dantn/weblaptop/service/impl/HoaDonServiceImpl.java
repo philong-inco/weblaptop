@@ -262,6 +262,44 @@ public class HoaDonServiceImpl implements HoaDonService {
 
     }
 
+    @Override
+    public void updateStatusCLient(String code, String status, CreateLichSuHoaDonClient request) throws AppException {
+        Optional<HoaDon> optional = billRepository.findHoaDonByMa(code);
+        if (optional.isPresent()) {
+            HoaDon bill = optional.get();
+            Integer statusHistory = BillUtils.convertBillStatusEnumToInteger(HoaDonStatus.getHoaDonStatusEnumByKey(status));
+            bill.setTrangThai(HoaDonStatus.getHoaDonStatusEnumByKey(status));
+            billHistoryService.updateStatusBillClient(request, bill.getMa(), statusHistory);
+            if (HoaDonStatus.XAC_NHAN.name().equals(status)) {
+
+            } else if (HoaDonStatus.CHO_GIAO.name().equals(status)) {
+
+            } else if (HoaDonStatus.DANG_GIAO.name().equals(status)) {
+                bill.setNgayGiaoHang(LocalDateTime.now());
+            } else if (HoaDonStatus.HOAN_THANH.name().equals(status)) {
+                bill.setNgayNhanHang(LocalDateTime.now());
+                bill.setNgayThanhToan(LocalDateTime.now());
+                Optional<HoaDonHinhThucThanhToan> hoaDonHinhThucThanhToan = hoaDonHinhThucThanhToanRepository.findByHoaDonIdAndLoaiThanhToan(optional.get().getId(), 1);
+                if (hoaDonHinhThucThanhToan.isPresent()) {
+                    hoaDonHinhThucThanhToan.get().setLoaiThanhToan(0);
+                    hoaDonHinhThucThanhToan.get().setNguoiSua("Nguyễn Tiến Mạnh");
+                    hoaDonHinhThucThanhToan.get().setNguoiTao("Nguyễn Tiến Mạnh");
+                    hoaDonHinhThucThanhToanRepository.save(hoaDonHinhThucThanhToan.get());
+                }
+                if (bill.getKhachHang() != null) {
+                    updateCustomerRank(bill.getKhachHang().getId());
+                }
+            } else if (HoaDonStatus.HUY.name().equals(status)) {
+                productRefund(bill);
+                optional.get().setTongSanPham(0);
+            }
+            HoaDonResponse response = HoaDonMapper.toHoaDonResponse(billRepository.save(bill));
+            sendEmailBill.sendEmailXacNhan(response, "Đơn hàng của bạn đã được : ");
+        } else {
+            throw new AppException(ErrorCode.BILL_NOT_FOUND);
+        }
+    }
+
     public List<String> listHangBill() {
         return billRepository.findAllByTrangThai(HoaDonStatus.TREO)
                 .stream()

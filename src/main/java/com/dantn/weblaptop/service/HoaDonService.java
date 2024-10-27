@@ -3,6 +3,7 @@ package com.dantn.weblaptop.service;
 import com.dantn.weblaptop.dto.request.create_request.CreateHoaDonClientAccountRequest;
 import com.dantn.weblaptop.dto.request.create_request.CreateHoaDonClientRequest;
 import com.dantn.weblaptop.dto.request.create_request.CreateLichSuHoaDon;
+import com.dantn.weblaptop.dto.request.create_request.CreateLichSuHoaDonClient;
 import com.dantn.weblaptop.dto.request.update_request.UpdateDiaChiHoaDonRequest;
 import com.dantn.weblaptop.dto.request.update_request.UpdateHoaDonRequest;
 import com.dantn.weblaptop.dto.response.HoaDonClientResponse;
@@ -38,6 +39,7 @@ public interface HoaDonService {
     ResultPaginationResponse pageBillByStatusAndType (String status , Integer type, Optional<String> page, Optional<String> size);
 
     void updateStatus(String code, String status, CreateLichSuHoaDon request) throws AppException;
+    void updateStatusCLient(String code, String status, CreateLichSuHoaDonClient request) throws AppException;
 
     List<String> listHangBill ();
 

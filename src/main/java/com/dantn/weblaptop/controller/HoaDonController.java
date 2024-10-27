@@ -3,6 +3,7 @@ package com.dantn.weblaptop.controller;
 import com.dantn.weblaptop.dto.request.create_request.CreateHoaDonClientAccountRequest;
 import com.dantn.weblaptop.dto.request.create_request.CreateHoaDonClientRequest;
 import com.dantn.weblaptop.dto.request.create_request.CreateLichSuHoaDon;
+import com.dantn.weblaptop.dto.request.create_request.CreateLichSuHoaDonClient;
 import com.dantn.weblaptop.dto.request.update_request.UpdateDiaChiHoaDonRequest;
 import com.dantn.weblaptop.dto.request.update_request.UpdateHoaDonRequest;
 import com.dantn.weblaptop.dto.response.ApiResponse;
@@ -208,6 +209,21 @@ public class HoaDonController {
             @RequestBody @Valid CreateLichSuHoaDon request
     ) throws AppException {
         billService.updateStatus(code, status, request);
+        ApiResponse<Object> apiResponse = ApiResponse
+                .builder()
+                .statusCode(HttpStatus.CREATED.value())
+                .message("Cập nhập hóa đơn thành công")
+                .build();
+        return ResponseEntity.status(HttpStatus.CREATED).body(apiResponse);
+    }
+
+    @PostMapping("client/update-status/{code}")
+    public ResponseEntity<ApiResponse> updateStatusClient(
+            @PathVariable(name = "code") String code,
+            @RequestParam(name = "status") String status,
+            @RequestBody @Valid CreateLichSuHoaDonClient request
+    ) throws AppException {
+        billService.updateStatusCLient(code, status, request);
         ApiResponse<Object> apiResponse = ApiResponse
                 .builder()
                 .statusCode(HttpStatus.CREATED.value())
