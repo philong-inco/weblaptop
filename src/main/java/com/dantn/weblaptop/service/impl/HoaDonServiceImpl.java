@@ -989,12 +989,13 @@ public class HoaDonServiceImpl implements HoaDonService {
         Optional<HoaDon> optional  = hoaDonRepository.findHoaDonByMa(billCode);
         if(optional.isPresent()) {
             List<LichSuHoaDonResponse> lichSuHoaDonResponses = billHistoryService.getBillHistoryByBillCode(optional.get().getMa());
+            List<SerialNumberDaBanResponse> serialNumber = serialNumberDaBanService.getSerialNumberDaBanPage(optional.get().getMa());
 
             return  HoaDonClientResponse
                     .builder()
                     .hoaDon(HoaDonMapper.toHoaDonResponse(optional.get()))
                     .lichSuHoaDon(lichSuHoaDonResponses)
-//                    .serialNumber(serialNumber)
+                    .serialNumber(serialNumber)
                     .build();
         }
 

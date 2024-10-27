@@ -10,7 +10,7 @@ import lombok.Setter;
 public class CreateLichSuHoaDon {
 
     @NotBlank(message = "NOTE_NOT_BLANK")
-    @Size(min = 20, message = "NOTE_MIN_20")
+    @Size(min = 10, message = "NOTE_MIN_20")
     private String ghiChuCuaHang;
     private String ghiChuKhachHang;
 }
