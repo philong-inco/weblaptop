@@ -78,6 +78,7 @@ public class HoaDonServiceImpl implements HoaDonService {
     SpringTemplateEngine templateEngine;
     GioHangRepository gioHangRepository;
     private final GioHangChiTietRepository gioHangChiTietRepository;
+    private final HoaDonRepository hoaDonRepository;
 
     @Override
     public ResultPaginationResponse getBillPage(Optional<String> page, Optional<String> size) {
@@ -981,6 +982,23 @@ public class HoaDonServiceImpl implements HoaDonService {
         }
         Collections.reverse(result);
         return result;
+    }
+
+    @Override
+    public HoaDonClientResponse getBillDetail(String billCode) throws AppException {
+        Optional<HoaDon> optional  = hoaDonRepository.findHoaDonByMa(billCode);
+        if(optional.isPresent()) {
+            List<LichSuHoaDonResponse> lichSuHoaDonResponses = billHistoryService.getBillHistoryByBillCode(optional.get().getMa());
+
+            return  HoaDonClientResponse
+                    .builder()
+                    .hoaDon(HoaDonMapper.toHoaDonResponse(optional.get()))
+                    .lichSuHoaDon(lichSuHoaDonResponses)
+//                    .serialNumber(serialNumber)
+                    .build();
+        }
+
+        return HoaDonClientResponse.builder().build();
     }
 
     private BigDecimal calculateDiscount(HoaDon existingBill, PhieuGiamGia coupon) {

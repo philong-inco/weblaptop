@@ -74,4 +74,6 @@ public interface HoaDonService {
     TraCuDonHangResponse lookUpOrders(String billCode , String phoneNumber) throws AppException;
 
     List<HoaDonClientResponse> getAllByCustomerIdAndStatus(Long customerId, String status) throws AppException;
+
+    HoaDonClientResponse getBillDetail (String billCode) throws AppException;
 }

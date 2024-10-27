@@ -357,5 +357,15 @@ public class HoaDonController {
                 .statusCode(HttpStatus.CREATED.value())
                 .build());
     }
+
+    @GetMapping("client/detail/")
+    public  ResponseEntity<ApiResponse> billDetail (
+            @RequestParam(name = "billCode") String billCode
+    ) throws AppException {
+        return ResponseEntity.ok(ApiResponse.builder()
+                .data(hoaDonService.getBillDetail(billCode))
+                .statusCode(HttpStatus.OK.value())
+                .build());
+    }
 }
 
