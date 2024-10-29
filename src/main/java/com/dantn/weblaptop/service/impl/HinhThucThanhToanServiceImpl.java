@@ -1,17 +1,26 @@
 package com.dantn.weblaptop.service.impl;
 
+import com.dantn.weblaptop.config.VNPAYConfig;
 import com.dantn.weblaptop.dto.request.create_request.CreateHinhThucThanhToanRequest;
+import com.dantn.weblaptop.dto.request.create_request.GioHangChiTietRequest;
 import com.dantn.weblaptop.dto.request.update_request.UpdateHinhThucThanhToanRequest;
 import com.dantn.weblaptop.dto.response.HinhThucThanhToanResponse;
 import com.dantn.weblaptop.dto.response.Meta;
 import com.dantn.weblaptop.dto.response.ResultPaginationResponse;
 import com.dantn.weblaptop.entity.hoadon.HinhThucThanhToan;
+import com.dantn.weblaptop.entity.hoadon.SerialNumberDaBan;
+import com.dantn.weblaptop.entity.sanpham.SanPhamChiTiet;
+import com.dantn.weblaptop.entity.sanpham.SerialNumber;
 import com.dantn.weblaptop.exception.AppException;
 import com.dantn.weblaptop.exception.ErrorCode;
 import com.dantn.weblaptop.mapper.impl.HinhThucThanhToanMapper;
 import com.dantn.weblaptop.repository.HinhThucThanhToanRepository;
+import com.dantn.weblaptop.repository.SanPhamChiTietRepository;
+import com.dantn.weblaptop.repository.SerialNumberRepository;
 import com.dantn.weblaptop.service.HinhThucThanhToanService;
 import com.dantn.weblaptop.util.GenerateCode;
+import com.dantn.weblaptop.util.VNPayUtil;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -21,6 +30,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -29,6 +41,10 @@ import java.util.Optional;
 @Slf4j
 public class HinhThucThanhToanServiceImpl implements HinhThucThanhToanService {
     HinhThucThanhToanRepository paymentMethodRepository;
+    VNPAYConfig vnPayConfig;
+    SanPhamChiTietRepository sanPhamChiTietRepository;
+    SerialNumberRepository serialNumberRepository;
+
     @Override
     public ResultPaginationResponse getPaymentMethodsPage(Optional<String> page, Optional<String> size) {
         String sPage = page.isPresent() ? page.get() : "0";
@@ -52,6 +68,7 @@ public class HinhThucThanhToanServiceImpl implements HinhThucThanhToanService {
 
         return response;
     }
+
     @Override
     public HinhThucThanhToanResponse create(CreateHinhThucThanhToanRequest request) {
         HinhThucThanhToan paymentMethod = paymentMethodRepository.save(
@@ -71,9 +88,50 @@ public class HinhThucThanhToanServiceImpl implements HinhThucThanhToanService {
     }
 
 
-
     @Override
     public void updateStart(Long id) {
 
+    }
+
+    @Override
+    public String payWithVNPAYOnline(List<GioHangChiTietRequest> cartDetail, HttpServletRequest request) throws AppException {
+
+        for (GioHangChiTietRequest cartDetailRequest : cartDetail) {
+            log.info("id SPCT : " + cartDetailRequest.getIdSPCT());
+            log.info("id Gia : " + cartDetailRequest.getGia());
+            log.info("id CartDetail : " + cartDetailRequest.getIdGioHangChiTiet());
+            log.info("id So Luong : " + cartDetailRequest.getSoLuong());
+            log.info("--------------------------");
+            Optional<SanPhamChiTiet> optional = sanPhamChiTietRepository.findById(cartDetailRequest.getIdSPCT());
+            if (!optional.isPresent()) {
+                throw new AppException(ErrorCode.PRODUCT_DETAIL_NOT_FOUND);
+            }
+            List<SerialNumber> listSerialNumber = serialNumberRepository
+                    .findBySanPhamChiTietIdAndTrangThaiWithLimit
+                            (cartDetailRequest.getIdSPCT(), cartDetailRequest.getSoLuong());
+
+            if (listSerialNumber.size() < cartDetailRequest.getSoLuong()) {
+                throw new RuntimeException("Sản phẩm " + optional.get().getMa() + " không đủ . Sản phẩm tồn kho : " + listSerialNumber.size());
+            }
+            // up lại tt sp
+            Integer quantityProductIsActive = serialNumberRepository.getQuantitySerialIsActive(cartDetailRequest.getIdSPCT());
+            if (quantityProductIsActive != null && quantityProductIsActive == 0) {
+                optional.get().setTrangThai(0);
+                sanPhamChiTietRepository.save(optional.get());
+            }
+        }
+        BigDecimal amount = BigDecimal.valueOf(Long.parseLong(request.getParameter("amount"))).multiply(BigDecimal.valueOf(100L));
+        String bankCode = request.getParameter("bankCode");
+        Map<String, String> vnpParamsMap = vnPayConfig.getVNPayConfig();
+        vnpParamsMap.put("vnp_Amount", String.valueOf(amount));
+        if (bankCode != null && !bankCode.isEmpty()) {
+            vnpParamsMap.put("vnp_BankCode", bankCode);
+        }
+        vnpParamsMap.put("vnp_IpAddr", VNPayUtil.getIpAddress(request));
+        String queryUrl = VNPayUtil.getPaymentURL(vnpParamsMap, true);
+        String hashData = VNPayUtil.getPaymentURL(vnpParamsMap, false);
+        String vnpSecureHash = VNPayUtil.hmacSHA512(vnPayConfig.getSecretKey(), hashData);
+        queryUrl += "&vnp_SecureHash=" + vnpSecureHash;
+        return vnPayConfig.getVnp_PayUrl() + "?" + queryUrl;
     }
 }
