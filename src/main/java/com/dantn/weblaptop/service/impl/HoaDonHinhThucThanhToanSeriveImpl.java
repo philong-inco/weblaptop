@@ -41,6 +41,7 @@ public class HoaDonHinhThucThanhToanSeriveImpl implements HoaDonHinhThucThanhToa
                     .loaiThanhToan(hoaDonHinhThucThanhToan.getLoaiThanhToan())
                     .phuongThanhToan(hoaDonHinhThucThanhToan.getHinhThucThanhToan() != null ? hoaDonHinhThucThanhToan.getHinhThucThanhToan().getId() : null)
                     .tienNhan(hoaDonHinhThucThanhToan.getTienNhan())
+//                    .maGiaoDich("")
                     .ngayTao(ConvertTime.convert(hoaDonHinhThucThanhToan.getNgayTao() + ""))
                     .ngaySua(ConvertTime.convert(hoaDonHinhThucThanhToan.getNgaySua() + ""))
                     .nguoiTao(hoaDonHinhThucThanhToan.getNguoiTao())

@@ -47,7 +47,7 @@ public class HinhThucThanhToanServiceImpl implements HinhThucThanhToanService {
     String returnUrlOnline;
     @Value("${payment.vnPay.returnUrl}")
     String returnUrl;
-    String urlSuccessClient = "http://localhost:3000/";
+    String urlSuccessClient = "http://localhost:5173/thank-you";
     final String urlSuccessAdmin = "";
     final HinhThucThanhToanRepository paymentMethodRepository;
     final VNPAYConfig vnPayConfig;
