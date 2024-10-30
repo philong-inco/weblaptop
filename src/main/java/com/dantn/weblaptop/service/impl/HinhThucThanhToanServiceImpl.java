@@ -21,6 +21,7 @@ import com.dantn.weblaptop.service.HinhThucThanhToanService;
 import com.dantn.weblaptop.util.GenerateCode;
 import com.dantn.weblaptop.util.VNPayUtil;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -31,6 +32,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
@@ -45,6 +47,8 @@ public class HinhThucThanhToanServiceImpl implements HinhThucThanhToanService {
     String returnUrlOnline;
     @Value("${payment.vnPay.returnUrl}")
     String returnUrl;
+    String urlSuccessClient = "http://localhost:3000/";
+    final String urlSuccessAdmin = "";
     final HinhThucThanhToanRepository paymentMethodRepository;
     final VNPAYConfig vnPayConfig;
     final SanPhamChiTietRepository sanPhamChiTietRepository;
@@ -140,4 +144,40 @@ public class HinhThucThanhToanServiceImpl implements HinhThucThanhToanService {
         queryUrl += "&vnp_SecureHash=" + vnpSecureHash;
         return vnPayConfig.getVnp_PayUrl() + "?" + queryUrl;
     }
+
+    @Override
+    public void handlePaymentCallback(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        String status = request.getParameter("vnp_ResponseCode");
+        String transactionId = request.getParameter("vnp_TxnRef");
+        String amount = request.getParameter("vnp_Amount");
+        String orderInfo = request.getParameter("vnp_OrderInfo");
+        String bankCode = request.getParameter("vnp_BankCode");
+        String payDate = request.getParameter("vnp_PayDate");
+        String cardType = request.getParameter("vnp_CardType");
+
+        String successUrl = this.urlSuccessClient
+                + "?transactionId=" + transactionId
+                + "&amount=" + amount
+                + "&status=" + status
+                + "&orderInfo=" + orderInfo
+                + "&bankCode=" + bankCode
+                + "&payDate=" + payDate
+                + "&cardType=" + cardType;
+
+        String failureUrl = "http://frontend-url.com/failure-page"
+                + "?transactionId=" + transactionId
+                + "&amount=" + amount
+                + "&status=" + status
+                + "&orderInfo=" + orderInfo
+                + "&bankCode=" + bankCode
+                + "&payDate=" + payDate
+                + "&cardType=" + cardType;
+
+        if ("00".equals(status)) {
+            response.sendRedirect(successUrl);
+        } else {
+            response.sendRedirect(failureUrl);
+        }
+    }
 }
+

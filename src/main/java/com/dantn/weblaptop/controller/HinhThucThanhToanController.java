@@ -84,37 +84,7 @@ public class HinhThucThanhToanController {
 
     @GetMapping("/vn-pay-callback")
     public void payCallbackHandler(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        String status = request.getParameter("vnp_ResponseCode");
-        String transactionId = request.getParameter("vnp_TxnRef");
-        String amount = request.getParameter("vnp_Amount");
-        String orderInfo = request.getParameter("vnp_OrderInfo");
-        String bankCode = request.getParameter("vnp_BankCode");
-        String payDate = request.getParameter("vnp_PayDate");
-        String cardType = request.getParameter("vnp_CardType");
-
-        String successUrl = "http://localhost:3000/"
-                + "?transactionId=" + transactionId
-                + "&amount=" + amount
-                + "&status=" + status
-                + "&orderInfo=" + orderInfo
-                + "&bankCode=" + bankCode
-                + "&payDate=" + payDate
-                + "&cardType=" + cardType;
-
-        String failureUrl = "http://frontend-url.com/failure-page"
-                + "?transactionId=" + transactionId
-                + "&amount=" + amount
-                + "&status=" + status
-                + "&orderInfo=" + orderInfo
-                + "&bankCode=" + bankCode
-                + "&payDate=" + payDate
-                + "&cardType=" + cardType;
-
-        if ("00".equals(status)) {
-            response.sendRedirect(successUrl);
-        } else {
-            response.sendRedirect(failureUrl);
-        }
+       this.paymentMethodService.handlePaymentCallback(request, response);
     }
 
     @GetMapping("/vn-pay-callback-2")

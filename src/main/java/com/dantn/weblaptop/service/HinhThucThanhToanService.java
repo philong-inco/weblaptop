@@ -7,7 +7,9 @@ import com.dantn.weblaptop.dto.response.HinhThucThanhToanResponse;
 import com.dantn.weblaptop.dto.response.ResultPaginationResponse;
 import com.dantn.weblaptop.exception.AppException;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
@@ -22,4 +24,5 @@ public interface HinhThucThanhToanService {
 
     String payWithVNPAYOnline(List<GioHangChiTietRequest> cartDetail , HttpServletRequest request) throws AppException;
 
+    void handlePaymentCallback(HttpServletRequest request, HttpServletResponse response) throws IOException;
 }
