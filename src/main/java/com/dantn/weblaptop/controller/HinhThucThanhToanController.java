@@ -82,38 +82,52 @@ public class HinhThucThanhToanController {
         );
     }
 
-//
-//    @GetMapping("/vn-pay-callback")
-//    public void payCallbackHandler(HttpServletRequest request, HttpServletResponse response) throws IOException {
-//        String status = request.getParameter("vnp_ResponseCode");
-//        if (status.equals("00")) {
-//            response.sendRedirect("https://www.facebook.com/profile.php?id=100026100193959&locale=vi_VN");
-//        } else {
-//            response.sendRedirect("http://frontend-url.com/failure-page");
-//        }
-//    }
-
     @GetMapping("/vn-pay-callback")
+    public void payCallbackHandler(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        String status = request.getParameter("vnp_ResponseCode");
+        String transactionId = request.getParameter("vnp_TxnRef");
+        String amount = request.getParameter("vnp_Amount");
+        String orderInfo = request.getParameter("vnp_OrderInfo");
+        String bankCode = request.getParameter("vnp_BankCode");
+        String payDate = request.getParameter("vnp_PayDate");
+        String cardType = request.getParameter("vnp_CardType");
+
+        String successUrl = "http://localhost:3000/"
+                + "?transactionId=" + transactionId
+                + "&amount=" + amount
+                + "&status=" + status
+                + "&orderInfo=" + orderInfo
+                + "&bankCode=" + bankCode
+                + "&payDate=" + payDate
+                + "&cardType=" + cardType;
+
+        String failureUrl = "http://frontend-url.com/failure-page"
+                + "?transactionId=" + transactionId
+                + "&amount=" + amount
+                + "&status=" + status
+                + "&orderInfo=" + orderInfo
+                + "&bankCode=" + bankCode
+                + "&payDate=" + payDate
+                + "&cardType=" + cardType;
+
+        if ("00".equals(status)) {
+            response.sendRedirect(successUrl);
+        } else {
+            response.sendRedirect(failureUrl);
+        }
+    }
+
+    @GetMapping("/vn-pay-callback-2")
     public ResponseEntity<ApiResponse> payCallbackHandler(HttpServletRequest request) {
         String status = request.getParameter("vnp_ResponseCode");
-        if (status.equals("00")) {
-            return ResponseEntity.status(HttpStatus.OK).body(
-                    ApiResponse.builder()
-                            .statusCode(HttpStatus.OK.value())
-                            .data(status)
-                            .message("Success")
-                            .build()
-            );
-        } else {
-//            throw new RuntimeException("Thanh toán thất bại");
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
-                    ApiResponse.builder()
-                            .statusCode(HttpStatus.BAD_REQUEST.value())
-                            .data(status)
-                            .message("Error")
-                            .build()
-            );
-        }
+        boolean isSuccess = "00".equals(status);
+        return ResponseEntity.status(isSuccess ? HttpStatus.OK : HttpStatus.BAD_REQUEST).body(
+                ApiResponse.builder()
+                        .statusCode(isSuccess ? HttpStatus.OK.value() : HttpStatus.BAD_REQUEST.value())
+                        .data(status)
+                        .message(isSuccess ? "Success" : "Error")
+                        .build()
+        );
     }
 
 }

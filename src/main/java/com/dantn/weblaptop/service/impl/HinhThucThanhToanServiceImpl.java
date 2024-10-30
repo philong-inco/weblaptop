@@ -25,6 +25,7 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -37,13 +38,17 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
+@FieldDefaults(level = AccessLevel.PRIVATE)
 @Slf4j
 public class HinhThucThanhToanServiceImpl implements HinhThucThanhToanService {
-    HinhThucThanhToanRepository paymentMethodRepository;
-    VNPAYConfig vnPayConfig;
-    SanPhamChiTietRepository sanPhamChiTietRepository;
-    SerialNumberRepository serialNumberRepository;
+    @Value("${payment.vnPay.returnUrlOnline}")
+    String returnUrlOnline;
+    @Value("${payment.vnPay.returnUrl}")
+    String returnUrl;
+    final HinhThucThanhToanRepository paymentMethodRepository;
+    final VNPAYConfig vnPayConfig;
+    final SanPhamChiTietRepository sanPhamChiTietRepository;
+    final SerialNumberRepository serialNumberRepository;
 
     @Override
     public ResultPaginationResponse getPaymentMethodsPage(Optional<String> page, Optional<String> size) {
@@ -123,6 +128,7 @@ public class HinhThucThanhToanServiceImpl implements HinhThucThanhToanService {
         BigDecimal amount = BigDecimal.valueOf(Long.parseLong(request.getParameter("amount"))).multiply(BigDecimal.valueOf(100L));
         String bankCode = request.getParameter("bankCode");
         Map<String, String> vnpParamsMap = vnPayConfig.getVNPayConfig();
+        vnpParamsMap.put("vnp_ReturnUrl", this.returnUrlOnline);
         vnpParamsMap.put("vnp_Amount", String.valueOf(amount));
         if (bankCode != null && !bankCode.isEmpty()) {
             vnpParamsMap.put("vnp_BankCode", bankCode);
