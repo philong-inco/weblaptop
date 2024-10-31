@@ -25,17 +25,17 @@ public class ApplicationIntConfig {
             KhachHangRepository customerRepository,
             PasswordEncoder passwordEncoder) {
         return args -> {
-            List<NhanVien> nhanVienList = userReposiory.findAll();
-            for (NhanVien nhanVien : nhanVienList) {
-                nhanVien.setMatKhau(passwordEncoder.encode("manh19924"));
-                userReposiory.save(nhanVien);
-            }
-
-            List<KhachHang> khachHangList = customerRepository.findAll();
-            for (KhachHang khachHang : khachHangList) {
-                khachHang.setMatKhau(passwordEncoder.encode("manh19925"));
-                customerRepository.save(khachHang);
-            }
+//            List<NhanVien> nhanVienList = userReposiory.findAll();
+//            for (NhanVien nhanVien : nhanVienList) {
+//                nhanVien.setMatKhau(passwordEncoder.encode("manh19924"));
+//                userReposiory.save(nhanVien);
+//            }
+//
+//            List<KhachHang> khachHangList = customerRepository.findAll();
+//            for (KhachHang khachHang : khachHangList) {
+//                khachHang.setMatKhau(passwordEncoder.encode("manh19925"));
+//                customerRepository.save(khachHang);
+//            }
         };
     }
 }
