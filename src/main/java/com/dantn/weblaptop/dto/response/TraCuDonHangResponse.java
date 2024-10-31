@@ -16,4 +16,5 @@ public class TraCuDonHangResponse {
     HoaDonResponse hoaDon;
     List<LichSuHoaDonResponse> lichSuHoaDon;
     List<HoaDonHinhThucThanhToanResponse> lichSuThanhToan;
+    List<SerialNumberDaBanResponse> serialNumber;
 }

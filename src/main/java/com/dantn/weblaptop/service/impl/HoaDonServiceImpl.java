@@ -986,10 +986,12 @@ public class HoaDonServiceImpl implements HoaDonService {
         hoaDonResponse.setTongTienPhaiTra(hoaDonResponse.getTongTienPhaiTra().add(hoaDonResponse.getTienShip()));
         List<LichSuHoaDonResponse> lichSuHoaDonResponses = billHistoryService.getBillHistoryByBillCode(optional.get().getMa());
         List<HoaDonHinhThucThanhToanResponse> lichSuThanhToan = hoaDonHinhThucThanhToanSerive.getAllByBillCode(optional.get().getMa());
+        List<SerialNumberDaBanResponse> serialNumber = serialNumberDaBanService.getSerialNumberDaBanPage(optional.get().getMa());
         return TraCuDonHangResponse.builder()
                 .hoaDon(hoaDonResponse)
                 .lichSuHoaDon(lichSuHoaDonResponses)
                 .lichSuThanhToan(lichSuThanhToan)
+                .serialNumber(serialNumber)
                 .build();
     }
 
