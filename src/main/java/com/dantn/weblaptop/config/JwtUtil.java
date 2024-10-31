@@ -1,8 +1,12 @@
 package com.dantn.weblaptop.config;
 
+import com.dantn.weblaptop.exception.MyJwtException;
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.SignatureException;
 import org.springframework.stereotype.Component;
 import javax.crypto.spec.SecretKeySpec;
 import java.util.Date;
@@ -23,7 +27,7 @@ public class JwtUtil {
                 .setClaims(claims)
                 .setSubject(subject)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 10)) // 10 giờ
+                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24)) // 1 ngày
                 .signWith(SignatureAlgorithm.HS256, new SecretKeySpec(SECRET_KEY.getBytes(), SignatureAlgorithm.HS256.getJcaName()))
                 .compact();
     }
@@ -38,7 +42,11 @@ public class JwtUtil {
     }
 
     private Claims extractAllClaims(String token) {
-        return Jwts.parser().setSigningKey(new SecretKeySpec(SECRET_KEY.getBytes(), SignatureAlgorithm.HS256.getJcaName())).parseClaimsJws(token).getBody();
+        return Jwts.parser()
+                .setSigningKey(new SecretKeySpec(
+                        SECRET_KEY.getBytes(),
+                        SignatureAlgorithm.HS256.getJcaName())).parseClaimsJws(token)
+                .getBody();
     }
 
     private Boolean isTokenExpired(String token) {

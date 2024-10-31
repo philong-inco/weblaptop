@@ -16,12 +16,19 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableWebSecurity
 public class MyConfig {
     private CustomUserDetailsService customUserDetailsService;
-    private JwtUtil jwtUtil;
+//    private JwtUtil jwtUtil;
+//
+//    public MyConfig(CustomUserDetailsService customUserDetailsService, JwtUtil jwtUtil, NhanVien_Repositoy nvRepo, KhachHang_Repository khRepo, NhanVienVaiTroRepository nvvtRepo) {
+//        this.customUserDetailsService = new CustomUserDetailsService(nvRepo, khRepo, nvvtRepo);
+//        this.jwtUtil = new JwtUtil();
+//    }
+    private final JwtRequestFilter jwtRequestFilter;
 
-    public MyConfig(CustomUserDetailsService customUserDetailsService, JwtUtil jwtUtil) {
+    public MyConfig(JwtRequestFilter jwtRequestFilter, CustomUserDetailsService customUserDetailsService) {
+        this.jwtRequestFilter = jwtRequestFilter;
         this.customUserDetailsService = customUserDetailsService;
-        this.jwtUtil = jwtUtil;
     }
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests((authz) -> authz
@@ -49,7 +56,7 @@ public class MyConfig {
 //                .requestMatchers("/api/man-hinh/.*/delete/**").hasAnyRole( "ADMIN")
                 .anyRequest().permitAll()
         )
-        .addFilterBefore(new JwtRequestFilter(jwtUtil, customUserDetailsService), UsernamePasswordAuthenticationFilter.class)
+        .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class)
         .csrf(csrf -> csrf.disable());
         return http.build();
     }
