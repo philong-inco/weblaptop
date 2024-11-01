@@ -37,7 +37,8 @@ public class HoaDonHinhThucThanhToan extends BaseEntity {
             fetch = FetchType.EAGER)
     @JoinColumn(name = "hoa_don_id")
     HoaDon hoaDon;
-
+    @Column(name = "ma_gio_dich")
+    String maGioDich;
     @Column(name = "so_tien")
     BigDecimal soTien;
     @Column(name = "tien_nhan")
