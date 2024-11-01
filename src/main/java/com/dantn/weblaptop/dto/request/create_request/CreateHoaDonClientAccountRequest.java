@@ -64,6 +64,8 @@ public class CreateHoaDonClientAccountRequest {
     @NotNull(message = "SHIPPING_DATE_NOT_NULL")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
     LocalDate ngayNhanHangDuKien;
+    String maGiaDich;
+    BigDecimal tienChuyenKhoan;
     @Valid
     List<GioHangChiTietRequest> gioHangChiTiet;
 }

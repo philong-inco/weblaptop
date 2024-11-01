@@ -25,11 +25,12 @@ public class HoaDonMapper {
         response.setIdNhanVien(hoaDon.getNhanVien() != null ?
                         hoaDon.getNhanVien().getId() : null
                 );
-        response.setTenKhachHang(
-                hoaDon.getTenKhachHang() != null ?
-                        hoaDon.getTenKhachHang() :
-                        (customer != null ? customer.getTen() : null)
-        );
+//        response.setTenKhachHang(
+//                hoaDon.getTenKhachHang() != null ?
+//                        hoaDon.getTenKhachHang() :
+//                        (customer != null ? customer.getTen() : null)
+//        );
+        response.setTenKhachHang(customer != null ? customer.getTen() : hoaDon.getTenKhachHang());
         response.setIdKhachHang(
                 customer !=null ? customer.getId() : null);
         response.setGhiChu(hoaDon.getGhiChu());

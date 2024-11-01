@@ -22,5 +22,6 @@ public class HoaDonHinhThucThanhToanResponse {
     String ngaySua;
     Long phuongThanhToan;
     String nguoiTao;
-
+    String maGiaoDich;
+    String nguoiXacNhan;
 }

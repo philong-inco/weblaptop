@@ -724,10 +724,7 @@ public class HoaDonServiceImpl implements HoaDonService {
         bill.setSdt(request.getSdt());
         bill.setEmail(request.getEmail());
         bill.setTienShip(request.getTienShip());
-        String diaChi = (request.getDiaChi() != null && !request.getDiaChi().isEmpty() ? request.getDiaChi() + " , " : "")
-                + request.getTenPhuongXa() + " , "
-                + request.getTenQuanHuyen() + " , "
-                + request.getTenTinhThanh() + " | "
+        String diaChi = request.getDiaChi() + " | "
                 + request.getIdPhuongXa() + " | "
                 + request.getIdQuanHuyen() + " | "
                 + request.getIdTinhThanh();
@@ -868,10 +865,7 @@ public class HoaDonServiceImpl implements HoaDonService {
         bill.setTenKhachHang(request.getTenKhachHang());
         bill.setSdt(request.getSdt());
         bill.setEmail(request.getEmail());
-        String diaChi = (request.getDiaChi() != null && !request.getDiaChi().isEmpty() ? request.getDiaChi() + " , " : "")
-                + request.getTenPhuongXa() + " , "
-                + request.getTenQuanHuyen() + " , "
-                + request.getTenTinhThanh() + " | "
+        String diaChi = request.getDiaChi() + " | "
                 + request.getIdPhuongXa() + " | "
                 + request.getIdQuanHuyen() + " | "
                 + request.getIdTinhThanh();
@@ -991,12 +985,15 @@ public class HoaDonServiceImpl implements HoaDonService {
             throw new AppException(ErrorCode.BILL_NOT_FOUND);
         }
         HoaDonResponse hoaDonResponse = HoaDonMapper.toHoaDonResponse(optional.get());
+        hoaDonResponse.setTongTienPhaiTra(hoaDonResponse.getTongTienPhaiTra().add(hoaDonResponse.getTienShip()));
         List<LichSuHoaDonResponse> lichSuHoaDonResponses = billHistoryService.getBillHistoryByBillCode(optional.get().getMa());
         List<HoaDonHinhThucThanhToanResponse> lichSuThanhToan = hoaDonHinhThucThanhToanSerive.getAllByBillCode(optional.get().getMa());
+        List<SerialNumberDaBanResponse> serialNumber = serialNumberDaBanService.getSerialNumberDaBanPage(optional.get().getMa());
         return TraCuDonHangResponse.builder()
                 .hoaDon(hoaDonResponse)
                 .lichSuHoaDon(lichSuHoaDonResponses)
                 .lichSuThanhToan(lichSuThanhToan)
+                .serialNumber(serialNumber)
                 .build();
     }
 
@@ -1012,12 +1009,15 @@ public class HoaDonServiceImpl implements HoaDonService {
         for (HoaDon bill : bills) {
             List<LichSuHoaDonResponse> lichSuHoaDonResponses = billHistoryService.getBillHistoryByBillCode(bill.getMa());
             List<SerialNumberDaBanResponse> serialNumber = serialNumberDaBanService.getSerialNumberDaBanPage(bill.getMa());
+            HoaDonResponse hoaDonResponse = HoaDonMapper.toHoaDonResponse(bill);
+            hoaDonResponse.setTongTienPhaiTra(hoaDonResponse.getTongTienPhaiTra().add(hoaDonResponse.getTienShip()));
             HoaDonClientResponse response = HoaDonClientResponse
                     .builder()
-                    .hoaDon(HoaDonMapper.toHoaDonResponse(bill))
+                    .hoaDon(hoaDonResponse)
                     .lichSuHoaDon(lichSuHoaDonResponses)
                     .serialNumber(serialNumber)
                     .build();
+
             result.add(response);
         }
         Collections.reverse(result);
@@ -1026,14 +1026,15 @@ public class HoaDonServiceImpl implements HoaDonService {
 
     @Override
     public HoaDonClientResponse getBillDetail(String billCode) throws AppException {
-        Optional<HoaDon> optional  = hoaDonRepository.findHoaDonByMa(billCode);
-        if(optional.isPresent()) {
+        Optional<HoaDon> optional = hoaDonRepository.findHoaDonByMa(billCode);
+        if (optional.isPresent()) {
             List<LichSuHoaDonResponse> lichSuHoaDonResponses = billHistoryService.getBillHistoryByBillCode(optional.get().getMa());
             List<SerialNumberDaBanResponse> serialNumber = serialNumberDaBanService.getSerialNumberDaBanPage(optional.get().getMa());
-
-            return  HoaDonClientResponse
+            HoaDonResponse hoaDonResponse = HoaDonMapper.toHoaDonResponse(optional.get());
+            hoaDonResponse.setTongTienPhaiTra(hoaDonResponse.getTongTienPhaiTra().add(hoaDonResponse.getTienShip()));
+            return HoaDonClientResponse
                     .builder()
-                    .hoaDon(HoaDonMapper.toHoaDonResponse(optional.get()))
+                    .hoaDon(hoaDonResponse)
                     .lichSuHoaDon(lichSuHoaDonResponses)
                     .serialNumber(serialNumber)
                     .build();
