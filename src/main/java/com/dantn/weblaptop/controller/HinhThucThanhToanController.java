@@ -75,7 +75,6 @@ public class HinhThucThanhToanController {
         return ResponseEntity.status(HttpStatus.CREATED).body(
                 ApiResponse.builder()
                         .statusCode(HttpStatus.CREATED.value())
-                        .data(null)
                         .message("Success")
                         .data(paymentMethodService.payWithVNPAYOnline(cartDetails, request))
                         .build()
