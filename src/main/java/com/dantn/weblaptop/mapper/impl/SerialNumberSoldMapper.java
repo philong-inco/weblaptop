@@ -1,5 +1,6 @@
 package com.dantn.weblaptop.mapper.impl;
 
+import com.dantn.weblaptop.dto.SerialNumberDaBan_Dto;
 import com.dantn.weblaptop.dto.response.SerialNumberDaBanResponse;
 import com.dantn.weblaptop.entity.hoadon.SerialNumberDaBan;
 import com.dantn.weblaptop.entity.sanpham.AnhSanPham;
@@ -28,4 +29,5 @@ public class SerialNumberSoldMapper {
             }
         }        return response;
     }
+
 }

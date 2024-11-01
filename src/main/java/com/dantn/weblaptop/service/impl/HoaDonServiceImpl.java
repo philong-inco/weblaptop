@@ -2,6 +2,8 @@ package com.dantn.weblaptop.service.impl;
 
 import com.dantn.weblaptop.constant.HoaDonStatus;
 import com.dantn.weblaptop.constant.RankCustomer;
+import com.dantn.weblaptop.dto.HoaDonDashboard_Dto;
+import com.dantn.weblaptop.dto.HoaDonSummaryDTO;
 import com.dantn.weblaptop.dto.request.create_request.*;
 import com.dantn.weblaptop.dto.request.update_request.UpdateDiaChiHoaDonRequest;
 import com.dantn.weblaptop.dto.request.update_request.UpdateHoaDonRequest;
@@ -646,8 +648,8 @@ public class HoaDonServiceImpl implements HoaDonService {
     }
 
     @Override
-    public Long countBillByDate(Long startDate, Long endDate) {
-        return 0L;
+    public Long countBillByDate(LocalDateTime startDate, LocalDateTime endDate) {
+        return hoaDonRepository.countBillByDate(startDate, endDate);
     }
 
     @Override
@@ -1039,6 +1041,52 @@ public class HoaDonServiceImpl implements HoaDonService {
 
         return HoaDonClientResponse.builder().build();
     }
+
+    @Override
+    public BigDecimal totalPriceByDate(LocalDateTime startDate, LocalDateTime endDate) {
+        return hoaDonRepository.totalPriceByDate(startDate, endDate);
+    }
+
+    @Override
+    public BigDecimal totalPriceByDateNow() {
+        return hoaDonRepository.totalPriceByDateNow();
+    }
+
+//    @Override
+//    public HoaDonSummaryDTO getInvoiceCountAndTotalProducts(LocalDateTime startDate, LocalDateTime endDate) {
+//        return hoaDonRepository.getInvoiceCountAndTotalProducts(startDate, endDate);
+//    }
+
+    @Override
+    public List<HoaDonDashboard_Dto> infoBillByDate(LocalDateTime startDateTime, LocalDateTime endDateTime) throws AppException {
+        List<Object[]> results = billRepository.countInvoicesAndSumProductsByDate(startDateTime, endDateTime);
+        if (results.isEmpty()) {
+            throw new AppException(ErrorCode.BILL_NOT_FOUND);
+        }
+
+        List<HoaDonDashboard_Dto> hoaDonDashboardDtoList = new ArrayList<>();
+        for (Object[] result : results) {
+            java.sql.Date sqlDate = (java.sql.Date) result[0];
+            LocalDateTime ngayThanhToan = sqlDate.toLocalDate().atStartOfDay(); // Chuyển đổi
+
+            Long soHoaDon = (Long) result[1];
+            Long tongSanPham = (Long) result[2];
+
+            HoaDonDashboard_Dto response = new HoaDonDashboard_Dto();
+            response.setNgayThanhToan(ngayThanhToan);
+            response.setTongHoaDon(soHoaDon);
+            response.setTongSanPham(tongSanPham);
+
+            hoaDonDashboardDtoList.add(response);
+        }
+        return hoaDonDashboardDtoList;
+    }
+
+    @Override
+    public Long sumProductSoldOutByDate(LocalDateTime startDate, LocalDateTime endDate) {
+        return hoaDonRepository.sumProductSoldOut(startDate, endDate);
+    }
+
 
     private BigDecimal calculateDiscount(HoaDon existingBill, PhieuGiamGia coupon) {
         BigDecimal moneyReduced = BigDecimal.ZERO;

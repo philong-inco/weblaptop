@@ -20,6 +20,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -29,7 +30,9 @@ import org.springframework.web.bind.annotation.*;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -269,21 +272,29 @@ public class HoaDonController {
     }
 
     @GetMapping("/countbill")
-    public ResponseEntity<ApiResponse> getCountBill(@RequestParam("startDate") Long startDate, @RequestParam("endDate") Long endDate) {
+    public ResponseEntity<Map<String, Object>> getCountBill(@RequestParam("startDate") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime startDate,
+                                                            @RequestParam("endDate") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime endDate) {
         try {
-
             Long count = hoaDonService.countBillByDate(startDate, endDate);
 
-            // Create a successful ApiResponse
-            ApiResponse response = new ApiResponse("Số lượng hóa đơn:", count);
+            // Tạo Map chứa dữ liệu trả về
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", true);
+            response.put("message", "Số lượng hóa đơn:");
+            response.put("data", count);
 
             return ResponseEntity.status(HttpStatus.OK).body(response);
         } catch (Exception e) {
-            // Handle exceptions and create an error ApiResponse
-            ApiResponse errorResponse = new ApiResponse(false, "Đã xảy ra lỗi: " + e.getMessage(), null);
+            // Tạo Map chứa lỗi
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("success", false);
+            errorResponse.put("message", "Đã xảy ra lỗi: " + e.getMessage());
+            errorResponse.put("data", null);
+
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
         }
     }
+
 
     @GetMapping("/sumpricebill")
     public ResponseEntity<ApiResponse> sumPriceBill(@RequestParam("startDate") Long startDate, @RequestParam("endDate") Long endDate) {
@@ -382,6 +393,67 @@ public class HoaDonController {
                 .data(hoaDonService.getBillDetail(billCode))
                 .statusCode(HttpStatus.OK.value())
                 .build());
+    }
+
+    @GetMapping("dashboard/totalprice")
+    public ResponseEntity<ApiResponse> totalPrice (@RequestParam("startDate") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime startDate,
+                                                   @RequestParam("endDate") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime endDate) {
+        return ResponseEntity.ok(ApiResponse.builder()
+                .data(hoaDonService.totalPriceByDate(startDate,endDate))
+                .statusCode(HttpStatus.OK.value())
+                .build());
+    }
+
+    @GetMapping("dashboard/totalpricenow")
+    public ResponseEntity<ApiResponse> totalPriceNow () {
+        return ResponseEntity.ok(ApiResponse.builder()
+                .data("Tổng doanh thu hôm nay: "+hoaDonService.totalPriceByDateNow())
+                .statusCode(HttpStatus.OK.value())
+                .build());
+    }
+
+//    @GetMapping("dashboard/totalproductandcoundbill")
+//    public ResponseEntity<ApiResponse> totalProductAndCountBill (@RequestParam("startDate") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime startDate,
+//                                                   @RequestParam("endDate") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime endDate) {
+//        return ResponseEntity.ok(ApiResponse.builder()
+//                .data(hoaDonService.getInvoiceCountAndTotalProducts(startDate,endDate))
+//                .statusCode(HttpStatus.OK.value())
+//                .build());
+//    }
+
+    @GetMapping("dashboard/infobill")
+    public ResponseEntity<ApiResponse> infoBillByDate(
+            @RequestParam("startDate") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime startDate,
+            @RequestParam("endDate") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime endDate) throws AppException {
+
+        return ResponseEntity.ok(ApiResponse.builder()
+                .data(hoaDonService.infoBillByDate(startDate, endDate))
+                .statusCode(HttpStatus.OK.value())
+                .build());
+    }
+
+    @GetMapping("dashboard/sumproductsoldout")
+    public ResponseEntity<Map<String, Object>> sumProductSoldOut(@RequestParam("startDate") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime startDate,
+                                                            @RequestParam("endDate") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime endDate) {
+        try {
+            Long sum = hoaDonService.sumProductSoldOutByDate(startDate, endDate);
+
+            // Tạo Map chứa dữ liệu trả về
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", true);
+            response.put("message", "Số sản phẩm đã bán:");
+            response.put("data", sum);
+
+            return ResponseEntity.status(HttpStatus.OK).body(response);
+        } catch (Exception e) {
+            // Tạo Map chứa lỗi
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("success", false);
+            errorResponse.put("message", "Đã xảy ra lỗi: " + e.getMessage());
+            errorResponse.put("data", null);
+
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
+        }
     }
 }
 

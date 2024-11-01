@@ -4,6 +4,9 @@ import com.dantn.weblaptop.dto.ChangeEmail_Dto;
 import com.dantn.weblaptop.dto.ForgotPassword_Dto;
 import com.dantn.weblaptop.dto.request.create_request.CreateNhanVien;
 import com.dantn.weblaptop.dto.request.update_request.UpdateNhanVien;
+import com.dantn.weblaptop.dto.response.ApiResponse;
+import com.dantn.weblaptop.dto.response.KhachHangResponse;
+import com.dantn.weblaptop.dto.response.NhanVienResponse;
 import com.dantn.weblaptop.repository.NhanVien_Repositoy;
 import com.dantn.weblaptop.service.NhanVien_Service;
 import jakarta.mail.MessagingException;
@@ -138,5 +141,22 @@ public class NhanVien_Controller {
     public ResponseEntity<?> updateImage(@PathVariable("id") Long id, @RequestParam("image") String image) {
         this.nhanVienService.updateImageNV(image, id);
         return ResponseEntity.ok("Image was updated");
+    }
+
+    @GetMapping("/login")
+    public ResponseEntity<?> login(@RequestParam("email") String email, @RequestParam("password") String password) {
+        // Gọi service để thực hiện đăng nhập
+        NhanVienResponse nhanVienResponse = nhanVienService.login(email, password);
+
+        // Kiểm tra phản hồi từ service
+        if (nhanVienResponse.getStatus().equals("Login successful")) {
+            // Nếu thành công, trả về phản hồi 200 OK với thông tin khách hàng
+            NhanVienResponse find = nhanVienService.findByEmail(nhanVienResponse.getEmail());
+            return ResponseEntity.ok(find);
+        } else {
+            // Nếu thất bại, trả về 401 Unauthorized với thông báo lỗi
+            ApiResponse response = new ApiResponse(false, nhanVienResponse.getStatus(), null);
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+        }
     }
 }

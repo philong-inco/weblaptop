@@ -56,7 +56,4 @@ public class HoaDonResponse {
     BigDecimal giaTriPhieuGiamGia;
     Integer loaiPGG;
     String maPGG;
-
-
-
 }

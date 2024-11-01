@@ -1,5 +1,7 @@
 package com.dantn.weblaptop.service;
 
+import com.dantn.weblaptop.dto.HoaDonDashboard_Dto;
+import com.dantn.weblaptop.dto.HoaDonSummaryDTO;
 import com.dantn.weblaptop.dto.request.create_request.CreateHoaDonClientAccountRequest;
 import com.dantn.weblaptop.dto.request.create_request.CreateHoaDonClientRequest;
 import com.dantn.weblaptop.dto.request.create_request.CreateLichSuHoaDon;
@@ -17,6 +19,7 @@ import org.springframework.data.jpa.domain.Specification;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -61,7 +64,7 @@ public interface HoaDonService {
 
     void  updateAddressInBill (String billCode , UpdateDiaChiHoaDonRequest request) throws AppException;
     
-    Long countBillByDate(Long startDate, Long endDate);
+    Long countBillByDate(LocalDateTime startDate, LocalDateTime endDate);
 
     BigDecimal sumBillByDate(Long startDate, Long endDate);
 
@@ -78,4 +81,13 @@ public interface HoaDonService {
     List<HoaDonClientResponse> getAllByCustomerIdAndStatus(Long customerId, String status) throws AppException;
 
     HoaDonClientResponse getBillDetail (String billCode) throws AppException;
+
+    BigDecimal totalPriceByDate(LocalDateTime startDate, LocalDateTime endDate);
+
+    BigDecimal totalPriceByDateNow();
+
+//    HoaDonSummaryDTO getInvoiceCountAndTotalProducts(LocalDateTime startDate, LocalDateTime endDate);
+
+    List<HoaDonDashboard_Dto> infoBillByDate(LocalDateTime startDate, LocalDateTime endDate) throws AppException;
+    Long sumProductSoldOutByDate(LocalDateTime startDate, LocalDateTime endDate);
 }

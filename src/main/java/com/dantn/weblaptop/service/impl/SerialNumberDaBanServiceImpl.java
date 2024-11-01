@@ -2,6 +2,7 @@ package com.dantn.weblaptop.service.impl;
 
 import com.dantn.weblaptop.constant.HoaDonStatus;
 import com.dantn.weblaptop.constant.RankCustomer;
+import com.dantn.weblaptop.dto.SerialNumberDaBan_Dto;
 import com.dantn.weblaptop.dto.request.create_request.CreateLichSuHoaDonRequest;
 import com.dantn.weblaptop.dto.request.create_request.CreateSerialNumberDaBanRequest;
 import com.dantn.weblaptop.dto.request.create_request.FindSanPhamChiTietByFilter;
@@ -32,6 +33,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -212,6 +216,24 @@ public class SerialNumberDaBanServiceImpl implements SerialNumberDaBanService {
             System.out.println("0 Tỏng tiền : " + totalMoney.orElse(BigDecimal.ZERO));
             calculateTotalAmountDue(existingBill, totalMoney);
             hoaDonRepository.save(existingBill);
+        }
+    }
+
+    @Override
+    public List<SerialNumberDaBan_Dto> findSerialNumberDaBanTopSold(LocalDateTime startDate, LocalDateTime endDate) throws AppException {
+        long startDateMillis = startDate.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
+        long endDateMillis = endDate.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
+        List<Object[]> results = serialNumberDaBanRepository.findSerialNumberDaBanTopSold(startDateMillis, endDateMillis);
+        if (!results.isEmpty()) {
+            return results.stream().map(result -> {
+                String productName = (String) result[0];
+                Long productId = (Long) result[1];
+                Long totalSerialsSold = (Long) result[2];
+
+                return new SerialNumberDaBan_Dto(productName, productId, totalSerialsSold);
+            }).collect(Collectors.toList());
+        }else {
+            throw new AppException(ErrorCode.SERIAL_NUMBER_DA_BAN);
         }
     }
 

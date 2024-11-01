@@ -1,6 +1,7 @@
 package com.dantn.weblaptop.repository;
 
 import com.dantn.weblaptop.constant.HoaDonStatus;
+import com.dantn.weblaptop.dto.HoaDonSummaryDTO;
 import com.dantn.weblaptop.entity.hoadon.HoaDon;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -29,11 +31,11 @@ public interface HoaDonRepository extends JpaRepository<HoaDon, Long>, JpaSpecif
     @Query(value = "SELECT ma FROM hoa_don WHERE trang_thai IN (0)", nativeQuery = true)
     List<String> getAllByStatus();
 
-    @Query(value = "SELECT COUNT(hd) FROM HoaDon hd WHERE  hd.ngayTao BETWEEN :startDate AND :endDate")
-    Long countBillByDate(@Param("startDate") Long startDate, @Param("endDate") Long endDate);
+    @Query(value = "SELECT COUNT(hd.id) as TongSoHoaDon FROM HoaDon hd WHERE hd.ngayThanhToan BETWEEN :startDate AND :endDate")
+    Long countBillByDate(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate);
 
-    @Query(value = "SELECT SUM(hd.tongTienPhaiTra) FROM HoaDon hd WHERE  hd.ngayTao BETWEEN :startDate AND :endDate")
-    BigDecimal totalPriceInBillByDate(@Param("startDate") Long startDate, @Param("endDate") Long endDate);
+    @Query("SELECT SUM(hd.tongSanPham) AS TongSanPham FROM HoaDon hd WHERE hd.ngayThanhToan BETWEEN :startDate AND :endDate")
+    Long sumProductSoldOut(@Param("startDate") LocalDateTime startDateTime, @Param("endDate") LocalDateTime endDateTime);
 
     @Modifying
     @Transactional
@@ -77,5 +79,33 @@ public interface HoaDonRepository extends JpaRepository<HoaDon, Long>, JpaSpecif
     Optional<HoaDon> findByMaAndSdt(String ma, String sdt);
 
     List<HoaDon> findAllByTrangThaiAndKhachHangId(HoaDonStatus trangThai, Long khachHangId);
+
     List<HoaDon> findAllByKhachHangId(Long khachHangId);
+
+    @Query(value = "SELECT SUM(hd.tongTienPhaiTra) FROM HoaDon hd " +
+            "WHERE hd.ngayThanhToan >= :startDate " +
+            "AND hd.ngayThanhToan <= :endDate AND hd.trangThai = 9")
+    BigDecimal totalPriceByDate(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate);
+
+    @Query(value = "SELECT SUM(hd.tongTienPhaiTra) FROM HoaDon hd " +
+            "WHERE hd.ngayThanhToan >= CURRENT_DATE " +
+            "AND hd.trangThai = 9")
+    BigDecimal totalPriceByDateNow();
+
+//    @Query("SELECT new com.dantn.weblaptop.dto.HoaDonSummaryDTO(COUNT(hd) AS tongHoaDon, SUM(hd.tongSanPham) AS tongSanPham) " +
+//            "FROM HoaDon hd " +
+//            "WHERE hd.ngayThanhToan >= :startDate " +
+//            "AND hd.ngayThanhToan <= :endDate " +
+//            "AND hd.trangThai = 9")
+//    HoaDonSummaryDTO getInvoiceCountAndTotalProducts(@Param("startDate") LocalDateTime startDate,
+//                                                     @Param("endDate") LocalDateTime endDate);
+
+    @Query("SELECT FUNCTION('DATE', hd.ngayThanhToan) AS ngayThanhToan, COUNT(hd) AS soHoaDon, SUM(hd.tongSanPham) AS tongSanPham " +
+            "FROM HoaDon hd " +
+            "WHERE hd.ngayThanhToan >= :startDateTime " +
+            "AND hd.ngayThanhToan <= :endDateTime " +
+            "GROUP BY FUNCTION('DATE', hd.ngayThanhToan)")
+    List<Object[]> countInvoicesAndSumProductsByDate(@Param("startDateTime") LocalDateTime startDateTime,
+                                                     @Param("endDateTime") LocalDateTime endDateTime);
+
 }
