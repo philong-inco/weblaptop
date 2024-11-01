@@ -33,27 +33,54 @@ public class MyConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests((authz) -> authz
                 .requestMatchers("/api/v1/auth/login").permitAll()
-                .requestMatchers("/api/ban-phim/add").hasAnyRole("STAFF", "ADMIN")
-                .requestMatchers("/api/ban-phim/update/**").hasAnyRole("STAFF", "ADMIN")
-                .requestMatchers("/api/ban-phim/detail/**").hasAnyRole("STAFF", "ADMIN")
-                .requestMatchers("/api/ban-phim/exist-code/**").hasAnyRole("STAFF", "ADMIN")
-                .requestMatchers("/api/ban-phim/exist-name/**").hasAnyRole("STAFF", "ADMIN")
-                .requestMatchers("/api/ban-phim/delete/**").hasAnyRole( "ADMIN")
-                //ban-phim
-//                .requestMatchers("/api/ban-phim/.*/add").hasAnyRole("STAFF", "ADMIN")
-//                .requestMatchers("/api/ban-phim/.*/update/**").hasAnyRole("STAFF", "ADMIN")
-//                .requestMatchers("/api/ban-phim/.*/detail/**").hasAnyRole("STAFF", "ADMIN")
-//                .requestMatchers("/api/ban-phim/.*/exist-code/**").hasAnyRole("STAFF", "ADMIN")
-//                .requestMatchers("/api/ban-phim/.*/exist-name/**").hasAnyRole("STAFF", "ADMIN")
-//                .requestMatchers("/api/ban-phim/.*/delete/**").hasAnyRole( "ADMIN")
+                 //Phần của Long (ae không sửa)
+//                .requestMatchers(
+//                        "/api/ban-phim/add",
+//                        "/api/ban-phim/update/**",
+//                        "/api/he-dieu-hanh/add",
+//                        "/api/he-dieu-hanh/update/**",
+//                        "/api/man-hinh/add",
+//                        "/api/man-hinh/update/**",
+//                        "/api/mau-sac/add",
+//                        "/api/mau-sac/update/**",
+//                        "/api/nhu-cau/add",
+//                        "/api/nhu-cau/update/**",
+//                        "/api/o-cung/add",
+//                        "/api/o-cung/update/**",
+//                        "/api/ram/add",
+//                        "/api/ram/update/**",
+//                        "/api/san-pham-chi-tiet/add",
+//                        "/api/san-pham-chi-tiet/update/**",
+//                        "/api/san-pham/add",
+//                        "/api/san-pham/update/**",
+//                        "/api/san-pham/change-status",
+//                        "/api/san-pham/updateSanPhamAndSPCT/**",
+//                        "/api/serial-number/add",
+//                        "/api/serial-number/update/**",
+//                        "/api/serial-number/change-status-to-serial-da-ban/**",
+//                        "/api/thuong-hieu/add",
+//                        "/api/thuong-hieu/update/**",
+//                        "/api/vga/add",
+//                        "/api/vga/update/**",
+//                        "/api/webcam/add",
+//                        "/api/webcam/update/**"
+//                ).hasAnyRole("STAFF", "ADMIN")
+//                .requestMatchers(
+//                        "/api/ban-phim/delete/**",
+//                        "/api/he-dieu-hanh/delete/**",
+//                        "/api/man-hinh/delete/**",
+//                        "/api/mau-sac/delete/**",
+//                        "/api/nhu-cau/delete/**",
+//                        "/api/o-cung/delete/**",
+//                        "/api/ram/delete/**",
+//                        "/api/san-pham-chi-tiet/delete/**",
+//                        "/api/san-pham/delete/**",
+//                        "/api/serial-number/delete/**",
+//                        "/api/thuong-hieu/delete/**",
+//                        "/api/vga/delete/**",
+//                        "/api/webcam/delete/**"
+//                ).hasAnyRole( "ADMIN")
 
-                // man-hinh
-//                .requestMatchers("/api/man-hinh/.*/add").hasAnyRole("STAFF", "ADMIN")
-//                .requestMatchers("/api/man-hinh/.*/update/**").hasAnyRole("STAFF", "ADMIN")
-//                .requestMatchers("/api/man-hinh/.*/detail/**").hasAnyRole("STAFF", "ADMIN")
-//                .requestMatchers("/api/man-hinh/.*/exist-code/**").hasAnyRole("STAFF", "ADMIN")
-//                .requestMatchers("/api/man-hinh/.*/exist-name/**").hasAnyRole("STAFF", "ADMIN")
-//                .requestMatchers("/api/man-hinh/.*/delete/**").hasAnyRole( "ADMIN")
                 .anyRequest().permitAll()
         )
         .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class)
