@@ -90,6 +90,7 @@ public enum ErrorCode {
     QUANTITY_PRODUCT_DETAIL_IN_CART_NOT_NULL(8017,"Số lượng sản phẩm chưa có"),
     TONG_TIEN_BAN_DAU_KHONG_AM(8017, "Tổng tiền ban đầu không được âm"),
     TONG_TIEN_PHAI_TRA_KHONG_AM(8018, "Tổng tiền phải trả không được âm"),
+    SERIAL_NUMBER_DA_BAN(8019, "Serial number null");
     ;
 
 

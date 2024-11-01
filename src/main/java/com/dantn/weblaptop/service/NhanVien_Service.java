@@ -3,6 +3,7 @@ package com.dantn.weblaptop.service;
 import com.dantn.weblaptop.dto.ChangeEmail_Dto;
 import com.dantn.weblaptop.dto.request.create_request.CreateNhanVien;
 import com.dantn.weblaptop.dto.request.update_request.UpdateNhanVien;
+import com.dantn.weblaptop.dto.response.KhachHangResponse;
 import com.dantn.weblaptop.dto.response.NhanVienResponse;
 import com.dantn.weblaptop.dto.response.VaiTro_Response;
 import jakarta.mail.MessagingException;
@@ -31,6 +32,8 @@ public interface NhanVien_Service {
 
     NhanVienResponse getOne(Long id);
 
+    NhanVienResponse login(String email, String password);
+
     List<VaiTro_Response> findVaiTroByNhanVien(Long id);
 
     List<NhanVienResponse> getDanhSachNhanVien();
@@ -46,4 +49,5 @@ public interface NhanVien_Service {
     void updatePassword(String newPassword, String email);
 
     void updateImageNV(String image, Long id);
+
 }

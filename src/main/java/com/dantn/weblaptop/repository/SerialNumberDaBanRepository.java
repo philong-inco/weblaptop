@@ -1,5 +1,6 @@
 package com.dantn.weblaptop.repository;
 
+import com.dantn.weblaptop.dto.SerialNumberDaBan_Dto;
 import com.dantn.weblaptop.dto.response.SerialNumberDaBanResponse;
 import com.dantn.weblaptop.dto.response.SerialNumberDaBanResponse2;
 import com.dantn.weblaptop.entity.hoadon.SerialNumberDaBan;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -68,4 +70,13 @@ public interface SerialNumberDaBanRepository extends JpaRepository<SerialNumberD
             "FROM serial_number_da_ban " +
             "WHERE hoa_don_id = :billId", nativeQuery = true)
     Optional<BigDecimal> sumGiaBanByHoaDonId(@Param("billId") Long billId);
+
+    @Query(value = "SELECT sp.ten as productName, spct.sanPham.id as productId, COUNT(sndb.serialNumber.id) as totalSerialsSold FROM SerialNumberDaBan sndb JOIN SerialNumber sn ON sndb.serialNumber.id = sn.id" +
+            " JOIN SanPhamChiTiet spct ON sn.sanPhamChiTiet.id = spct.id" +
+            " JOIN SanPham sp ON spct.sanPham.id = sp.id" +
+            " GROUP BY sp.ten, spct.sanPham.id" +
+            " ORDER BY totalSerialsSold DESC" +
+            " LIMIT 5")
+    List<Object[]> findSerialNumberDaBanTopSold(@Param("startDate") Long startDate, @Param("endDate") Long endDate);
+
 }

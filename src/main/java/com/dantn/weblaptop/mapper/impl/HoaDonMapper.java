@@ -11,6 +11,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Comment("hoaDonMapper")
 public class HoaDonMapper {
 
@@ -101,5 +104,10 @@ public class HoaDonMapper {
 
     public  static  void toUpdateHoaDon (HoaDon hoaDon){
 
+    }
+    public static List<HoaDonResponse> toHoaDonResponseList(List<HoaDon> hoaDonList) {
+        return hoaDonList.stream()
+                .map(HoaDonMapper::toHoaDonResponse)
+                .collect(Collectors.toList());
     }
 }

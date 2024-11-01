@@ -48,4 +48,5 @@ public class NhanVienResponse {
 
     Set<String> listVaiTro;
 
+    String status;
 }

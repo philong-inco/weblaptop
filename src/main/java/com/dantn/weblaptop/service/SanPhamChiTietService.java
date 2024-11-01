@@ -33,6 +33,7 @@ public interface SanPhamChiTietService {
     SanPhamChiTietResponse findById(Long idSPCT);
 
     List<SanPhamChiTietClientDTO> findByFilter(FindSanPhamChiTietByFilter filter);
+    Page<SanPhamChiTietClientDTO> findByFilterPage(FindSanPhamChiTietByFilter filter, Pageable pageable);
 
     boolean isExistSanPhamChiTietByCreate(SanPhamChiTietCreate create);
 

@@ -4,8 +4,10 @@ import com.dantn.weblaptop.constant.EmailSender;
 import com.dantn.weblaptop.dto.ChangeEmail_Dto;
 import com.dantn.weblaptop.dto.request.create_request.CreateNhanVien;
 import com.dantn.weblaptop.dto.request.update_request.UpdateNhanVien;
+import com.dantn.weblaptop.dto.response.KhachHangResponse;
 import com.dantn.weblaptop.dto.response.NhanVienResponse;
 import com.dantn.weblaptop.dto.response.VaiTro_Response;
+import com.dantn.weblaptop.entity.khachhang.KhachHang;
 import com.dantn.weblaptop.entity.nhanvien.NhanVien;
 import com.dantn.weblaptop.entity.nhanvien.NhanVienVaiTro;
 import com.dantn.weblaptop.entity.nhanvien.VaiTro;
@@ -261,6 +263,31 @@ public class NhanVienService_Implement implements NhanVien_Service {
     public NhanVienResponse getOne(Long id) {
         NhanVien nhanVien = nhanVienRepositoy.findById(id).orElseThrow(() -> new RuntimeException("Không tìm thấy nhân viên với ID: " + id));
         return nhanVienMapper.EntiyToResponse(nhanVien);
+    }
+
+    @Override
+    public NhanVienResponse login(String email, String password) {
+        // Tìm khách hàng từ cơ sở dữ liệu theo email
+        NhanVien nhanVienOpt = nhanVienRepositoy.findByEmail(email);
+
+        if (nhanVienOpt != null) {
+            // Kiểm tra mật khẩu có đúng không
+            if (nhanVienOpt.getMatKhau().equals(password)) {
+                // Nếu đúng, tạo đối tượng KhachHangResponse và trả về
+                NhanVienResponse response = new NhanVienResponse();
+                response.setId(nhanVienOpt.getId());
+                response.setEmail(nhanVienOpt.getEmail());
+                response.setTen(nhanVienOpt.getTen());
+                response.setTrangThai(nhanVienOpt.getTrangThai());
+                return response;
+            } else {
+                // Mật khẩu không đúng
+                throw new RuntimeException("Invalid password");
+            }
+        } else {
+            // Không tìm thấy khách hàng với email này
+            throw new RuntimeException("Email not found");
+        }
     }
 
     @Override

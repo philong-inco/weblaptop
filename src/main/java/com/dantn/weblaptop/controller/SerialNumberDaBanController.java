@@ -1,5 +1,6 @@
 package com.dantn.weblaptop.controller;
 
+import com.dantn.weblaptop.dto.SerialNumberDaBan_Dto;
 import com.dantn.weblaptop.dto.request.create_request.CreateSerialNumberDaBanRequest;
 import com.dantn.weblaptop.dto.request.update_request.SerialNumberSoldDelete;
 import com.dantn.weblaptop.dto.response.ApiResponse;
@@ -8,9 +9,13 @@ import com.dantn.weblaptop.service.SerialNumberDaBanService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDateTime;
+import java.util.List;
 
 @RestController
 @RequestMapping("api/serial-number-sold")
@@ -50,4 +55,17 @@ public class SerialNumberDaBanController {
                         .message("Deleted successfully")
                         .build());
     }
+
+    @GetMapping("topsold")
+    public ResponseEntity<ApiResponse> topSold(
+            @RequestParam("startDate") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime startDate,
+            @RequestParam("endDate") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime endDate) throws AppException {
+        return ResponseEntity.status(HttpStatus.OK).body(
+                ApiResponse.builder()
+                        .statusCode(HttpStatus.OK.value())
+                        .message("Top sold items retrieved successfully")
+                        .data(serialNumberDaBanService.findSerialNumberDaBanTopSold(startDate, endDate))
+                        .build());
+    }
+
 }
