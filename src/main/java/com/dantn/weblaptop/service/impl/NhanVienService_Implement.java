@@ -25,6 +25,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
@@ -50,7 +51,7 @@ public class NhanVienService_Implement implements NhanVien_Service {
     NhanVienVaiTroRepository nhanVienVaiTroRepository;
     @Autowired
     private NhanVien_Repositoy nhanVien_Repositoy;
-
+    PasswordEncoder passwordEncoder;
 
     @Override
     public Page<NhanVienResponse> pageNhanVien(Integer pageNo, Integer size) {
@@ -168,7 +169,7 @@ public class NhanVienService_Implement implements NhanVien_Service {
         nhanVien.setNgayTao(LocalDateTime.now().toInstant(ZoneOffset.UTC).toEpochMilli());
         nhanVien.setNgayBatDauLamViec(LocalDateTime.now());
         nhanVien.setTrangThai(1);
-        nhanVien.setMatKhau(GenerateCode.generateNhanVienCode());
+        nhanVien.setMatKhau(passwordEncoder.encode(GenerateCode.generatePassWordNhanVien()));
         return nhanVien;
     }
 

@@ -2,6 +2,7 @@ package com.dantn.weblaptop.controller;
 
 import com.dantn.weblaptop.dto.request.create_request.CreateDiaChi;
 import com.dantn.weblaptop.dto.request.update_request.UpdateDiaChi;
+import com.dantn.weblaptop.dto.response.ApiResponse;
 import com.dantn.weblaptop.dto.response.DiaChi_Response;
 import com.dantn.weblaptop.entity.khachhang.DiaChi;
 import com.dantn.weblaptop.repository.DiaChi_Repository;
@@ -63,10 +64,19 @@ public class DiaChi_Controller {
     }
 
     @PutMapping("/defaultlocation/{id}")
-    public ResponseEntity<?> defaultLocation(@PathVariable Long id, @RequestParam Long idKhachHang) {
-        diaChiService.defauldiaChi(id, idKhachHang);
-        return new ResponseEntity<>(HttpStatus.OK);
+    public ResponseEntity<String> defaultLocation(@PathVariable Long id, @RequestParam Long idKhachHang) {
+        try {
+            diaChiService.defauldiaChi(id, idKhachHang);
+            // Trả về thông báo thành công
+            return ResponseEntity.ok("Đặt địa chỉ mặc định thành công");
+        } catch (Exception e) {
+            // Trả về thông báo thất bại
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Đặt địa chỉ mặc định thất bại: " + e.getMessage());
+        }
     }
+
+
 
     @PutMapping("/undefaultlocation/{id}")
     public ResponseEntity<?> unDefaultLocation(@PathVariable Long id, @RequestParam Long idKhachHang) {

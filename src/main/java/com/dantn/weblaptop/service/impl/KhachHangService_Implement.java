@@ -23,6 +23,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
@@ -51,6 +52,7 @@ public class KhachHangService_Implement implements KhachHang_Service {
     @Autowired
     private GioHangService gioHangService;
 
+    PasswordEncoder passwordEncoder;
 
     @Override
     public Page<KhachHangResponse> pageKhachHang(Integer pageNo, Integer size) {
@@ -127,7 +129,7 @@ public class KhachHangService_Implement implements KhachHang_Service {
             khachHang.setNgayTao(LocalDateTime.now().toInstant(ZoneOffset.UTC).toEpochMilli());
             khachHang.setTrangThai(1);
             khachHang.setHangKhachHang(0);
-            khachHang.setMatKhau(generateRandomPassword(10));
+            khachHang.setMatKhau(passwordEncoder.encode(generateRandomPassword(10)));
             // Lấy session ID từ request
             String sessionId = request.getSession().getId();
             khachHang.setSessionId(sessionId);
@@ -286,7 +288,7 @@ public class KhachHangService_Implement implements KhachHang_Service {
     public KhachHang updateForgotPassword(Long id, String newPassword) {
         KhachHang khachHang = khachHangRepository.findKhachHangById(id);
         if (khachHang != null) {
-            khachHang.setMatKhau(newPassword);
+            khachHang.setMatKhau(passwordEncoder.encode(newPassword));
             khachHang.setTrangThai(1);
             KhachHang afterForgot = khachHangRepository.save(khachHang);
             return afterForgot;
@@ -294,18 +296,6 @@ public class KhachHangService_Implement implements KhachHang_Service {
             throw new RuntimeException("Không thể tìm thấy tài khoản khách hàng. Vui lòng kiểm tra lại thông tin khách hàng.");
         }
     }
-
-//    @Override
-//    public boolean forgotPassword(String email, String password) throws MessagingException {
-//        KhachHang khachHang = khachHangRepository.findKhachHangByEmail(email);
-//        if (khachHang != null) {
-//            khachHang.setMatKhau(password);
-//            khachHangRepository.save(khachHang);
-//            return true;
-//        } else {
-//            throw new RuntimeException("Không thể tìm thấy tài khoản khách hàng. Vui lòng kiểm tra lại thông tin khách hàng.");
-//        }
-//    }
 
     @Override
     public KhachHangResponse login(String email, String password) {
