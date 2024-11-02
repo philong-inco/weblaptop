@@ -147,6 +147,18 @@ public class HoaDonServiceImpl implements HoaDonService {
     }
 
     @Override
+    public String updateBill(String code, String status) {
+        if (status.equals("00")) {
+            HoaDon hoaDon = billRepository.findHoaDonByMa(code).get();
+            hoaDon.setTrangThai(HoaDonStatus.CHO_XAC_NHAN);
+//            HoaDonHinhThucThanhToan hinhThucThanhToan = hoaDonHinhThucThanhToanRepository.
+            return "Oke";
+        } else {
+            return "";
+        }
+    }
+
+    @Override
     public HoaDonResponse updateBillByCode(String code, UpdateHoaDonRequest request) {
         return null;
     }
@@ -700,33 +712,114 @@ public class HoaDonServiceImpl implements HoaDonService {
         }
 
         if (request.getPhuongThucThanhToan() == 2) {
-            bill.setTrangThai(HoaDonStatus.CHO_XAC_NHAN);
+            bill.setTrangThai(HoaDonStatus.CHO_THANH_TOAN);
             System.out.println("Đã thanh toán chuyển khoản rồi");
             // ko đc up rank ở đây phải thanh toán mới đ up
 //            bill.setTrangThai(HoaDonStatus.CHO_XAC_NHAN);
-//            HoaDonHinhThucThanhToan paymentHistory = new HoaDonHinhThucThanhToan();
-//            paymentHistory.setSoTien(request.getTienChuyenKhoan());
-//            paymentHistory.setMaGioDich(request.getMaGiaDich().trim());
-//            paymentHistory.setTienNhan(request.getTienChuyenKhoan());
-//            paymentHistory.setHoaDon(bill);
-//            paymentHistory.setNguoiTao("Nguyễn Tiến Mạnh");
-//            paymentHistory.setNguoiSua("Nguyễn Tiến Mạnh");
-//            paymentHistory.setLoaiThanhToan(0);
-//            paymentHistory.setHinhThucThanhToan(payment);
-//            hoaDonHinhThucThanhToanRepository.save(paymentHistory);
-//            if (request.getThanhToanSau() == 1) {
-//                HoaDonHinhThucThanhToan paymentHistory2 = new HoaDonHinhThucThanhToan();
-//                paymentHistory2.setSoTien(request.getTongTienPhaiTra().subtract(request.getTienChuyenKhoan()));
-//                paymentHistory2.setTienNhan(BigDecimal.ZERO);
-//                paymentHistory2.setHoaDon(bill);
-//                paymentHistory2.setNguoiTao("Nguyễn Tiến Mạnh");
-//                paymentHistory2.setNguoiSua("Nguyễn Tiến Mạnh");
-//                paymentHistory2.setLoaiThanhToan(request.getThanhToanSau());
-//                HinhThucThanhToan payment2 = hinhThucThanhToanRepository.findById(2L).orElseThrow(
-//                        () -> new AppException(ErrorCode.PAY_NO_FOUND));
-//                paymentHistory2.setHinhThucThanhToan(payment2);
-//                hoaDonHinhThucThanhToanRepository.save(paymentHistory2);
-//            }
+            HoaDonHinhThucThanhToan paymentHistory = new HoaDonHinhThucThanhToan();
+// 500tr
+            BigDecimal threshold = new BigDecimal("500000000");
+            if (request.getTongTienPhaiTra().compareTo(threshold) > 0) {
+                System.out.println("Lớn 500 ");
+                request.setTienChuyenKhoan(threshold);
+                BigDecimal soTienConNo = request.getTongTienPhaiTra().subtract(threshold);
+                System.out.println("Lớn 500 " + soTienConNo);
+                HoaDonHinhThucThanhToan paymentHistory11 = new HoaDonHinhThucThanhToan();
+                paymentHistory11.setSoTien(soTienConNo);
+                paymentHistory11.setTienNhan(BigDecimal.ZERO);
+                paymentHistory11.setHoaDon(bill);
+                paymentHistory11.setNguoiTao("Nguyễn Tiến Mạnh");
+                paymentHistory11.setNguoiSua("Nguyễn Tiến Mạnh");
+                paymentHistory11.setLoaiThanhToan(0);
+                paymentHistory11.setTrangThai(0);
+                HinhThucThanhToan payment11 = hinhThucThanhToanRepository.findById(2L).orElseThrow(
+                        () -> new AppException(ErrorCode.PAY_NO_FOUND));
+                paymentHistory11.setHinhThucThanhToan(payment11);
+                hoaDonHinhThucThanhToanRepository.save(paymentHistory11);
+                // thanh toán sau
+                HoaDonHinhThucThanhToan paymentHistory2 = new HoaDonHinhThucThanhToan();
+                paymentHistory2.setSoTien(soTienConNo);
+                paymentHistory2.setTienNhan(BigDecimal.ZERO);
+                paymentHistory2.setHoaDon(bill);
+                paymentHistory2.setNguoiTao("Nguyễn Tiến Mạnh");
+                paymentHistory2.setNguoiSua("Nguyễn Tiến Mạnh");
+                paymentHistory2.setLoaiThanhToan(1);
+                HinhThucThanhToan payment2 = hinhThucThanhToanRepository.findById(1L).orElseThrow(
+                        () -> new AppException(ErrorCode.PAY_NO_FOUND));
+                paymentHistory2.setHinhThucThanhToan(payment2);
+                hoaDonHinhThucThanhToanRepository.save(paymentHistory2);
+            } else {
+                if (request.getTongTienPhaiTra().remainder(BigDecimal.ONE).compareTo(BigDecimal.ZERO) != 0) {
+                    System.out.println("Dưới 500 và  lẻ");
+                    BigDecimal tongTienPhaiTra = request.getTongTienPhaiTra();
+                    BigDecimal phanNguyen = tongTienPhaiTra.setScale(0, BigDecimal.ROUND_DOWN);
+                    BigDecimal phanThapPhan = tongTienPhaiTra.subtract(phanNguyen);
+                    request.setTienChuyenKhoan(phanNguyen);
+                    // tt
+                    HoaDonHinhThucThanhToan paymentHistory11 = new HoaDonHinhThucThanhToan();
+                    paymentHistory11.setSoTien(phanNguyen);
+                    paymentHistory11.setTienNhan(BigDecimal.ZERO);
+                    paymentHistory11.setHoaDon(bill);
+                    paymentHistory11.setNguoiTao("Nguyễn Tiến Mạnh");
+                    paymentHistory11.setNguoiSua("Nguyễn Tiến Mạnh");
+                    paymentHistory11.setLoaiThanhToan(0);
+                    paymentHistory11.setTrangThai(0);
+                    HinhThucThanhToan payment11 = hinhThucThanhToanRepository.findById(2L).orElseThrow(
+                            () -> new AppException(ErrorCode.PAY_NO_FOUND));
+                    paymentHistory11.setHinhThucThanhToan(payment11);
+                    hoaDonHinhThucThanhToanRepository.save(paymentHistory11);
+                    //
+                    System.out.println("Phần thập phân: " + phanThapPhan);
+                    HoaDonHinhThucThanhToan paymentHistory2 = new HoaDonHinhThucThanhToan();
+                    paymentHistory2.setSoTien(phanThapPhan);
+                    paymentHistory2.setTienNhan(BigDecimal.ZERO);
+                    paymentHistory2.setHoaDon(bill);
+                    paymentHistory2.setNguoiTao("Nguyễn Tiến Mạnh");
+                    paymentHistory2.setNguoiSua("Nguyễn Tiến Mạnh");
+                    paymentHistory2.setLoaiThanhToan(1);
+                    HinhThucThanhToan payment2 = hinhThucThanhToanRepository.findById(2L).orElseThrow(
+                            () -> new AppException(ErrorCode.PAY_NO_FOUND));
+                    paymentHistory2.setHinhThucThanhToan(payment2);
+                    hoaDonHinhThucThanhToanRepository.save(paymentHistory2);
+                }else{
+                    System.out.println("Dưới 500 và ko lẻ");
+                    request.setTienChuyenKhoan(request.getTongTienPhaiTra());
+                    HoaDonHinhThucThanhToan paymentHistory11 = new HoaDonHinhThucThanhToan();
+                    paymentHistory11.setSoTien(request.getTongTienPhaiTra());
+                    paymentHistory11.setTienNhan(BigDecimal.ZERO);
+                    paymentHistory11.setHoaDon(bill);
+                    paymentHistory11.setNguoiTao("Nguyễn Tiến Mạnh");
+                    paymentHistory11.setNguoiSua("Nguyễn Tiến Mạnh");
+                    paymentHistory11.setLoaiThanhToan(0);
+                    paymentHistory11.setTrangThai(0);
+                    HinhThucThanhToan payment11 = hinhThucThanhToanRepository.findById(2L).orElseThrow(
+                            () -> new AppException(ErrorCode.PAY_NO_FOUND));
+                    paymentHistory11.setHinhThucThanhToan(payment11);
+                    hoaDonHinhThucThanhToanRepository.save(paymentHistory11);
+                }
+            }
+            paymentHistory.setSoTien(request.getTienChuyenKhoan());
+            paymentHistory.setMaGioDich(request.getMaGiaDich().trim());
+            paymentHistory.setTienNhan(request.getTienChuyenKhoan());
+            paymentHistory.setHoaDon(bill);
+            paymentHistory.setNguoiTao("Nguyễn Tiến Mạnh");
+            paymentHistory.setNguoiSua("Nguyễn Tiến Mạnh");
+            paymentHistory.setLoaiThanhToan(0);
+            paymentHistory.setHinhThucThanhToan(payment);
+            hoaDonHinhThucThanhToanRepository.save(paymentHistory);
+            if (request.getThanhToanSau() == 1) {
+                HoaDonHinhThucThanhToan paymentHistory2 = new HoaDonHinhThucThanhToan();
+                paymentHistory2.setSoTien(request.getTongTienPhaiTra().subtract(request.getTienChuyenKhoan()));
+                paymentHistory2.setTienNhan(BigDecimal.ZERO);
+                paymentHistory2.setHoaDon(bill);
+                paymentHistory2.setNguoiTao("Nguyễn Tiến Mạnh");
+                paymentHistory2.setNguoiSua("Nguyễn Tiến Mạnh");
+                paymentHistory2.setLoaiThanhToan(request.getThanhToanSau());
+                HinhThucThanhToan payment2 = hinhThucThanhToanRepository.findById(2L).orElseThrow(
+                        () -> new AppException(ErrorCode.PAY_NO_FOUND));
+                paymentHistory2.setHinhThucThanhToan(payment2);
+                hoaDonHinhThucThanhToanRepository.save(paymentHistory2);
+            }
         }
         billRepository.save(bill);
         LichSuHoaDon billHistory = new LichSuHoaDon();
@@ -884,33 +977,116 @@ public class HoaDonServiceImpl implements HoaDonService {
             // tạo lịch sử hóa đơn
         }
         if (request.getPhuongThucThanhToan() == 2) {
-//            System.out.println("Đã thanh toán chuyển khoản rồi");
-//            // ko đc up rank ở đây phải thanh toán mới đ up
+            bill.setTrangThai(HoaDonStatus.CHO_THANH_TOAN);
+            System.out.println("Đã thanh toán chuyển khoản rồi");
+            // ko đc up rank ở đây phải thanh toán mới đ up
 //            bill.setTrangThai(HoaDonStatus.CHO_XAC_NHAN);
-//            HoaDonHinhThucThanhToan paymentHistory = new HoaDonHinhThucThanhToan();
-//            paymentHistory.setSoTien(request.getTienChuyenKhoan());
-//            paymentHistory.setMaGioDich(request.getMaGiaDich().trim());
-//            paymentHistory.setTienNhan(request.getTienChuyenKhoan());
-//            paymentHistory.setHoaDon(bill);
-//            paymentHistory.setNguoiTao("Nguyễn Tiến Mạnh");
-//            paymentHistory.setNguoiSua("Nguyễn Tiến Mạnh");
-//            paymentHistory.setLoaiThanhToan(0);
-//            paymentHistory.setHinhThucThanhToan(payment);
-//            hoaDonHinhThucThanhToanRepository.save(paymentHistory);
-//            if(request.getThanhToanSau()==1){
-//                HoaDonHinhThucThanhToan paymentHistory2 = new HoaDonHinhThucThanhToan();
-//                paymentHistory2.setSoTien(request.getTongTienPhaiTra().subtract(request.getTienChuyenKhoan()));
-//                paymentHistory2.setTienNhan(BigDecimal.ZERO);
-//                paymentHistory2.setHoaDon(bill);
-//                paymentHistory2.setNguoiTao("Nguyễn Tiến Mạnh");
-//                paymentHistory2.setNguoiSua("Nguyễn Tiến Mạnh");
-//                paymentHistory2.setLoaiThanhToan(request.getThanhToanSau());
-//                HinhThucThanhToan payment2 = hinhThucThanhToanRepository.findById(2L).orElseThrow(
-//                        () -> new AppException(ErrorCode.PAY_NO_FOUND));
-//                paymentHistory2.setHinhThucThanhToan(payment2);
-//                hoaDonHinhThucThanhToanRepository.save(paymentHistory2);
-//            }
+            HoaDonHinhThucThanhToan paymentHistory = new HoaDonHinhThucThanhToan();
+// 500tr
+            BigDecimal threshold = new BigDecimal("500000000");
+            if (request.getTongTienPhaiTra().compareTo(threshold) > 0) {
+                System.out.println("Lớn 500 ");
+                request.setTienChuyenKhoan(threshold);
+                BigDecimal soTienConNo = request.getTongTienPhaiTra().subtract(threshold);
+                System.out.println("Lớn 500 " + soTienConNo);
+                HoaDonHinhThucThanhToan paymentHistory11 = new HoaDonHinhThucThanhToan();
+                paymentHistory11.setSoTien(soTienConNo);
+                paymentHistory11.setTienNhan(BigDecimal.ZERO);
+                paymentHistory11.setHoaDon(bill);
+                paymentHistory11.setNguoiTao("Nguyễn Tiến Mạnh");
+                paymentHistory11.setNguoiSua("Nguyễn Tiến Mạnh");
+                paymentHistory11.setLoaiThanhToan(0);
+                paymentHistory11.setTrangThai(0);
+                HinhThucThanhToan payment11 = hinhThucThanhToanRepository.findById(2L).orElseThrow(
+                        () -> new AppException(ErrorCode.PAY_NO_FOUND));
+                paymentHistory11.setHinhThucThanhToan(payment11);
+                hoaDonHinhThucThanhToanRepository.save(paymentHistory11);
+                // thanh toán sau
+                HoaDonHinhThucThanhToan paymentHistory2 = new HoaDonHinhThucThanhToan();
+                paymentHistory2.setSoTien(soTienConNo);
+                paymentHistory2.setTienNhan(BigDecimal.ZERO);
+                paymentHistory2.setHoaDon(bill);
+                paymentHistory2.setNguoiTao("Nguyễn Tiến Mạnh");
+                paymentHistory2.setNguoiSua("Nguyễn Tiến Mạnh");
+                paymentHistory2.setLoaiThanhToan(1);
+                HinhThucThanhToan payment2 = hinhThucThanhToanRepository.findById(1L).orElseThrow(
+                        () -> new AppException(ErrorCode.PAY_NO_FOUND));
+                paymentHistory2.setHinhThucThanhToan(payment2);
+                hoaDonHinhThucThanhToanRepository.save(paymentHistory2);
+            } else {
+                if (request.getTongTienPhaiTra().remainder(BigDecimal.ONE).compareTo(BigDecimal.ZERO) != 0) {
+                    System.out.println("Dưới 500 và  lẻ");
+                    BigDecimal tongTienPhaiTra = request.getTongTienPhaiTra();
+                    BigDecimal phanNguyen = tongTienPhaiTra.setScale(0, BigDecimal.ROUND_DOWN);
+                    BigDecimal phanThapPhan = tongTienPhaiTra.subtract(phanNguyen);
+                    request.setTienChuyenKhoan(phanNguyen);
+                    // tt
+                    HoaDonHinhThucThanhToan paymentHistory11 = new HoaDonHinhThucThanhToan();
+                    paymentHistory11.setSoTien(phanNguyen);
+                    paymentHistory11.setTienNhan(BigDecimal.ZERO);
+                    paymentHistory11.setHoaDon(bill);
+                    paymentHistory11.setNguoiTao("Nguyễn Tiến Mạnh");
+                    paymentHistory11.setNguoiSua("Nguyễn Tiến Mạnh");
+                    paymentHistory11.setLoaiThanhToan(0);
+                    paymentHistory11.setTrangThai(0);
+                    HinhThucThanhToan payment11 = hinhThucThanhToanRepository.findById(2L).orElseThrow(
+                            () -> new AppException(ErrorCode.PAY_NO_FOUND));
+                    paymentHistory11.setHinhThucThanhToan(payment11);
+                    hoaDonHinhThucThanhToanRepository.save(paymentHistory11);
+                    //
+                    System.out.println("Phần thập phân: " + phanThapPhan);
+                    HoaDonHinhThucThanhToan paymentHistory2 = new HoaDonHinhThucThanhToan();
+                    paymentHistory2.setSoTien(phanThapPhan);
+                    paymentHistory2.setTienNhan(BigDecimal.ZERO);
+                    paymentHistory2.setHoaDon(bill);
+                    paymentHistory2.setNguoiTao("Nguyễn Tiến Mạnh");
+                    paymentHistory2.setNguoiSua("Nguyễn Tiến Mạnh");
+                    paymentHistory2.setLoaiThanhToan(1);
+                    HinhThucThanhToan payment2 = hinhThucThanhToanRepository.findById(2L).orElseThrow(
+                            () -> new AppException(ErrorCode.PAY_NO_FOUND));
+                    paymentHistory2.setHinhThucThanhToan(payment2);
+                    hoaDonHinhThucThanhToanRepository.save(paymentHistory2);
+                }else{
+                    System.out.println("Dưới 500 và ko lẻ");
+                    request.setTienChuyenKhoan(request.getTongTienPhaiTra());
+                    HoaDonHinhThucThanhToan paymentHistory11 = new HoaDonHinhThucThanhToan();
+                    paymentHistory11.setSoTien(request.getTongTienPhaiTra());
+                    paymentHistory11.setTienNhan(BigDecimal.ZERO);
+                    paymentHistory11.setHoaDon(bill);
+                    paymentHistory11.setNguoiTao("Nguyễn Tiến Mạnh");
+                    paymentHistory11.setNguoiSua("Nguyễn Tiến Mạnh");
+                    paymentHistory11.setLoaiThanhToan(0);
+                    paymentHistory11.setTrangThai(0);
+                    HinhThucThanhToan payment11 = hinhThucThanhToanRepository.findById(2L).orElseThrow(
+                            () -> new AppException(ErrorCode.PAY_NO_FOUND));
+                    paymentHistory11.setHinhThucThanhToan(payment11);
+                    hoaDonHinhThucThanhToanRepository.save(paymentHistory11);
+                }
+            }
+            paymentHistory.setSoTien(request.getTienChuyenKhoan());
+            paymentHistory.setMaGioDich(request.getMaGiaDich().trim());
+            paymentHistory.setTienNhan(request.getTienChuyenKhoan());
+            paymentHistory.setHoaDon(bill);
+            paymentHistory.setNguoiTao("Nguyễn Tiến Mạnh");
+            paymentHistory.setNguoiSua("Nguyễn Tiến Mạnh");
+            paymentHistory.setLoaiThanhToan(0);
+            paymentHistory.setHinhThucThanhToan(payment);
+            hoaDonHinhThucThanhToanRepository.save(paymentHistory);
+            if (request.getThanhToanSau() == 1) {
+                HoaDonHinhThucThanhToan paymentHistory2 = new HoaDonHinhThucThanhToan();
+                paymentHistory2.setSoTien(request.getTongTienPhaiTra().subtract(request.getTienChuyenKhoan()));
+                paymentHistory2.setTienNhan(BigDecimal.ZERO);
+                paymentHistory2.setHoaDon(bill);
+                paymentHistory2.setNguoiTao("Nguyễn Tiến Mạnh");
+                paymentHistory2.setNguoiSua("Nguyễn Tiến Mạnh");
+                paymentHistory2.setLoaiThanhToan(request.getThanhToanSau());
+                HinhThucThanhToan payment2 = hinhThucThanhToanRepository.findById(2L).orElseThrow(
+                        () -> new AppException(ErrorCode.PAY_NO_FOUND));
+                paymentHistory2.setHinhThucThanhToan(payment2);
+                hoaDonHinhThucThanhToanRepository.save(paymentHistory2);
+            }
         }
+
         billRepository.save(bill);
         LichSuHoaDon billHistory = new LichSuHoaDon();
         billHistory.setTrangThai(2);

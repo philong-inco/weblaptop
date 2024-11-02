@@ -31,6 +31,7 @@ public interface HoaDonService {
     HoaDonResponse createBill() throws AppException;
 
     HoaDonResponse updateBill(Long id, UpdateHoaDonRequest request);
+    String updateBill(String billCode , String status);
 
     HoaDonResponse updateBillByCode(String code, UpdateHoaDonRequest request);
 

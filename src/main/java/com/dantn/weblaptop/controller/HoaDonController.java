@@ -267,9 +267,9 @@ public class HoaDonController {
         billHistoryService.revertBillStatus(code);
         return ResponseEntity.status(HttpStatus.CREATED).body(
                 ApiResponse.builder()
-                .statusCode(HttpStatus.CREATED.value())
-                .message("Chuyển đổi trạng thái thành công")
-                .build());
+                        .statusCode(HttpStatus.CREATED.value())
+                        .message("Chuyển đổi trạng thái thành công")
+                        .build());
     }
 
     @GetMapping("/countbill")
@@ -358,11 +358,11 @@ public class HoaDonController {
 
     @PostMapping("client/create-bill/account")
     public ResponseEntity<ApiResponse> createBillClientAccount(
-            @RequestBody @Valid CreateHoaDonClientAccountRequest  createHoaDonClientAccountRequest
+            @RequestBody @Valid CreateHoaDonClientAccountRequest createHoaDonClientAccountRequest
             , HttpServletRequest request
     ) throws AppException {
         return ResponseEntity.ok(ApiResponse.builder()
-                .data(hoaDonService.createBillClientAccount(createHoaDonClientAccountRequest , request))
+                .data(hoaDonService.createBillClientAccount(createHoaDonClientAccountRequest, request))
                 .statusCode(HttpStatus.CREATED.value())
                 .build());
     }
@@ -390,7 +390,7 @@ public class HoaDonController {
     }
 
     @GetMapping("client/detail/")
-    public  ResponseEntity<ApiResponse> billDetail (
+    public ResponseEntity<ApiResponse> billDetail(
             @RequestParam(name = "billCode") String billCode
     ) throws AppException {
         return ResponseEntity.ok(ApiResponse.builder()
@@ -400,18 +400,18 @@ public class HoaDonController {
     }
 
     @GetMapping("dashboard/totalprice")
-    public ResponseEntity<ApiResponse> totalPrice (@RequestParam("startDate") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime startDate,
-                                                   @RequestParam("endDate") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime endDate) {
+    public ResponseEntity<ApiResponse> totalPrice(@RequestParam("startDate") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime startDate,
+                                                  @RequestParam("endDate") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime endDate) {
         return ResponseEntity.ok(ApiResponse.builder()
-                .data(hoaDonService.totalPriceByDate(startDate,endDate))
+                .data(hoaDonService.totalPriceByDate(startDate, endDate))
                 .statusCode(HttpStatus.OK.value())
                 .build());
     }
 
     @GetMapping("dashboard/totalpricenow")
-    public ResponseEntity<ApiResponse> totalPriceNow () {
+    public ResponseEntity<ApiResponse> totalPriceNow() {
         return ResponseEntity.ok(ApiResponse.builder()
-                .data("Tổng doanh thu hôm nay: "+hoaDonService.totalPriceByDateNow())
+                .data("Tổng doanh thu hôm nay: " + hoaDonService.totalPriceByDateNow())
                 .statusCode(HttpStatus.OK.value())
                 .build());
     }
@@ -438,7 +438,7 @@ public class HoaDonController {
 
     @GetMapping("dashboard/sumproductsoldout")
     public ResponseEntity<Map<String, Object>> sumProductSoldOut(@RequestParam("startDate") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime startDate,
-                                                            @RequestParam("endDate") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime endDate) {
+                                                                 @RequestParam("endDate") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime endDate) {
         try {
             Long sum = hoaDonService.sumProductSoldOutByDate(startDate, endDate);
 
@@ -459,5 +459,15 @@ public class HoaDonController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
         }
     }
+
+    @PostMapping("update-bill/pay")
+    public ResponseEntity<ApiResponse> updateBill(
+            @RequestParam(name = "billCode") String billCode,
+            @RequestParam(name = "status") String status
+    ) {
+        return ResponseEntity.ok(ApiResponse.builder()
+                .data(hoaDonService.updateBill(billCode, status))
+                .statusCode(HttpStatus.OK.value())
+                .build());    }
 }
 

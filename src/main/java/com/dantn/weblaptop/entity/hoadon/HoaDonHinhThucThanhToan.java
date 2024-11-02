@@ -46,6 +46,6 @@ public class HoaDonHinhThucThanhToan extends BaseEntity {
     @Column(name = "loai_thanh_toan")
     Integer loaiThanhToan; // 0 đã tt : 1 trả sau
 //
-//    @Column(name = "trang_thai")
-//    Integer trangThai;// 0 thành công 1 : thất bại :
+    @Column(name = "trang_thai")
+    Integer trangThai;// 0 thành công 1 : thất bại :
 }
