@@ -463,7 +463,8 @@ public class HoaDonController {
     @PostMapping("update-bill/pay")
     public ResponseEntity<ApiResponse> updateBill(
             @RequestParam(name = "billCode") String billCode,
-            @RequestParam(name = "status") String status
+            @RequestParam(name = "status") String status,
+            @RequestParam(name = "codeTran") String codeTran
     ) {
         return ResponseEntity.ok(ApiResponse.builder()
                 .data(hoaDonService.updateBill(billCode, status))

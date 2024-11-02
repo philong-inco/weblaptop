@@ -799,7 +799,7 @@ public class HoaDonServiceImpl implements HoaDonService {
                 }
             }
             paymentHistory.setSoTien(request.getTienChuyenKhoan());
-            paymentHistory.setMaGioDich(request.getMaGiaDich().trim());
+//            paymentHistory.setMaGioDich(request.getMaGiaDich().trim());
             paymentHistory.setTienNhan(request.getTienChuyenKhoan());
             paymentHistory.setHoaDon(bill);
             paymentHistory.setNguoiTao("Nguyễn Tiến Mạnh");
@@ -1064,7 +1064,7 @@ public class HoaDonServiceImpl implements HoaDonService {
                 }
             }
             paymentHistory.setSoTien(request.getTienChuyenKhoan());
-            paymentHistory.setMaGioDich(request.getMaGiaDich().trim());
+//            paymentHistory.setMaGioDich(request.getMaGiaDich().trim());
             paymentHistory.setTienNhan(request.getTienChuyenKhoan());
             paymentHistory.setHoaDon(bill);
             paymentHistory.setNguoiTao("Nguyễn Tiến Mạnh");
