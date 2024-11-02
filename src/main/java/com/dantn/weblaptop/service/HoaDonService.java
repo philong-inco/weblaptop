@@ -14,6 +14,7 @@ import com.dantn.weblaptop.dto.response.ResultPaginationResponse;
 import com.dantn.weblaptop.dto.response.TraCuDonHangResponse;
 import com.dantn.weblaptop.entity.hoadon.HoaDon;
 import com.dantn.weblaptop.exception.AppException;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 
@@ -72,9 +73,9 @@ public interface HoaDonService {
 
     byte[] getInvoicePdf(String billCode) throws AppException;
 
-    HoaDonResponse createBillClient(CreateHoaDonClientRequest request) throws AppException;
+    String createBillClient(CreateHoaDonClientRequest createHoaDonClientRequest, HttpServletRequest request) throws AppException;
 
-    HoaDonResponse createBillClientAccount (CreateHoaDonClientAccountRequest  request) throws AppException;
+    String createBillClientAccount (CreateHoaDonClientAccountRequest  createHoaDonClientAccountRequest ,  HttpServletRequest request) throws AppException;
 
     TraCuDonHangResponse lookUpOrders(String billCode , String phoneNumber) throws AppException;
 

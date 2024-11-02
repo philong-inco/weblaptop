@@ -2,12 +2,15 @@ package com.dantn.weblaptop.service.impl;
 
 import com.dantn.weblaptop.config.VNPAYConfig;
 import com.dantn.weblaptop.dto.request.create_request.CreateHinhThucThanhToanRequest;
+import com.dantn.weblaptop.dto.request.create_request.CreateHoaDonClientAccountRequest;
+import com.dantn.weblaptop.dto.request.create_request.CreateHoaDonClientRequest;
 import com.dantn.weblaptop.dto.request.create_request.GioHangChiTietRequest;
 import com.dantn.weblaptop.dto.request.update_request.UpdateHinhThucThanhToanRequest;
 import com.dantn.weblaptop.dto.response.HinhThucThanhToanResponse;
 import com.dantn.weblaptop.dto.response.Meta;
 import com.dantn.weblaptop.dto.response.ResultPaginationResponse;
 import com.dantn.weblaptop.entity.hoadon.HinhThucThanhToan;
+import com.dantn.weblaptop.entity.hoadon.HoaDon;
 import com.dantn.weblaptop.entity.hoadon.SerialNumberDaBan;
 import com.dantn.weblaptop.entity.sanpham.SanPhamChiTiet;
 import com.dantn.weblaptop.entity.sanpham.SerialNumber;
@@ -15,6 +18,7 @@ import com.dantn.weblaptop.exception.AppException;
 import com.dantn.weblaptop.exception.ErrorCode;
 import com.dantn.weblaptop.mapper.impl.HinhThucThanhToanMapper;
 import com.dantn.weblaptop.repository.HinhThucThanhToanRepository;
+import com.dantn.weblaptop.repository.HoaDonRepository;
 import com.dantn.weblaptop.repository.SanPhamChiTietRepository;
 import com.dantn.weblaptop.repository.SerialNumberRepository;
 import com.dantn.weblaptop.service.HinhThucThanhToanService;
@@ -53,6 +57,7 @@ public class HinhThucThanhToanServiceImpl implements HinhThucThanhToanService {
     final VNPAYConfig vnPayConfig;
     final SanPhamChiTietRepository sanPhamChiTietRepository;
     final SerialNumberRepository serialNumberRepository;
+    final HoaDonRepository hoaDonRepository;
 
     @Override
     public ResultPaginationResponse getPaymentMethodsPage(Optional<String> page, Optional<String> size) {
@@ -105,35 +110,37 @@ public class HinhThucThanhToanServiceImpl implements HinhThucThanhToanService {
     @Override
     public String payWithVNPAYOnline(List<GioHangChiTietRequest> cartDetail, HttpServletRequest request) throws AppException {
 
-        for (GioHangChiTietRequest cartDetailRequest : cartDetail) {
-            log.info("id SPCT : " + cartDetailRequest.getIdSPCT());
-            log.info("id Gia : " + cartDetailRequest.getGia());
-            log.info("id CartDetail : " + cartDetailRequest.getIdGioHangChiTiet());
-            log.info("id So Luong : " + cartDetailRequest.getSoLuong());
-            log.info("--------------------------");
-            Optional<SanPhamChiTiet> optional = sanPhamChiTietRepository.findById(cartDetailRequest.getIdSPCT());
-            if (!optional.isPresent()) {
-                throw new AppException(ErrorCode.PRODUCT_DETAIL_NOT_FOUND);
-            }
-            List<SerialNumber> listSerialNumber = serialNumberRepository
-                    .findBySanPhamChiTietIdAndTrangThaiWithLimit
-                            (cartDetailRequest.getIdSPCT(), cartDetailRequest.getSoLuong());
-
-            if (listSerialNumber.size() < cartDetailRequest.getSoLuong()) {
-                throw new RuntimeException("Sản phẩm " + optional.get().getMa() + " không đủ . Sản phẩm tồn kho : " + listSerialNumber.size());
-            }
-            // up lại tt sp
-            Integer quantityProductIsActive = serialNumberRepository.getQuantitySerialIsActive(cartDetailRequest.getIdSPCT());
-            if (quantityProductIsActive != null && quantityProductIsActive == 0) {
-                optional.get().setTrangThai(0);
-                sanPhamChiTietRepository.save(optional.get());
-            }
-        }
+//        for (GioHangChiTietRequest cartDetailRequest : cartDetail) {
+//            log.info("id SPCT : " + cartDetailRequest.getIdSPCT());
+//            log.info("id Gia : " + cartDetailRequest.getGia());
+//            log.info("id CartDetail : " + cartDetailRequest.getIdGioHangChiTiet());
+//            log.info("id So Luong : " + cartDetailRequest.getSoLuong());
+//            log.info("--------------------------");
+//            Optional<SanPhamChiTiet> optional = sanPhamChiTietRepository.findById(cartDetailRequest.getIdSPCT());
+//            if (!optional.isPresent()) {
+//                throw new AppException(ErrorCode.PRODUCT_DETAIL_NOT_FOUND);
+//            }
+//            List<SerialNumber> listSerialNumber = serialNumberRepository
+//                    .findBySanPhamChiTietIdAndTrangThaiWithLimit
+//                            (cartDetailRequest.getIdSPCT(), cartDetailRequest.getSoLuong());
+//
+//            if (listSerialNumber.size() < cartDetailRequest.getSoLuong()) {
+//                throw new RuntimeException("Sản phẩm " + optional.get().getMa() + " không đủ . Sản phẩm tồn kho : " + listSerialNumber.size());
+//            }
+//            // up lại tt sp
+//            Integer quantityProductIsActive = serialNumberRepository.getQuantitySerialIsActive(cartDetailRequest.getIdSPCT());
+//            if (quantityProductIsActive != null && quantityProductIsActive == 0) {
+//                optional.get().setTrangThai(0);
+//                sanPhamChiTietRepository.save(optional.get());
+//            }
+//        }
         BigDecimal amount = BigDecimal.valueOf(Long.parseLong(request.getParameter("amount"))).multiply(BigDecimal.valueOf(100L));
         String bankCode = request.getParameter("bankCode");
         Map<String, String> vnpParamsMap = vnPayConfig.getVNPayConfig();
         vnpParamsMap.put("vnp_ReturnUrl", this.returnUrlOnline);
         vnpParamsMap.put("vnp_Amount", String.valueOf(amount));
+                vnpParamsMap.put("vnp_TxnRef",  VNPayUtil.getRandomNumber(8));
+        vnpParamsMap.put("vnp_OrderInfo", "Thanh toan don hang:" +  VNPayUtil.getRandomNumber(8));
         if (bankCode != null && !bankCode.isEmpty()) {
             vnpParamsMap.put("vnp_BankCode", bankCode);
         }
@@ -144,6 +151,48 @@ public class HinhThucThanhToanServiceImpl implements HinhThucThanhToanService {
         queryUrl += "&vnp_SecureHash=" + vnpSecureHash;
         return vnPayConfig.getVnp_PayUrl() + "?" + queryUrl;
     }
+
+    @Override
+    public String payWithVNPAYOnline2(CreateHoaDonClientRequest createHoaDonClientRequest, HoaDon hoaDon, HttpServletRequest request) {
+//        BigDecimal amount = BigDecimal.valueOf(Long.parseLong(request.getParameter("amount"))).multiply(BigDecimal.valueOf(100L));
+        BigDecimal amount = createHoaDonClientRequest.getTienChuyenKhoan();
+        String bankCode = request.getParameter("bankCode");
+        Map<String, String> vnpParamsMap = vnPayConfig.getVNPayConfig();
+        vnpParamsMap.put("vnp_ReturnUrl", this.returnUrlOnline);
+        vnpParamsMap.put("vnp_Amount", String.valueOf(amount));
+        vnpParamsMap.put("vnp_TxnRef", hoaDon.getMa());
+        vnpParamsMap.put("vnp_OrderInfo", "Thanh toan don hang:" + hoaDon.getMa());
+        if (bankCode != null && !bankCode.isEmpty()) {
+            vnpParamsMap.put("vnp_BankCode", bankCode);
+        }
+        vnpParamsMap.put("vnp_IpAddr", VNPayUtil.getIpAddress(request));
+        String queryUrl = VNPayUtil.getPaymentURL(vnpParamsMap, true);
+        String hashData = VNPayUtil.getPaymentURL(vnpParamsMap, false);
+        String vnpSecureHash = VNPayUtil.hmacSHA512(vnPayConfig.getSecretKey(), hashData);
+        queryUrl += "&vnp_SecureHash=" + vnpSecureHash;
+        return vnPayConfig.getVnp_PayUrl() + "?" + queryUrl;
+    }
+
+    @Override
+    public String payWithVNPAYAccountOnline(CreateHoaDonClientAccountRequest createHoaDonClientRequest, HoaDon hoaDon, HttpServletRequest request) {
+        BigDecimal amount = createHoaDonClientRequest.getTienChuyenKhoan();
+        String bankCode = request.getParameter("bankCode");
+        Map<String, String> vnpParamsMap = vnPayConfig.getVNPayConfig();
+        vnpParamsMap.put("vnp_ReturnUrl", this.returnUrlOnline);
+        vnpParamsMap.put("vnp_Amount", String.valueOf(amount));
+        vnpParamsMap.put("vnp_TxnRef", hoaDon.getMa());
+        vnpParamsMap.put("vnp_OrderInfo", "Thanh toan don hang:" + hoaDon.getMa());
+        if (bankCode != null && !bankCode.isEmpty()) {
+            vnpParamsMap.put("vnp_BankCode", bankCode);
+        }
+        vnpParamsMap.put("vnp_IpAddr", VNPayUtil.getIpAddress(request));
+        String queryUrl = VNPayUtil.getPaymentURL(vnpParamsMap, true);
+        String hashData = VNPayUtil.getPaymentURL(vnpParamsMap, false);
+        String vnpSecureHash = VNPayUtil.hmacSHA512(vnPayConfig.getSecretKey(), hashData);
+        queryUrl += "&vnp_SecureHash=" + vnpSecureHash;
+        return vnPayConfig.getVnp_PayUrl() + "?" + queryUrl;
+    }
+
 
     @Override
     public void handlePaymentCallback(HttpServletRequest request, HttpServletResponse response) throws IOException {

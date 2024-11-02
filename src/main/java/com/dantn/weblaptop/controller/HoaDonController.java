@@ -14,6 +14,7 @@ import com.dantn.weblaptop.service.LichSuHoaDonService;
 import com.dantn.weblaptop.service.impl.HoaDonServiceImpl;
 import com.dantn.weblaptop.util.SendEmailBill;
 import com.turkraft.springfilter.boot.Filter;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -345,20 +346,23 @@ public class HoaDonController {
 
     @PostMapping("client/create-bill")
     public ResponseEntity<ApiResponse> createBillClient(
-            @RequestBody @Valid CreateHoaDonClientRequest request
+            @RequestBody @Valid CreateHoaDonClientRequest createHoaDonClientRequest
+            , HttpServletRequest request
+
     ) throws AppException {
         return ResponseEntity.ok(ApiResponse.builder()
-                .data(hoaDonService.createBillClient(request))
+                .data(hoaDonService.createBillClient(createHoaDonClientRequest, request))
                 .statusCode(HttpStatus.CREATED.value())
                 .build());
     }
 
     @PostMapping("client/create-bill/account")
     public ResponseEntity<ApiResponse> createBillClientAccount(
-            @RequestBody @Valid CreateHoaDonClientAccountRequest  request
+            @RequestBody @Valid CreateHoaDonClientAccountRequest  createHoaDonClientAccountRequest
+            , HttpServletRequest request
     ) throws AppException {
         return ResponseEntity.ok(ApiResponse.builder()
-                .data(hoaDonService.createBillClientAccount(request))
+                .data(hoaDonService.createBillClientAccount(createHoaDonClientAccountRequest , request))
                 .statusCode(HttpStatus.CREATED.value())
                 .build());
     }
