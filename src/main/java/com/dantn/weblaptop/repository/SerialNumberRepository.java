@@ -58,9 +58,22 @@ public interface SerialNumberRepository extends JpaRepository<SerialNumber, Long
     @Query("SELECT sn FROM " +
             "SerialNumber sn " +
             "WHERE (:codeSerial = '' " +
-            "OR sn.ma LIKE %:codeSerial%) " +
+            "OR sn.ma LIKE %:codeSerial%) AND sn.trangThai = 0 " +
             "AND sn.sanPhamChiTiet.id = :productDetailId")
     Page<SerialNumber> findByMaContainingAndSanPhamChiTietId(String codeSerial , Long productDetailId, Pageable pageable);
+
+    @Query(value = "SELECT sn FROM SerialNumber sn " +
+            "LEFT JOIN SerialNumberDaBan sndb ON sn.id = sndb.serialNumber.id " +
+            "AND sndb.hoaDon.id IN (SELECT hd.id FROM HoaDon hd WHERE hd.ma = :maHoaDon) " +  // Di chuyển vào đây
+            "WHERE (sn.trangThai = 0 OR (sn.trangThai = 1 AND sndb.serialNumber.id IS NOT NULL)) " +
+            "AND (sn.trangThai = 0 OR sndb.hoaDon.id IS NOT NULL) " +
+            "AND sn.sanPhamChiTiet.id = :sanPhamChiTietId " +
+            "AND sn.ma LIKE %:maSerial% " +
+            "ORDER BY sn.trangThai DESC")
+    Page<SerialNumber> findSerialNumbers(@Param("maHoaDon") String maHoaDon,
+                                         @Param("sanPhamChiTietId") Long sanPhamChiTietId,
+                                         @Param("maSerial") String maSerial,
+                                         Pageable pageable);
 
     @Modifying
     @Transactional

@@ -110,30 +110,25 @@ public class HinhThucThanhToanServiceImpl implements HinhThucThanhToanService {
     @Override
     public String payWithVNPAYOnline(List<GioHangChiTietRequest> cartDetail, HttpServletRequest request) throws AppException {
 
-//        for (GioHangChiTietRequest cartDetailRequest : cartDetail) {
-//            log.info("id SPCT : " + cartDetailRequest.getIdSPCT());
-//            log.info("id Gia : " + cartDetailRequest.getGia());
-//            log.info("id CartDetail : " + cartDetailRequest.getIdGioHangChiTiet());
-//            log.info("id So Luong : " + cartDetailRequest.getSoLuong());
-//            log.info("--------------------------");
-//            Optional<SanPhamChiTiet> optional = sanPhamChiTietRepository.findById(cartDetailRequest.getIdSPCT());
-//            if (!optional.isPresent()) {
-//                throw new AppException(ErrorCode.PRODUCT_DETAIL_NOT_FOUND);
-//            }
-//            List<SerialNumber> listSerialNumber = serialNumberRepository
-//                    .findBySanPhamChiTietIdAndTrangThaiWithLimit
-//                            (cartDetailRequest.getIdSPCT(), cartDetailRequest.getSoLuong());
-//
-//            if (listSerialNumber.size() < cartDetailRequest.getSoLuong()) {
-//                throw new RuntimeException("Sản phẩm " + optional.get().getMa() + " không đủ . Sản phẩm tồn kho : " + listSerialNumber.size());
-//            }
-//            // up lại tt sp
-//            Integer quantityProductIsActive = serialNumberRepository.getQuantitySerialIsActive(cartDetailRequest.getIdSPCT());
-//            if (quantityProductIsActive != null && quantityProductIsActive == 0) {
-//                optional.get().setTrangThai(0);
-//                sanPhamChiTietRepository.save(optional.get());
-//            }
-//        }
+        for (GioHangChiTietRequest cartDetailRequest : cartDetail) {
+            Optional<SanPhamChiTiet> optional = sanPhamChiTietRepository.findById(cartDetailRequest.getIdSPCT());
+            if (!optional.isPresent()) {
+                throw new AppException(ErrorCode.PRODUCT_DETAIL_NOT_FOUND);
+            }
+            List<SerialNumber> listSerialNumber = serialNumberRepository
+                    .findBySanPhamChiTietIdAndTrangThaiWithLimit
+                            (cartDetailRequest.getIdSPCT(), cartDetailRequest.getSoLuong());
+
+            if (listSerialNumber.size() < cartDetailRequest.getSoLuong()) {
+                throw new RuntimeException("Sản phẩm " + optional.get().getMa() + " không đủ . Sản phẩm tồn kho : " + listSerialNumber.size());
+            }
+            // up lại tt sp
+            Integer quantityProductIsActive = serialNumberRepository.getQuantitySerialIsActive(cartDetailRequest.getIdSPCT());
+            if (quantityProductIsActive != null && quantityProductIsActive == 0) {
+                optional.get().setTrangThai(0);
+                sanPhamChiTietRepository.save(optional.get());
+            }
+        }
         BigDecimal amount = BigDecimal.valueOf(Long.parseLong(request.getParameter("amount"))).multiply(BigDecimal.valueOf(100L));
         String bankCode = request.getParameter("bankCode");
         Map<String, String> vnpParamsMap = vnPayConfig.getVNPayConfig();
