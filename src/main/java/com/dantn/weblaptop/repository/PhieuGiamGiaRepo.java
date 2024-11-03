@@ -50,14 +50,14 @@ public interface PhieuGiamGiaRepo extends JpaRepository<PhieuGiamGia, Long>, Jpa
             "CASE " +
             "    WHEN " +
             "        CASE " +
-            "            WHEN pgg.loai_giam_gia = 1 THEN pgg.gia_tri_giam_gia * :totalAmount / 100 " +
+            "            WHEN pgg.loai_giam_gia = 1 THEN pgg.gia_tri_giam_gia * pgg.giam_toi_da / 100 " +
             "            WHEN pgg.loai_giam_gia = 2 THEN pgg.gia_tri_giam_gia " +
             "            ELSE 0 " +
             "        END > pgg.giam_toi_da " +
             "    THEN pgg.giam_toi_da " +
             "    ELSE " +
             "        CASE " +
-            "            WHEN pgg.loai_giam_gia = 1 THEN pgg.gia_tri_giam_gia * :totalAmount / 100 " +
+            "            WHEN pgg.loai_giam_gia = 1 THEN pgg.gia_tri_giam_gia * pgg.giam_toi_da / 100 " +
             "            WHEN pgg.loai_giam_gia = 2 THEN pgg.gia_tri_giam_gia " +
             "            ELSE 0 " +
             "        END " +
@@ -144,8 +144,8 @@ public interface PhieuGiamGiaRepo extends JpaRepository<PhieuGiamGia, Long>, Jpa
             "    CASE \n" +
             "        WHEN pgg.loai_giam_gia = 1 THEN \n" +
             "            CASE \n" +
-            "                WHEN (pgg.gia_tri_giam_gia * :totalAmount / 100) > pgg.giam_toi_da THEN pgg.giam_toi_da \n" +
-            "                ELSE (pgg.gia_tri_giam_gia * :totalAmount / 100) \n" +
+            "                WHEN (pgg.gia_tri_giam_gia * pgg.giam_toi_da / 100) > pgg.giam_toi_da THEN pgg.giam_toi_da \n" +
+            "                ELSE (pgg.gia_tri_giam_gia * pgg.giam_toi_da / 100) \n" +
             "            END \n" +
             "        WHEN pgg.loai_giam_gia = 2 THEN \n" +
             "            CASE \n" +
@@ -180,7 +180,7 @@ public interface PhieuGiamGiaRepo extends JpaRepository<PhieuGiamGia, Long>, Jpa
             "    SELECT " +
             "        LEAST( " +
             "            CASE " +
-            "                WHEN loai_giam_gia = 1 THEN (gia_tri_giam_gia * :amount / 100)  " +
+            "                WHEN loai_giam_gia = 1 THEN (gia_tri_giam_gia * giam_toi_da / 100)  " +
             "                WHEN loai_giam_gia = 2 THEN gia_tri_giam_gia  " +
             "                ELSE 0 " +
             "            END, " +

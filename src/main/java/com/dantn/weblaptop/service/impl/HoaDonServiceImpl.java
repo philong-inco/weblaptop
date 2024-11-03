@@ -436,7 +436,7 @@ public class HoaDonServiceImpl implements HoaDonService {
         HoaDon existingBill = billRepository.findHoaDonByMa(billCode).orElseThrow(() -> new AppException(ErrorCode.BILL_NOT_FOUND));
         PhieuGiamGia coupon = couponRepository.findById(couponId).orElseThrow(() -> new AppException(ErrorCode.COUPONS_NOT_FOUND));
         BigDecimal moneyReduced = calculateDiscount(existingBill, coupon);
-        calculateDiscount(existingBill, coupon);
+//        calculateDiscount(existingBill, coupon);
         updateTotalMoney(existingBill, moneyReduced);
         existingBill.setPhieuGiamGia(coupon);
         return HoaDonMapper.toHoaDonResponse(billRepository.save(existingBill));
@@ -1064,8 +1064,8 @@ public class HoaDonServiceImpl implements HoaDonService {
         if (coupon.getLoaiGiamGia() == 2) {
             moneyReduced = coupon.getGiaTriGiamGia();
         } else {
-            // Tính % của phiếu giảm rồi trừ đi
-            moneyReduced = existingBill.getTongTienBanDau().multiply(coupon.getGiaTriGiamGia()).divide(BigDecimal.valueOf(100), RoundingMode.HALF_UP);
+            // Tính % của phiếu giảm rồi trừ đi  existingBill.getTongTienBanDau()
+            moneyReduced = coupon.getGiamToiDa().multiply(coupon.getGiaTriGiamGia()).divide(BigDecimal.valueOf(100), RoundingMode.HALF_UP);
         }
 
         if (coupon.getGiamToiDa().compareTo(moneyReduced) < 0) {

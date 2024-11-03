@@ -90,7 +90,7 @@ public class HoaDonMapper {
             moneyReduced = coupon.getGiaTriGiamGia();
         } else {
             // Tính % của phiếu giảm rồi trừ đi
-            moneyReduced = existingBill.getTongTienBanDau()
+            moneyReduced = coupon.getGiamToiDa()
                     .multiply(coupon.getGiaTriGiamGia())
                     .divide(BigDecimal.valueOf(100), RoundingMode.HALF_UP);
         }
