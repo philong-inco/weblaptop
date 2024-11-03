@@ -23,7 +23,7 @@ public class EmailSender {
         this.javaMailSender = javaMailSender;
     }
 
-    public void newCustomerSendEmail(KhachHang khachHang) throws MessagingException {
+    public void newCustomerSendEmail(KhachHang khachHang, String pass) throws MessagingException {
         MimeMessage mimeMessage = javaMailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true, "UTF-8");
 
@@ -65,7 +65,7 @@ public class EmailSender {
                         "</div>" +
                         "</body>" +
                         "</html>",
-                khachHang.getTen(), khachHang.getEmail(), khachHang.getMatKhau()
+                khachHang.getTen(), khachHang.getEmail(), pass
         );
 
         helper.setText(emailContent, true);
