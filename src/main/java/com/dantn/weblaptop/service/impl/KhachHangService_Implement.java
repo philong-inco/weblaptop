@@ -1,5 +1,6 @@
 package com.dantn.weblaptop.service.impl;
 
+import com.dantn.weblaptop.config.MyConfig;
 import com.dantn.weblaptop.constant.EmailSender;
 import com.dantn.weblaptop.dto.InfomationKhachHang;
 import com.dantn.weblaptop.dto.request.create_request.CreateKhachHang;
@@ -51,8 +52,8 @@ public class KhachHangService_Implement implements KhachHang_Service {
     private KhachHang_Repository khachHang_Repository;
     @Autowired
     private GioHangService gioHangService;
-
-    PasswordEncoder passwordEncoder;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @Override
     public Page<KhachHangResponse> pageKhachHang(Integer pageNo, Integer size) {
@@ -125,11 +126,14 @@ public class KhachHangService_Implement implements KhachHang_Service {
     public KhachHangResponse create(CreateKhachHang createKhachHangRequest, HttpServletRequest request) {
         try {
             KhachHang khachHang = khachHangMapper.createToEntityKhachHang(createKhachHangRequest);
+            String encodedPassword = generateRandomPassword(10);
+
+            System.out.println(encodedPassword);
             khachHang.setMa(GenerateCode.generateKhachHangCode());
             khachHang.setNgayTao(LocalDateTime.now().toInstant(ZoneOffset.UTC).toEpochMilli());
             khachHang.setTrangThai(1);
             khachHang.setHangKhachHang(0);
-            khachHang.setMatKhau(passwordEncoder.encode(generateRandomPassword(10)));
+            khachHang.setMatKhau(passwordEncoder.encode(encodedPassword));
             // Lấy session ID từ request
             String sessionId = request.getSession().getId();
             khachHang.setSessionId(sessionId);
@@ -157,7 +161,7 @@ public class KhachHangService_Implement implements KhachHang_Service {
                 diaChi.setKhachHang(khSave);
                 diaChiRepository.save(diaChi);
             }
-            emailSender.newCustomerSendEmail(khachHang);
+            emailSender.newCustomerSendEmail(khachHang, encodedPassword);
             return khachHangMapper.entityToResponseKhachHang(khSave);
         } catch (Exception ex) {
             throw new RuntimeException("Failed to create khach hang. Possibly duplicate record." + ex);
@@ -330,7 +334,7 @@ public class KhachHangService_Implement implements KhachHang_Service {
         if (khachHang != null) {
             String newPassword = generateRandomPassword(10);
             khachHang.setTrangThai(3);
-            khachHang.setMatKhau(newPassword);
+            khachHang.setMatKhau(passwordEncoder.encode(newPassword));
             khachHangRepository.save(khachHang);
             emailSender.sendForgotPasswordEmail(khachHang, newPassword);
         } else {

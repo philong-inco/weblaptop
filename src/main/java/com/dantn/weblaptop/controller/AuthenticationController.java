@@ -65,6 +65,7 @@ public class AuthenticationController {
             response.setEmail(customer.getEmail());
             response.setSdt(customer.getSdt());
             response.setAvatar(customer.getHinhAnh());
+            response.setTrangThai(customer.getTrangThai());
         } else {
             List<String> granded = vaiTroRepository.findByIdNhanVien(staff.getId())
                     .stream().map(VaiTro::getTen).collect(Collectors.toList());
@@ -78,6 +79,8 @@ public class AuthenticationController {
             response.setEmail(staff.getEmail());
             response.setSdt(staff.getSdt());
             response.setAvatar(staff.getHinhAnh());
+            System.out.println(staff.getStatus());
+            response.setTrangThai(staff.getTrangThai());
         }
 
         return response;
