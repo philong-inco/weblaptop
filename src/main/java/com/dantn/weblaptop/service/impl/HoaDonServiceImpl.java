@@ -907,6 +907,7 @@ public class HoaDonServiceImpl implements HoaDonService {
     private void createPaymentHistoryAccount(
             CreateHoaDonClientAccountRequest request,
             HoaDon bill) throws AppException {
+        bill.setTrangThai(HoaDonStatus.CHO_XAC_NHAN);
         HinhThucThanhToan paymentCK = hinhThucThanhToanRepository.findById(2L).orElseThrow(() -> new AppException(ErrorCode.PAY_NO_FOUND));
         HinhThucThanhToan paymentTM = hinhThucThanhToanRepository.findById(1L).orElseThrow(() -> new AppException(ErrorCode.PAY_NO_FOUND));
         HoaDonHinhThucThanhToan paymentHistory = new HoaDonHinhThucThanhToan();
@@ -936,6 +937,7 @@ public class HoaDonServiceImpl implements HoaDonService {
     private void createPaymentHistory(
             CreateHoaDonClientRequest request,
             HoaDon bill) throws AppException {
+        bill.setTrangThai(HoaDonStatus.CHO_XAC_NHAN);
         HinhThucThanhToan paymentCK = hinhThucThanhToanRepository.findById(2L).orElseThrow(() -> new AppException(ErrorCode.PAY_NO_FOUND));
         HinhThucThanhToan paymentTM = hinhThucThanhToanRepository.findById(1L).orElseThrow(() -> new AppException(ErrorCode.PAY_NO_FOUND));
         HoaDonHinhThucThanhToan paymentHistory = new HoaDonHinhThucThanhToan();
