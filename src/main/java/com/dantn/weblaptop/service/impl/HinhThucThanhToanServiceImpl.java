@@ -149,7 +149,6 @@ public class HinhThucThanhToanServiceImpl implements HinhThucThanhToanService {
 
     @Override
     public String payWithVNPAYOnline2(CreateHoaDonClientRequest createHoaDonClientRequest, HoaDon hoaDon, HttpServletRequest request) {
-//        BigDecimal amount = BigDecimal.valueOf(Long.parseLong(request.getParameter("amount"))).multiply(BigDecimal.valueOf(100L));
         BigDecimal amount = createHoaDonClientRequest.getTienChuyenKhoan().multiply(BigDecimal.valueOf(100L));
         String bankCode = request.getParameter("bankCode");
         Map<String, String> vnpParamsMap = vnPayConfig.getVNPayConfig();

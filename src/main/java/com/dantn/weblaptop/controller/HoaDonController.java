@@ -466,6 +466,10 @@ public class HoaDonController {
             @RequestParam(name = "status") String status,
             @RequestParam(name = "codeTran") String codeTran
     ) {
+        System.out.println("code : "+billCode);
+        System.out.println("status : "+status);
+        System.out.println("codeTran : "+codeTran);
+
         return ResponseEntity.ok(ApiResponse.builder()
                 .data(hoaDonService.updateBill(billCode, status))
                 .statusCode(HttpStatus.OK.value())
