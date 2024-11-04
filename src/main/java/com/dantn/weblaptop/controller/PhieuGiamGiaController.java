@@ -226,4 +226,13 @@ public class PhieuGiamGiaController {
         apiResponse.setData(phieuGiamGiaService.getAllPhieuGiamGiaByIdCustomer(page, size, idCustomer));
         return ResponseEntity.ok(apiResponse);
     }
+
+    @GetMapping("/sentemailwellcome")
+    public ResponseEntity<ApiResponse> sentEmailWelcomCustomer(@RequestParam(name = "email", required = false) String email) throws MessagingException {
+        phieuGiamGiaService.sentNotificationVourcher(email);
+        ApiResponse apiResponse = new ApiResponse<>();
+        apiResponse.setStatusCode(HttpStatus.OK.value());
+        apiResponse.setMessage("Đã gửi email cho khách hàng.");
+        return ResponseEntity.ok(apiResponse);
+    }
 }

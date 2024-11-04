@@ -7,7 +7,6 @@ import com.dantn.weblaptop.entity.phieugiamgia.PhieuGiamGia;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Component;
@@ -218,7 +217,7 @@ public class EmailSender {
                             "<p>Chúng tôi đã nhận được yêu cầu thay đổi mật khẩu cho tài khoản của quý khách tại <strong>Cửa hàng Laptop ComNoOne</strong>. Để bảo mật, hệ thống đã tạo mật khẩu mới cho quý khách. Quý khách vui lòng sử dụng mật khẩu này để đăng nhập vào hệ thống.</p>" +
                             "<p><strong>Mật khẩu mới:</strong> %s</p>" +
                             "<p>Chúng tôi khuyến khích quý khách đăng nhập và thay đổi mật khẩu ngay lập tức để đảm bảo tài khoản được bảo vệ tốt nhất. Vui lòng giữ kín thông tin mật khẩu và không chia sẻ cho bất kỳ ai.</p>" +
-                            "<a href='https://comnoone.vn/login' class='button'>Đăng nhập ngay</a>" +
+                            "<a href='http://localhost:5173/auth/sign-in' class='button'>Đăng nhập ngay</a>" +
                             "<p>Nếu quý khách không yêu cầu thay đổi mật khẩu, vui lòng liên hệ ngay với bộ phận chăm sóc khách hàng của chúng tôi qua số điện thoại hoặc email bên dưới để được hỗ trợ và bảo vệ tài khoản của quý khách.</p>" +
                             "</div>" +
                             "<div class='footer'>" +
@@ -307,5 +306,52 @@ public class EmailSender {
         helper.setText(emailContent, true);
         javaMailSender.send(mimeMessage);
     }
+
+    public void sendWelcomeEmail(String email) throws MessagingException {
+        MimeMessage mimeMessage = javaMailSender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true, "UTF-8");
+        helper.setTo(email);
+        helper.setSubject("Chào mừng bạn đến với Laptop ComNoOne!");
+
+        String emailContent = String.format(
+                "<html>" +
+                        "<head>" +
+                        "<style>" +
+                        "body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; margin: 0; padding: 0; }" +
+                        ".header { background: linear-gradient(135deg, #ff5722, #ff9800); padding: 20px; text-align: center; color: #fff; }" +
+                        ".header img { max-width: 200px; }" +
+                        ".content { padding: 20px; background-color: #f4f4f4; }" +
+                        ".content h2 { color: #333; font-size: 22px; }" +
+                        ".content p { margin: 15px 0; font-size: 16px; }" +
+                        ".footer { background-color: #e2e2e2; padding: 15px; text-align: center; font-size: 14px; color: #777; }" +
+                        ".button { display: inline-block; padding: 12px 25px; margin-top: 20px; color: #fff; background-color: #4a90e2; text-decoration: none; border-radius: 5px; font-size: 16px; }" +
+                        "</style>" +
+                        "</head>" +
+                        "<body>" +
+                        "<div class='header'>" +
+                        "<img src='https://res.cloudinary.com/daljc2ktr/image/upload/v1723625914/af7ad9ee-03a4-4080-b809-572700a19da6.png' alt='Cửa hàng Laptop ComNoOne' />" +
+                        "<h1>Chào mừng bạn đến với Laptop ComNoOne!</h1>" +
+                        "</div>" +
+                        "<div class='content'>" +
+                        "<h2>Xin chào bạn !</h2>" +
+                        "<p>Cảm ơn bạn đã tham gia cùng chúng tôi tại Laptop ComNoOne!</p>" +
+                        "<p>Để chào mừng, chúng tôi muốn tặng bạn một mã giảm giá đặc biệt.</p>" +
+                        "<p>Hãy đăng ký nhận bản tin của chúng tôi để không bỏ lỡ bất kỳ ưu đãi nào và nhận mã giảm giá ngay!</p>" +
+                        "<a href='http://localhost:5173/auth/sign-up' class='button'>Đăng Ký Nhận Ưu Đãi</a>" +
+                        "</div>" +
+                        "<div class='footer'>" +
+                        "<p>Trân trọng,</p>" +
+                        "<p>Đội ngũ Cửa hàng Laptop ComNoOne</p>" +
+                        "<p>&copy; 2024 Laptop ComNoOne. All rights reserved.</p>" +
+                        "</div>" +
+                        "</body>" +
+                        "</html>"
+        );
+
+        helper.setText(emailContent, true);
+        javaMailSender.send(mimeMessage);
+    }
+
+
 
 }

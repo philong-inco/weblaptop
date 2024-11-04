@@ -8,7 +8,6 @@ import com.dantn.weblaptop.dto.response.Meta;
 import com.dantn.weblaptop.dto.response.PhieuGiamGiaResponse;
 import com.dantn.weblaptop.dto.response.ResultPaginationResponse;
 import com.dantn.weblaptop.entity.khachhang.KhachHang;
-import com.dantn.weblaptop.entity.nhanvien.NhanVien;
 import com.dantn.weblaptop.entity.phieugiamgia.KhachHangPhieuGiamGia;
 import com.dantn.weblaptop.entity.phieugiamgia.PhieuGiamGia;
 import com.dantn.weblaptop.exception.AppException;
@@ -18,7 +17,6 @@ import com.dantn.weblaptop.repository.KhachHangPhieuGiamGiaRepository;
 import com.dantn.weblaptop.repository.KhachHangRepository;
 import com.dantn.weblaptop.repository.NhanVien_Repositoy;
 import com.dantn.weblaptop.repository.PhieuGiamGiaRepo;
-import com.dantn.weblaptop.service.HoaDonService;
 import jakarta.mail.MessagingException;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -359,6 +357,13 @@ public class PhieuGiamGiaService {
             }else{
                 throw new AppException(ErrorCode.COUPON_DOES_NOT_APPLY);
             }
+        }
+    }
+
+    public void sentNotificationVourcher(String email) throws MessagingException {
+        System.out.println(email);
+        if(email != null && email != ""){
+            emailSender.sendWelcomeEmail(email);
         }
     }
 }
