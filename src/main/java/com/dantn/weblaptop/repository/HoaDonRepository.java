@@ -2,6 +2,7 @@ package com.dantn.weblaptop.repository;
 
 import com.dantn.weblaptop.constant.HoaDonStatus;
 import com.dantn.weblaptop.dto.HoaDonSummaryDTO;
+import com.dantn.weblaptop.dto.TrangThaiHoaDon_Dto;
 import com.dantn.weblaptop.entity.hoadon.HoaDon;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -74,7 +75,7 @@ public interface HoaDonRepository extends JpaRepository<HoaDon, Long>, JpaSpecif
     @Query(value = "SELECT sum(tong_tien_phai_tra) FROM hoa_don where khach_hang_id =:idKh and trang_thai = 6", nativeQuery = true)
     Optional<BigDecimal> tongTienDaChiCuaKhachHang(@Param("idKh") Long idKh);
 
-    List<HoaDon>findAllByTrangThai(HoaDonStatus status);
+    List<HoaDon> findAllByTrangThai(HoaDonStatus status);
 
     Optional<HoaDon> findByMaAndSdt(String ma, String sdt);
 
@@ -108,4 +109,14 @@ public interface HoaDonRepository extends JpaRepository<HoaDon, Long>, JpaSpecif
     List<Object[]> countInvoicesAndSumProductsByDate(@Param("startDateTime") LocalDateTime startDateTime,
                                                      @Param("endDateTime") LocalDateTime endDateTime);
 
+    @Query(value = "SELECT COUNT(*) AS SoLuong, hd.trang_thai AS trangThai, " +
+            "(COUNT(*) * 100.0 / (SELECT COUNT(*) FROM hoa_don WHERE ngay_tao BETWEEN :startDateTime AND :endDateTime)) AS TiLePhanTram " +
+            "FROM hoa_don hd " +
+            "WHERE hd.ngay_tao BETWEEN :startDateTime AND :endDateTime " +
+            "GROUP BY hd.trang_thai " +
+            "ORDER BY hd.trang_thai",
+            nativeQuery = true)
+    List<Object[]> totalCalculateBillPercentageByDate(@Param("startDateTime") Long startDateTime,
+                                                      @Param("endDateTime") Long endDateTime);
 }
+

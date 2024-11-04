@@ -3,7 +3,7 @@ package com.dantn.weblaptop.service.impl;
 import com.dantn.weblaptop.constant.HoaDonStatus;
 import com.dantn.weblaptop.constant.RankCustomer;
 import com.dantn.weblaptop.dto.HoaDonDashboard_Dto;
-import com.dantn.weblaptop.dto.HoaDonSummaryDTO;
+import com.dantn.weblaptop.dto.TrangThaiHoaDon_Dto;
 import com.dantn.weblaptop.dto.request.create_request.*;
 import com.dantn.weblaptop.dto.request.update_request.UpdateDiaChiHoaDonRequest;
 import com.dantn.weblaptop.dto.request.update_request.UpdateHoaDonRequest;
@@ -25,7 +25,6 @@ import com.dantn.weblaptop.service.*;
 import com.dantn.weblaptop.util.BillUtils;
 import com.dantn.weblaptop.util.GenerateCode;
 import com.dantn.weblaptop.util.SendEmailBill;
-import com.dantn.weblaptop.util.VNPayUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -41,7 +40,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.thymeleaf.context.Context;
@@ -54,6 +52,7 @@ import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -1057,6 +1056,31 @@ public class HoaDonServiceImpl implements HoaDonService {
         return hoaDonRepository.sumProductSoldOut(startDate, endDate);
     }
 
+    @Override
+    public List<TrangThaiHoaDon_Dto> CalculateBillPercentage(LocalDateTime startDate, LocalDateTime endDate) throws AppException {
+        Long startDateMillis = startDate.toInstant(ZoneOffset.UTC).toEpochMilli();
+        Long endDateMillis = endDate.toInstant(ZoneOffset.UTC).toEpochMilli();
+        List<Object[]> trangThaiHoaDonCalulate = hoaDonRepository.totalCalculateBillPercentageByDate(startDateMillis, endDateMillis);
+        if (trangThaiHoaDonCalulate.isEmpty()) {
+            throw new AppException(ErrorCode.BILL_NOT_FOUND);
+        }
+
+        List<TrangThaiHoaDon_Dto> listTrangThai = new ArrayList<>();
+        for (Object[] result : trangThaiHoaDonCalulate) {
+            Long soLuong = ((Number) result[0]).longValue();
+            Integer trangThai = result[1] != null ? ((Number) result[1]).intValue() : null;
+            BigDecimal tiLe = (result[2] instanceof Double) ? BigDecimal.valueOf((Double) result[2]) : (BigDecimal) result[2];
+
+            TrangThaiHoaDon_Dto response = new TrangThaiHoaDon_Dto();
+            response.setSoLuong(soLuong);
+            response.setTrangThaiHoaDon(trangThai);
+            response.setTiLeTrangThaiHoaDon(tiLe);
+            listTrangThai.add(response);
+        }
+
+        return listTrangThai;
+    }
+
 
     private BigDecimal calculateDiscount(HoaDon existingBill, PhieuGiamGia coupon) {
         BigDecimal moneyReduced = BigDecimal.ZERO;
@@ -1064,10 +1088,8 @@ public class HoaDonServiceImpl implements HoaDonService {
         if (coupon.getLoaiGiamGia() == 2) {
             moneyReduced = coupon.getGiaTriGiamGia();
         } else {
-            // Tính % của phiếu giảm rồi trừ đi  existingBill.getTongTienBanDau()
             moneyReduced = coupon.getGiamToiDa().multiply(coupon.getGiaTriGiamGia()).divide(BigDecimal.valueOf(100), RoundingMode.HALF_UP);
         }
-
         if (coupon.getGiamToiDa().compareTo(moneyReduced) < 0) {
             moneyReduced = coupon.getGiamToiDa();
         }

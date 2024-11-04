@@ -469,6 +469,16 @@ public class HoaDonController {
         return ResponseEntity.ok(ApiResponse.builder()
                 .data(hoaDonService.updateBill(billCode, status))
                 .statusCode(HttpStatus.OK.value())
-                .build());    }
+                .build());
+    }
+
+    @GetMapping("/dashboard/calculatebillpercentage")
+    public ResponseEntity<ApiResponse> calculateBillPercentage(@RequestParam("startDate") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime startDate,
+                                                               @RequestParam("endDate") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime endDate) throws AppException {
+        return ResponseEntity.ok(ApiResponse.builder()
+                .data(hoaDonService.CalculateBillPercentage(startDate, endDate))
+                .statusCode(HttpStatus.OK.value())
+                .build());
+    }
 }
 

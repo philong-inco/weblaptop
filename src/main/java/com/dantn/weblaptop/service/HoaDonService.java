@@ -1,7 +1,7 @@
 package com.dantn.weblaptop.service;
 
 import com.dantn.weblaptop.dto.HoaDonDashboard_Dto;
-import com.dantn.weblaptop.dto.HoaDonSummaryDTO;
+import com.dantn.weblaptop.dto.TrangThaiHoaDon_Dto;
 import com.dantn.weblaptop.dto.request.create_request.CreateHoaDonClientAccountRequest;
 import com.dantn.weblaptop.dto.request.create_request.CreateHoaDonClientRequest;
 import com.dantn.weblaptop.dto.request.create_request.CreateLichSuHoaDon;
@@ -88,8 +88,9 @@ public interface HoaDonService {
 
     BigDecimal totalPriceByDateNow();
 
-//    HoaDonSummaryDTO getInvoiceCountAndTotalProducts(LocalDateTime startDate, LocalDateTime endDate);
-
     List<HoaDonDashboard_Dto> infoBillByDate(LocalDateTime startDate, LocalDateTime endDate) throws AppException;
+
     Long sumProductSoldOutByDate(LocalDateTime startDate, LocalDateTime endDate);
+
+    List<TrangThaiHoaDon_Dto> CalculateBillPercentage (LocalDateTime startDate, LocalDateTime endDate) throws AppException;
 }
