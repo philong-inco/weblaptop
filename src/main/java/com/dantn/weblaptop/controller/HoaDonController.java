@@ -411,20 +411,11 @@ public class HoaDonController {
     @GetMapping("dashboard/totalpricenow")
     public ResponseEntity<ApiResponse> totalPriceNow() {
         return ResponseEntity.ok(ApiResponse.builder()
-                .data("Tổng doanh thu hôm nay: " + hoaDonService.totalPriceByDateNow())
+                .data(hoaDonService.totalPriceByDateNow())
                 .statusCode(HttpStatus.OK.value())
                 .build());
     }
-
-//    @GetMapping("dashboard/totalproductandcoundbill")
-//    public ResponseEntity<ApiResponse> totalProductAndCountBill (@RequestParam("startDate") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime startDate,
-//                                                   @RequestParam("endDate") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime endDate) {
-//        return ResponseEntity.ok(ApiResponse.builder()
-//                .data(hoaDonService.getInvoiceCountAndTotalProducts(startDate,endDate))
-//                .statusCode(HttpStatus.OK.value())
-//                .build());
-//    }
-
+    
     @GetMapping("dashboard/infobill")
     public ResponseEntity<ApiResponse> infoBillByDate(
             @RequestParam("startDate") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime startDate,
