@@ -415,7 +415,7 @@ public class HoaDonController {
                 .statusCode(HttpStatus.OK.value())
                 .build());
     }
-    
+
     @GetMapping("dashboard/infobill")
     public ResponseEntity<ApiResponse> infoBillByDate(
             @RequestParam("startDate") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime startDate,
@@ -432,7 +432,6 @@ public class HoaDonController {
                                                                  @RequestParam("endDate") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime endDate) {
         try {
             Long sum = hoaDonService.sumProductSoldOutByDate(startDate, endDate);
-
             // Tạo Map chứa dữ liệu trả về
             Map<String, Object> response = new HashMap<>();
             response.put("success", true);

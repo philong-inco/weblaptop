@@ -85,7 +85,7 @@ public interface HoaDonRepository extends JpaRepository<HoaDon, Long>, JpaSpecif
 
     @Query(value = "SELECT SUM(hd.tongTienPhaiTra) FROM HoaDon hd " +
             "WHERE hd.ngayThanhToan >= :startDate " +
-            "AND hd.ngayThanhToan <= :endDate AND hd.trangThai = 9")
+            "AND hd.ngayThanhToan <= :endDate")
     BigDecimal totalPriceByDate(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate);
 
     @Query(value = "SELECT SUM(hd.tongTienPhaiTra) FROM HoaDon hd " +

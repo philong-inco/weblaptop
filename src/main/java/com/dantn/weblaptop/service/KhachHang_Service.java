@@ -60,5 +60,4 @@ public interface KhachHang_Service {
     KhachHangResponse login(String email, String password);
 
     void sentEmailForgotPassword(String email) throws MessagingException;
-
 }
