@@ -24,5 +24,5 @@ public interface AnhSanPhamService {
     void deleteAllByIdSPCT(Long idSPCT);
 
     List<String> getAll();
-
+    void addList(List<AnhSanPham> list);
 }
