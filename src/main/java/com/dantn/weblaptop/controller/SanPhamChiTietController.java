@@ -2,6 +2,7 @@ package com.dantn.weblaptop.controller;
 
 import com.dantn.weblaptop.dto.request.create_request.FindSanPhamChiTietByFilter;
 import com.dantn.weblaptop.dto.request.create_request.SanPhamChiTietCreate;
+import com.dantn.weblaptop.dto.request.update_request.SPCTUpdateTemp;
 import com.dantn.weblaptop.dto.request.update_request.SanPhamChiTietUpdate;
 import com.dantn.weblaptop.dto.response.ResponseLong;
 import com.dantn.weblaptop.dto.response.SanPhamChiTietClientDTO;
@@ -319,6 +320,26 @@ public class SanPhamChiTietController {
         return ResponseEntity.status(HttpStatus.OK).body(new ResponseLong<>(
                 200, "Lấy biến thể thành công", spct
         ));
+    }
+
+    @PutMapping("update-price-image")
+    public ResponseEntity<?> getSPCTForClientChecked(@RequestBody SPCTUpdateTemp spct){
+        try {
+            service.updatePriceImage(spct);
+            return ResponseEntity.ok().build();
+        } catch (Exception e){
+            return ResponseEntity.badRequest().build();
+        }
+    }
+
+    @GetMapping("change-status")
+    public ResponseEntity<?>  changeStatus(@RequestParam("idSPCT") Long idSPCT, @RequestParam("status") Integer status){
+        try {
+            service.changeStatus(idSPCT, status);
+            return ResponseEntity.ok().build();
+        } catch (Exception e){
+            return ResponseEntity.badRequest().build();
+        }
     }
 
 
