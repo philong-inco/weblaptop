@@ -11,6 +11,7 @@ import com.dantn.weblaptop.dto.response.AnhSanPhamResponse;
 import com.dantn.weblaptop.dto.response.SanPhamChiTietClientDTO;
 import com.dantn.weblaptop.dto.response.SanPhamChiTietResponse;
 import com.dantn.weblaptop.dto.response.SerialNumberResponse;
+import com.dantn.weblaptop.entity.sanpham.AnhSanPham;
 import com.dantn.weblaptop.entity.sanpham.SanPham;
 import com.dantn.weblaptop.entity.sanpham.SanPhamChiTiet;
 import com.dantn.weblaptop.entity.sanpham.SerialNumber;
@@ -38,6 +39,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -306,6 +308,41 @@ public class SanPhamChiTietServiceImpl implements SanPhamChiTietService {
         if (check.size() > 0)
             return true;
         return false;
+    }
+
+    @Override
+    public void updatePriceImage(SPCTUpdateTemp spct) throws Exception {
+        Optional<SanPhamChiTiet> opt = spctRepository.findById(spct.getId());
+        if(opt.isPresent()){
+            SanPhamChiTiet entity = opt.get();
+            entity.setGiaBan(new BigDecimal(spct.getGiaBan().trim()));
+            SanPhamChiTiet entity1 = spctRepository.save(entity);
+            updatePriceImageChangeImage(entity1, spct.getListUrlAnhSanPham());
+        } else throw new Exception();
+    }
+
+    @Override
+    public void changeStatus(Long idSPCT, Integer status) throws Exception {
+        Optional<SanPhamChiTiet> otp = spctRepository.findById(idSPCT);
+        if (otp.isPresent()){
+            SanPhamChiTiet entity = otp.get();
+            entity.setTrangThai(status);
+            spctRepository.save(entity);
+        } else throw new Exception();
+    }
+
+    public void updatePriceImageChangeImage(SanPhamChiTiet spct, String[] imgs){
+        anhSanPhamService.deleteAllByIdSPCT(spct.getId());
+        List<AnhSanPham> listAnh = new ArrayList<>();
+        for (int i = 0; i < imgs.length; i++) {
+            AnhSanPham anh = AnhSanPham.builder()
+                    .sanPhamChiTiet(spct)
+                    .trangThai(1)
+                    .url(imgs[i])
+                    .build();
+            listAnh.add(anh);
+        }
+        anhSanPhamService.addList(listAnh);
     }
 
     public void beforeAdd(SanPhamChiTiet spct, SanPhamChiTietCreate create) {

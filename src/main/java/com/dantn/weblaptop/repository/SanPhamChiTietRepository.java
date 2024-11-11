@@ -35,7 +35,7 @@ public interface SanPhamChiTietRepository extends JpaRepository<SanPhamChiTiet, 
     @Query("SELECT s FROM SanPhamChiTiet s WHERE s.sanPham.id = :id")
     Page<SanPhamChiTiet> findByProductIdPage(@Param("id") Long productId, Pageable pageable);
 
-    @Query("SELECT s FROM SanPhamChiTiet s WHERE s.sanPham.id = :id")
+    @Query("SELECT s FROM SanPhamChiTiet s WHERE s.sanPham.id = :id ORDER BY s.ngayTao DESC")
     List<SanPhamChiTiet> findByProductIdList(@Param("id") Long productId);
 
     @Query("SELECT s FROM SanPhamChiTiet s WHERE s.sanPham.id = :id AND s.trangThai = 1")

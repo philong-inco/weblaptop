@@ -106,4 +106,10 @@ public class AnhSanPhamServiceImpl implements AnhSanPhamService {
                 .collect(Collectors.toSet())
                 .stream().toList();
     }
+    @Override
+    public void addList(List<AnhSanPham> list) {
+        for (AnhSanPham anh :list) {
+            repository.save(anh);
+        }
+    }
 }
