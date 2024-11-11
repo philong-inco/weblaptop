@@ -487,7 +487,7 @@ public class HoaDonServiceImpl implements HoaDonService {
 
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public Boolean payCounter(String billCode, UpdateHoaDonRequest request) throws AppException {
+    public String payCounter(String billCode, UpdateHoaDonRequest request) throws AppException {
         HoaDon bill = billRepository.findHoaDonByMa(billCode.trim()).orElseThrow(() -> new AppException(ErrorCode.BILL_NOT_FOUND));
         Optional<Integer> quantityInBill = serialNumberDaBanRepository.getQuantityByHoaDonId(bill.getId());
         if (quantityInBill.isEmpty() || quantityInBill.get() == 0) {
@@ -578,7 +578,7 @@ public class HoaDonServiceImpl implements HoaDonService {
             billHistory.setNhanVien(nhanVien);
         }
         billHistoryRepository.save(billHistory);
-        return true;
+        return bill.getMa();
     }
 
 
