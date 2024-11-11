@@ -28,6 +28,7 @@ public interface HinhThucThanhToanService {
     String payWithVNPAYOnline(List<GioHangChiTietRequest> cartDetail, HttpServletRequest request) throws AppException;
 
     String payWithVNPAYOnline2(CreateHoaDonClientRequest createHoaDonClientRequest, HoaDon hoaDon, HttpServletRequest request);
+    String payWithVNPAYOnlineAdmin(String maHoaDon , HttpServletRequest request);
 
     String payWithVNPAYAccountOnline(CreateHoaDonClientAccountRequest createHoaDonClientRequest, HoaDon hoaDon, HttpServletRequest request);
 

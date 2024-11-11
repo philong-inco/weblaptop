@@ -65,9 +65,9 @@ public enum ErrorCode {
     AMOUNT_NOT_NULL(7002, "Hãy nhập số tiền"),
     PAYMENT_HISTORY_NOT_FOUND(7003, "Không tìm thấy lịch sử thanh toán"),
     TIEN_KO_DU(7004, "Tiền nhập chưa đủ"),
-    HOA_DON_HUY(7005,"Hóa đơn đã bị hủy không thể thêm sản phm"),
-    HOA_DON_DANG_GIAO(7006,"Hóa đơn đang giao không thể thêm sản phẩm"),
-    HOA_DON_DANG_THANH_CONG(7007,"Hóa đơn thành công không thể thêm sản phẩm"),
+    HOA_DON_HUY(7005, "Hóa đơn đã bị hủy không thể thêm sản phm"),
+    HOA_DON_DANG_GIAO(7006, "Hóa đơn đang giao không thể thêm sản phẩm"),
+    HOA_DON_DANG_THANH_CONG(7007, "Hóa đơn thành công không thể thêm sản phẩm"),
     THANH_TOAN_PHAI_TOAN_PHAM(7008, "Phải thanh toán sau cả hóa đơn"),
 
     CUSTOMER_NOT_FOUNT(8000, "Khach hàng không tồn tại"),
@@ -85,14 +85,13 @@ public enum ErrorCode {
     TONG_TIEN_PHAI_TRA_NOT_NULL(8012, "Tổng tiền phải trả chưa có"),
     MONEY_SHIP(8013, "Tiền ship chưa có"),
     SHIPPING_DATE_NOT_NULL(8014, "Ngày nhận hàng dự kiến chưa co"),
-    PAY_LATER_NOT_NULL(8015,"Chưa chuyền thanhToanSau"),
-    PAYMENT_METHOD_NOT_NULL(8016,"Chưa chuyển phuongThucThanhToan"),
-    QUANTITY_PRODUCT_DETAIL_IN_CART_NOT_NULL(8017,"Số lượng sản phẩm chưa có"),
+    PAY_LATER_NOT_NULL(8015, "Chưa chuyền thanhToanSau"),
+    PAYMENT_METHOD_NOT_NULL(8016, "Chưa chuyển phuongThucThanhToan"),
+    QUANTITY_PRODUCT_DETAIL_IN_CART_NOT_NULL(8017, "Số lượng sản phẩm chưa có"),
     TONG_TIEN_BAN_DAU_KHONG_AM(8017, "Tổng tiền ban đầu không được âm"),
     TONG_TIEN_PHAI_TRA_KHONG_AM(8018, "Tổng tiền phải trả không được âm"),
-    SERIAL_NUMBER_DA_BAN(8019, "Serial number null");
-    ;
-
+    SERIAL_NUMBER_DA_BAN(8019, "Serial number null"),
+    TOTAL_PRODUCT_IN_BILL_MAX_10(8020, "Đơn hàng trả sau chỉ được mua tối đa 10 sản phẩm");;
 
 
     private Integer code;

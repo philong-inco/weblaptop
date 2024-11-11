@@ -2,6 +2,11 @@ package com.dantn.weblaptop.util;
 
 import com.dantn.weblaptop.constant.HoaDonStatus;
 
+import java.math.BigDecimal;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.util.Locale;
+
 public class BillUtils {
 
     public static Integer convertBillStatusEnumToInteger(HoaDonStatus status) {
@@ -30,4 +35,14 @@ public class BillUtils {
                 return -1;
         }
     }
+
+    public  static String convertMoney (BigDecimal money) {
+        if(money.compareTo(BigDecimal.ZERO) == 0 || money== null) {
+            return "0 đ";
+        }
+        DecimalFormatSymbols symbols = new DecimalFormatSymbols(Locale.getDefault());
+        symbols.setGroupingSeparator('.');
+        symbols.setDecimalSeparator(',');
+        DecimalFormat formatter = new DecimalFormat("#,###.###", symbols);
+        return formatter.format(money) + " đ";    }
 }

@@ -24,4 +24,5 @@ public class HoaDonHinhThucThanhToanResponse {
     String nguoiTao;
     String maGiaoDich;
     String nguoiXacNhan;
+    Integer trangThai;
 }

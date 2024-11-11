@@ -81,6 +81,19 @@ public class HinhThucThanhToanController {
         );
     }
 
+    @PostMapping("admin/vn-pay/{billCode}")
+    public ResponseEntity<ApiResponse> adminVnPay(
+            @PathVariable String billCode,
+            HttpServletRequest request) throws AppException {
+        return ResponseEntity.status(HttpStatus.CREATED).body(
+                ApiResponse.builder()
+                        .statusCode(HttpStatus.CREATED.value())
+                        .message("Success")
+                        .data(paymentMethodService.payWithVNPAYOnlineAdmin(billCode, request))
+                        .build()
+        );
+    }
+
     @GetMapping("/vn-pay-callback")
     public void payCallbackHandler(HttpServletRequest request, HttpServletResponse response) throws IOException {
        this.paymentMethodService.handlePaymentCallback(request, response);
