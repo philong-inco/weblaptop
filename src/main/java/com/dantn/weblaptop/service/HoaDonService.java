@@ -14,6 +14,7 @@ import com.dantn.weblaptop.dto.response.ResultPaginationResponse;
 import com.dantn.weblaptop.dto.response.TraCuDonHangResponse;
 import com.dantn.weblaptop.entity.hoadon.HoaDon;
 import com.dantn.weblaptop.exception.AppException;
+import com.google.zxing.WriterException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -72,7 +73,7 @@ public interface HoaDonService {
 
      void updateCustomerRank(Long idKhachHang) ;
 
-    byte[] getInvoicePdf(String billCode) throws AppException;
+    byte[] getInvoicePdf(String billCode) throws AppException, IOException, WriterException;
 
     String createBillClient(CreateHoaDonClientRequest createHoaDonClientRequest, HttpServletRequest request) throws AppException;
 

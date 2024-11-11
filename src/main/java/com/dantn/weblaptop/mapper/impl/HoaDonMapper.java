@@ -1,13 +1,18 @@
 package com.dantn.weblaptop.mapper.impl;
 
 import com.dantn.weblaptop.dto.response.HoaDonResponse;
+import com.dantn.weblaptop.dto.response.pdf.BillPdfResponse;
 import com.dantn.weblaptop.entity.hoadon.HoaDon;
 import com.dantn.weblaptop.entity.khachhang.KhachHang;
 import com.dantn.weblaptop.entity.phieugiamgia.PhieuGiamGia;
+import com.dantn.weblaptop.util.BillUtils;
 import com.dantn.weblaptop.util.ConvertTime;
+import com.dantn.weblaptop.util.QrCode;
+import com.google.zxing.WriterException;
 import org.hibernate.annotations.Comment;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDateTime;
@@ -109,5 +114,37 @@ public class HoaDonMapper {
         return hoaDonList.stream()
                 .map(HoaDonMapper::toHoaDonResponse)
                 .collect(Collectors.toList());
+    }
+
+    public static BillPdfResponse toBillPdfResponse(HoaDonResponse hoaDonResponse) throws IOException, WriterException {
+        BillPdfResponse billPdfResponse = new BillPdfResponse();
+        billPdfResponse.setId(hoaDonResponse.getId());
+        billPdfResponse.setIdNhanVien(hoaDonResponse.getIdNhanVien());
+        billPdfResponse.setIdKhachHang(hoaDonResponse.getIdKhachHang());
+        billPdfResponse.setTenKhachHang(hoaDonResponse.getTenKhachHang());
+        billPdfResponse.setMa(hoaDonResponse.getMa());
+        billPdfResponse.setTongSanPham(hoaDonResponse.getTongSanPham());
+        billPdfResponse.setLoaiHoaDon(hoaDonResponse.getLoaiHoaDon());
+        billPdfResponse.setTongTienBanDau(BillUtils.convertMoney(hoaDonResponse.getTongTienBanDau()));
+        billPdfResponse.setTongTienPhaiTra(BillUtils.convertMoney(hoaDonResponse.getTongTienPhaiTra().add(hoaDonResponse.getTienShip())));
+        billPdfResponse.setSdt(hoaDonResponse.getSdt());
+        billPdfResponse.setEmail(hoaDonResponse.getEmail());
+        billPdfResponse.setDiaChi(hoaDonResponse.getDiaChi());
+        billPdfResponse.setTienShip(BillUtils.convertMoney(hoaDonResponse.getTienShip()));
+        billPdfResponse.setThanhToanSau(hoaDonResponse.getThanhToanSau());
+        billPdfResponse.setNgayGiaoHang(hoaDonResponse.getNgayGiaoHang());
+        billPdfResponse.setNgayNhanHang(hoaDonResponse.getNgayNhanHang());
+        billPdfResponse.setNgayThanhToan(hoaDonResponse.getNgayThanhToan());
+        billPdfResponse.setGhiChu(hoaDonResponse.getGhiChu());
+        billPdfResponse.setTrangThai(hoaDonResponse.getTrangThai());
+        billPdfResponse.setNguoiTao(hoaDonResponse.getNguoiTao());
+        billPdfResponse.setNguoiSua(billPdfResponse.getNguoiSua());
+        billPdfResponse.setNgayTao(hoaDonResponse.getNgayTao());
+        billPdfResponse.setIdPhieuGiamGia(hoaDonResponse.getIdPhieuGiamGia());
+        billPdfResponse.setMaPGG(hoaDonResponse.getMaPGG());
+        billPdfResponse.setLoaiPGG(hoaDonResponse.getLoaiPGG());
+        billPdfResponse.setGiaTriPhieuGiamGia(BillUtils.convertMoney(hoaDonResponse.getGiaTriPhieuGiamGia()));
+        billPdfResponse.setQrCode(QrCode.generateQRCodeBase64(hoaDonResponse.getMa()));
+        return billPdfResponse;
     }
 }
