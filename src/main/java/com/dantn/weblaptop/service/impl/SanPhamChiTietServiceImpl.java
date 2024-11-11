@@ -5,6 +5,7 @@ import com.dantn.weblaptop.dto.request.create_request.FindSanPhamChiTietByFilter
 import com.dantn.weblaptop.dto.request.create_request.SanPhamChiTietCreate;
 import com.dantn.weblaptop.dto.request.create_request.SerialNumberCreate;
 import com.dantn.weblaptop.dto.request.update_request.AnhSanPhamUpdate;
+import com.dantn.weblaptop.dto.request.update_request.SPCTUpdateTemp;
 import com.dantn.weblaptop.dto.request.update_request.SanPhamChiTietUpdate;
 import com.dantn.weblaptop.dto.request.update_request.SerialNumberUpdate;
 import com.dantn.weblaptop.dto.response.AnhSanPhamResponse;
