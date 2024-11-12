@@ -45,6 +45,7 @@ public class HoaDonHinhThucThanhToanSeriveImpl implements HoaDonHinhThucThanhToa
                     .ngayTao(ConvertTime.convert(hoaDonHinhThucThanhToan.getNgayTao() + ""))
                     .ngaySua(ConvertTime.convert(hoaDonHinhThucThanhToan.getNgaySua() + ""))
                     .nguoiTao(hoaDonHinhThucThanhToan.getNguoiTao())
+                    .trangThai(hoaDonHinhThucThanhToan.getTrangThai())
                     .build();
         }).toList();
     }
@@ -63,6 +64,8 @@ public class HoaDonHinhThucThanhToanSeriveImpl implements HoaDonHinhThucThanhToa
         paymentHistory.setNguoiSua("Nguyễn Tiến Mạnh");
         paymentHistory.setLoaiThanhToan(request.getLoaiThanhToan());
         paymentHistory.setHinhThucThanhToan(payment);
+        paymentHistory.setMaGioDich(request.getMaGD());
+        paymentHistory.setTrangThai(0);
         bill.setEmail(request.getEmail());
         bill.setSdt(request.getSdt());
         bill.setTenKhachHang(request.getTen());

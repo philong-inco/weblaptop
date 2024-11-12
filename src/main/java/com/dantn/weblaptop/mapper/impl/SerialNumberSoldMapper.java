@@ -2,11 +2,15 @@ package com.dantn.weblaptop.mapper.impl;
 
 import com.dantn.weblaptop.dto.SerialNumberDaBan_Dto;
 import com.dantn.weblaptop.dto.response.SerialNumberDaBanResponse;
+import com.dantn.weblaptop.dto.response.pdf.SerialNumberDaBanPdfResponse;
 import com.dantn.weblaptop.entity.hoadon.SerialNumberDaBan;
 import com.dantn.weblaptop.entity.sanpham.AnhSanPham;
+import com.dantn.weblaptop.util.BillUtils;
+import org.springframework.stereotype.Component;
 
+import java.math.BigDecimal;
 import java.util.Set;
-
+@Component
 public class SerialNumberSoldMapper {
 
     public static SerialNumberDaBanResponse toSerialNumberDaBanResponse(SerialNumberDaBan serialNumberSold) {
@@ -28,6 +32,18 @@ public class SerialNumberSoldMapper {
                 response.setAnh(anhDauTien.getUrl());
             }
         }        return response;
+    }
+
+    public  static SerialNumberDaBanPdfResponse toSerialNumberDaBanPdfResponse(SerialNumberDaBanResponse serialNumberSold) {
+        SerialNumberDaBanPdfResponse response = new SerialNumberDaBanPdfResponse();
+        response.setBillId(serialNumberSold.getBillId());
+        response.setProductDetailId(serialNumberSold.getProductDetailId());
+        response.setProductDetailCode(serialNumberSold.getProductDetailCode());
+        response.setProductName(serialNumberSold.getProductName());
+        response.setQuantity(serialNumberSold.getQuantity());
+        response.setPrice(BillUtils.convertMoney(serialNumberSold.getPrice()));
+        response.setTotalPrice(BillUtils.convertMoney(serialNumberSold.getPrice().multiply(new BigDecimal(serialNumberSold.getQuantity()))));
+        return response;
     }
 
 }

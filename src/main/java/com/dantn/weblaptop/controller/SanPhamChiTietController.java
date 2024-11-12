@@ -9,6 +9,7 @@ import com.dantn.weblaptop.dto.response.SanPhamChiTietClientDTO;
 import com.dantn.weblaptop.dto.response.SanPhamChiTietResponse;
 import com.dantn.weblaptop.service.SanPhamChiTietService;
 import com.dantn.weblaptop.util.FakeDataForClient;
+import com.dantn.weblaptop.util.QrCode;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -342,5 +343,12 @@ public class SanPhamChiTietController {
         }
     }
 
-
+    @GetMapping("qr-code")
+    public String genQRCode(@RequestParam("value") String value){
+        try{
+            return QrCode.generateQRCodeBase64(value);
+        } catch (Exception ex){
+            return "Error generating QR code";
+        }
+    }
 }

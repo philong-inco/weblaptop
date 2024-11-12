@@ -16,6 +16,7 @@ public interface LichSuHoaDonService {
 
     LichSuHoaDonResponse updateStatusBill(CreateLichSuHoaDon request, String billCode , Integer status) throws AppException;
     LichSuHoaDonResponse updateStatusBillClient(CreateLichSuHoaDonClient request, String billCode , Integer status) throws AppException;
+    LichSuHoaDonResponse updateStatusBill(String billCode , Integer status) throws AppException;
 
     List<LichSuHoaDonResponse> getBillHistoryByBillId(Long billId);
 

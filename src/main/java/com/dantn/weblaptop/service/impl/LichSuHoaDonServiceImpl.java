@@ -113,6 +113,33 @@ public class LichSuHoaDonServiceImpl implements LichSuHoaDonService {
         return response;
     }
 
+    @Override
+    public LichSuHoaDonResponse updateStatusBill(String billCode, Integer status) throws AppException {
+        //        Lấy từ sercurity
+        NhanVien existingEmployee = employeeRepository.findById(1L).orElseThrow(
+                () -> new AppException(ErrorCode.EMPLOYEE_NOT_FOUND));
+
+//        KhachHang existingCustomer = null;
+//        if (request.getIdKhachHang() != null) {
+//            existingCustomer = customerRepository.findById(request.getIdKhachHang()).orElseThrow(
+//                    () -> new AppException(ErrorCode.CUSTOMER_NOT_FOUND));
+//        }
+        HoaDon existingBill = billRepository.findHoaDonByMa(billCode).orElseThrow(
+                () -> new AppException(ErrorCode.BILL_NOT_FOUND));
+        LichSuHoaDon newBillHistory = new LichSuHoaDon();
+        newBillHistory.setNhanVien(existingEmployee);
+        newBillHistory.setKhachHang(existingBill.getKhachHang());
+        newBillHistory.setHoaDon(existingBill);
+        newBillHistory.setNguoiSua(existingEmployee.getTen());
+        newBillHistory.setNguoiTao(existingEmployee.getTen());
+
+        newBillHistory.setTrangThai(status);
+        LichSuHoaDonResponse response = LichSuHoaDonMapper.toBillHistoryResponse(billHistoryRepository.save(newBillHistory));
+
+        log.info(response.toString());
+        return response;
+    }
+
 
     @Override
     public List<LichSuHoaDonResponse> getBillHistoryByBillId(Long billId) {

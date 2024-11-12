@@ -90,7 +90,7 @@ public interface HoaDonRepository extends JpaRepository<HoaDon, Long>, JpaSpecif
 
     @Query(value = "SELECT SUM(hd.tongTienPhaiTra) FROM HoaDon hd " +
             "WHERE hd.ngayThanhToan >= CURRENT_DATE " +
-            "AND hd.trangThai = 9")
+            "AND hd.trangThai = 6")
     BigDecimal totalPriceByDateNow();
 
 //    @Query("SELECT new com.dantn.weblaptop.dto.HoaDonSummaryDTO(COUNT(hd) AS tongHoaDon, SUM(hd.tongSanPham) AS tongSanPham) " +

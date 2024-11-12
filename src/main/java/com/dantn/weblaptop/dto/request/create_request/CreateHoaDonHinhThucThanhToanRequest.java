@@ -26,6 +26,7 @@ public class CreateHoaDonHinhThucThanhToanRequest {
     Integer loaiThanhToan;
 //    BigDecimal tienShip;
     Integer loaiHoaDon;
+    String maGD;
 
     //
     String ten;
