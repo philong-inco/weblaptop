@@ -51,7 +51,8 @@ public class NhanVienService_Implement implements NhanVien_Service {
     NhanVienVaiTroRepository nhanVienVaiTroRepository;
     @Autowired
     private NhanVien_Repositoy nhanVien_Repositoy;
-    PasswordEncoder passwordEncoder;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @Override
     public Page<NhanVienResponse> pageNhanVien(Integer pageNo, Integer size) {
@@ -162,14 +163,15 @@ public class NhanVienService_Implement implements NhanVien_Service {
         }
     }
 
-
     private NhanVien prepareNhanVienEntity(CreateNhanVien createNhanVienRequest) {
         NhanVien nhanVien = nhanVienMapper.CreateToEntity(createNhanVienRequest);
         nhanVien.setMa(GenerateCode.generateNhanVienCode());
         nhanVien.setNgayTao(LocalDateTime.now().toInstant(ZoneOffset.UTC).toEpochMilli());
         nhanVien.setNgayBatDauLamViec(LocalDateTime.now());
         nhanVien.setTrangThai(1);
-        nhanVien.setMatKhau(passwordEncoder.encode(GenerateCode.generatePassWordNhanVien()));
+        String endcode = GenerateCode.generatePassWordNhanVien();
+        System.out.println(endcode);
+        nhanVien.setMatKhau(passwordEncoder.encode(endcode));
         return nhanVien;
     }
 
@@ -346,7 +348,7 @@ public class NhanVienService_Implement implements NhanVien_Service {
         NhanVien nhanVien = nhanVienRepositoy.findByEmail(email);
         if (nhanVien != null) {
             String newPlainTextPassword = GenerateCode.generatePassWordNhanVien();
-            nhanVien.setMatKhau(newPlainTextPassword);
+            nhanVien.setMatKhau(passwordEncoder.encode(newPlainTextPassword));
             nhanVienRepositoy.save(nhanVien);
             emailSender.sendForgotPasswordEmailNhanVien(nhanVien, newPlainTextPassword);
         } else {
@@ -362,6 +364,18 @@ public class NhanVienService_Implement implements NhanVien_Service {
     @Override
     public void updateImageNV(String image, Long id) {
         nhanVienRepositoy.updateImageEmployee(image, id);
+    }
+
+    @Override
+    public void sentEmailForgotPassword(String email) throws MessagingException {
+        NhanVien nhanVien = nhanVienRepositoy.findByEmail(email);
+        if(nhanVien != null){
+            String newPlainTextPassword = GenerateCode.generatePassWordNhanVien();
+            nhanVien.setMatKhau(passwordEncoder.encode(newPlainTextPassword));
+            nhanVien.setTrangThai(3);
+            emailSender.sendForgotPasswordEmailNhanVien(nhanVien, newPlainTextPassword);
+            nhanVienRepositoy.save(nhanVien);
+        }
     }
 
     @Override

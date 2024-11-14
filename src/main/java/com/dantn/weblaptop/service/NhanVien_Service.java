@@ -50,4 +50,6 @@ public interface NhanVien_Service {
 
     void updateImageNV(String image, Long id);
 
+    void sentEmailForgotPassword(String email) throws MessagingException;
+
 }

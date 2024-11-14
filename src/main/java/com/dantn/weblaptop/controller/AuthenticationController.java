@@ -69,6 +69,7 @@ public class AuthenticationController {
         } else {
             List<String> granded = vaiTroRepository.findByIdNhanVien(staff.getId())
                     .stream().map(VaiTro::getTen).collect(Collectors.toList());
+            System.out.println(granded);
             if (granded.size() > 1 && granded.contains("ADMIN")){
                 response.setRole("ADMIN");
             } else if (granded.size() == 1 && granded.contains("STAFF")) {
