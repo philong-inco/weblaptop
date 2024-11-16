@@ -55,7 +55,7 @@ public class CreateHoaDonClientAccountRequest {
     @NotNull(message = "TONG_TIEN_PHAI_TRA_NOT_NULL")
     @Min(value = 0, message = "TONG_TIEN_PHAI_TRA_KHONG_AM")
     BigDecimal tongTienPhaiTra;
-    BigDecimal giamHangKhachHang;
+//    BigDecimal giamHangKhachHang;
     @NotNull(message = "MONEY_SHIP")
     BigDecimal tienShip;
     // pgg

@@ -31,6 +31,7 @@ import com.dantn.weblaptop.util.BillUtils;
 import com.dantn.weblaptop.util.GenerateCode;
 import com.dantn.weblaptop.util.SendEmailBill;
 import com.google.zxing.WriterException;
+import com.lowagie.text.pdf.BaseFont;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -68,7 +69,7 @@ import java.util.stream.Collectors;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @Slf4j
 public class HoaDonServiceImpl implements HoaDonService {
-//    private final ModelMapper modelMapper;
+    //    private final ModelMapper modelMapper;
     HoaDonRepository billRepository;
     LichSuHoaDonService billHistoryService;
     LichSuHoaDonRepository billHistoryRepository;
@@ -306,7 +307,7 @@ public class HoaDonServiceImpl implements HoaDonService {
                 optional.get().setTongSanPham(0);
             }
             HoaDonResponse response = HoaDonMapper.toHoaDonResponse(billRepository.save(bill));
-            sendEmailBill.sendEmailXacNhan(response, "Đơn hàng của bạn đã được : ");
+//            sendEmailBill.sendEmailXacNhan(response, "Đơn hàng của bạn đã được : ");
         } else {
             throw new AppException(ErrorCode.BILL_NOT_FOUND);
         }
@@ -550,6 +551,7 @@ public class HoaDonServiceImpl implements HoaDonService {
             if (request.getThanhToanSau() == 1) {
                 HoaDonHinhThucThanhToan hoaDonHinhThucThanhToan = new HoaDonHinhThucThanhToan();
                 hoaDonHinhThucThanhToan.setSoTien(bill.getTienShip().add(bill.getTongTienPhaiTra()));
+                hoaDonHinhThucThanhToan.setTienNhan(bill.getTienShip().add(bill.getTongTienPhaiTra()));
                 hoaDonHinhThucThanhToan.setHoaDon(bill);
                 hoaDonHinhThucThanhToan.setNguoiSua("Nguyễn Tiến Mạnh");
                 hoaDonHinhThucThanhToan.setNguoiTao("Nguyễn Tiến Mạnh");
@@ -587,7 +589,8 @@ public class HoaDonServiceImpl implements HoaDonService {
     public void updateAddressInBill(String billCode, UpdateDiaChiHoaDonRequest request) throws AppException {
         HoaDon bill = billRepository.findHoaDonByMa(billCode.trim()).orElseThrow(() -> new AppException(ErrorCode.BILL_NOT_FOUND));
 // check trạng thái
-        String diaChi = (request.getDiaChi() != null && !request.getDiaChi().isEmpty() ? request.getDiaChi().trim() + "" : "") + " | " + request.getPhuong() + " | " + request.getHuyen() + " | " + request.getTinh();
+
+        String diaChi = request.getDiaChi().trim() +"," + request.getTenPhuong() + "," + request.getTenHuyen() + "," + request.getTenTinh() + " | " + request.getPhuong() + " | " + request.getHuyen() + " | " + request.getTinh();
         BigDecimal newMoneyShip = request.getTienShip().subtract(bill.getTienShip());
         if (newMoneyShip.compareTo(BigDecimal.ZERO) > 0) {
             Optional<HoaDonHinhThucThanhToan> optionalTraSau = hoaDonHinhThucThanhToanRepository.findByHoaDonIdAndLoaiThanhToan(bill.getId(), 1);
@@ -662,6 +665,7 @@ public class HoaDonServiceImpl implements HoaDonService {
         List<HoaDonHinhThucThanhToanPdfReponse> paymentHistoryPdf = paymentHistory.stream().map(
                 HoaDonHinhThucThanhToanMapper::toHoaDonHinhThucThanhToanPdfReponse
         ).toList();
+
         context.setVariable("bill", billPdfResponse);
         context.setVariable("serials", serialsPdf);
         context.setVariable("paymentHistory", paymentHistoryPdf);
@@ -673,6 +677,8 @@ public class HoaDonServiceImpl implements HoaDonService {
         String processedHtml = templateEngine.process("templatesBill", context);
         OutputStream outputStream = new ByteArrayOutputStream();
         ITextRenderer renderer = new ITextRenderer();
+//        String fontPath = getClass().getResource("/fonts/Roboto-Regular.ttf").getPath();
+//        renderer.getFontResolver().addFont(fontPath, BaseFont.IDENTITY_H, BaseFont.EMBEDDED);
         renderer.setDocumentFromString(processedHtml);
         renderer.layout();
         renderer.createPDF(outputStream);
@@ -869,7 +875,7 @@ public class HoaDonServiceImpl implements HoaDonService {
             Optional<KhachHang> optional = customerRepository.findById(request.getIdKhacHang());
             if (optional.isPresent()) {
                 bill.setKhachHang(optional.get());
-                bill.setTienGiamHangKhachHang(request.getGiamHangKhachHang());
+//                bill.setTienGiamHangKhachHang(request.getGiamHangKhachHang());
             } else {
                 throw new AppException(ErrorCode.CUSTOMER_NOT_FOUND);
             }
@@ -881,7 +887,7 @@ public class HoaDonServiceImpl implements HoaDonService {
             bill.setTrangThai(HoaDonStatus.CHO_XAC_NHAN);
             HoaDonHinhThucThanhToan paymentHistory = new HoaDonHinhThucThanhToan();
             paymentHistory.setSoTien(request.getTongTienPhaiTra());
-            paymentHistory.setTienNhan(BigDecimal.ZERO);
+            paymentHistory.setTienNhan(request.getTongTienPhaiTra());
             paymentHistory.setHoaDon(bill);
             paymentHistory.setNguoiTao("Nguyễn Tiến Mạnh");
             paymentHistory.setNguoiSua("Nguyễn Tiến Mạnh");
