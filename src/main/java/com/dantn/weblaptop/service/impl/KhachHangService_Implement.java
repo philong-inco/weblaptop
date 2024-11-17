@@ -13,6 +13,7 @@ import com.dantn.weblaptop.exception.ErrorCode;
 import com.dantn.weblaptop.mapper.KhachHang_Mapper;
 import com.dantn.weblaptop.repository.DiaChi_Repository;
 import com.dantn.weblaptop.repository.KhachHang_Repository;
+import com.dantn.weblaptop.repository.NhanVien_Repositoy;
 import com.dantn.weblaptop.service.GioHangService;
 import com.dantn.weblaptop.service.KhachHang_Service;
 import com.dantn.weblaptop.util.GenerateCode;
@@ -48,12 +49,18 @@ public class KhachHangService_Implement implements KhachHang_Service {
 
     @Autowired
     EmailSender emailSender;
+
     @Autowired
     private KhachHang_Repository khachHang_Repository;
+
     @Autowired
     private GioHangService gioHangService;
+
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    NhanVien_Repositoy nhanVienRepositoy;
 
     @Override
     public Page<KhachHangResponse> pageKhachHang(Integer pageNo, Integer size) {
@@ -144,6 +151,11 @@ public class KhachHangService_Implement implements KhachHang_Service {
 
             if (khachHangRepository.findKhachHangByEmail(khachHang.getEmail()) != null) {
                 throw new RuntimeException("Email này đã tồn tại " + khachHang.getEmail());
+            }
+
+            if(nhanVienRepositoy.findByEmail(khachHang.getEmail()) != null) {
+                throw new RuntimeException("Email này đã được sử dụng đăng kí tài khoản nhân viên trước đó. Hãy sử dụng email khách" + khachHang.getEmail());
+
             }
             KhachHang khSave = khachHangRepository.save(khachHang);
             gioHangService.createGioHang(khSave);

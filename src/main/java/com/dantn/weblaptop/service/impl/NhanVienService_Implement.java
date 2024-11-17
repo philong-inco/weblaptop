@@ -134,8 +134,7 @@ public class NhanVienService_Implement implements NhanVien_Service {
             }
 
             if(khachHangRepository.findKhachHangByEmail(createNhanVienRequest.getEmail()) != null){
-                throw new RuntimeException("Email đã được sử dụng trước đó. Vui lòng sử dụng email khác.");
-
+                throw new RuntimeException("Email đã được sử dụng trước đó để đăng kí tài khoản Khách Hàng. Vui lòng sử dụng email khác.");
             }
 
             // Chuẩn bị thực thể NhanVien từ request
@@ -228,6 +227,9 @@ public class NhanVienService_Implement implements NhanVien_Service {
                     throw new RuntimeException("Số điện thoại này đã tồn tại: " + nv.getSdt());
                 });
 
+                if(khachHangRepository.findKhachHangByEmail(updateNhanVien.getEmail()) != null){
+                    throw new RuntimeException("Email đã được sử dụng trước đó để đăng kí tài khoản Khách Hàng. Vui lòng sử dụng email khác.");
+                }
                 // Cập nhật các trường của nhân viên
                 nhanVien.setTen(updateNhanVien.getTen());
                 nhanVien.setHinhAnh(updateNhanVien.getHinhAnh());
