@@ -10,6 +10,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface SanPhamChiTietRepository extends JpaRepository<SanPhamChiTiet, Long>, JpaSpecificationExecutor<SanPhamChiTiet> {
@@ -76,4 +77,8 @@ public interface SanPhamChiTietRepository extends JpaRepository<SanPhamChiTiet, 
                                                         @Param("idSPCT") Long id,
                                                         @Param("idMS") Long idMS
     );
+
+    Optional<SanPhamChiTiet> findByMa(String ma);
+
+    Optional<SanPhamChiTiet> findBySerialNumbersId(Long serialNumbersId);
 }

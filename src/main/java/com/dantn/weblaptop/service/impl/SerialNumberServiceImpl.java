@@ -184,6 +184,29 @@ public class SerialNumberServiceImpl implements SerialNumberService {
     }
 
     @Override
+    public ResultPaginationResponse findSerialNumbersByProductCode(String maHoaDon, String maSanPhamChiTiet, String maSerial, Optional<String> page, Optional<String> size) {
+        String sPage = page.orElse("0");
+        String sSize = size.orElse("5");
+        Pageable pageable = PageRequest.of(Integer.parseInt(sPage), Integer.parseInt(sSize));
+        Page<SerialNumberResponse> responses = serialNumberRepository
+                .findSerialNumbersByProductCode(maHoaDon, maSanPhamChiTiet , maSerial , pageable).
+                map(mapper::entityToResponse);
+
+        Meta meta = Meta.builder()
+                .page(responses.getNumber())
+                .pageSize(responses.getSize())
+                .pages(responses.getTotalPages())
+                .total(responses.getTotalElements())
+                .build();
+
+        return ResultPaginationResponse
+                .builder()
+                .meta(meta)
+                .result(responses.getContent())
+                .build();
+    }
+
+    @Override
     public ResultPaginationResponse getAllSerialNumberByProductDetailIdAndCodeSerial(
             Long productDetailId, String codeSerial, Optional<String> page, Optional<String> size) {
         String sPage = page.orElse("0");

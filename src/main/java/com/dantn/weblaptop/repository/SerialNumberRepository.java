@@ -75,6 +75,21 @@ public interface SerialNumberRepository extends JpaRepository<SerialNumber, Long
                                          @Param("maSerial") String maSerial,
                                          Pageable pageable);
 
+    @Query(value = "SELECT sn FROM SerialNumber sn " +
+            "JOIN SanPhamChiTiet spct ON spct.id = sn.sanPhamChiTiet.id " +
+            "LEFT JOIN SerialNumberDaBan sndb ON sn.id = sndb.serialNumber.id " +
+            "AND sndb.hoaDon.id IN (SELECT hd.id FROM HoaDon hd WHERE hd.ma = :maHoaDon) " +
+            "WHERE (sn.trangThai = 0 OR (sn.trangThai = 1 AND sndb.serialNumber.id IS NOT NULL)) " +
+            "AND (sn.trangThai = 0 OR sndb.hoaDon.id IS NOT NULL) " +
+            "AND spct.ma = :maSanPhamChiTIet " +
+            "AND sn.ma LIKE %:maSerial% " +
+            "ORDER BY sn.trangThai DESC")
+    Page<SerialNumber> findSerialNumbersByProductCode(
+            @Param("maHoaDon") String maHoaDon,
+            @Param("maSanPhamChiTIet") String maSanPhamChiTIet,
+            @Param("maSerial") String maSerial,
+            Pageable pageable);
+
     @Modifying
     @Transactional
     @Query(value = "UPDATE serial_number sn " +
