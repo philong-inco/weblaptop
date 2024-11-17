@@ -18,4 +18,7 @@ public interface HoaDonHinhThucThanhToanRepository extends JpaRepository<HoaDonH
     @Query(value = "SELECT * FROM hoa_don_httc WHERE hoa_don_id = :billId AND loai_thanh_toan = :loaiThanhToan ORDER BY id DESC LIMIT 1", nativeQuery = true)
     Optional<HoaDonHinhThucThanhToan> findByHoaDonIdAndLoaiThanhToan(@Param("billId") Long billId,@Param("loaiThanhToan") Integer loaiThanhToan);
 
+    @Query(value = "SELECT * FROM hoa_don_httc WHERE hoa_don_id = :billId AND trang_thai = :trangThai and hinh_thuc_thanh_toan_id = :pttt ORDER BY id DESC LIMIT 1", nativeQuery = true)
+    Optional<HoaDonHinhThucThanhToan> findByHoaDonIdAndTrangThaiVsPTTT(@Param("billId") Long billId,@Param("trangThai") Integer trangThai, @Param("pttt") Long  pttt);
+
 }

@@ -13,6 +13,7 @@ import com.dantn.weblaptop.dto.response.HoaDonResponse;
 import com.dantn.weblaptop.dto.response.ResultPaginationResponse;
 import com.dantn.weblaptop.dto.response.TraCuDonHangResponse;
 import com.dantn.weblaptop.entity.hoadon.HoaDon;
+import com.dantn.weblaptop.entity.phieugiamgia.PhieuGiamGia;
 import com.dantn.weblaptop.exception.AppException;
 import com.google.zxing.WriterException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -32,7 +33,7 @@ public interface HoaDonService {
     HoaDonResponse createBill() throws AppException;
 
     HoaDonResponse updateBill(Long id, UpdateHoaDonRequest request);
-    String updateBill(String billCode , String status);
+    String updateBill(String billCode , String status , String tran);
 
     HoaDonResponse updateBillByCode(String code, UpdateHoaDonRequest request);
 
@@ -94,4 +95,6 @@ public interface HoaDonService {
     Long sumProductSoldOutByDate(LocalDateTime startDate, LocalDateTime endDate);
 
     List<TrangThaiHoaDon_Dto> CalculateBillPercentage (LocalDateTime startDate, LocalDateTime endDate) throws AppException;
+
+    void updateCoupons (PhieuGiamGia phieuGiamGia , HoaDon hoaDon);
 }

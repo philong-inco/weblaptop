@@ -300,4 +300,19 @@ public class SerialNumberController {
                 .data(serialNumberService.findSerialNumbers(codeBill , productId,codeSerial, page, size))
                 .build();
     }
+
+    @GetMapping("/product-detail-code-serial-in-bill-tow/{productCode}")
+    public ApiResponse<ResultPaginationResponse> getSerialNumberByProductCodeAndCodeInBill
+            (@PathVariable("productCode") String productCode,
+             @RequestParam("codeSerial") String codeSerial,
+             @RequestParam("codeBill") String codeBill,
+             @RequestParam(name = "page", defaultValue = "0") Optional<String> page,
+             @RequestParam(name = "size", defaultValue = "5") Optional<String> size
+            ) {
+        return ApiResponse.<ResultPaginationResponse>builder()
+                .statusCode(HttpStatus.OK.value())
+                .message("Get SerialNumber By Product Success")
+                .data(serialNumberService.findSerialNumbersByProductCode(codeBill , productCode,codeSerial, page, size))
+                .build();
+    }
 }

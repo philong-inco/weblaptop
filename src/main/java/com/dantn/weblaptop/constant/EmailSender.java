@@ -184,7 +184,6 @@ public class EmailSender {
         }
     }
 
-
     public void sendForgotPasswordEmailNhanVien(NhanVien nhanVien, String newPassword) throws MessagingException {
         MimeMessage message = javaMailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(message, true);

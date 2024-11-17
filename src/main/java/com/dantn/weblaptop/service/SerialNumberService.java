@@ -62,6 +62,13 @@ public interface SerialNumberService {
             Optional<String> page, Optional<String> size
     );
 
+    ResultPaginationResponse findSerialNumbersByProductCode(
+            String maHoaDon,
+            String MaSanPhamChiTiet,
+            String maSerial,
+            Optional<String> page, Optional<String> size
+    );
+
     ResultPaginationResponse getAllSerialNumberByProductDetailIdAndCodeSerial(
             Long productId, String codeSerial, Optional<String> page, Optional<String> size);
 

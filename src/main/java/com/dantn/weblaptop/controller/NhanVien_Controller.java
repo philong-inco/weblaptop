@@ -119,17 +119,12 @@ public class NhanVien_Controller {
         }
     }
 
-    @PostMapping("/forgotPassword")
-    public ResponseEntity<String> sendForgotPasswordEmailForNhanVien(@RequestBody ForgotPassword_Dto forgotPasswordDto) {
-        try {
-            nhanVienService.sendForgotPasswordEmailForNhanVien(forgotPasswordDto.getEmail());
-            return ResponseEntity.ok("Mật khẩu đã được gửi lại vào email của nhân viên.");
-        } catch (ConfigDataResourceNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-        } catch (MessagingException e) {
-            throw new RuntimeException(e);
-        }
+    @GetMapping("/sendemailforgotpassword/{email}")
+    public ResponseEntity<?> sentEmail(@PathVariable String email) throws MessagingException {
+        nhanVienService.sentEmailForgotPassword(email);
+        return ResponseEntity.ok("Đã gửi email thành công đến nhân viên.");
     }
+
 
     @PutMapping("/updatepassword/{email}")
     public ResponseEntity<?> updatePassword(@PathVariable("email") String email, @RequestParam("newPassword") String newPassword) {

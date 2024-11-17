@@ -1,6 +1,7 @@
 package com.dantn.weblaptop.controller;
 
 import com.dantn.weblaptop.dto.SerialNumberDaBan_Dto;
+import com.dantn.weblaptop.dto.request.create_request.CreateSerialNumberCodeDaBanRequest;
 import com.dantn.weblaptop.dto.request.create_request.CreateSerialNumberDaBanRequest;
 import com.dantn.weblaptop.dto.request.update_request.SerialNumberSoldDelete;
 import com.dantn.weblaptop.dto.response.ApiResponse;
@@ -42,6 +43,17 @@ public class SerialNumberDaBanController {
                         .statusCode(HttpStatus.CREATED.value())
                         .message("Created successfully")
                         .data(serialNumberDaBanService.create(request))
+                        .build());
+    }
+
+    @PostMapping("create-by-product-code")
+    public ResponseEntity<ApiResponse> createByProductCode(
+            @RequestBody CreateSerialNumberCodeDaBanRequest request) throws AppException {
+        return ResponseEntity.status(HttpStatus.CREATED).body(
+                ApiResponse.builder()
+                        .statusCode(HttpStatus.CREATED.value())
+                        .message("Created successfully")
+                        .data(serialNumberDaBanService.createByProductCode(request))
                         .build());
     }
 

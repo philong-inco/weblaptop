@@ -37,7 +37,7 @@ public class BillUtils {
     }
 
     public  static String convertMoney (BigDecimal money) {
-        if(money.compareTo(BigDecimal.ZERO) == 0 || money== null) {
+        if (money == null || money.compareTo(BigDecimal.ZERO) == 0) {
             return "0 đ";
         }
         DecimalFormatSymbols symbols = new DecimalFormatSymbols(Locale.getDefault());

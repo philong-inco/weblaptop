@@ -12,7 +12,9 @@ import com.dantn.weblaptop.exception.AppException;
 import com.dantn.weblaptop.service.HoaDonService;
 import com.dantn.weblaptop.service.LichSuHoaDonService;
 import com.dantn.weblaptop.service.impl.HoaDonServiceImpl;
+import com.dantn.weblaptop.util.QrCode;
 import com.dantn.weblaptop.util.SendEmailBill;
+import com.google.zxing.WriterException;
 import com.turkraft.springfilter.boot.Filter;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
@@ -461,7 +463,7 @@ public class HoaDonController {
         System.out.println("codeTran : "+codeTran);
 
         return ResponseEntity.ok(ApiResponse.builder()
-                .data(hoaDonService.updateBill(billCode, status))
+                .data(hoaDonService.updateBill(billCode, status, codeTran))
                 .statusCode(HttpStatus.OK.value())
                 .build());
     }
