@@ -13,6 +13,7 @@ import com.dantn.weblaptop.entity.nhanvien.NhanVienVaiTro;
 import com.dantn.weblaptop.entity.nhanvien.VaiTro;
 import com.dantn.weblaptop.mapper.NhanVien_Mapper;
 import com.dantn.weblaptop.mapper.VaiTro_Mapper;
+import com.dantn.weblaptop.repository.KhachHang_Repository;
 import com.dantn.weblaptop.repository.NhanVienVaiTroRepository;
 import com.dantn.weblaptop.repository.NhanVien_Repositoy;
 import com.dantn.weblaptop.repository.VaiTro_Repository;
@@ -53,6 +54,8 @@ public class NhanVienService_Implement implements NhanVien_Service {
     private NhanVien_Repositoy nhanVien_Repositoy;
     @Autowired
     private PasswordEncoder passwordEncoder;
+    @Autowired
+    private KhachHang_Repository khachHangRepository;
 
     @Override
     public Page<NhanVienResponse> pageNhanVien(Integer pageNo, Integer size) {
@@ -130,34 +133,27 @@ public class NhanVienService_Implement implements NhanVien_Service {
                 throw new RuntimeException("Số điện thoại đã được sử dụng trước đó. Vui lòng sử dụng số điện thoại khác.");
             }
 
+            if(khachHangRepository.findKhachHangByEmail(createNhanVienRequest.getEmail()) != null){
+                throw new RuntimeException("Email đã được sử dụng trước đó. Vui lòng sử dụng email khác.");
+
+            }
+
             // Chuẩn bị thực thể NhanVien từ request
             NhanVien nhanVien = prepareNhanVienEntity(createNhanVienRequest);
-
-            // Xác thực các thuộc tính của NhanVien (ví dụ: email, hình ảnh)
             validateNhanVien(createNhanVienRequest);
-
-            // Lưu thông tin nhân viên vào cơ sở dữ liệu
             nhanVien = saveNhanVien(nhanVien);
-
-            // Gán vai trò cho nhân viên từ danh sách vai trò đã yêu cầu
             assignRolesToNhanVien(nhanVien, createNhanVienRequest.getListVaiTro());
-
-            // Lấy vai trò từ repository và gửi email đăng ký
             Set<VaiTro> vaiTros = vaiTroRepository.findVaiTroByTen(createNhanVienRequest.getListVaiTro());
             sendSignupEmailAsync(nhanVien, vaiTros);
-
-            // Chuyển thực thể thành phản hồi
             return mapToResponse(nhanVien);
 
         } catch (IllegalArgumentException ex) {
             System.out.println("Lỗi tham số không hợp lệ: " + ex.getMessage());
             throw new RuntimeException("Tham số không hợp lệ. Vui lòng kiểm tra lại dữ liệu đầu vào.");
         } catch (RuntimeException ex) {
-            // Lỗi nghiệp vụ như email trùng lặp hoặc hình ảnh quá dài
             System.out.println("Lỗi nghiệp vụ: " + ex.getMessage());
             throw new RuntimeException("Lỗi nghiệp vụ: " + ex.getMessage());
         } catch (Exception ex) {
-            // Lỗi không xác định
             System.out.println("Lỗi không xác định: " + ex.getMessage());
             throw new RuntimeException("Tạo mới nhân viên không thành công. Chi tiết lỗi: " + ex.getMessage());
         }
@@ -372,7 +368,6 @@ public class NhanVienService_Implement implements NhanVien_Service {
         if(nhanVien != null){
             String newPlainTextPassword = GenerateCode.generatePassWordNhanVien();
             nhanVien.setMatKhau(passwordEncoder.encode(newPlainTextPassword));
-            nhanVien.setTrangThai(3);
             emailSender.sendForgotPasswordEmailNhanVien(nhanVien, newPlainTextPassword);
             nhanVienRepositoy.save(nhanVien);
         }
