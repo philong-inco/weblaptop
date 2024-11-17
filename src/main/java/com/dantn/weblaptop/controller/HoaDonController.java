@@ -463,7 +463,7 @@ public class HoaDonController {
         System.out.println("codeTran : "+codeTran);
 
         return ResponseEntity.ok(ApiResponse.builder()
-                .data(hoaDonService.updateBill(billCode, status))
+                .data(hoaDonService.updateBill(billCode, status, codeTran))
                 .statusCode(HttpStatus.OK.value())
                 .build());
     }

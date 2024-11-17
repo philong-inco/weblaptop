@@ -79,4 +79,6 @@ public interface SanPhamChiTietRepository extends JpaRepository<SanPhamChiTiet, 
     );
 
     Optional<SanPhamChiTiet> findByMa(String ma);
+
+    Optional<SanPhamChiTiet> findBySerialNumbersId(Long serialNumbersId);
 }

@@ -12,10 +12,7 @@ import com.dantn.weblaptop.dto.response.LichSuHoaDonResponse;
 import com.dantn.weblaptop.dto.response.PhieuGiamGiaResponse;
 import com.dantn.weblaptop.dto.response.SanPhamChiTietClientDTO;
 import com.dantn.weblaptop.dto.response.SerialNumberDaBanResponse;
-import com.dantn.weblaptop.entity.hoadon.HinhThucThanhToan;
-import com.dantn.weblaptop.entity.hoadon.HoaDon;
-import com.dantn.weblaptop.entity.hoadon.HoaDonHinhThucThanhToan;
-import com.dantn.weblaptop.entity.hoadon.SerialNumberDaBan;
+import com.dantn.weblaptop.entity.hoadon.*;
 import com.dantn.weblaptop.entity.phieugiamgia.PhieuGiamGia;
 import com.dantn.weblaptop.entity.sanpham.SanPhamChiTiet;
 import com.dantn.weblaptop.entity.sanpham.SerialNumber;
@@ -57,6 +54,7 @@ public class SerialNumberDaBanServiceImpl implements SerialNumberDaBanService {
     SanPhamChiTietServiceImpl sanPhamChiTietServiceImpl;
     HoaDonHinhThucThanhToanRepository hoaDonHinhThucThanhToanRepository;
     private final HinhThucThanhToanRepository hinhThucThanhToanRepository;
+    LichSuHoaDonRepository lichSuHoaDonRepository;
 
     @Override
     public List<SerialNumberDaBanResponse> getSerialNumberDaBanPage(String code) {
@@ -203,6 +201,17 @@ public class SerialNumberDaBanServiceImpl implements SerialNumberDaBanService {
             }
             sanPhamChiTietRepository.save(optional.get());
         }
+        if(!existingBill.getTrangThai().name().equals("DON_MOI") &&!existingBill.getTrangThai().name().equals("TREO") ){
+            LichSuHoaDon lichSuHoaDon = new LichSuHoaDon();
+            lichSuHoaDon.setHoaDon(existingBill);
+            lichSuHoaDon.setTrangThai(12);//cap nhap don hang
+            lichSuHoaDon.setKhachHang(existingBill.getKhachHang());
+            lichSuHoaDon.setNhanVien(existingBill.getNhanVien());
+            lichSuHoaDon.setGhiChuChoCuaHang("Cập nhập số lượng sản phẩm");
+            lichSuHoaDon.setNguoiTao("Mạnh cập nhập");
+            lichSuHoaDon.setNguoiSua("Mạnh cập nhập");
+            lichSuHoaDonRepository.save(lichSuHoaDon);
+        }
         return true;
     }
 
@@ -252,7 +261,30 @@ public class SerialNumberDaBanServiceImpl implements SerialNumberDaBanService {
             existingBill.setTongTienBanDau(totalMoney.orElse(BigDecimal.ZERO));
             System.out.println("0 Tỏng tiền : " + totalMoney.orElse(BigDecimal.ZERO));
             calculateTotalAmountDue(existingBill, totalMoney);
+            // cập nhập trạng thái sp
+            SerialNumber serialNumber = updatedSerialNumbers.get(0);
+        Optional<SanPhamChiTiet> optional=    sanPhamChiTietRepository.findBySerialNumbersId(serialNumber.getId());
+            if(optional.isPresent()) {
+                Integer quantity = serialNumberRepository.getQuantitySerialIsActive(optional.get().getId());
+                if(quantity<=0){
+                    optional.get().setTrangThai(0);
+                }else {
+                    optional.get().setTrangThai(1);
+                }
+                sanPhamChiTietRepository.save(optional.get());
+            }
             hoaDonRepository.save(existingBill);
+            if(!existingBill.getTrangThai().name().equals("DON_MOI") &&!existingBill.getTrangThai().name().equals("TREO") ){
+                LichSuHoaDon lichSuHoaDon = new LichSuHoaDon();
+                lichSuHoaDon.setHoaDon(existingBill);
+                lichSuHoaDon.setTrangThai(12);//cap nhap don hang
+                lichSuHoaDon.setKhachHang(existingBill.getKhachHang());
+                lichSuHoaDon.setNhanVien(existingBill.getNhanVien());
+                lichSuHoaDon.setGhiChuChoCuaHang("Cập nhập số lượng sản phẩm");
+                lichSuHoaDon.setNguoiTao("Mạnh cập nhập");
+                lichSuHoaDon.setNguoiSua("Mạnh cập nhập");
+                lichSuHoaDonRepository.save(lichSuHoaDon);
+            }
         }
     }
 
