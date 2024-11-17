@@ -130,6 +130,7 @@ public class SanPhamChiTietMapper extends GenericsMapper<SanPhamChiTiet, SanPham
                 .idNhuCau(entity.getSanPham().getNhuCau().getId())
                 .nhuCau(entity.getSanPham().getNhuCau().getTen())
                 .idThuongHieu(entity.getSanPham().getThuongHieu().getId())
+                .thuongHieu(entity.getSanPham().getThuongHieu().getTen())
                 .giaBan(entity.getGiaBan()+"")
                 .idBanPhim(entity.getBanPhim().getId())
                 .banPhim(entity.getBanPhim().getTen())
