@@ -90,20 +90,23 @@ public class SanPhamMapper extends GenericsMapper<SanPham, SanPhamCreate, SanPha
     }
 
     public SanPhamClientDTO entityToClient(SanPham entity){
-       SanPhamClientDTO client = SanPhamClientDTO.builder()
-               .id(entity.getId())
-               .ten(entity.getTen())
-               .moTa(entity.getMoTa())
-               .nhuCau(entity.getNhuCau().getTen())
-               .thuongHieu(entity.getThuongHieu().getTen())
-               .build();
-
-       return client;
+        List<SerialNumber> listSeri = repositorySeri.findSerialNumberBySanPhamId(entity.getId());
+        if (listSeri != null && listSeri.size() > 0){
+            SanPhamClientDTO client = SanPhamClientDTO.builder()
+                    .id(entity.getId())
+                    .ten(entity.getTen())
+                    .moTa(entity.getMoTa())
+                    .nhuCau(entity.getNhuCau().getTen())
+                    .thuongHieu(entity.getThuongHieu().getTen())
+                    .build();
+            return client;
+        } else return null;
     }
 
     public Page<SanPhamClientDTO> pageEntityToClient(Page<SanPham> entityPage){
         List<SanPhamClientDTO> list = entityPage.getContent().stream()
                 .map(this::entityToClient).collect(Collectors.toList());
-        return new PageImpl<>(list, entityPage.getPageable(), entityPage.getTotalElements());
+        List<SanPhamClientDTO> listResult = list.stream().filter(x -> x != null).collect(Collectors.toList());
+        return new PageImpl<>(listResult, entityPage.getPageable(), entityPage.getTotalElements());
     }
 }

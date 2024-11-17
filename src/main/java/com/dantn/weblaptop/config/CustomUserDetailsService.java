@@ -31,7 +31,6 @@ public class CustomUserDetailsService implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         NhanVien nhanVien = nhanVienRepositoy.findByEmail(username.trim());
         KhachHang khachHang = khachHangRepository.findKhachHangByEmail(username.trim());
-
         if (nhanVien != null) {
             String[] nhanVienVaiTro = nhanVienVaiTroRepository.findByIdNhanVien(nhanVien.getId())
                     .stream().map(VaiTro::getTen).toArray(String[]::new);
