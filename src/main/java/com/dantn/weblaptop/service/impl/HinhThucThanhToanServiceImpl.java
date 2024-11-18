@@ -154,7 +154,7 @@ public class HinhThucThanhToanServiceImpl implements HinhThucThanhToanService {
         Map<String, String> vnpParamsMap = vnPayConfig.getVNPayConfig();
         vnpParamsMap.put("vnp_ReturnUrl", this.returnUrlOnline);
         vnpParamsMap.put("vnp_Amount", String.valueOf(amount));
-        vnpParamsMap.put("vnp_TxnRef",hoaDon.getMa() + "|" + VNPayUtil.getRandomNumber(8));
+        vnpParamsMap.put("vnp_TxnRef",hoaDon.getMa() + "|" + VNPayUtil.getRandomNumber(8)+"|"+hoaDon.getSdt());
         vnpParamsMap.put("vnp_OrderInfo", "Thanh toan don hang:" + hoaDon.getMa());
         if (bankCode != null && !bankCode.isEmpty()) {
             vnpParamsMap.put("vnp_BankCode", bankCode);
@@ -194,7 +194,7 @@ public class HinhThucThanhToanServiceImpl implements HinhThucThanhToanService {
         Map<String, String> vnpParamsMap = vnPayConfig.getVNPayConfig();
         vnpParamsMap.put("vnp_ReturnUrl", this.returnUrlOnline);
         vnpParamsMap.put("vnp_Amount", String.valueOf(amount));
-        vnpParamsMap.put("vnp_TxnRef", hoaDon.getMa() + "|" + VNPayUtil.getRandomNumber(8));
+        vnpParamsMap.put("vnp_TxnRef", hoaDon.getMa() + "|" + VNPayUtil.getRandomNumber(8)+"|"+hoaDon.getSdt());
         vnpParamsMap.put("vnp_OrderInfo", "Thanh toan don hang:" + hoaDon.getMa());
         if (bankCode != null && !bankCode.isEmpty()) {
             vnpParamsMap.put("vnp_BankCode", bankCode);
