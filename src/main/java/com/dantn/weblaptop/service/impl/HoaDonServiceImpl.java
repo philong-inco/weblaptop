@@ -554,6 +554,9 @@ public class HoaDonServiceImpl implements HoaDonService {
         updateCoupons(bill.getPhieuGiamGia(), bill);
 //        lưu theo trạng thái
         LichSuHoaDon billHistory = new LichSuHoaDon();
+        HinhThucThanhToan tienMat = hinhThucThanhToanRepository.findById(1L).get();
+        HinhThucThanhToan chuyenKhoan = hinhThucThanhToanRepository.findById(2L).get();
+
         if (request.getLoaiHoaDon() == 0) {
             // toonhr tienf đã trả
             BigDecimal total = hoaDonHinhThucThanhToanSerive.getAllByBillCode(bill.getMa()).stream().filter(item -> item.getLoaiThanhToan() == 0).map(HoaDonHinhThucThanhToanResponse::getSoTien).reduce(BigDecimal.ZERO, BigDecimal::add);
@@ -588,6 +591,8 @@ public class HoaDonServiceImpl implements HoaDonService {
                 hoaDonHinhThucThanhToan.setNguoiSua("Nguyễn Tiến Mạnh");
                 hoaDonHinhThucThanhToan.setNguoiTao("Nguyễn Tiến Mạnh");
                 hoaDonHinhThucThanhToan.setLoaiThanhToan(request.getLoaiHoaDon());
+                hoaDonHinhThucThanhToan.setHinhThucThanhToan(tienMat);
+                hoaDonHinhThucThanhToan.setTrangThai(1);
                 hoaDonHinhThucThanhToanRepository.save(hoaDonHinhThucThanhToan);
             }
 
