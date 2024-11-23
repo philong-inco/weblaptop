@@ -91,21 +91,21 @@ public abstract class GenericsService<E, ID, C, U, R> implements IGenericsServic
 
     @Override
     public boolean existByCode(String code) {
-        List<E> result = genericsRepository.isExistCode(code.toLowerCase());
+        List<E> result = genericsRepository.isExistCode(code.trim().toLowerCase());
         boolean check = result.size() > 0 ? true : false;
         return check;
     }
 
     @Override
     public boolean existByName(String name) {
-        List<E> result = genericsRepository.isExistName(name.toLowerCase());
+        List<E> result = genericsRepository.isExistName(name.trim().toLowerCase());
         boolean check = result.size() > 0 ? true : false;
         return check;
     }
 
     @Override
     public boolean existByNameAndDifferentId(String name, ID id) {
-        List<E> result = genericsRepository.isExistNameAndDifferentId(name.toLowerCase(), id);
+        List<E> result = genericsRepository.isExistNameAndDifferentId(name.trim().toLowerCase(), id);
         boolean check = result.size() > 0 ? true : false;
         return check;
     }
