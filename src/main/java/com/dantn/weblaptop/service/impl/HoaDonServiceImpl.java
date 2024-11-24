@@ -31,6 +31,10 @@ import com.dantn.weblaptop.util.BillUtils;
 import com.dantn.weblaptop.util.GenerateCode;
 import com.dantn.weblaptop.util.SendEmailBill;
 import com.google.zxing.WriterException;
+import com.itextpdf.html2pdf.ConverterProperties;
+import com.itextpdf.html2pdf.HtmlConverter;
+import com.itextpdf.html2pdf.resolver.font.DefaultFontProvider;
+import com.itextpdf.kernel.pdf.PdfWriter;
 import com.lowagie.text.pdf.BaseFont;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.AccessLevel;
@@ -54,11 +58,15 @@ import org.thymeleaf.context.Context;
 import org.thymeleaf.spring6.SpringTemplateEngine;
 import org.xhtmlrenderer.pdf.ITextRenderer;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.*;
@@ -594,6 +602,8 @@ public class HoaDonServiceImpl implements HoaDonService {
                 hoaDonHinhThucThanhToan.setHinhThucThanhToan(tienMat);
                 hoaDonHinhThucThanhToan.setTrangThai(1);
                 hoaDonHinhThucThanhToanRepository.save(hoaDonHinhThucThanhToan);
+            }else{
+
             }
 
             bill.setTrangThai(HoaDonStatus.XAC_NHAN);
@@ -723,15 +733,40 @@ public class HoaDonServiceImpl implements HoaDonService {
         System.out.println("Processing template with invoice: " + billCode);
 
         String processedHtml = templateEngine.process("templatesBill", context);
-        OutputStream outputStream = new ByteArrayOutputStream();
-        ITextRenderer renderer = new ITextRenderer();
-//        String fontPath = getClass().getResource("/fonts/Roboto-Regular.ttf").getPath();
-//        renderer.getFontResolver().addFont(fontPath, BaseFont.IDENTITY_H, BaseFont.EMBEDDED);
-        renderer.setDocumentFromString(processedHtml);
-        renderer.layout();
-        renderer.createPDF(outputStream);
+//        OutputStream outputStream = new ByteArrayOutputStream();
+//        ITextRenderer renderer = new ITextRenderer();
+////        String fontPath = getClass().getResource("/fonts/Roboto-Regular.ttf").getPath();
+////        renderer.getFontResolver().addFont(fontPath, BaseFont.IDENTITY_H, BaseFont.EMBEDDED);
+//        renderer.setDocumentFromString(processedHtml);
+//        renderer.layout();
+//        renderer.createPDF(outputStream);
 
-        return ((ByteArrayOutputStream) outputStream).toByteArray();
+//        return ((ByteArrayOutputStream) outputStream).toByteArray();
+      return   htmlToPdf(processedHtml,billCode);
+    }
+
+    public byte[] htmlToPdf(String processedHtml, String code) {
+
+        String downloadPath = System.getProperty("user.home") + "/Downloads";
+
+        try (ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+             PdfWriter pdfwriter = new PdfWriter(byteArrayOutputStream)) {
+
+            DefaultFontProvider defaultFont = new DefaultFontProvider(false, true, false);
+            ConverterProperties converterProperties = new ConverterProperties();
+            converterProperties.setFontProvider(defaultFont);
+
+            HtmlConverter.convertToPdf(processedHtml, pdfwriter, converterProperties);
+
+            byte[] pdfBytes = byteArrayOutputStream.toByteArray();
+            return pdfBytes;
+//            Files.copy(new ByteArrayInputStream(pdfBytes), Paths.get(downloadPath, code + ".pdf"), StandardCopyOption.REPLACE_EXISTING);
+
+        } catch (IOException ex) {
+            // Xử lý ngoại lệ khi có lỗi I/O
+            ex.printStackTrace();
+        }
+        return null;
     }
 
     @Transactional(rollbackFor = Exception.class)

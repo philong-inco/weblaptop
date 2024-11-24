@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RestController
@@ -50,6 +51,16 @@ public class AuthenticationController {
         AuthResponse response = getInfoGuest(authRequest.getEmail());
         response.setJwt(token);
 
+        return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/verify-token")
+    public ResponseEntity<?> verifyToken() {
+      Optional<String> optional = JwtUtil.getCurrentUserLogin();
+      if(!optional.isPresent()|| optional.get().equals("anonymousUser")) {
+          return ResponseEntity.status(401).body("Invalid credentials");
+      }
+        AuthResponse response = getInfoGuest(optional.get());
         return ResponseEntity.ok(response);
     }
 

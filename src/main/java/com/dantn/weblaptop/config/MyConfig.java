@@ -65,6 +65,10 @@ public class MyConfig {
 //                        "/api/webcam/add",
 //                        "/api/webcam/update/**"
 //                ).hasAnyRole("STAFF", "ADMIN")
+                                .requestMatchers(
+                                        "api/sell/**"
+                                        ,"/api/bills/code/**")
+                                .hasAnyRole("ADMIN", "STAFF")
 //                .requestMatchers(
 //                        "/api/ban-phim/delete/**",
 //                        "/api/he-dieu-hanh/delete/**",

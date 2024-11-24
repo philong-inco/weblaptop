@@ -63,14 +63,36 @@ public class JwtRequestFilter extends OncePerRequestFilter {
                 }
             }
             filterChain.doFilter(request, response);
+//        } catch (ExpiredJwtException e) {
+////            throw new MyJwtException("Token đã hết hạn", 701);
+//            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+//            response.getWriter().write(e.getMessage());
+//        } catch (SignatureException e) {
+//            throw new MyJwtException("Chữ ký không hợp lệ", 702);
+//        } catch (MalformedJwtException e) {
+//            throw new MyJwtException("Token không hợp lệ", 703);
+//        } catch (Exception e) {
+////            throw new MyJwtException("Token không hợp lệ", 704);
+//            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+//            response.getWriter().write(e.getMessage());
+//        }
         } catch (ExpiredJwtException e) {
-            throw new MyJwtException("Token đã hết hạn", 701);
+            handleException(response, HttpServletResponse.SC_UNAUTHORIZED, "Token đã hết hạn", 701);
         } catch (SignatureException e) {
-            throw new MyJwtException("Chữ ký không hợp lệ", 702);
+            handleException(response, HttpServletResponse.SC_UNAUTHORIZED, "Chữ ký không hợp lệ", 702);
         } catch (MalformedJwtException e) {
-            throw new MyJwtException("Token không hợp lệ", 703);
+            handleException(response, HttpServletResponse.SC_UNAUTHORIZED, "Token không hợp lệ", 703);
         } catch (Exception e) {
-            throw new MyJwtException("Token không hợp lệ", 704);
+            handleException(response, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Lỗi không xác định", 704);
         }
+    }
+
+    private void handleException(HttpServletResponse response, int status, String message, int errorCode) throws IOException {
+        response.setStatus(status);
+        response.setContentType("application/json");
+        response.getWriter().write(
+                String.format("{\"message\": \"%s\", \"code\": %d}", message, errorCode)
+        );
+        response.getWriter().flush();
     }
 }
