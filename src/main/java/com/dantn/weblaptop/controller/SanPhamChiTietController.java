@@ -21,6 +21,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -273,6 +274,24 @@ public class SanPhamChiTietController {
     public ResponseEntity<ResponseLong<List<SanPhamChiTietResponse>>> getAllByProductId(
             @RequestParam(value = "idProduct", required = true) Long idProduct){
         List<SanPhamChiTietResponse> responses = service.getAllListBySanPhamId(idProduct);
+        if ( responses == null || responses.size() == 0)
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseLong<>(
+                    404, "Không có biến thể nào trên ID Product này",
+                    null, null, null, null, null
+            ));
+        return ResponseEntity.status(HttpStatus.OK).body(new ResponseLong<>(
+                200, "Get thành công",
+                responses, null, null, null, null
+        ));
+    }
+
+    @PostMapping("/get-by-product-ids")
+    public ResponseEntity<ResponseLong<List<SanPhamChiTietResponse>>> getAllByProductIds(
+            @RequestBody String[] idProduct){
+        List<SanPhamChiTietResponse> responses = new ArrayList<>();
+        for (String id : idProduct) {
+            responses.addAll(service.getAllListBySanPhamId(Long.valueOf(id)));
+        }
         if ( responses == null || responses.size() == 0)
             return ResponseEntity.status(HttpStatus.OK).body(new ResponseLong<>(
                     404, "Không có biến thể nào trên ID Product này",
