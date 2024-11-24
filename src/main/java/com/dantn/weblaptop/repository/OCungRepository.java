@@ -22,7 +22,7 @@ public interface OCungRepository extends IGenericsRepository<OCung, Long> {
     List<OCung> getAllList();
 
     @Override
-    @Query("SELECT r FROM OCung r WHERE r.trangThai = 1")
+    @Query("SELECT r FROM OCung r WHERE r.trangThai = 1 ORDER BY r.ngayTao DESC")
     List<OCung> getAllListActive();
 
     @Override

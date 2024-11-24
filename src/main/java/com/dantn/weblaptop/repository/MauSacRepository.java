@@ -22,7 +22,7 @@ public interface MauSacRepository extends IGenericsRepository<MauSac, Long> {
     List<MauSac> getAllList();
 
     @Override
-    @Query("SELECT r FROM MauSac r WHERE r.trangThai = 1")
+    @Query("SELECT r FROM MauSac r WHERE r.trangThai = 1 ORDER BY r.ngayTao DESC")
     List<MauSac> getAllListActive();
 
     @Override

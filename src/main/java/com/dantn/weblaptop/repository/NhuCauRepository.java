@@ -22,7 +22,7 @@ public interface NhuCauRepository extends IGenericsRepository<NhuCau, Long> {
     List<NhuCau> getAllList();
 
     @Override
-    @Query("SELECT r FROM NhuCau r WHERE r.trangThai = 1")
+    @Query("SELECT r FROM NhuCau r WHERE r.trangThai = 1 ORDER BY r.ngayTao DESC")
     List<NhuCau> getAllListActive();
 
     @Override

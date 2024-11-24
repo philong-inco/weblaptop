@@ -18,7 +18,7 @@ public interface CPURepository extends IGenericsRepository<CPU, Long> {
     Page<CPU> getAllPage(Pageable pageable);
 
     @Override
-    @Query("SELECT r FROM CPU r WHERE r.trangThai = 1")
+    @Query("SELECT r FROM CPU r WHERE r.trangThai = 1 ORDER BY r.ngayTao DESC")
     List<CPU> getAllListActive();
     @Override
     @Query("SELECT r FROM CPU r")

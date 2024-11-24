@@ -23,7 +23,7 @@ public interface WebcamRepository extends IGenericsRepository<Webcam, Long> {
     List<Webcam> getAllList();
 
     @Override
-    @Query("SELECT r FROM Webcam r WHERE r.trangThai = 1")
+    @Query("SELECT r FROM Webcam r WHERE r.trangThai = 1 ORDER BY r.ngayTao DESC")
     List<Webcam> getAllListActive();
 
     @Override

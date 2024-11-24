@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -39,11 +40,12 @@ public class ThuongHieuController extends GenericsController<ThuongHieu, Long, T
             @RequestParam(value = "ma", required = false, defaultValue = "") String ma,
             @RequestParam(value = "trangThai", required = false, defaultValue = "") String trangThai
     ) {
+        Sort sort = Sort.by("ngayTao").descending();
         Pageable pageable;
         try {
-            pageable = PageRequest.of(Integer.valueOf(pageStr), Integer.valueOf(sizeStr));
+            pageable = PageRequest.of(Integer.valueOf(pageStr), Integer.valueOf(sizeStr),sort);
         } catch (Exception e) {
-            pageable = PageRequest.of(0, 10);
+            pageable = PageRequest.of(0, 10,sort);
         }
         Page<ThuongHieuResponse> pageResult = service.findByFilter(ten, ma, trangThai, pageable);
         ResponseLong<List<ThuongHieuResponse>> result = new ResponseLong<>(

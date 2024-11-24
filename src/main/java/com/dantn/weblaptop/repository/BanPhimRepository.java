@@ -21,7 +21,7 @@ public interface BanPhimRepository extends IGenericsRepository<BanPhim, Long> {
     List<BanPhim> getAllList();
 
     @Override
-    @Query("SELECT r FROM BanPhim r WHERE r.trangThai = 1")
+    @Query("SELECT r FROM BanPhim r WHERE r.trangThai = 1 ORDER BY r.ngayTao DESC")
     List<BanPhim> getAllListActive();
 
     @Override

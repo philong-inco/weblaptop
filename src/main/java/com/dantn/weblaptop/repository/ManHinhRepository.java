@@ -22,7 +22,7 @@ public interface ManHinhRepository extends IGenericsRepository<ManHinh, Long> {
     List<ManHinh> getAllList();
 
     @Override
-    @Query("SELECT r FROM ManHinh r WHERE r.trangThai = 1")
+    @Query("SELECT r FROM ManHinh r WHERE r.trangThai = 1 ORDER BY r.ngayTao DESC")
     List<ManHinh> getAllListActive();
 
     @Override

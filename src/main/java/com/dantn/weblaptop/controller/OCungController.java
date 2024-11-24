@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -38,10 +39,11 @@ public class OCungController extends GenericsController<OCung, Long, OCungCreate
             @RequestParam(value = "trangThai", required = false, defaultValue = "") String trangThai
     ) {
         Pageable pageable;
+        Sort sort = Sort.by("ngayTao").descending();
         try {
-            pageable = PageRequest.of(Integer.valueOf(pageStr), Integer.valueOf(sizeStr));
+            pageable = PageRequest.of(Integer.valueOf(pageStr), Integer.valueOf(sizeStr), sort);
         } catch (Exception e) {
-            pageable = PageRequest.of(0, 10);
+            pageable = PageRequest.of(0, 10, sort);
         }
         Page<OCungResponse> pageResult = service.findByFilter(ten, ma, trangThai, pageable);
         ResponseLong<List<OCungResponse>> result = new ResponseLong<>(

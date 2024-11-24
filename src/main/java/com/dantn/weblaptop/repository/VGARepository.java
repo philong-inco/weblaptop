@@ -22,7 +22,7 @@ public interface VGARepository extends IGenericsRepository<VGA, Long> {
     List<VGA> getAllList();
 
     @Override
-    @Query("SELECT r FROM VGA r WHERE r.trangThai = 1")
+    @Query("SELECT r FROM VGA r WHERE r.trangThai = 1 ORDER BY r.ngayTao DESC")
     List<VGA> getAllListActive();
 
     @Override
