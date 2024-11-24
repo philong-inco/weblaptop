@@ -22,7 +22,7 @@ public interface HeDieuHanhRepository extends IGenericsRepository<HeDieuHanh, Lo
     List<HeDieuHanh> getAllList();
 
     @Override
-    @Query("SELECT r FROM HeDieuHanh r WHERE r.trangThai = 1")
+    @Query("SELECT r FROM HeDieuHanh r WHERE r.trangThai = 1 ORDER BY r.ngayTao DESC")
     List<HeDieuHanh> getAllListActive();
 
     @Override

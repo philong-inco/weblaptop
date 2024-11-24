@@ -23,7 +23,7 @@ public interface RAMRepository extends IGenericsRepository<RAM, Long>, JpaSpecif
     List<RAM> getAllList();
 
     @Override
-    @Query("SELECT r FROM RAM r WHERE r.trangThai = 1")
+    @Query("SELECT r FROM RAM r WHERE r.trangThai = 1 ORDER BY r.ngayTao DESC")
     List<RAM> getAllListActive();
 
     @Override

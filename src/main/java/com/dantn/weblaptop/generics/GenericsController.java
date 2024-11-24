@@ -176,6 +176,14 @@ public abstract class GenericsController<E, ID, C, U, R> {
                 String.valueOf(result.getTotalElements())));
     }
 
+    @GetMapping("exist-name-diff-id")
+    public ResponseEntity<ResponseLong<Boolean>> existByNameDifferentId(@RequestParam("name") String name, @RequestParam("id")ID id) {
+        Boolean result = genericsService.existByNameAndDifferentId(name, id);
+        if (result)
+            return ResponseEntity.ok().body(new ResponseLong<>(999, "Name is existed", result, null, null, null, null));
+        return ResponseEntity.ok().body(new ResponseLong<>(200, "Name is unique", result, null, null, null, null));
+    }
+
 }
 // them get entity va get list va find by status findbycodeor name
 

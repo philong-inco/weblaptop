@@ -21,7 +21,7 @@ public interface ThuongHieuRepository extends IGenericsRepository<ThuongHieu, Lo
     List<ThuongHieu> getAllList();
 
     @Override
-    @Query("SELECT r FROM ThuongHieu r WHERE r.trangThai = 1")
+    @Query("SELECT r FROM ThuongHieu r WHERE r.trangThai = 1 ORDER BY r.ngayTao DESC")
     List<ThuongHieu> getAllListActive();
 
     @Override

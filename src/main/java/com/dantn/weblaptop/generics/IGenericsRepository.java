@@ -30,4 +30,6 @@ public interface IGenericsRepository<T, ID> extends JpaRepository<T, ID>, JpaSpe
     List<T> isExistName(String name);
 
     List<T> isExistNameAndDifferentId(String name, ID id);
+
+
 }
