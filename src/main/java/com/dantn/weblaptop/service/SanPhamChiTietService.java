@@ -43,4 +43,7 @@ public interface SanPhamChiTietService {
     void updatePriceImage(SPCTUpdateTemp spct) throws Exception;
 
     void changeStatus(Long idSPCT, Integer status) throws Exception;
+
+    void tatTrangThaiTheoIdSP(Long idSP);
+    void batTrangThaiTheoIdSP(Long idSP);
 }

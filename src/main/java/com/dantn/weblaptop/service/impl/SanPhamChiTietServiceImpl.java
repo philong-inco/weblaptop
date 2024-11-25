@@ -27,6 +27,7 @@ import com.dantn.weblaptop.entity.sanpham.thuoctinh.VGA;
 import com.dantn.weblaptop.entity.sanpham.thuoctinh.Webcam;
 import com.dantn.weblaptop.mapper.impl.SanPhamChiTietMapper;
 import com.dantn.weblaptop.repository.SanPhamChiTietRepository;
+import com.dantn.weblaptop.repository.SerialNumberRepository;
 import com.dantn.weblaptop.service.AnhSanPhamService;
 import com.dantn.weblaptop.service.SanPhamChiTietService;
 import com.dantn.weblaptop.service.SerialNumberService;
@@ -66,6 +67,7 @@ public class SanPhamChiTietServiceImpl implements SanPhamChiTietService {
 
     AnhSanPhamService anhSanPhamService;
     SerialNumberService serialNumberService;
+    SerialNumberRepository serialRepo;
 
     SanPhamChiTietSpecificationInner specificationInner;
     SanPhamChiTietSpecificationJoin specificationJoin;
@@ -330,6 +332,27 @@ public class SanPhamChiTietServiceImpl implements SanPhamChiTietService {
             entity.setTrangThai(status);
             spctRepository.save(entity);
         } else throw new Exception();
+    }
+
+    @Override
+    public void tatTrangThaiTheoIdSP(Long idSP) {
+        List<SanPhamChiTiet> spcts = spctRepository.findByProductIdListActive(idSP);
+        for (SanPhamChiTiet s : spcts) {
+            s.setTrangThai(0);
+            spctRepository.save(s);
+        }
+    }
+
+    @Override
+    public void batTrangThaiTheoIdSP(Long idSP) {
+        List<SanPhamChiTiet> spcts = spctRepository.findByProductIdListInActive(idSP);
+        for (SanPhamChiTiet s : spcts) {
+            List<SerialNumber> listSeri = serialRepo.findBySanPhamChiTietIdActive(s.getId());
+            if(listSeri.size()>0){
+                s.setTrangThai(1);
+                spctRepository.save(s);
+            }
+        }
     }
 
     public void updatePriceImageChangeImage(SanPhamChiTiet spct, String[] imgs){
