@@ -6,7 +6,6 @@ import com.dantn.weblaptop.dto.request.create_request.FindSanPhamFilterByName;
 import com.dantn.weblaptop.dto.request.create_request.HeDieuHanhCreate;
 import com.dantn.weblaptop.dto.request.create_request.ManHinhCreate;
 import com.dantn.weblaptop.dto.request.create_request.NhuCauCreate;
-import com.dantn.weblaptop.dto.request.create_request.RAMCreate;
 import com.dantn.weblaptop.dto.request.create_request.SanPhamCreate;
 import com.dantn.weblaptop.dto.request.create_request.ThuongHieuCreate;
 import com.dantn.weblaptop.dto.request.create_request.VGACreate;
@@ -15,7 +14,6 @@ import com.dantn.weblaptop.dto.request.update_request.BanPhimUpdate;
 import com.dantn.weblaptop.dto.request.update_request.HeDieuHanhUpdate;
 import com.dantn.weblaptop.dto.request.update_request.ManHinhUpdate;
 import com.dantn.weblaptop.dto.request.update_request.NhuCauUpdate;
-import com.dantn.weblaptop.dto.request.update_request.RAMUpdate;
 import com.dantn.weblaptop.dto.request.update_request.SanPhamUpdate;
 import com.dantn.weblaptop.dto.request.update_request.ThuongHieuUpdate;
 import com.dantn.weblaptop.dto.request.update_request.UpdateSPAndSPCTDTO;
@@ -25,7 +23,6 @@ import com.dantn.weblaptop.dto.response.BanPhimResponse;
 import com.dantn.weblaptop.dto.response.HeDieuHanhResponse;
 import com.dantn.weblaptop.dto.response.ManHinhResponse;
 import com.dantn.weblaptop.dto.response.NhuCauResponse;
-import com.dantn.weblaptop.dto.response.RAMResponse;
 import com.dantn.weblaptop.dto.response.SanPhamClientDTO;
 import com.dantn.weblaptop.dto.response.SanPhamResponse;
 import com.dantn.weblaptop.dto.response.ThuongHieuResponse;
@@ -74,6 +71,7 @@ public class SanPhamService extends GenericsService<SanPham, Long, SanPhamCreate
     private final GenericsService<HeDieuHanh, Long, HeDieuHanhCreate, HeDieuHanhUpdate, HeDieuHanhResponse> serviceHeDieuHanh;
     private final SanPhamRepository sanPhamRepository;
     private final SanPhamChiTietRepository spctRepo;
+    private final SanPhamChiTietService spctService;
 
     private final SanPhamMapper sanPhamMapper;
 
@@ -90,7 +88,7 @@ public class SanPhamService extends GenericsService<SanPham, Long, SanPhamCreate
                           GenericsService<BanPhim, Long, BanPhimCreate, BanPhimUpdate, BanPhimResponse> serviceBanPhim,
                           GenericsService<HeDieuHanh, Long, HeDieuHanhCreate, HeDieuHanhUpdate, HeDieuHanhResponse> serviceHeDieuHanh,
 
-                          SanPhamMapper sanPhamMapper
+                          SanPhamChiTietService spctService, SanPhamMapper sanPhamMapper
 
     ) {
         super(genericsRepository, genericsMapper);
@@ -103,6 +101,7 @@ public class SanPhamService extends GenericsService<SanPham, Long, SanPhamCreate
         this.serviceManHinh = serviceManHinh;
         this.serviceBanPhim = serviceBanPhim;
         this.serviceHeDieuHanh = serviceHeDieuHanh;
+        this.spctService = spctService;
         this.sanPhamMapper = sanPhamMapper;
     }
 
@@ -229,8 +228,15 @@ public class SanPhamService extends GenericsService<SanPham, Long, SanPhamCreate
         if (result.isPresent()) {
             SanPham sanPham = result.get();
             sanPham.setTrangThai(status);
-            if (sanPhamRepository.save(sanPham) != null)
+            if (sanPhamRepository.save(sanPham) != null){
+                if (status == 0){
+                    // tắt trạng thái
+                    spctService.tatTrangThaiTheoIdSP(id);
+                } else if (status == 1){
+                    spctService.batTrangThaiTheoIdSP(id);
+                }
                 return true;
+            }
         }
         return false;
     }
