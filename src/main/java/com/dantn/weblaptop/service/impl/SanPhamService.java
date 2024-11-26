@@ -71,7 +71,7 @@ public class SanPhamService extends GenericsService<SanPham, Long, SanPhamCreate
     private final GenericsService<HeDieuHanh, Long, HeDieuHanhCreate, HeDieuHanhUpdate, HeDieuHanhResponse> serviceHeDieuHanh;
     private final SanPhamRepository sanPhamRepository;
     private final SanPhamChiTietRepository spctRepo;
-    private final SanPhamChiTietService spctService;
+    private final SPCTService2 spctService;
 
     private final SanPhamMapper sanPhamMapper;
 
@@ -88,7 +88,7 @@ public class SanPhamService extends GenericsService<SanPham, Long, SanPhamCreate
                           GenericsService<BanPhim, Long, BanPhimCreate, BanPhimUpdate, BanPhimResponse> serviceBanPhim,
                           GenericsService<HeDieuHanh, Long, HeDieuHanhCreate, HeDieuHanhUpdate, HeDieuHanhResponse> serviceHeDieuHanh,
 
-                          SanPhamChiTietService spctService, SanPhamMapper sanPhamMapper
+                          SPCTService2 spctService, SanPhamMapper sanPhamMapper
 
     ) {
         super(genericsRepository, genericsMapper);
