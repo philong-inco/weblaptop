@@ -302,7 +302,7 @@ public class SerialNumberDaBanServiceImpl implements SerialNumberDaBanService {
                 return new SerialNumberDaBan_Dto(productName, productId, totalSerialsSold);
             }).collect(Collectors.toList());
         } else {
-            throw new AppException(ErrorCode.SERIAL_NUMBER_DA_BAN);
+            return new ArrayList<>();
         }
     }
 

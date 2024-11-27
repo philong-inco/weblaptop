@@ -1289,7 +1289,7 @@ public class HoaDonServiceImpl implements HoaDonService {
     public List<HoaDonDashboard_Dto> infoBillByDate(LocalDateTime startDateTime, LocalDateTime endDateTime) throws AppException {
         List<Object[]> results = billRepository.countInvoicesAndSumProductsByDate(startDateTime, endDateTime);
         if (results.isEmpty()) {
-            throw new AppException(ErrorCode.BILL_NOT_FOUND);
+            return new ArrayList<>();
         }
 
         List<HoaDonDashboard_Dto> hoaDonDashboardDtoList = new ArrayList<>();
@@ -1321,7 +1321,7 @@ public class HoaDonServiceImpl implements HoaDonService {
         Long endDateMillis = endDate.toInstant(ZoneOffset.UTC).toEpochMilli();
         List<Object[]> trangThaiHoaDonCalulate = hoaDonRepository.totalCalculateBillPercentageByDate(startDateMillis, endDateMillis);
         if (trangThaiHoaDonCalulate.isEmpty()) {
-            throw new AppException(ErrorCode.BILL_NOT_FOUND);
+            return new ArrayList<>();
         }
 
         List<TrangThaiHoaDon_Dto> listTrangThai = new ArrayList<>();
