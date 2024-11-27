@@ -29,7 +29,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.View;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.time.ZoneOffset;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -366,4 +368,37 @@ public class PhieuGiamGiaService {
             emailSender.sendWelcomeEmail(email);
         }
     }
+
+    public void changeStatusPhieuGiamGiaByDate() {
+        LocalDateTime now = LocalDateTime.now();
+        List<PhieuGiamGia> listAllPhieuGiamGia = phieuGiamGiaRepo.findAll();
+        List<PhieuGiamGia>  updatedList = new ArrayList<>();
+        for (PhieuGiamGia i : listAllPhieuGiamGia) {
+            if (i.getTrangThai() == 4) {
+                continue;
+            }
+            int currentStatus = i.getTrangThai();
+            if (i.getSoLuong() == 0) {
+                i.setTrangThai(2); // Hết hạn
+            } else if (i.getTrangThai() != 3) {
+                if (i.getNgayHetHan().isBefore(now)) {
+                    i.setTrangThai(2); // Hết hạn
+                } else if (i.getNgayBatDau().isAfter(now)) {
+                    i.setTrangThai(0); // Chưa áp dụng
+                } else if (i.getNgayBatDau().isBefore(now) && i.getNgayHetHan().isAfter(now)) {
+                    i.setTrangThai(1); // Đang áp dụng
+                }
+            }
+
+            // Chỉ thêm vào danh sách nếu trạng thái thay đổi
+            if (i.getTrangThai() != currentStatus) {
+                updatedList.add(i);
+            }
+        }
+
+        if (!updatedList.isEmpty()) {
+            phieuGiamGiaRepo.saveAll(updatedList); // Lưu tất cả các thay đổi một lần
+        }
+    }
+
 }

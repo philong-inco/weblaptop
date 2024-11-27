@@ -206,4 +206,9 @@ public interface PhieuGiamGiaRepo extends JpaRepository<PhieuGiamGia, Long>, Jpa
     @Query(value = "UPDATE PhieuGiamGia pgg  SET pgg.trangThai = 1 WHERE pgg.id = :id")
     void changeStatusPhieuGiamGiaPause(Long id);
 
+
+    @Modifying
+    @Transactional
+    @Query(value = "UPDATE PhieuGiamGia pgg  SET pgg.trangThai = :trangThai WHERE pgg.id = :id")
+    void changeStatusPhieuGiamGiaByDateNow(Long id, Integer trangThai);
 }

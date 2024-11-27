@@ -235,4 +235,15 @@ public class PhieuGiamGiaController {
         apiResponse.setMessage("Đã gửi email cho khách hàng.");
         return ResponseEntity.ok(apiResponse);
     }
+
+    @PutMapping("/checkupdatestatus")
+    public ResponseEntity<ApiResponse> checkUpdateStatus(){
+        phieuGiamGiaService.changeStatusPhieuGiamGiaByDate();
+        ApiResponse apiResponse = new ApiResponse<>();
+        apiResponse.setStatusCode(HttpStatus.OK.value());
+        apiResponse.setMessage("check update status success.");
+        return ResponseEntity.ok(apiResponse);
+    }
+
+
 }
