@@ -1,5 +1,6 @@
 package com.dantn.weblaptop.config;
 
+import com.dantn.weblaptop.repository.NhanVien_Repositoy;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -19,7 +20,6 @@ import java.util.Optional;
 @Component
 public class JwtUtil {
     private String SECRET_KEY = "sdjfskdjfldsfdsjcosdijcoisjcosijcosjcos"; // Thay đổi key của bạn
-
     public String generateToken(String username) {
         Map<String, Object> claims = new HashMap<>();
         return createToken(claims, username);

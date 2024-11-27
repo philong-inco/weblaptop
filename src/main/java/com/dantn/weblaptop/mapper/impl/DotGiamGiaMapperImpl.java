@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 
 @Component
 public class DotGiamGiaMapperImpl implements DotGiamGiaMapper {
-    private final AutoSetTime autoSetTime = new AutoSetTime();
+//    private final AutoSetTime autoSetTime = new AutoSetTime();
 
     @Override
     public DotGiamGia createRequestToDotGiamGia(CreateDotGiamGiaRequest request) {
@@ -32,7 +32,7 @@ public class DotGiamGiaMapperImpl implements DotGiamGiaMapper {
         dotGiamGia.setThoiGianKetthuc(request.getThoiGianKetThuc());
         dotGiamGia.setGiaTriGiam(request.getGiaTriGiam());
         dotGiamGia.setGiamToiDa(request.getGiamToiDa());
-        dotGiamGia.setNgayTao(autoSetTime.getCurrentTimes());
+//        dotGiamGia.setNgayTao(autoSetTime.getCurrentTimes());
         return dotGiamGia;
     }
 
@@ -86,7 +86,7 @@ public class DotGiamGiaMapperImpl implements DotGiamGiaMapper {
         dotGiamGia.setThoiGianBatDau(request.getThoiGianBatDau());
         dotGiamGia.setThoiGianKetthuc(request.getThoiGianKetThuc());
         dotGiamGia.setGiaTriGiam(request.getGiaTriGiam());
-        dotGiamGia.setNgayTao(autoSetTime.getCurrentTimes());
+//        dotGiamGia.setNgayTao(autoSetTime.getCurrentTimes());
         dotGiamGia.setGiamToiDa(request.getGiamToiDa());
         return dotGiamGia;
     }
