@@ -1,5 +1,6 @@
 package com.dantn.weblaptop.service.impl;
 
+import com.dantn.weblaptop.config.JwtUtil;
 import com.dantn.weblaptop.constant.HoaDonStatus;
 import com.dantn.weblaptop.constant.RankCustomer;
 import com.dantn.weblaptop.dto.HoaDonDashboard_Dto;
@@ -127,11 +128,17 @@ public class HoaDonServiceImpl implements HoaDonService {
 //        if (billListStatusPending.size() >= 5) {
 //            throw new AppException(ErrorCode.MAXIMUM_5);
 //        }
-        NhanVien existingEmployee = employeeRepository.findById(1L).get();
-        // save
         HoaDon newBill = new HoaDon();
+        Optional<String> emailOption = JwtUtil.getCurrentUserLogin();
+        if (emailOption.isPresent() ) {
+            NhanVien existingEmployee = employeeRepository.findByEmail(emailOption.get());
+            newBill.setNhanVien(existingEmployee);
+        }
+
+        // save
+
         newBill.setMa(GenerateCode.generateHoaDon());
-        newBill.setNhanVien(existingEmployee);
+
         newBill.setTongTienPhaiTra(BigDecimal.ZERO);
         newBill.setTongTienBanDau(BigDecimal.ZERO);
         newBill.setTrangThai(HoaDonStatus.DON_MOI);
@@ -602,7 +609,7 @@ public class HoaDonServiceImpl implements HoaDonService {
                 hoaDonHinhThucThanhToan.setHinhThucThanhToan(tienMat);
                 hoaDonHinhThucThanhToan.setTrangThai(1);
                 hoaDonHinhThucThanhToanRepository.save(hoaDonHinhThucThanhToan);
-            }else{
+            } else {
 
             }
 
@@ -663,7 +670,7 @@ public class HoaDonServiceImpl implements HoaDonService {
         bill.setEmail(request.getEmail());
         bill.setLoaiHoaDon(1);
         billRepository.save(bill);
-        if(!bill.getTrangThai().name().equals("DON_MOI") &&!bill.getTrangThai().name().equals("TREO") ){
+        if (!bill.getTrangThai().name().equals("DON_MOI") && !bill.getTrangThai().name().equals("TREO")) {
             LichSuHoaDon lichSuHoaDon = new LichSuHoaDon();
             lichSuHoaDon.setHoaDon(bill);
             lichSuHoaDon.setTrangThai(12);//cap nhap don hang
@@ -742,7 +749,7 @@ public class HoaDonServiceImpl implements HoaDonService {
 //        renderer.createPDF(outputStream);
 
 //        return ((ByteArrayOutputStream) outputStream).toByteArray();
-      return   htmlToPdf(processedHtml,billCode);
+        return htmlToPdf(processedHtml, billCode);
     }
 
     public byte[] htmlToPdf(String processedHtml, String code) {
@@ -962,7 +969,7 @@ public class HoaDonServiceImpl implements HoaDonService {
             if (optional.isPresent()) {
                 bill.setKhachHang(optional.get());
 //                bill.setTienGiamHangKhachHang(request.getGiamHangKhachHang());
-                if(bill.getPhieuGiamGia()!=null){
+                if (bill.getPhieuGiamGia() != null) {
                     updateCoupons(bill.getPhieuGiamGia(), bill);
                 }
             } else {
@@ -1414,7 +1421,6 @@ public class HoaDonServiceImpl implements HoaDonService {
         }
         serialNumberRepository.saveAll(serialNumbers);
     }
-
 
 
 }
