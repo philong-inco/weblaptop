@@ -24,6 +24,7 @@ import org.springframework.web.servlet.View;
 
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -142,6 +143,36 @@ public class DotGiamGiaServiceImpl implements DotGiamGiaService {
         return dotGiamGiaRepository.getDotGiamGiaBySPCTId(idSPCT);
 
     }
+
+    @Override
+    public void changeStatusDotGiamGiaByDate() {
+        LocalDateTime now = LocalDateTime.now();
+        List<DotGiamGia> updateList = new ArrayList<>();
+        List<DotGiamGia> dotGiamGiaList = dotGiamGiaRepository.findAll();
+        for (DotGiamGia dotGiamGia : dotGiamGiaList) {
+            if(dotGiamGia.getTrangThai() == 4){
+                continue;
+            }
+            int currentStatus = dotGiamGia.getTrangThai();
+            if (dotGiamGia.getTrangThai() != 3) { // Chỉ cập nhật nếu phiếu giảm giá không bị hủy
+                if (dotGiamGia.getThoiGianKetthuc().isBefore(now)) {
+                    dotGiamGia.setTrangThai(2); // Cập nhật trạng thái thành "Hết hạn"
+                } else if (dotGiamGia.getThoiGianBatDau().isAfter(now)) {
+                    dotGiamGia.setTrangThai(0); // Cập nhật trạng thái thành "Chưa áp dụng"
+                } else if (dotGiamGia.getThoiGianBatDau().isBefore(now) && dotGiamGia.getThoiGianKetthuc().isAfter(now)) {
+                    dotGiamGia.setTrangThai(1); // Cập nhật trạng thái thành "Đang áp dụng"
+                }
+            }
+            if(dotGiamGia.getTrangThai() != currentStatus){
+                updateList.add(dotGiamGia);
+            }
+        }
+
+        if(!updateList.isEmpty()){
+            dotGiamGiaRepository.saveAll(updateList);
+        }
+    }
+
 
     private String generateUniqueCode() {
         return "DGG" + System.currentTimeMillis();

@@ -67,4 +67,8 @@ public interface DotGiamGiaRepository extends JpaRepository<DotGiamGia, Long>, J
     @Query("SELECT dgg FROM DotGiamGia dgg JOIN dgg.dotGiamGiaSanPhamChiTiets dggct WHERE dggct.sanPhamChiTiet.id = :idSPCT AND dgg.trangThai = 1")
      List<DotGiamGia> getDotGiamGiaBySPCTId(@Param("idSPCT")Long idSPCT);
 
+    @Modifying
+    @Transactional
+    @Query(value = "UPDATE DotGiamGia dgg SET dgg.trangThai = :trangThai WHERE dgg.id = :id")
+    void updateStatusDGGByDate(@Param("id") Long id, @Param("trangThai") Integer trangThai);
 }

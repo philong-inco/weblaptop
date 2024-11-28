@@ -2,11 +2,13 @@ package com.dantn.weblaptop.controller;
 
 import com.dantn.weblaptop.dto.request.create_request.CreateDotGiamGiaRequest;
 import com.dantn.weblaptop.dto.request.update_request.UpdateGotGiamGiaRequest;
+import com.dantn.weblaptop.dto.response.ApiResponse;
 import com.dantn.weblaptop.dto.response.DotGiamGiaResponse;
 import com.dantn.weblaptop.exception.AppException;
 import com.dantn.weblaptop.service.DotGiamGiaService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
@@ -121,5 +123,14 @@ public class DotGiamGiaController {
     @GetMapping("/findbyidspctandactive")
     public ResponseEntity<?> findByIdSpctAndActive(@PathVariable Long idSpct) {
         return ResponseEntity.ok(dotGiamGiaService.getDotGiamGiaBySPCTId(idSpct));
+    }
+
+    @PutMapping("/checkupdatestatus")
+    public ResponseEntity<ApiResponse> checkUpdateStatus(){
+        dotGiamGiaService.changeStatusDotGiamGiaByDate();
+        com.dantn.weblaptop.dto.response.ApiResponse apiResponse = new ApiResponse<>();
+        apiResponse.setStatusCode(HttpStatus.OK.value());
+        apiResponse.setMessage("check update status success.");
+        return ResponseEntity.ok(apiResponse);
     }
 }

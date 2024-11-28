@@ -389,15 +389,13 @@ public class PhieuGiamGiaService {
                     i.setTrangThai(1); // Đang áp dụng
                 }
             }
-
-            // Chỉ thêm vào danh sách nếu trạng thái thay đổi
             if (i.getTrangThai() != currentStatus) {
                 updatedList.add(i);
             }
         }
 
         if (!updatedList.isEmpty()) {
-            phieuGiamGiaRepo.saveAll(updatedList); // Lưu tất cả các thay đổi một lần
+            phieuGiamGiaRepo.saveAll(updatedList);
         }
     }
 

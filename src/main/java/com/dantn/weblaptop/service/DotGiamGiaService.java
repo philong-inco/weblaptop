@@ -36,4 +36,6 @@ public interface DotGiamGiaService {
 
     List<DotGiamGia> getDotGiamGiaBySPCTId(Long idSPCT);
 
+     void changeStatusDotGiamGiaByDate();
+
 }
