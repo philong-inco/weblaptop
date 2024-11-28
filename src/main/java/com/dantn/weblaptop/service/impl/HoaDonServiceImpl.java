@@ -124,13 +124,13 @@ public class HoaDonServiceImpl implements HoaDonService {
 
     @Override
     public HoaDonResponse createBill() throws AppException {
-        List<HoaDon> billListStatusPending = billRepository.findByTrangThaiAndLoaiHoaDon(HoaDonStatus.getHoaDonStatusEnum("Đơn mới"), 0);
+//        List<HoaDon> billListStatusPending = billRepository.findByTrangThaiAndLoaiHoaDon(HoaDonStatus.getHoaDonStatusEnum("Đơn mới"), 0);
 //        if (billListStatusPending.size() >= 5) {
 //            throw new AppException(ErrorCode.MAXIMUM_5);
 //        }
         HoaDon newBill = new HoaDon();
         Optional<String> emailOption = JwtUtil.getCurrentUserLogin();
-        if (emailOption.isPresent() ) {
+        if (emailOption.isPresent() && !emailOption.get().equals("anonymousUser") ) {
             NhanVien existingEmployee = employeeRepository.findByEmail(emailOption.get());
             newBill.setNhanVien(existingEmployee);
         }
@@ -284,8 +284,8 @@ public class HoaDonServiceImpl implements HoaDonService {
                 if (hoaDonHinhThucThanhToan.isPresent()) {
                     hoaDonHinhThucThanhToan.get().setLoaiThanhToan(0);
                     hoaDonHinhThucThanhToan.get().setTrangThai(0);
-                    hoaDonHinhThucThanhToan.get().setNguoiSua("Nguyễn Tiến Mạnh");
-                    hoaDonHinhThucThanhToan.get().setNguoiTao("Nguyễn Tiến Mạnh");
+//                    hoaDonHinhThucThanhToan.get().setNguoiSua("Nguyễn Tiến Mạnh");
+//                    hoaDonHinhThucThanhToan.get().setNguoiTao("Nguyễn Tiến Mạnh");
                     hoaDonHinhThucThanhToanRepository.save(hoaDonHinhThucThanhToan.get());
                 }
 //                if (bill.getKhachHang() != null) {
@@ -323,8 +323,8 @@ public class HoaDonServiceImpl implements HoaDonService {
                 Optional<HoaDonHinhThucThanhToan> hoaDonHinhThucThanhToan = hoaDonHinhThucThanhToanRepository.findByHoaDonIdAndLoaiThanhToan(optional.get().getId(), 1);
                 if (hoaDonHinhThucThanhToan.isPresent()) {
                     hoaDonHinhThucThanhToan.get().setLoaiThanhToan(0);
-                    hoaDonHinhThucThanhToan.get().setNguoiSua("Nguyễn Tiến Mạnh");
-                    hoaDonHinhThucThanhToan.get().setNguoiTao("Nguyễn Tiến Mạnh");
+//                    hoaDonHinhThucThanhToan.get().setNguoiSua("Nguyễn Tiến Mạnh");
+//                    hoaDonHinhThucThanhToan.get().setNguoiTao("Nguyễn Tiến Mạnh");
                     hoaDonHinhThucThanhToanRepository.save(hoaDonHinhThucThanhToan.get());
                 }
                 if (bill.getKhachHang() != null) {
@@ -359,8 +359,8 @@ public class HoaDonServiceImpl implements HoaDonService {
                 if (hoaDonHinhThucThanhToan.isPresent()) {
                     hoaDonHinhThucThanhToan.get().setLoaiThanhToan(0);
                     hoaDonHinhThucThanhToan.get().setTrangThai(0);
-                    hoaDonHinhThucThanhToan.get().setNguoiSua("Nguyễn Tiến Mạnh");
-                    hoaDonHinhThucThanhToan.get().setNguoiTao("Nguyễn Tiến Mạnh");
+//                    hoaDonHinhThucThanhToan.get().setNguoiSua("Nguyễn Tiến Mạnh");
+//                    hoaDonHinhThucThanhToan.get().setNguoiTao("Nguyễn Tiến Mạnh");
                     hoaDonHinhThucThanhToanRepository.save(hoaDonHinhThucThanhToan.get());
                 }
             }
@@ -586,16 +586,23 @@ public class HoaDonServiceImpl implements HoaDonService {
             HoaDonResponse response = HoaDonMapper.toHoaDonResponse(billRepository.save(bill));
             billHistory.setHoaDon(bill);
             billHistory.setTrangThai(6);
-            billHistory.setNguoiSua("Nguyễn Tiến Mạnh");
-            billHistory.setNguoiTao("Nguyễn Tiến Mạnh");
+//            billHistory.setNguoiSua("Nguyễn Tiến Mạnh");
+//            billHistory.setNguoiTao("Nguyễn Tiến Mạnh");
             billHistory.setGhiChuChoCuaHang("Thanh toán thành công");
             billHistory.setGhiChuChoKhachHang("Thanh toán thành công");
-            NhanVien nhanVien = employeeRepository.findById(1L).get();
-            sendEmailBill.sendEmailXacNhan(response, "Cảm ơn ban đã mua hàng");
-            billHistory.setNhanVien(nhanVien);
-            if (bill.getKhachHang() != null) {
-                updateCustomerRank(bill.getKhachHang().getId());
+//            NhanVien nhanVien = employeeRepository.findById(1L).get()
+            Optional<String> emailOption = JwtUtil.getCurrentUserLogin();
+            if (emailOption.isPresent() && !emailOption.get().equals("anonymousUser") ) {
+                NhanVien existingEmployee = employeeRepository.findByEmail(emailOption.get());
+//                bill.setNhanVien(existingEmployee);
+                billHistory.setNhanVien(existingEmployee);
             }
+            sendEmailBill.sendEmailXacNhan(response, "Cảm ơn ban đã mua hàng");
+//            billHistory.setNhanVien(nhanVien);
+
+//            if (bill.getKhachHang() != null) {
+////                updateCustomerRank(bill.getKhachHang().getId());
+//            }
         } else if (request.getLoaiHoaDon() == 1) {
             // lưu
             if (request.getThanhToanSau() == 1) {
@@ -603,8 +610,8 @@ public class HoaDonServiceImpl implements HoaDonService {
                 hoaDonHinhThucThanhToan.setSoTien(bill.getTienShip().add(bill.getTongTienPhaiTra()));
                 hoaDonHinhThucThanhToan.setTienNhan(bill.getTienShip().add(bill.getTongTienPhaiTra()));
                 hoaDonHinhThucThanhToan.setHoaDon(bill);
-                hoaDonHinhThucThanhToan.setNguoiSua("Nguyễn Tiến Mạnh");
-                hoaDonHinhThucThanhToan.setNguoiTao("Nguyễn Tiến Mạnh");
+//                hoaDonHinhThucThanhToan.setNguoiSua("Nguyễn Tiến Mạnh");
+//                hoaDonHinhThucThanhToan.setNguoiTao("Nguyễn Tiến Mạnh");
                 hoaDonHinhThucThanhToan.setLoaiThanhToan(request.getLoaiHoaDon());
                 hoaDonHinhThucThanhToan.setHinhThucThanhToan(tienMat);
                 hoaDonHinhThucThanhToan.setTrangThai(1);
@@ -626,12 +633,18 @@ public class HoaDonServiceImpl implements HoaDonService {
             billRepository.save(bill);
             billHistory.setHoaDon(bill);
             billHistory.setTrangThai(9);
-            billHistory.setNguoiSua("Nguyễn Tiến Mạnh");
-            billHistory.setNguoiTao("Nguyễn Tiến Mạnh");
+//            billHistory.setNguoiSua("Nguyễn Tiến Mạnh");
+//            billHistory.setNguoiTao("Nguyễn Tiến Mạnh");
             billHistory.setGhiChuChoCuaHang("Hóa đơn chuyển sang chờ xác nhận");
             billHistory.setGhiChuChoKhachHang("Chờ xác nhận");
-            NhanVien nhanVien = employeeRepository.findById(1L).get();
-            billHistory.setNhanVien(nhanVien);
+//            NhanVien nhanVien = employeeRepository.findById(1L).get();
+            Optional<String> emailOption = JwtUtil.getCurrentUserLogin();
+            if (emailOption.isPresent() && !emailOption.get().equals("anonymousUser") ) {
+                NhanVien existingEmployee = employeeRepository.findByEmail(emailOption.get());
+//                newBill.setNhanVien(existingEmployee);
+                billHistory.setNhanVien(existingEmployee);
+            }
+
         }
         billHistoryRepository.save(billHistory);
         return bill.getMa();
@@ -677,8 +690,8 @@ public class HoaDonServiceImpl implements HoaDonService {
             lichSuHoaDon.setKhachHang(bill.getKhachHang());
             lichSuHoaDon.setNhanVien(bill.getNhanVien());
             lichSuHoaDon.setGhiChuChoCuaHang("Cập nhập địa chỉ");
-            lichSuHoaDon.setNguoiTao("Mạnh cập nhập");
-            lichSuHoaDon.setNguoiSua("Mạnh cập nhập");
+//            lichSuHoaDon.setNguoiTao("Mạnh cập nhập");
+//            lichSuHoaDon.setNguoiSua("Mạnh cập nhập");
             billHistoryRepository.save(lichSuHoaDon);
         }
     }
@@ -834,8 +847,8 @@ public class HoaDonServiceImpl implements HoaDonService {
             paymentHistory.setSoTien(request.getTongTienPhaiTra());
             paymentHistory.setTienNhan(BigDecimal.ZERO);
             paymentHistory.setHoaDon(bill);
-            paymentHistory.setNguoiTao("Nguyễn Tiến Mạnh");
-            paymentHistory.setNguoiSua("Nguyễn Tiến Mạnh");
+//            paymentHistory.setNguoiTao("Nguyễn Tiến Mạnh");
+//            paymentHistory.setNguoiSua("Nguyễn Tiến Mạnh");
             paymentHistory.setTrangThai(1);
             paymentHistory.setLoaiThanhToan(request.getThanhToanSau());
             paymentHistory.setHinhThucThanhToan(payment);
@@ -985,8 +998,8 @@ public class HoaDonServiceImpl implements HoaDonService {
             paymentHistory.setSoTien(request.getTongTienPhaiTra());
             paymentHistory.setTienNhan(request.getTongTienPhaiTra());
             paymentHistory.setHoaDon(bill);
-            paymentHistory.setNguoiTao("Nguyễn Tiến Mạnh");
-            paymentHistory.setNguoiSua("Nguyễn Tiến Mạnh");
+//            paymentHistory.setNguoiTao("Nguyễn Tiến Mạnh");
+//            paymentHistory.setNguoiSua("Nguyễn Tiến Mạnh");
             paymentHistory.setLoaiThanhToan(request.getThanhToanSau());
             paymentHistory.setTrangThai(1);
             paymentHistory.setHinhThucThanhToan(payment);

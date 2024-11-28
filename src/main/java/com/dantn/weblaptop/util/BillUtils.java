@@ -5,7 +5,7 @@ import com.dantn.weblaptop.constant.HoaDonStatus;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
-import java.util.Locale;
+import java.util.*;
 
 public class BillUtils {
 
@@ -36,7 +36,7 @@ public class BillUtils {
         }
     }
 
-    public  static String convertMoney (BigDecimal money) {
+    public static String convertMoney(BigDecimal money) {
         if (money == null || money.compareTo(BigDecimal.ZERO) == 0) {
             return "0 đ";
         }
@@ -44,5 +44,43 @@ public class BillUtils {
         symbols.setGroupingSeparator('.');
         symbols.setDecimalSeparator(',');
         DecimalFormat formatter = new DecimalFormat("#,###.###", symbols);
-        return formatter.format(money) + " đ";    }
+        return formatter.format(money) + " đ";
+    }
+
+    public static Map<String, BigDecimal> listMoneyShip = new HashMap<String, BigDecimal>();
+
+
+    public static BigDecimal getMoney(String billCode) {
+        return listMoneyShip.get(billCode);
+    }
+
+    public static boolean addMoney(String billCode, BigDecimal amount) {
+        if (listMoneyShip.containsKey(billCode)) {
+            System.out.println("Không thể thêm: Mã hóa đơn '" + billCode + "' đã tồn tại.");
+            return false;
+        }
+
+        if (amount.compareTo(BigDecimal.ZERO) <= 0) {
+            System.out.println("Không thể thêm: Số tiền phải lớn hơn 0.");
+            return false;
+        }
+
+        listMoneyShip.put(billCode, amount);
+        System.out.println("Thêm thành công: Mã hóa đơn '" + billCode + "', Số tiền: " + amount);
+        return true;
+    }
+
+
+    public static boolean removeMoney(String billCode) {
+        if (listMoneyShip.containsKey(billCode)) {
+            listMoneyShip.remove(billCode);
+            return true;
+        }
+        return false;
+    }
+    public static void printAll() {
+        for (Map.Entry<String, BigDecimal> entry : listMoneyShip.entrySet()) {
+            System.out.println("Bill Code: " + entry.getKey() + ", Amount: " + entry.getValue());
+        }
+    }
 }
