@@ -44,9 +44,17 @@ public class AutoSetTime {
         return Calendar.getInstance().getTimeInMillis();
     }
     public String getNameStaff() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication != null) {
-            return authentication.getName();
-        } else return "Systerm filled data";
+//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+//        if (authentication != null) {
+//            return authentication.getName();
+//        } else return "Systerm filled data";
+        Optional<String> optional = JwtUtil.getCurrentUserLogin();
+        if (optional.isPresent()) {
+            if(optional.get().equals("anonymousUser")){
+                return "Nguyễn Tiến Mạnh";
+            }
+            return optional.get();
+        }
+        return "Chưa xác định";
     }
 }

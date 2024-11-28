@@ -58,6 +58,12 @@ public class GioHangServiceImpl implements GioHangService {
 
     @Override
     public CartResponse addToCart(AddToGioHangRequest request, HttpServletRequest httpServletRequest) throws AppException {
+        SanPhamChiTiet sanPhamChiTiet = sanPhamChiTietRepository.findById(request.getIdSPCT()).orElseThrow(
+                ()-> new AppException(ErrorCode.PRODUCT_DETAIL_NOT_FOUND)
+        );
+        if(sanPhamChiTiet.getTrangThai()==0){
+            throw new AppException(ErrorCode.SAN_PHAM_NGUNG_BAN);
+        }
         Integer quantity = Optional.ofNullable(serialNumberService.getSerialNumberByProductIdAndStatus(request.getIdSPCT(), 0)).map(List::size).orElse(0);
         if (quantity < request.getSoLuong()) {
             throw new AppException(ErrorCode.PRODUCT_QUANTITY_IS_NOT_ENOUGH);

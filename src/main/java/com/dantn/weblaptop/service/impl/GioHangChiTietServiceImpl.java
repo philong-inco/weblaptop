@@ -3,6 +3,7 @@ package com.dantn.weblaptop.service.impl;
 import com.dantn.weblaptop.dto.request.create_request.GioHangRequest;
 import com.dantn.weblaptop.dto.request.update_request.UpdateSoLongRequest;
 import com.dantn.weblaptop.entity.giohang.GioHangChiTiet;
+import com.dantn.weblaptop.entity.sanpham.SanPhamChiTiet;
 import com.dantn.weblaptop.exception.AppException;
 import com.dantn.weblaptop.exception.ErrorCode;
 import com.dantn.weblaptop.repository.GioHangChiTietRepository;
@@ -24,6 +25,7 @@ import java.util.Optional;
 public class GioHangChiTietServiceImpl implements GioHangChiTietService {
     GioHangChiTietRepository gioHangChiTietRepository;
     SerialNumberService serialNumberService;
+    SanPhamChiTietRepository sanPhamChiTietRepository;
 
 
     @Override
@@ -35,6 +37,12 @@ public class GioHangChiTietServiceImpl implements GioHangChiTietService {
     @Override
     public String changeQuantity(UpdateSoLongRequest changeQuantity) throws AppException {
         GioHangChiTiet cartDetail = gioHangChiTietRepository.findById(changeQuantity.getIdGioHangChiTiet()).get();
+        SanPhamChiTiet sanPhamChiTiet = sanPhamChiTietRepository.findById(cartDetail.getSanPhamChiTiet().getId()).orElseThrow(
+                ()-> new AppException(ErrorCode.PRODUCT_DETAIL_NOT_FOUND)
+        );
+        if(sanPhamChiTiet.getTrangThai()==0){
+            throw new AppException(ErrorCode.SAN_PHAM_NGUNG_BAN);
+        }
         Integer quantity = Optional.ofNullable(
                         serialNumberService.getSerialNumberByProductIdAndStatus(cartDetail.getSanPhamChiTiet().getId(), 0))
                 .map(List::size)
