@@ -359,6 +359,7 @@ public class HoaDonServiceImpl implements HoaDonService {
                 if (hoaDonHinhThucThanhToan.isPresent()) {
                     hoaDonHinhThucThanhToan.get().setLoaiThanhToan(0);
                     hoaDonHinhThucThanhToan.get().setTrangThai(0);
+                    hoaDonHinhThucThanhToan.get().setTienNhan(bill.getTongTienPhaiTra().add(bill.getTienShip()));
 //                    hoaDonHinhThucThanhToan.get().setNguoiSua("Nguyễn Tiến Mạnh");
 //                    hoaDonHinhThucThanhToan.get().setNguoiTao("Nguyễn Tiến Mạnh");
                     hoaDonHinhThucThanhToanRepository.save(hoaDonHinhThucThanhToan.get());
@@ -377,8 +378,6 @@ public class HoaDonServiceImpl implements HoaDonService {
         Page<HoaDon> billPage = billRepository.findAll(specification, sortedPageable);
         Page<HoaDonResponse> responses = billPage.map(bill -> {
             HoaDonResponse response = HoaDonMapper.toHoaDonResponse(bill);
-//            Optional<Integer> quantity = serialNumberDaBanRepository.getQuantityByHoaDonId(bill.getId());
-//            response.setTongSanPham(quantity.orElse(0));
             return response;
         });
 
