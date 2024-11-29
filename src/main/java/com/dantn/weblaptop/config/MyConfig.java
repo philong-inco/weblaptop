@@ -87,7 +87,9 @@ public class MyConfig {
 //                        "/api/vga/delete/**",
 //                        "/api/webcam/delete/**"
 //                ).hasAnyRole( "ADMIN")
-
+                                .requestMatchers("/api/v1/auth/admin-test").hasRole("ADMIN")
+                                .requestMatchers("/api/ban-phim/add").hasAnyRole("ADMIN")
+                                .requestMatchers("/api/ban-phim/update/**").hasAnyRole("ADMIN")
                 .anyRequest().permitAll()
         )
         .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class)

@@ -150,6 +150,7 @@ public class SanPhamChiTietMapper extends GenericsMapper<SanPhamChiTiet, SanPham
                 .vga(entity.getVga().getTen())
                 .idWebcam(entity.getWebcam().getId())
                 .webcam(entity.getWebcam().getTen())
+                .trangThai(entity.getTrangThai())
                 .build();
 
         // check cac gia tri con lai

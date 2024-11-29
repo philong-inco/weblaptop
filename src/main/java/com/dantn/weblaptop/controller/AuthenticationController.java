@@ -19,6 +19,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -81,7 +82,15 @@ public class AuthenticationController {
             List<String> granded = vaiTroRepository.findByIdNhanVien(staff.getId())
                     .stream().map(VaiTro::getTen).collect(Collectors.toList());
             System.out.println(granded);
-            if (granded.size() > 1 && granded.contains("ADMIN")){
+            String x = granded.get(0);
+            String y = "ADMIN";
+            if (x == y){
+                System.out.println("true");
+            }
+            if (granded.contains("ADMIN")){
+                System.out.println("true");
+            }
+            if (granded.size() >= 1 && granded.contains("ADMIN")){
                 response.setRole("ADMIN");
             } else if (granded.size() == 1 && granded.contains("STAFF")) {
                 response.setRole("STAFF");
@@ -96,5 +105,10 @@ public class AuthenticationController {
         }
 
         return response;
+    }
+
+    @GetMapping("admin-test")
+    public ResponseEntity<?> testAdmin(){
+        return ResponseEntity.ok("Admin mới xem được");
     }
 }
