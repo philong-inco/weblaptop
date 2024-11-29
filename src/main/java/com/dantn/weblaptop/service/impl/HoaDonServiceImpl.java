@@ -381,14 +381,18 @@ public class HoaDonServiceImpl implements HoaDonService {
                     hoaDonHinhThucThanhToanRepository.save(hoaDonHinhThucThanhToan.get());
                 }
             }else if(HoaDonStatus.XAC_NHAN.name().equals(status)){
-                HoaDonHinhThucThanhToan hinhThucThanhToan = new HoaDonHinhThucThanhToan();
-                hinhThucThanhToan.setSoTien(bill.getTongTienPhaiTra().add(bill.getTienShip()));
-                hinhThucThanhToan.setHoaDon(bill);
-                hinhThucThanhToan.setTienNhan((bill.getTongTienPhaiTra().add(bill.getTienShip())));
-                hinhThucThanhToan.setLoaiThanhToan(1);
-                hinhThucThanhToan.setTrangThai(1);
-                hinhThucThanhToan.setHinhThucThanhToan(payment);
-                hoaDonHinhThucThanhToanRepository.save(hinhThucThanhToan);
+                List<HoaDonHinhThucThanhToan> list = hoaDonHinhThucThanhToanRepository.findAllByHoaDonMa(code);
+                if(list.isEmpty()){
+                    HoaDonHinhThucThanhToan hinhThucThanhToan = new HoaDonHinhThucThanhToan();
+                    hinhThucThanhToan.setSoTien(bill.getTongTienPhaiTra().add(bill.getTienShip()));
+                    hinhThucThanhToan.setHoaDon(bill);
+                    hinhThucThanhToan.setTienNhan((bill.getTongTienPhaiTra().add(bill.getTienShip())));
+                    hinhThucThanhToan.setLoaiThanhToan(1);
+                    hinhThucThanhToan.setTrangThai(1);
+                    hinhThucThanhToan.setHinhThucThanhToan(payment);
+                    hoaDonHinhThucThanhToanRepository.save(hinhThucThanhToan);
+                }
+
             }
             bill.setTrangThai(HoaDonStatus.getHoaDonStatusEnumByKey(status));
             billRepository.save(bill);

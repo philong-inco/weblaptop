@@ -381,7 +381,8 @@ public class SerialNumberDaBanServiceImpl implements SerialNumberDaBanService {
             // Tính tổng số tiền phải trả cộng với tiền ship
             BigDecimal tongTienPhaiTraVaShip = existingBill.getTongTienPhaiTra().add(existingBill.getTienShip());
             // Lấy số tiền đã thanh toán
-            BigDecimal soTienDaThanhToan = optionalTraTruoc.get().getSoTien();
+//            BigDecimal soTienDaThanhToan = optionalTraTruoc.get().getSoTien();
+            BigDecimal soTienDaThanhToan = optionalTraTruoc.get().getTienNhan();
 
             // Tính số tiền chênh lệch
             BigDecimal soTienChenhLech = tongTienPhaiTraVaShip.subtract(soTienDaThanhToan);
