@@ -51,4 +51,5 @@ public class SanPhamChiTietClientDTO {
     String maKhuyenMai;
     String tenKhuyenMai;
     String listUrlAnhSanPham;
+    Integer trangThai;
 }
