@@ -34,37 +34,37 @@ public class MyConfig {
         http.authorizeHttpRequests((authz) -> authz
                 .requestMatchers("/api/v1/auth/login").permitAll()
                  //Phần của Long (ae không sửa)
-//                .requestMatchers(
-//                        "/api/ban-phim/add",
-//                        "/api/ban-phim/update/**",
-//                        "/api/he-dieu-hanh/add",
-//                        "/api/he-dieu-hanh/update/**",
-//                        "/api/man-hinh/add",
-//                        "/api/man-hinh/update/**",
-//                        "/api/mau-sac/add",
-//                        "/api/mau-sac/update/**",
-//                        "/api/nhu-cau/add",
-//                        "/api/nhu-cau/update/**",
-//                        "/api/o-cung/add",
-//                        "/api/o-cung/update/**",
-//                        "/api/ram/add",
-//                        "/api/ram/update/**",
-//                        "/api/san-pham-chi-tiet/add",
-//                        "/api/san-pham-chi-tiet/update/**",
-//                        "/api/san-pham/add",
-//                        "/api/san-pham/update/**",
-//                        "/api/san-pham/change-status",
-//                        "/api/san-pham/updateSanPhamAndSPCT/**",
-//                        "/api/serial-number/add",
-//                        "/api/serial-number/update/**",
-//                        "/api/serial-number/change-status-to-serial-da-ban/**",
-//                        "/api/thuong-hieu/add",
-//                        "/api/thuong-hieu/update/**",
-//                        "/api/vga/add",
-//                        "/api/vga/update/**",
-//                        "/api/webcam/add",
-//                        "/api/webcam/update/**"
-//                ).hasAnyRole("STAFF", "ADMIN")
+                .requestMatchers(
+                        "/api/ban-phim/add",
+                        "/api/ban-phim/update/**",
+                        "/api/he-dieu-hanh/add",
+                        "/api/he-dieu-hanh/update/**",
+                        "/api/man-hinh/add",
+                        "/api/man-hinh/update/**",
+                        "/api/mau-sac/add",
+                        "/api/mau-sac/update/**",
+                        "/api/nhu-cau/add",
+                        "/api/nhu-cau/update/**",
+                        "/api/o-cung/add",
+                        "/api/o-cung/update/**",
+                        "/api/ram/add",
+                        "/api/ram/update/**",
+                        "/api/san-pham-chi-tiet/add",
+                        "/api/san-pham-chi-tiet/update/**",
+                        "/api/san-pham/add",
+                        "/api/san-pham/update/**",
+                        "/api/san-pham/change-status",
+                        "/api/san-pham/updateSanPhamAndSPCT/**",
+                        "/api/serial-number/add",
+                        "/api/serial-number/update/**",
+                        "/api/serial-number/change-status-to-serial-da-ban/**",
+                        "/api/thuong-hieu/add",
+                        "/api/thuong-hieu/update/**",
+                        "/api/vga/add",
+                        "/api/vga/update/**",
+                        "/api/webcam/add",
+                        "/api/webcam/update/**"
+                ).hasAnyRole("ADMIN")
 //                .requestMatchers(
 //                        "api/sell/**",
 //                        "/api/bills/code/**")
@@ -72,24 +72,22 @@ public class MyConfig {
 //                .requestMatchers("api/sell/**",
 //                        "/api/bills/create/**")
 //                                .hasAnyRole("ADMIN")
-//                .requestMatchers(
-//                        "/api/ban-phim/delete/**",
-//                        "/api/he-dieu-hanh/delete/**",
-//                        "/api/man-hinh/delete/**",
-//                        "/api/mau-sac/delete/**",
-//                        "/api/nhu-cau/delete/**",
-//                        "/api/o-cung/delete/**",
-//                        "/api/ram/delete/**",
-//                        "/api/san-pham-chi-tiet/delete/**",
-//                        "/api/san-pham/delete/**",
-//                        "/api/serial-number/delete/**",
-//                        "/api/thuong-hieu/delete/**",
-//                        "/api/vga/delete/**",
-//                        "/api/webcam/delete/**"
-//                ).hasAnyRole( "ADMIN")
-                                .requestMatchers("/api/v1/auth/admin-test").hasRole("ADMIN")
-                                .requestMatchers("/api/ban-phim/add").hasAnyRole("ADMIN")
-                                .requestMatchers("/api/ban-phim/update/**").hasAnyRole("ADMIN")
+                .requestMatchers(
+                        "/api/ban-phim/delete/**",
+                        "/api/he-dieu-hanh/delete/**",
+                        "/api/man-hinh/delete/**",
+                        "/api/mau-sac/delete/**",
+                        "/api/nhu-cau/delete/**",
+                        "/api/o-cung/delete/**",
+                        "/api/ram/delete/**",
+                        "/api/san-pham-chi-tiet/delete/**",
+                        "/api/san-pham/delete/**",
+                        "/api/serial-number/delete/**",
+                        "/api/thuong-hieu/delete/**",
+                        "/api/vga/delete/**",
+                        "/api/webcam/delete/**"
+                ).hasAnyRole( "ADMIN")
+
                 .anyRequest().permitAll()
         )
         .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class)
