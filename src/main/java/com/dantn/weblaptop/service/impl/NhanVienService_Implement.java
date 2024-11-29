@@ -165,7 +165,7 @@ public class NhanVienService_Implement implements NhanVien_Service {
         nhanVien.setNgayBatDauLamViec(LocalDateTime.now());
         nhanVien.setTrangThai(1);
         String endcode = GenerateCode.generatePassWordNhanVien();
-        System.out.println(endcode);
+        System.out.println("MatKhauNhanVien: " + endcode);
         nhanVien.setMatKhau(passwordEncoder.encode(endcode));
         return nhanVien;
     }

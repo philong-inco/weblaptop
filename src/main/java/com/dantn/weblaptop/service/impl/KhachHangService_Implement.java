@@ -135,7 +135,7 @@ public class KhachHangService_Implement implements KhachHang_Service {
             KhachHang khachHang = khachHangMapper.createToEntityKhachHang(createKhachHangRequest);
             String encodedPassword = generateRandomPassword(10);
 
-            System.out.println(encodedPassword);
+            System.out.println("MatKhauKhachHang: " + encodedPassword);
             khachHang.setMa(GenerateCode.generateKhachHangCode());
             khachHang.setNgayTao(LocalDateTime.now().toInstant(ZoneOffset.UTC).toEpochMilli());
             khachHang.setTrangThai(1);
