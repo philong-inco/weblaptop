@@ -208,8 +208,8 @@ public class SerialNumberDaBanServiceImpl implements SerialNumberDaBanService {
             lichSuHoaDon.setKhachHang(existingBill.getKhachHang());
             lichSuHoaDon.setNhanVien(existingBill.getNhanVien());
             lichSuHoaDon.setGhiChuChoCuaHang("Cập nhập số lượng sản phẩm");
-            lichSuHoaDon.setNguoiTao("Mạnh cập nhập");
-            lichSuHoaDon.setNguoiSua("Mạnh cập nhập");
+//            lichSuHoaDon.setNguoiTao("Mạnh cập nhập");
+//            lichSuHoaDon.setNguoiSua("Mạnh cập nhập");
             lichSuHoaDonRepository.save(lichSuHoaDon);
         }
         return true;
