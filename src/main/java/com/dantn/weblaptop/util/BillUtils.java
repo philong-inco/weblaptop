@@ -10,6 +10,7 @@ import java.util.*;
 public class BillUtils {
 
     public static Integer convertBillStatusEnumToInteger(HoaDonStatus status) {
+        System.out.println("Đựược gọi -1");
         switch (status) {
             case DON_MOI:
                 return 0;
@@ -51,7 +52,7 @@ public class BillUtils {
 
 
     public static BigDecimal getMoney(String billCode) {
-        return listMoneyShip.get(billCode);
+        return listMoneyShip.getOrDefault(billCode, BigDecimal.ZERO);
     }
 
     public static boolean addMoney(String billCode, BigDecimal amount) {

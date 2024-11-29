@@ -48,8 +48,8 @@
             <div class="" style="margin-top: 5px; text-align: center">
                 <p>SDT: 0868819924</p>
             </div>
-            <div class="" style="margin-top: 10px; display: flex; justify-content: center">
-                <p th:text="${'Ma hoa don: '+ bill.ma}"></p>
+            <div class="" style="margin-top: 10px;" >
+                <p th:text="${'Mã hóa đơn : '+ bill.ma}"></p>
 <!--                <p style="margin-left: 30px" th:text="${ invoice.date}"></p>-->
                 <img style="position: absolute;top: 30px;right: 40px; width: 90px; height: 90px" th:src="${bill.qrCode}" alt="QR Code"> </img>
             </div>
@@ -61,33 +61,33 @@
             <div class="" style="margin-left: 20px; ">
                 <p th:text="${'Khách hàng: ' + ((bill.idKhachHang == null ) ? 'Khách lẻ '+ (bill.tenKhachHang==null ||bill.tenKhachHang==''? '':bill.tenKhachHang ) : bill.tenKhachHang)}"></p>
                 <p th:text="${'Sdt: '+((bill.sdt == null || bill.sdt == '') ? '' : bill.sdt )}"></p>
-                <p th:text="${'Dia chi : '+ ((bill.diaChi == null ||bill.diaChi == '') ? '--' :  bill.diaChi)}"></p>
+                <p th:text="${'Địa chỉ : '+ ((bill.diaChi == null ||bill.diaChi == '') ? '--' :  bill.diaChi)}"></p>
             </div>
         </div>
     </div>
     <div style="padding: 20px 10px;border-top-style: dashed; border-width: 1px; border-color: rgb(0, 0, 0);">
         <div class="" style="margin-right: 20px;">
-            <p style="font-size: 18px; font-weight: 800; margin-bottom: 30px">Noi dung don hang <span
+            <p style="font-size: 18px; font-weight: 800; margin-bottom: 30px">Nội dung đơn hàng <span
                     style="font-size: 16px; font-width: 500;"
-                    th:text="${'( Tong san pham '+bill.tongSanPham + ' )'}"></span></p>
+                    th:text="${'( Tổng sản phẩm'+bill.tongSanPham + ' )'}"></span></p>
             <table class="table " style="width: 100%">
                 <thead>
                 <td class="th"><strong>Stt</strong></td>
                 <td class="th"><strong>Tên</strong></td>
                 <td class="th"><strong>Giá</strong></td>
-                <td class="th"><strong>So luong</strong></td>
+                <td class="th"><strong>Số lượng </strong></td>
 <!--                <td class="th"><strong>Trạng thái</strong></td>-->
-                <td class="th"><strong>Tong</strong></td>
+                <td class="th"><strong>Tổng</strong></td>
                 </thead>
                 <tbody>
                 <th:block th:each="item,index : ${serials}">
                     <tr>
                         <td class="td" th:text="${index.index  + 1}">BS-200</td>
                         <td class="td" th:text="${item.productName}">BS-200</td>
-                        <td class="td" ><span th:text="${(item.price) + ' VND'} "></span></td>
+                        <td class="td" ><span th:text="${(item.price) + ''} "></span></td>
                         <td class="td" th:text="${item.quantity }">1</td>
 <!--                        <td class="td" th:text="${item.status }">1</td>-->
-                        <td class="td" th:text="${(item.totalPrice ) + ' VND'} ">$10.99</td>
+                        <td class="td" th:text="${(item.totalPrice ) + ''} ">$10.99</td>
                     </tr>
                 </th:block>
                 </tbody>
@@ -99,7 +99,7 @@
                         <td class="thick-line"></td>
                         <td class="thick-line " style="font-size: 16px; font-weight: 500">
 
-                            <strong >Tong tien hàng :</strong></td>
+                            <strong >Tổng tiền hàng :</strong></td>
                         <td class="thick-line text-end" float="right" style="font-size: 18px; font-weight: 600" th:text="${bill.tongTienBanDau}"></td>
                     </tr>
                     <tr>
@@ -110,32 +110,32 @@
                     </tr>
                     <tr>
                         <td class="border-0"></td>
-                        <td class="nborder-0"></td>
+                        <td class="border-0"></td>
                         <td class="border-0 " style="font-size: 16px; font-weight: 500"><strong>Voucher :</strong></td>
-                        <td class="border-0no-line text-end" float="right" style="font-size: 18px; font-weight: 600" th:text="${bill.giaTriPhieuGiamGia==null ? '' :bill.giaTriPhieuGiamGia + ' VND'}">ádsadasd</td>
+                        <td class="border-0no-line text-end" float="right" style="font-size: 18px; font-weight: 600" th:text="${bill.giaTriPhieuGiamGia==null ? '' :bill.giaTriPhieuGiamGia + ''}">ádsadasd</td>
                     </tr>
 
                     <tr th:if="${bill.loaiHoaDon==1}">
                         <td class="border-0"></td>
                         <td class="border-0"></td>
-                        <td class="border-0 " style="font-size: 16px; font-weight: 500"><strong>Phi ship:</strong></td>
-                        <td class="border-0  text-end" float="right" style="font-size: 18px; font-weight: 600" th:text="${(bill.tienShip) + ' VND'}">
+                        <td class="border-0 " style="font-size: 16px; font-weight: 500"><strong>Phí ship:</strong></td>
+                        <td class="border-0  text-end" float="right" style="font-size: 18px; font-weight: 600" th:text="${(bill.tienShip) + ''}">
                         </td>
                     </tr>
                     <tr>
                         <td class="border-0"></td>
                         <td class="border-0"></td>
-                        <td class="border-0 " style="font-size: 16px; font-weight: 500"><strong>Tong hoa don:</strong></td>
-                        <td class="border-0  text-end" float="right" style="font-size: 18px; font-weight: 600" th:text="${(bill.tongTienPhaiTra ) + ' VND'}">
+                        <td class="border-0 " style="font-size: 16px; font-weight: 500"><strong>Tổng hóa đơn:</strong></td>
+                        <td class="border-0  text-end" float="right" style="font-size: 18px; font-weight: 600" th:text="${(bill.tongTienPhaiTra ) + ''}">
                         </td>
                     </tr>
                     <tr style="margin-top: 5px">
                         <td class="border-0"></td>
-                        <td class="border-0 " colspan="3"><strong style="font-weight: 500; font-size: 16px " th:text="${'Tong so luong san pham : '+bill.tongSanPham + ' '}"></strong></td>
+                        <td class="border-0 " colspan="3"><strong style="font-weight: 500; font-size: 16px " th:text="${'Tổng số lượng sản phẩm : '+bill.tongSanPham + ' '}"></strong></td>
                     </tr>
                     <tr style="margin-top: 5px">
                         <td class="border-0"></td>
-                        <td class="border-0 " colspan="3"><strong style="font-weight: 500; font-size: 16px " th:text="${'Khach hàng da thanh toán : '+khachDaThanhToan + ' VND'}"></strong></td>
+                        <td class="border-0 " colspan="3"><strong style="font-weight: 500; font-size: 16px " th:text="${'Khách hàng đã thanh toán : '+khachDaThanhToan + ' '}"></strong></td>
                     </tr>
                     </tbody>
                 </table>
@@ -152,7 +152,7 @@
                 <th:block th:each="item,idex : ${paymentHistory}">
                     <tr>
                         <td th:text="${idex.index  + 1}"></td>
-                        <td th:text="${(item.tienNhan) + ' VND'}"  style="font-weight: bold; " float="right"></td>
+                        <td th:text="${(item.tienNhan) + ''}"  style="font-weight: bold; " float="right"></td>
                         <td class="text-center" style="font-weight: bold; " th:text="${item.loaiThanhToan ==1 ? 'Trả sau' : 'Đã thanh toán'}"></td>
                     </tr>
                 </th:block>
