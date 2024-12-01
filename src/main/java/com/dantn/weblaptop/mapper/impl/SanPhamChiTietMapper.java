@@ -2,10 +2,12 @@ package com.dantn.weblaptop.mapper.impl;
 
 
 import com.dantn.weblaptop.dto.response.AnhSanPhamResponse;
+import com.dantn.weblaptop.dto.response.SPCTForGemini;
 import com.dantn.weblaptop.dto.response.SanPhamChiTietClientDTO;
 import com.dantn.weblaptop.dto.response.SerialNumberResponse;
 import com.dantn.weblaptop.entity.dotgiamgia.DotGiamGia;
 
+import com.dantn.weblaptop.entity.sanpham.SanPham;
 import com.dantn.weblaptop.entity.sanpham.SanPhamChiTiet;
 import com.dantn.weblaptop.entity.sanpham.SerialNumber;
 import com.dantn.weblaptop.generics.GenericsMapper;
@@ -194,6 +196,12 @@ public class SanPhamChiTietMapper extends GenericsMapper<SanPhamChiTiet, SanPham
 
     public List<SanPhamChiTietClientDTO> listEntityToClient(List<SanPhamChiTiet> list){
         return list.stream().map(this::entityToClient).collect(Collectors.toList());
+    }
+
+    public List<SPCTForGemini> listEntityToClientGemini(List<SanPhamChiTiet> list){
+        List<SanPhamChiTietClientDTO> clientDto = listEntityToClient(list);
+        List<SPCTForGemini> result = clientDto.stream().map(x -> SPCTForGemini.toResult(x)).collect(Collectors.toList());
+        return result;
     }
 
     public Page<SanPhamChiTietClientDTO> pageEntityToClient(Page<SanPhamChiTiet> entityPage) {

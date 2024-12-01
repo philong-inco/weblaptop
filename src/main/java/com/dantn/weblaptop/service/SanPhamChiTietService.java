@@ -4,6 +4,7 @@ import com.dantn.weblaptop.dto.request.create_request.FindSanPhamChiTietByFilter
 import com.dantn.weblaptop.dto.request.create_request.SanPhamChiTietCreate;
 import com.dantn.weblaptop.dto.request.update_request.SPCTUpdateTemp;
 import com.dantn.weblaptop.dto.request.update_request.SanPhamChiTietUpdate;
+import com.dantn.weblaptop.dto.response.SPCTForGemini;
 import com.dantn.weblaptop.dto.response.SanPhamChiTietClientDTO;
 import com.dantn.weblaptop.dto.response.SanPhamChiTietResponse;
 import com.dantn.weblaptop.repository.SanPhamChiTietRepository;
@@ -46,4 +47,6 @@ public interface SanPhamChiTietService {
 
     void tatTrangThaiTheoIdSP(Long idSP);
     void batTrangThaiTheoIdSP(Long idSP);
+
+    List<SPCTForGemini> findByFilterGemini(FindSanPhamChiTietByFilter filter);
 }

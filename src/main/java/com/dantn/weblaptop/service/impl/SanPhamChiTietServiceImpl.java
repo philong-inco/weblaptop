@@ -9,6 +9,7 @@ import com.dantn.weblaptop.dto.request.update_request.SPCTUpdateTemp;
 import com.dantn.weblaptop.dto.request.update_request.SanPhamChiTietUpdate;
 import com.dantn.weblaptop.dto.request.update_request.SerialNumberUpdate;
 import com.dantn.weblaptop.dto.response.AnhSanPhamResponse;
+import com.dantn.weblaptop.dto.response.SPCTForGemini;
 import com.dantn.weblaptop.dto.response.SanPhamChiTietClientDTO;
 import com.dantn.weblaptop.dto.response.SanPhamChiTietResponse;
 import com.dantn.weblaptop.dto.response.SerialNumberResponse;
@@ -353,6 +354,38 @@ public class SanPhamChiTietServiceImpl implements SanPhamChiTietService {
                 spctRepository.save(s);
             }
         }
+    }
+
+    @Override
+    public List<SPCTForGemini> findByFilterGemini(FindSanPhamChiTietByFilter filter) {
+        Specification<SanPhamChiTiet> spec = Specification.where(specificationInner.listIntegerEquals("trangThai", ConvertStringToArray.toArray(filter.getTrangThai())))
+                .and(specificationInner.listLongEquals("id", ConvertStringToArray.toArray(filter.getIdSPCT())))
+                .and(specificationInner.timestampBefore("ngayTao", filter.getNgayTaoTruoc()))
+                .and(specificationInner.timestampAfter("ngayTao", filter.getNgayTaoSau()))
+                .and(specificationInner.timestampBefore("ngaySua", filter.getNgaySuaTruoc()))
+                .and(specificationInner.timestampAfter("ngaySua", filter.getNgaySuaSau()))
+                .and(specificationInner.bigDecimalLessThanOrEquals("giaBan", filter.getGiaNhoHon()))
+                .and(specificationInner.bigDecimalGreaterThanOrEquals("giaBan", filter.getGiaLonHon()))
+                .and(specificationInner.listStringEquals("ma", ConvertStringToArray.toArray(filter.getMaSanPhamChiTiet())))
+//                //san pham
+                .and(specificationJoin.listStringEquals(SanPham.class, "sanPham", "ma", ConvertStringToArray.toArray(filter.getMaSanPham())))
+                .and(specificationJoin.listStringLike(SanPham.class, "sanPham", "ten", ConvertStringToArray.toArray(filter.getTenSanPham())))
+                .and(specificationJoin.listLongEquals(SanPham.class, "sanPham", "id", ConvertStringToArray.toArray(filter.getIdSP())))
+//                // nhu cau - thuong hieu
+                .and(specificationJoin.hasNhuCau(ConvertStringToArray.toArray(filter.getNhuCau())))
+                .and(specificationJoin.hasThuongHieu(ConvertStringToArray.toArray(filter.getThuongHieu())))
+//                // thuoc tinh
+                .and(specificationJoin.listLongEquals(CPU.class, "cpu", "id", ConvertStringToArray.toArray(filter.getCpu())))
+                .and(specificationJoin.listLongEquals(MauSac.class, "mauSac", "id", ConvertStringToArray.toArray(filter.getMauSac())))
+                .and(specificationJoin.listLongEquals(RAM.class, "ram", "id", ConvertStringToArray.toArray(filter.getRam())))
+                .and(specificationJoin.listLongEquals(VGA.class, "vga", "id", ConvertStringToArray.toArray(filter.getVga())))
+                .and(specificationJoin.listLongEquals(Webcam.class, "webcam", "id", ConvertStringToArray.toArray(filter.getWebcam())))
+                .and(specificationJoin.listLongEquals(OCung.class, "oCung", "id", ConvertStringToArray.toArray(filter.getOCung())))
+                .and(specificationJoin.listLongEquals(ManHinh.class, "manHinh", "id", ConvertStringToArray.toArray(filter.getManHinh())))
+                .and(specificationJoin.listLongEquals(HeDieuHanh.class, "heDieuHanh", "id", ConvertStringToArray.toArray(filter.getHeDieuHanh())))
+                .and(specificationJoin.listLongEquals(BanPhim.class, "banPhim", "id", ConvertStringToArray.toArray(filter.getBanPhim())));
+        List<SanPhamChiTiet> list = spctRepository.findAll(spec);
+        return spctMapper.listEntityToClientGemini(list);
     }
 
     public void updatePriceImageChangeImage(SanPhamChiTiet spct, String[] imgs){

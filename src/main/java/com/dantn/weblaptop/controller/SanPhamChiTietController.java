@@ -5,6 +5,7 @@ import com.dantn.weblaptop.dto.request.create_request.SanPhamChiTietCreate;
 import com.dantn.weblaptop.dto.request.update_request.SPCTUpdateTemp;
 import com.dantn.weblaptop.dto.request.update_request.SanPhamChiTietUpdate;
 import com.dantn.weblaptop.dto.response.ResponseLong;
+import com.dantn.weblaptop.dto.response.SPCTForGemini;
 import com.dantn.weblaptop.dto.response.SanPhamChiTietClientDTO;
 import com.dantn.weblaptop.dto.response.SanPhamChiTietResponse;
 import com.dantn.weblaptop.service.SanPhamChiTietService;
@@ -369,5 +370,63 @@ public class SanPhamChiTietController {
         } catch (Exception ex){
             return "Error generating QR code";
         }
+    }
+
+    @GetMapping("find/filter-gemeni")
+    public ResponseEntity<ResponseLong<List<SPCTForGemini>>> findByFilterForGemeni(
+            @RequestParam(value = "tenSP", required = false, defaultValue = "") String tenSP,
+            @RequestParam(value = "maSP", required = false, defaultValue = "") String maSP,
+            @RequestParam(value = "maSPCT", required = false, defaultValue = "") String maSPCT,
+            @RequestParam(value = "trangThai", required = false, defaultValue = "") String trangThai,
+            @RequestParam(value = "ngayTaoTruoc", required = false, defaultValue = "") String ngayTaoTruoc,
+            @RequestParam(value = "ngayTaoSau", required = false, defaultValue = "") String ngayTaoSau,
+            @RequestParam(value = "ngaySuaTruoc", required = false, defaultValue = "") String ngaySuaTruoc,
+            @RequestParam(value = "ngaySuaSau", required = false, defaultValue = "") String ngaySuaSau,
+            @RequestParam(value = "thuongHieu", required = false, defaultValue = "") String thuongHieu,
+            @RequestParam(value = "nhuCau", required = false, defaultValue = "") String nhuCau,
+            @RequestParam(value = "mauSac", required = false, defaultValue = "") String mauSac,
+            @RequestParam(value = "ram", required = false, defaultValue = "") String ram,
+            @RequestParam(value = "cpu", required = false, defaultValue = "") String cpu,
+            @RequestParam(value = "vga", required = false, defaultValue = "") String vga,
+            @RequestParam(value = "webcam", required = false, defaultValue = "") String webcam,
+            @RequestParam(value = "oCung", required = false, defaultValue = "") String oCung,
+            @RequestParam(value = "manHinh", required = false, defaultValue = "") String manHinh,
+            @RequestParam(value = "heDieuHanh", required = false, defaultValue = "") String heDieuHanh,
+            @RequestParam(value = "banPhim", required = false, defaultValue = "") String banPhim,
+            @RequestParam(value = "giaNhoHon", required = false, defaultValue = "") String giaNhoHon,
+            @RequestParam(value = "giaLonHon", required = false, defaultValue = "") String giaLonHon,
+            @RequestParam(value = "idSPCT", required = false, defaultValue = "") String idSPCT,
+            @RequestParam(value = "idSP", required = false, defaultValue = "") String idSP
+    ) {
+        FindSanPhamChiTietByFilter filter = FindSanPhamChiTietByFilter.builder()
+                .tenSanPham(tenSP)
+                .maSanPham(maSP)
+                .maSanPhamChiTiet(maSPCT)
+                .trangThai(trangThai)
+                .ngayTaoSau(ngayTaoSau)
+                .ngayTaoTruoc(ngayTaoTruoc)
+                .ngaySuaSau(ngaySuaSau)
+                .ngaySuaTruoc(ngaySuaTruoc)
+                .thuongHieu(thuongHieu)
+                .nhuCau(nhuCau)
+                .ram(ram)
+                .cpu(cpu)
+                .vga(vga)
+                .mauSac(mauSac)
+                .webcam(webcam)
+                .oCung(oCung)
+                .manHinh(manHinh)
+                .heDieuHanh(heDieuHanh)
+                .banPhim(banPhim)
+                .giaLonHon(giaLonHon)
+                .giaNhoHon(giaNhoHon)
+                .idSP(idSP)
+                .idSPCT(idSPCT)
+                .build();
+        return ResponseEntity.ok().body(new ResponseLong<>(
+                200, "Find successfully",
+                service.findByFilterGemini(filter),
+                null, null, null, null
+        ));
     }
 }
