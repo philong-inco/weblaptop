@@ -21,15 +21,12 @@ public class SPCTForGemini {
                 client.getTenSanPham() + " - " +
                         " Nhu cầu " + client.getNhuCau()  + " - " +
                         " Thương hiệu " + client.getThuongHieu() + " - " +
-                        " Bàn phím " + client.getBanPhim() + " - " +
                         " CPU " + client.getCpu()  + " - " +
-                        " Hệ điều hành " + client.getHeDieuHanh()  + " - " +
-                        " Màn hình " + client.getManHinh() + " - " +
                         " Màu " + client.getMauSac() + " - " +
-                        " Ổ cứng " + client.getOCung() + " - " +
                         " Ram " + client.getRam() + " - " +
                         " VGA " + client.getVga() + " - " +
-                        " Webcam " + client.getWebcam()
+                        " Giá bán " +  client.getGiaBan() + " - " +
+                        " Giá sau khuyến mãi " + client.getGiaSauKhuyenMai()
         );
     }
 }
