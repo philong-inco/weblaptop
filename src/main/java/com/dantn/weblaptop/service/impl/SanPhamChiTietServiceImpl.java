@@ -46,7 +46,9 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
@@ -72,6 +74,7 @@ public class SanPhamChiTietServiceImpl implements SanPhamChiTietService {
 
     SanPhamChiTietSpecificationInner specificationInner;
     SanPhamChiTietSpecificationJoin specificationJoin;
+    private final SanPhamChiTietMapper sanPhamChiTietMapper;
 
     @Override
     public List<SanPhamChiTietResponse> getAllList() {
@@ -385,7 +388,15 @@ public class SanPhamChiTietServiceImpl implements SanPhamChiTietService {
                 .and(specificationJoin.listLongEquals(HeDieuHanh.class, "heDieuHanh", "id", ConvertStringToArray.toArray(filter.getHeDieuHanh())))
                 .and(specificationJoin.listLongEquals(BanPhim.class, "banPhim", "id", ConvertStringToArray.toArray(filter.getBanPhim())));
         List<SanPhamChiTiet> list = spctRepository.findAll(spec);
-        return spctMapper.listEntityToClientGemini(list);
+        Map<Long, SanPhamChiTiet> uniqueProducts = list.stream()
+                .collect(Collectors.toMap(
+                        spct -> spct.getSanPham().getId(), // Nhóm theo ID của sản phẩm
+                        spct -> spct, // Lấy sản phẩm đầu tiên làm đại diện
+                        (existing, replacement) -> existing // Giữ biến thể đầu tiên
+                ));
+
+        // Chuyển đổi danh sách uniqueProducts thành danh sách SPCTForGemini
+        return sanPhamChiTietMapper.listEntityToClientGemini(new ArrayList<>(uniqueProducts.values()));
     }
 
     public void updatePriceImageChangeImage(SanPhamChiTiet spct, String[] imgs){
