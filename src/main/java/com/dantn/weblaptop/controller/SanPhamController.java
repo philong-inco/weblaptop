@@ -237,6 +237,7 @@ public class SanPhamController extends GenericsController<SanPham, Long, SanPham
                 .tenManHinh(ConvertStringToArray.toArray(tenManHinh))
                 .tenHeDieuHanh(ConvertStringToArray.toArray(tenHeDieuHanh))
                 .tenBanPhim(ConvertStringToArray.toArray(tenBanPhim))
+                .coDotGiamGia(dangKhuyenmai)
                 .build();
 
 
