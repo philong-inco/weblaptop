@@ -163,6 +163,8 @@ public class SanPhamService extends GenericsService<SanPham, Long, SanPhamCreate
                 .and(SanPhamSpecifications.hasGiaNhoHon(attribute.getGiaNhoHon()))
                 .and(SanPhamSpecifications.hasGiaLonHon(attribute.getGiaLonHon()));
 
+
+
         return genericsMapper.pageEntityToPageResponse(sanPhamRepository.findAll(spec, pageable));
     }
 
@@ -191,6 +193,7 @@ public class SanPhamService extends GenericsService<SanPham, Long, SanPhamCreate
                 .and(SanPhamSpecifications.hasGiaNhoHon(attribute.getGiaNhoHon()))
                 .and(SanPhamSpecifications.hasGiaLonHon(attribute.getGiaLonHon()));
 
+
         return genericsMapper.pageEntityToPageResponse(sanPhamRepository.findAll(spec, pageable));
     }
 
@@ -217,7 +220,8 @@ public class SanPhamService extends GenericsService<SanPham, Long, SanPhamCreate
                 .and(SanPhamSpecifications.hasIdAttribute(HeDieuHanh.class, "heDieuHanh", attribute.getTenHeDieuHanh()))
                 .and(SanPhamSpecifications.hasIdAttribute(OCung.class, "oCung", attribute.getTenOCung()))
                 .and(SanPhamSpecifications.hasGiaNhoHon(attribute.getGiaNhoHon()))
-                .and(SanPhamSpecifications.hasGiaLonHon(attribute.getGiaLonHon()));
+                .and(SanPhamSpecifications.hasGiaLonHon(attribute.getGiaLonHon()))
+                .and(SanPhamSpecifications.hasKhuyenMai((attribute.getCoDotGiamGia()+"").trim()));
 
 
         return sanPhamMapper.pageEntityToClient(sanPhamRepository.findAll(spec, pageable));

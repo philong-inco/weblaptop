@@ -1,5 +1,6 @@
 package com.dantn.weblaptop.service.impl;
 
+import com.dantn.weblaptop.entity.dotgiamgia.DotGiamGia;
 import com.dantn.weblaptop.entity.dotgiamgia.DotGiamGiaSanPhamChiTiet;
 import com.dantn.weblaptop.entity.sanpham.NhuCau;
 import com.dantn.weblaptop.entity.sanpham.SanPham;
@@ -225,6 +226,20 @@ public class SanPhamSpecifications {
             }
 
             return builder.or(predicates.toArray(new Predicate[0]));
+        };
+    }
+
+    public static Specification<SanPham> hasKhuyenMai(String dangKhuyenMai) {
+        return (root, query, builder) -> {
+            if (!dangKhuyenMai.equals("1"))
+                return builder.conjunction();
+            Join<SanPham, SanPhamChiTiet> sanPhamChiTietJoin = root.join("sanPhamChiTiets", JoinType.LEFT);
+            Join<SanPhamChiTiet, DotGiamGiaSanPhamChiTiet> dotGiamGiaSPCT = sanPhamChiTietJoin.join("dotGiamGiaSanPhamChiTiets", JoinType.LEFT);
+            Join<DotGiamGiaSanPhamChiTiet, DotGiamGia> dotGiamGiaJoin = dotGiamGiaSPCT.join("dotGiamGia", JoinType.INNER);
+            Predicate hasDiscountPredicate = builder.isNotNull(dotGiamGiaSPCT.get("id"));
+            Predicate hasPromoActive = builder.equal(dotGiamGiaJoin.get("trangThai"),1);
+            query.distinct(true);
+            return builder.and(hasDiscountPredicate, hasPromoActive);
         };
     }
 
