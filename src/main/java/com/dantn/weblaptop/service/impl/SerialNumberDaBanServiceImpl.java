@@ -112,13 +112,24 @@ public class SerialNumberDaBanServiceImpl implements SerialNumberDaBanService {
 
         // Xóa các SerialNumber không còn tồn tại từ cơ sở dữ liệu
         if (!serialNumbersToDelete.isEmpty()) {
-            List<SerialNumberDaBan> serialNumberDaBansToDelete = serialNumberDaBanRepository.findAllBySerialNumberIdIn(serialNumbersToDelete);
+            List<SerialNumberDaBan> serialNumberDaBansToDelete = serialNumberDaBanRepository.findAllBySerialNumberIdIn(serialNumbersToDelete, existingBill.getId());
             List<Long> idsToDelete = serialNumberDaBansToDelete.stream()
                     .map(serialNumberDaBan -> serialNumberDaBan.getSerialNumber().getId())
                     .collect(Collectors.toList());
             existingBill.setTongSanPham(existingBill.getTongSanPham() - idsToDelete.size());
-            serialNumberRepository.updateStatusByIdsNative(0, idsToDelete);
+            // cập nhập serila chưa bán
+            if (!existingBill.getTrangThai().name().equals("DON_MOI") && !existingBill.getTrangThai().name().equals("TREO")) {
+                System.out.println("Xóa có cập nhập trạng thái serial");
+                serialNumberRepository.updateStatusByIdsNative(0, idsToDelete);
+            }
+//
+            System.out.println("Xóa");
             serialNumberDaBanRepository.deleteAll(serialNumberDaBansToDelete);
+        }
+        if (existingBill.getTrangThai().name().equals("DON_MOI") || existingBill.getTrangThai().name().equals("TREO") || existingBill.getTrangThai().name().equals("CHO_XAC_NHAN")) {
+            System.out.println("Serial đã được bán");
+            serialNumberService.getSerialSoldInBillByProductId(1, existingBill.getId(),request.getProductId());
+//            serialNumberService.getSerialSoldInBill(1,existingBill.getId());
         }
 
         // Lấy tất cả các SerialNumberDaBan hiện có cho hóa đơn
@@ -132,6 +143,9 @@ public class SerialNumberDaBanServiceImpl implements SerialNumberDaBanService {
         // Tạo danh sách các SerialNumberDaBan để thêm mới
         SanPhamChiTiet sanPhamChiTiet = sanPhamChiTietRepository.findById(request.getProductId()).orElseThrow(
                 () -> new AppException(ErrorCode.PRODUCT_DETAIL_NOT_FOUND));
+//        if (sanPhamChiTiet.getTrangThai() == 0) {
+//            throw new AppException(ErrorCode.SAN_PHAM_NGUNG_BAN);
+//        }
         FindSanPhamChiTietByFilter filter = new FindSanPhamChiTietByFilter();
         filter.setMaSanPhamChiTiet(sanPhamChiTiet.getMa());
         List<SanPhamChiTietClientDTO> sanPhamChiTietClientDTOS = sanPhamChiTietServiceImpl.findByFilter(filter);
@@ -157,6 +171,7 @@ public class SerialNumberDaBanServiceImpl implements SerialNumberDaBanService {
                     newSerialNumberDaBan.setHoaDon(existingBill);
                     newSerialNumberDaBan.setGiaBan(finalGiaBan);
                     newSerialNumberDaBan.setSerialNumber(serialNumber);
+                    System.out.println("Thêm");
                     return newSerialNumberDaBan;
                 })
                 .collect(Collectors.toList());
@@ -166,21 +181,18 @@ public class SerialNumberDaBanServiceImpl implements SerialNumberDaBanService {
             List<Long> idsToCreate = newSerialNumberDaBans.stream()
                     .map(serialNumberDaBan -> serialNumberDaBan.getSerialNumber().getId())
                     .collect(Collectors.toList());
-//            if (existingBill.getTrangThai() != HoaDonStatus.DON_MOI && existingBill.getLoaiHoaDon() == 1 && existingBill.getThanhToanSau() == 0) {
-//                BigDecimal tienTraSau = newSerialNumberDaBans.stream()
-//                        .map(SerialNumberDaBan::getGiaBan)
-//                        .reduce(BigDecimal.ZERO, BigDecimal::add);
-//                System.out.println("Tiền Trả Sau : " + tienTraSau);
-//                // lấy ra số tiền đa bill ban đầu phụ thuộc vài soTien và tienThua
-//                existingBill.setThanhToanSau(1);
-//                HoaDonHinhThucThanhToan newHoaDonHinhThucThanhToan = new HoaDonHinhThucThanhToan();
-//                newHoaDonHinhThucThanhToan.setSoTien(tienTraSau);
-//                newHoaDonHinhThucThanhToan.setLoaiThanhToan(1);
-//                newHoaDonHinhThucThanhToan.setHoaDon(existingBill);
-//                hoaDonHinhThucThanhToanRepository.save(newHoaDonHinhThucThanhToan);
-//            }
+
             existingBill.setTongSanPham(existingBill.getTongSanPham() + idsToCreate.size());
-            serialNumberRepository.updateStatusByIdsNative(1, idsToCreate);
+            // cập nhập trạng thái đã bán
+            if (!existingBill.getTrangThai().name().equals("DON_MOI") && !existingBill.getTrangThai().name().equals("TREO" )&& !existingBill.getTrangThai().name().equals("CHO_XAC_NHAN")) {
+                System.out.println("Thêm serial có cập nhập trạng thái");
+                serialNumberRepository.updateStatusByIdsNative(1, idsToCreate);
+//                if(existingBill.getTrangThai().name().equals("CHO_XAC_NHAN")) {
+//                List<SerialNumber> serials =  serialNumberRepository.findSerialNumbersByDaBanByStatusAndBillId(0,existingBill.getId());
+//                    serials.forEach(serialNumber ->  serialNumber.setTrangThai(1) );
+//                    serialNumberRepository.saveAll(serials);
+//                }
+            }
             serialNumberDaBanRepository.saveAll(newSerialNumberDaBans);
         }
         // tính tiền
@@ -192,16 +204,16 @@ public class SerialNumberDaBanServiceImpl implements SerialNumberDaBanService {
         hoaDonRepository.save(existingBill);
         //
         Optional<SanPhamChiTiet> optional = sanPhamChiTietRepository.findById(request.getProductId());
-        if(optional.isPresent()) {
+        if (optional.isPresent()) {
             Integer quantity = serialNumberRepository.getQuantitySerialIsActive(request.getProductId());
-            if(quantity<=0){
+            if (quantity <= 0) {
                 optional.get().setTrangThai(0);
-            }else {
+            } else {
                 optional.get().setTrangThai(1);
             }
             sanPhamChiTietRepository.save(optional.get());
         }
-        if(!existingBill.getTrangThai().name().equals("DON_MOI") &&!existingBill.getTrangThai().name().equals("TREO") ){
+        if (!existingBill.getTrangThai().name().equals("DON_MOI") && !existingBill.getTrangThai().name().equals("TREO")) {
             LichSuHoaDon lichSuHoaDon = new LichSuHoaDon();
             lichSuHoaDon.setHoaDon(existingBill);
             lichSuHoaDon.setTrangThai(12);//cap nhap don hang
@@ -250,39 +262,45 @@ public class SerialNumberDaBanServiceImpl implements SerialNumberDaBanService {
             List<Long> serialNumberIds = serialNumbersToDelete.stream()
                     .map(serialNumberDaBan -> serialNumberDaBan.getSerialNumber().getId())
                     .collect(Collectors.toList());
-            List<SerialNumber> updatedSerialNumbers = serialNumberRepository.findAllById(serialNumberIds)
-                    .stream()
-                    .peek(serialNumber -> serialNumber.setTrangThai(0))
-                    .collect(Collectors.toList());
-            serialNumberRepository.saveAll(updatedSerialNumbers);
+            // list cập nhập về trạng thái chưa bán
+
+            if (!existingBill.getTrangThai().equals(HoaDonStatus.DON_MOI) && !existingBill.getTrangThai().equals(HoaDonStatus.TREO)) {
+                System.out.println("Xóa có cập nhập serial");
+                List<SerialNumber> updatedSerialNumbers = serialNumberRepository.findAllById(serialNumberIds)
+                        .stream()
+                        .peek(serialNumber -> serialNumber.setTrangThai(0))
+                        .collect(Collectors.toList());
+                serialNumberRepository.saveAll(updatedSerialNumbers);
+                // cập nhập trạng thái sp
+                SerialNumber serialNumber = updatedSerialNumbers.get(0);
+                Optional<SanPhamChiTiet> optional = sanPhamChiTietRepository.findBySerialNumbersId(serialNumber.getId());
+                if (optional.isPresent()) {
+                    Integer quantity = serialNumberRepository.getQuantitySerialIsActive(optional.get().getId());
+                    if (quantity <= 0) {
+                        optional.get().setTrangThai(0);
+                    } else {
+                        optional.get().setTrangThai(1);
+                    }
+                    sanPhamChiTietRepository.save(optional.get());
+                }
+            }
+
             // tính lại tiền
             // tính tiền
             Optional<BigDecimal> totalMoney = serialNumberDaBanRepository.sumGiaBanByHoaDonId(existingBill.getId());
             existingBill.setTongTienBanDau(totalMoney.orElse(BigDecimal.ZERO));
             System.out.println("0 Tỏng tiền : " + totalMoney.orElse(BigDecimal.ZERO));
             calculateTotalAmountDue(existingBill, totalMoney);
-            // cập nhập trạng thái sp
-            SerialNumber serialNumber = updatedSerialNumbers.get(0);
-        Optional<SanPhamChiTiet> optional=    sanPhamChiTietRepository.findBySerialNumbersId(serialNumber.getId());
-            if(optional.isPresent()) {
-                Integer quantity = serialNumberRepository.getQuantitySerialIsActive(optional.get().getId());
-                if(quantity<=0){
-                    optional.get().setTrangThai(0);
-                }else {
-                    optional.get().setTrangThai(1);
-                }
-                sanPhamChiTietRepository.save(optional.get());
-            }
             hoaDonRepository.save(existingBill);
-            if(!existingBill.getTrangThai().name().equals("DON_MOI") &&!existingBill.getTrangThai().name().equals("TREO") ){
+            if (!existingBill.getTrangThai().name().equals("DON_MOI") && !existingBill.getTrangThai().name().equals("TREO")) {
                 LichSuHoaDon lichSuHoaDon = new LichSuHoaDon();
                 lichSuHoaDon.setHoaDon(existingBill);
                 lichSuHoaDon.setTrangThai(12);//cap nhap don hang
                 lichSuHoaDon.setKhachHang(existingBill.getKhachHang());
                 lichSuHoaDon.setNhanVien(existingBill.getNhanVien());
                 lichSuHoaDon.setGhiChuChoCuaHang("Cập nhập số lượng sản phẩm");
-                lichSuHoaDon.setNguoiTao("Mạnh cập nhập");
-                lichSuHoaDon.setNguoiSua("Mạnh cập nhập");
+//                lichSuHoaDon.setNguoiTao("Mạnh cập nhập");
+//                lichSuHoaDon.setNguoiSua("Mạnh cập nhập");
                 lichSuHoaDonRepository.save(lichSuHoaDon);
             }
         }
@@ -416,5 +434,7 @@ public class SerialNumberDaBanServiceImpl implements SerialNumberDaBanService {
             hoaDonHinhThucThanhToanRepository.save(hoaDonHinhThucThanhToan);
         }
     }
+
+
 
 }

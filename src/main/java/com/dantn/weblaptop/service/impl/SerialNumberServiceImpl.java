@@ -25,6 +25,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 
@@ -228,6 +229,34 @@ public class SerialNumberServiceImpl implements SerialNumberService {
                 .meta(meta)
                 .result(responses.getContent())
                 .build();
+    }
+
+    @Override
+    public Boolean getSerialSoldInBill(Integer status, Long billId) {
+        List<SerialNumber> serialNumbers = serialNumberRepository.findSerialNumbersByDaBanByStatusAndBillId(status, billId);
+        if (!serialNumbers.isEmpty()) {
+            String message ="Mã Serial đã bán : "+ serialNumbers.stream()
+                    .map(SerialNumber::getMa)
+                    .filter(ma -> ma != null && !ma.isEmpty())
+                    .collect(Collectors.joining(", "));
+            throw new RuntimeException(message);
+//            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public Boolean getSerialSoldInBillByProductId(Integer status, Long billId, Long productId) {
+        List<SerialNumber> serialNumbers = serialNumberRepository.findSerialNumbersByDaBanByStatusAndBillIdAndProductId(status, billId, productId);
+        if (!serialNumbers.isEmpty()) {
+            String message ="Mã Serial đã bán : "+ serialNumbers.stream()
+                    .map(SerialNumber::getMa)
+                    .filter(ma -> ma != null && !ma.isEmpty())
+                    .collect(Collectors.joining(", "));
+            throw new RuntimeException(message);
+//            return false;
+        }
+        return true;
     }
 
     @Override

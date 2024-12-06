@@ -72,5 +72,7 @@ public interface SerialNumberService {
     ResultPaginationResponse getAllSerialNumberByProductDetailIdAndCodeSerial(
             Long productId, String codeSerial, Optional<String> page, Optional<String> size);
 
+   Boolean getSerialSoldInBill(Integer status , Long billId);
+    Boolean getSerialSoldInBillByProductId(Integer status , Long billId, Long productId);
 
 }

@@ -68,8 +68,11 @@ public interface SerialNumberRepository extends JpaRepository<SerialNumber, Long
             "WHERE (sn.trangThai = 0 OR (sn.trangThai = 1 AND sndb.serialNumber.id IS NOT NULL)) " +
             "AND (sn.trangThai = 0 OR sndb.hoaDon.id IS NOT NULL) " +
             "AND sn.sanPhamChiTiet.id = :sanPhamChiTietId " +
-            "AND sn.ma LIKE %:maSerial% " +
-            "ORDER BY sn.trangThai DESC")
+            "AND sn.ma LIKE %:maSerial% "+
+            "ORDER BY CASE WHEN sndb.serialNumber.id IS NOT NULL THEN 0 ELSE 1 END, sn.trangThai DESC")
+
+//            +
+//            "ORDER BY sn.trangThai ASC")
     Page<SerialNumber> findSerialNumbers(@Param("maHoaDon") String maHoaDon,
                                          @Param("sanPhamChiTietId") Long sanPhamChiTietId,
                                          @Param("maSerial") String maSerial,
@@ -83,7 +86,10 @@ public interface SerialNumberRepository extends JpaRepository<SerialNumber, Long
             "AND (sn.trangThai = 0 OR sndb.hoaDon.id IS NOT NULL) " +
             "AND spct.ma = :maSanPhamChiTIet " +
             "AND sn.ma LIKE %:maSerial% " +
-            "ORDER BY sn.trangThai DESC")
+            "ORDER BY CASE WHEN sndb.serialNumber.id IS NOT NULL THEN 0 ELSE 1 END, sn.trangThai DESC")
+
+//            +
+//            "ORDER BY sn.trangThai DESC")
     Page<SerialNumber> findSerialNumbersByProductCode(
             @Param("maHoaDon") String maHoaDon,
             @Param("maSanPhamChiTIet") String maSanPhamChiTIet,
@@ -101,6 +107,20 @@ public interface SerialNumberRepository extends JpaRepository<SerialNumber, Long
     @Transactional
     @Query(value = "UPDATE serial_number sn SET sn.trang_thai = :status WHERE sn.id IN (:ids)", nativeQuery = true)
     void updateStatusByIdsNative(@Param("status") Integer status, @Param("ids") List<Long> ids);
+
+    @Query(value = "select sr.* from serial_number as sr \n" +
+            "join serial_number_da_ban as srdb on sr.id =srdb.serial_number_id\n" +
+            "where sr.trang_thai = :status  and srdb.hoa_don_id = :billId ",nativeQuery = true)
+    List<SerialNumber> findSerialNumbersByDaBanByStatusAndBillId(@Param("status") Integer status, @Param("billId") Long billId);
+
+    @Query(value = "select sr.* from serial_number as sr \n" +
+            "join serial_number_da_ban as srdb on sr.id =srdb.serial_number_id\n" +
+            "where sr.trang_thai = :status  and srdb.hoa_don_id = :billId and  sr.san_pham_chi_tiet_id = :productId ",nativeQuery = true)
+    List<SerialNumber> findSerialNumbersByDaBanByStatusAndBillIdAndProductId(
+            @Param("status") Integer status,
+            @Param("billId") Long billId,
+            @Param("productId") Long productId
+    );
 
     @Modifying
     @Transactional
@@ -121,4 +141,9 @@ public interface SerialNumberRepository extends JpaRepository<SerialNumber, Long
             "FROM serial_number AS sr \n" +
             "WHERE sr.san_pham_chi_tiet_id = :productDetailId  AND sr.trang_thai = 0;", nativeQuery = true)
     Integer  getQuantitySerialIsActive(@Param("productDetailId") Long productDetailId);
+
+    @Query(value = "select sr.* from serial_number as sr \n" +
+            "join serial_number_da_ban as srdb on sr.id = srdb.serial_number_id\n" +
+            "where srdb.hoa_don_id = :billId", nativeQuery = true)
+    List<SerialNumber>  getListSerialInBill (@Param("billId") Long billId);
 }

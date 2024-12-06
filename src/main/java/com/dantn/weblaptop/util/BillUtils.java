@@ -32,6 +32,8 @@ public class BillUtils {
                 return 8;
             case XAC_NHAN:
                 return 9;
+            case HEN_LAI:
+                return 13;
             default:
                 return -1;
         }

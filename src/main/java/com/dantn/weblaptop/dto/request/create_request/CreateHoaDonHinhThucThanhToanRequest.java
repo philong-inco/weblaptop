@@ -18,6 +18,8 @@ public class CreateHoaDonHinhThucThanhToanRequest {
     @NotNull(message = "AMOUNT_NOT_NULL")
     @Min(value = 0, message = "AMOUNT_INVALID")
     BigDecimal soTien;
+    @NotNull(message = "AMOUNT_NOT_NULL")
+    @Min(value = 0, message = "AMOUNT_INVALID")
     BigDecimal tienNhan;
 //    BigDecimal tienThua;
     @NotNull(message = "idHTTT chưa có")
