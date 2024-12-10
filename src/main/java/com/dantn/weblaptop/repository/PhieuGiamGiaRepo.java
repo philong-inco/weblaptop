@@ -21,6 +21,10 @@ public interface PhieuGiamGiaRepo extends JpaRepository<PhieuGiamGia, Long>, Jpa
 
     Optional<PhieuGiamGia> findByMa(String ma);
 
+    @Modifying
+    @Query(value = "UPDATE PhieuGiamGia p SET p.trangThai = :trangThai WHERE p.id = :id")
+    void updateTrangThaiByDate(@Param("id") Long id, @Param("trangThai") Integer trangThai);
+
     //    Lấy pgg dk với khách lẻ
     @Query(value = "" +
             "select pgg.* from phieu_giam_gia as pgg\n" +

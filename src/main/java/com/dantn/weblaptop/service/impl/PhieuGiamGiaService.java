@@ -25,6 +25,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.View;
 
@@ -383,12 +386,15 @@ public class PhieuGiamGiaService {
     public void changeStatusPhieuGiamGiaByDate() {
         LocalDateTime now = LocalDateTime.now();
         List<PhieuGiamGia> listAllPhieuGiamGia = phieuGiamGiaRepo.findAll();
-        List<PhieuGiamGia>  updatedList = new ArrayList<>();
         for (PhieuGiamGia i : listAllPhieuGiamGia) {
+            // Tránh những phiếu giảm giá đã có trạng thái 4
             if (i.getTrangThai() == 4) {
                 continue;
             }
+
             int currentStatus = i.getTrangThai();
+
+            // Kiểm tra và thay đổi trạng thái của phiếu giảm giá
             if (i.getSoLuong() == 0) {
                 i.setTrangThai(2); // Hết hạn
             } else if (i.getTrangThai() != 3) {
@@ -400,14 +406,14 @@ public class PhieuGiamGiaService {
                     i.setTrangThai(1); // Đang áp dụng
                 }
             }
+
+            // Nếu trạng thái đã thay đổi, chỉ cập nhật trường trangThai
             if (i.getTrangThai() != currentStatus) {
-                updatedList.add(i);
+                // Cập nhật chỉ trường trangThai
+                phieuGiamGiaRepo.updateTrangThaiByDate(i.getId(), i.getTrangThai());
             }
         }
-
-        if (!updatedList.isEmpty()) {
-            phieuGiamGiaRepo.saveAll(updatedList);
-        }
     }
+
 
 }
