@@ -8,13 +8,13 @@ import com.dantn.weblaptop.dto.request.update_request.UpdateDiaChiHoaDonRequest;
 import com.dantn.weblaptop.dto.request.update_request.UpdateHoaDonRequest;
 import com.dantn.weblaptop.dto.response.ApiResponse;
 import com.dantn.weblaptop.entity.hoadon.HoaDon;
+import com.dantn.weblaptop.entity.sanpham.SerialNumber;
 import com.dantn.weblaptop.exception.AppException;
 import com.dantn.weblaptop.service.HoaDonService;
 import com.dantn.weblaptop.service.LichSuHoaDonService;
+import com.dantn.weblaptop.service.SerialNumberService;
 import com.dantn.weblaptop.service.impl.HoaDonServiceImpl;
-import com.dantn.weblaptop.util.QrCode;
 import com.dantn.weblaptop.util.SendEmailBill;
-import com.google.zxing.WriterException;
 import com.turkraft.springfilter.boot.Filter;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
@@ -34,7 +34,6 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -48,6 +47,14 @@ public class HoaDonController {
     HoaDonService billService;
     HoaDonServiceImpl hoaDonService;
     SendEmailBill sendEmailBill;
+    SerialNumberService serialNumberService;
+
+    @GetMapping("demo")
+    public ApiResponse<?> demo() {
+        return ApiResponse.builder()
+                .data(serialNumberService.getSerialSoldInBill(1, 63L))
+                .build();
+    }
 
     @GetMapping("all")
     public ResponseEntity<ApiResponse> filterBill(
@@ -458,10 +465,6 @@ public class HoaDonController {
             @RequestParam(name = "status") String status,
             @RequestParam(name = "codeTran") String codeTran
     ) {
-        System.out.println("code : "+billCode);
-        System.out.println("status : "+status);
-        System.out.println("codeTran : "+codeTran);
-
         return ResponseEntity.ok(ApiResponse.builder()
                 .data(hoaDonService.updateBill(billCode, status, codeTran))
                 .statusCode(HttpStatus.OK.value())

@@ -19,6 +19,7 @@ public class SPCTForGemini {
     public static SPCTForGemini toResult(SanPhamChiTietClientDTO client){
         return client == null ? null : new SPCTForGemini(
                 client.getTenSanPham() + " - " +
+                        " ID " + client.getId()  + " - " +
                         " Nhu cầu " + client.getNhuCau()  + " - " +
                         " Thương hiệu " + client.getThuongHieu() + " - " +
                         " CPU " + client.getCpu()  + " - " +

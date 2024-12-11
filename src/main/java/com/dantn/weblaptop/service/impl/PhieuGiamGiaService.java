@@ -155,6 +155,17 @@ public class PhieuGiamGiaService {
                     throw new RuntimeException(e);
                 }
             });
+        }else {
+            List<KhachHang> listKhachHang = khachHangRepository.findAll();
+            if (listKhachHang != null) {
+                listKhachHang.forEach(khachHang -> {
+                    try {
+                        sendMailToCustomer(savedPhieuGiamGia, khachHang.getId());
+                    }catch (Exception ex){
+                        throw new RuntimeException(ex);
+                    }
+                });
+            }
         }
         PhieuGiamGia phieuGiamGia = phieuGiamGiaRepo.findById(savedPhieuGiamGia.getId()).get();
 
