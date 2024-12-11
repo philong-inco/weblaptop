@@ -21,7 +21,6 @@ public class CreateHoaDonHinhThucThanhToanRequest {
     @NotNull(message = "AMOUNT_NOT_NULL")
     @Min(value = 0, message = "AMOUNT_INVALID")
     BigDecimal tienNhan;
-//    BigDecimal tienThua;
     @NotNull(message = "idHTTT chưa có")
     Long idHTTT;
     @NotNull(message = "Loại Trả sau || TT chưa có")

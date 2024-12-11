@@ -10,7 +10,6 @@ import java.util.*;
 public class BillUtils {
 
     public static Integer convertBillStatusEnumToInteger(HoaDonStatus status) {
-        System.out.println("Đựược gọi -1");
         switch (status) {
             case DON_MOI:
                 return 0;
@@ -35,6 +34,7 @@ public class BillUtils {
             case HEN_LAI:
                 return 13;
             default:
+                System.out.println("Đựược gọi -1");
                 return -1;
         }
     }
@@ -59,17 +59,12 @@ public class BillUtils {
 
     public static boolean addMoney(String billCode, BigDecimal amount) {
         if (listMoneyShip.containsKey(billCode)) {
-            System.out.println("Không thể thêm: Mã hóa đơn '" + billCode + "' đã tồn tại.");
             return false;
         }
-
         if (amount.compareTo(BigDecimal.ZERO) <= 0) {
-            System.out.println("Không thể thêm: Số tiền phải lớn hơn 0.");
             return false;
         }
-
         listMoneyShip.put(billCode, amount);
-        System.out.println("Thêm thành công: Mã hóa đơn '" + billCode + "', Số tiền: " + amount);
         return true;
     }
 
@@ -81,9 +76,9 @@ public class BillUtils {
         }
         return false;
     }
+
     public static void printAll() {
         for (Map.Entry<String, BigDecimal> entry : listMoneyShip.entrySet()) {
-            System.out.println("Bill Code: " + entry.getKey() + ", Amount: " + entry.getValue());
         }
     }
 }

@@ -60,8 +60,6 @@ public class HoaDonHinhThucThanhToanSeriveImpl implements HoaDonHinhThucThanhToa
         paymentHistory.setSoTien(request.getSoTien());
         paymentHistory.setTienNhan(request.getTienNhan());
         paymentHistory.setHoaDon(bill);
-//        paymentHistory.setNguoiTao("Nguyễn Tiến Mạnh");
-//        paymentHistory.setNguoiSua("Nguyễn Tiến Mạnh");
         paymentHistory.setLoaiThanhToan(request.getLoaiThanhToan());
         paymentHistory.setHinhThucThanhToan(payment);
         paymentHistory.setMaGioDich(request.getMaGD());
