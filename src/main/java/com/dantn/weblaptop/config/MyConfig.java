@@ -87,6 +87,17 @@ public class MyConfig {
                         "/api/vga/delete/**",
                         "/api/webcam/delete/**"
                 ).hasAnyRole( "ADMIN")
+                                .requestMatchers(
+                                        "/api/nhan_vien/create",
+                                        "/api/nhan_vien/updatepassword/**",
+                                        "/api/nhan_vien/update/**",
+                                        "/api/v1/discounts/update/**",
+                                        "/api/v1/discounts/add",
+                                        "/api/coupons/add/**",
+                                        "/api/coupons/update/**",
+                                        "/api/khachhang/update/**",
+                                        "/api/khachhang/update-info/**"
+                                ).hasAnyRole("ADMIN")
 
                 .anyRequest().permitAll()
         )
