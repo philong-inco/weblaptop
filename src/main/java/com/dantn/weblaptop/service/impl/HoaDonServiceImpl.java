@@ -36,7 +36,6 @@ import com.itextpdf.html2pdf.ConverterProperties;
 import com.itextpdf.html2pdf.HtmlConverter;
 import com.itextpdf.html2pdf.resolver.font.DefaultFontProvider;
 import com.itextpdf.kernel.pdf.PdfWriter;
-import com.lowagie.text.pdf.BaseFont;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -47,7 +46,6 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -57,17 +55,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.thymeleaf.context.Context;
 import org.thymeleaf.spring6.SpringTemplateEngine;
-import org.xhtmlrenderer.pdf.ITextRenderer;
 
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.*;
@@ -533,24 +525,24 @@ public class HoaDonServiceImpl implements HoaDonService {
 //                }
 
                 HoaDonResponse response = HoaDonMapper.toHoaDonResponse(billRepository.save(bill.get()));
-                if (response.getDiaChi() != null) {
-                    String[] diaChiParts = response.getDiaChi().split("\\|");
-                    for (int i = 0; i < diaChiParts.length; i++) {
-                        diaChiParts[i] = diaChiParts[i].trim();
-                    }
-                    if (diaChiParts.length == 4) {
-                        String diaChiChiTiet = diaChiParts[0];
-                        String phuongXa = diaChiParts[1];
-                        String quanHuyen = diaChiParts[2];
-                        String tinhThanh = diaChiParts[3];
-                        response.setDiaChi(diaChiChiTiet);
-                        response.setPhuong(phuongXa);
-                        response.setHuyen(quanHuyen);
-                        response.setTinh(tinhThanh);
-                    } else {
-                        System.out.println("Chuỗi địa chỉ không có đủ 4 phần.");
-                    }
-                }
+//                if (response.getDiaChi() != null) {
+//                    String[] diaChiParts = response.getDiaChi().split("\\|");
+//                    for (int i = 0; i < diaChiParts.length; i++) {
+//                        diaChiParts[i] = diaChiParts[i].trim();
+//                    }
+//                    if (diaChiParts.length == 4) {
+//                        String diaChiChiTiet = diaChiParts[0];
+//                        String phuongXa = diaChiParts[1];
+//                        String quanHuyen = diaChiParts[2];
+//                        String tinhThanh = diaChiParts[3];
+//                        response.setDiaChi(diaChiChiTiet);
+//                        response.setPhuong(phuongXa);
+//                        response.setHuyen(quanHuyen);
+//                        response.setTinh(tinhThanh);
+//                    } else {
+//                        System.out.println("Chuỗi địa chỉ không có đủ 4 phần.");
+//                    }
+//                }
                 return response;
             } else {
                 throw new AppException(ErrorCode.BILL_NOT_FOUND);
@@ -650,31 +642,20 @@ public class HoaDonServiceImpl implements HoaDonService {
             if (total.compareTo(bill.getTongTienPhaiTra()) < 0) {
                 throw new AppException(ErrorCode.TIEN_KO_DU);
             }
-
             bill.setTrangThai(HoaDonStatus.HOAN_THANH);
             bill.setNgayThanhToan(LocalDateTime.now());
             bill.setLoaiHoaDon(request.getLoaiHoaDon());
-
             HoaDonResponse response = HoaDonMapper.toHoaDonResponse(billRepository.save(bill));
             billHistory.setHoaDon(bill);
             billHistory.setTrangThai(6);
-//            billHistory.setNguoiSua("Nguyễn Tiến Mạnh");
-//            billHistory.setNguoiTao("Nguyễn Tiến Mạnh");
             billHistory.setGhiChuChoCuaHang("Thanh toán thành công");
             billHistory.setGhiChuChoKhachHang("Thanh toán thành công");
-//            NhanVien nhanVien = employeeRepository.findById(1L).get()
             Optional<String> emailOption = JwtUtil.getCurrentUserLogin();
             if (emailOption.isPresent() && !emailOption.get().equals("anonymousUser")) {
                 NhanVien existingEmployee = employeeRepository.findByEmail(emailOption.get());
-//                bill.setNhanVien(existingEmployee);
                 billHistory.setNhanVien(existingEmployee);
             }
             sendEmailBill.sendEmailXacNhan(response, "Cảm ơn ban đã mua hàng");
-//            billHistory.setNhanVien(nhanVien);
-
-//            if (bill.getKhachHang() != null) {
-////                updateCustomerRank(bill.getKhachHang().getId());
-//            }
         } else if (request.getLoaiHoaDon() == 1) {
             // lưu
             if (request.getThanhToanSau() == 1) {
@@ -682,8 +663,6 @@ public class HoaDonServiceImpl implements HoaDonService {
                 hoaDonHinhThucThanhToan.setSoTien(bill.getTienShip().add(bill.getTongTienPhaiTra()));
                 hoaDonHinhThucThanhToan.setTienNhan(bill.getTienShip().add(bill.getTongTienPhaiTra()));
                 hoaDonHinhThucThanhToan.setHoaDon(bill);
-//                hoaDonHinhThucThanhToan.setNguoiSua("Nguyễn Tiến Mạnh");
-//                hoaDonHinhThucThanhToan.setNguoiTao("Nguyễn Tiến Mạnh");
                 hoaDonHinhThucThanhToan.setLoaiThanhToan(request.getLoaiHoaDon());
                 hoaDonHinhThucThanhToan.setHinhThucThanhToan(tienMat);
                 hoaDonHinhThucThanhToan.setTrangThai(1);
@@ -705,15 +684,10 @@ public class HoaDonServiceImpl implements HoaDonService {
             billRepository.save(bill);
             billHistory.setHoaDon(bill);
             billHistory.setTrangThai(9);
-//            billHistory.setNguoiSua("Nguyễn Tiến Mạnh");
-//            billHistory.setNguoiTao("Nguyễn Tiến Mạnh");
             billHistory.setGhiChuChoCuaHang("Hóa đơn chuyển sang chờ xác nhận");
-            billHistory.setGhiChuChoKhachHang("Chờ xác nhận");
-//            NhanVien nhanVien = employeeRepository.findById(1L).get();
             Optional<String> emailOption = JwtUtil.getCurrentUserLogin();
             if (emailOption.isPresent() && !emailOption.get().equals("anonymousUser")) {
                 NhanVien existingEmployee = employeeRepository.findByEmail(emailOption.get());
-//                newBill.setNhanVien(existingEmployee);
                 billHistory.setNhanVien(existingEmployee);
             }
 
@@ -727,53 +701,83 @@ public class HoaDonServiceImpl implements HoaDonService {
     @Override
     public void updateAddressInBill(String billCode, UpdateDiaChiHoaDonRequest request) throws AppException {
         HoaDon bill = billRepository.findHoaDonByMa(billCode.trim()).orElseThrow(() -> new AppException(ErrorCode.BILL_NOT_FOUND));
+        if (bill.getLoaiHoaDon() == 0) {
+            throw new AppException(ErrorCode.NO_UPDATE_ADDRESS);
+        }
 // check trạng thái
         String diaChi = request.getDiaChi().trim() + "," + request.getTenPhuong() + "," + request.getTenHuyen() + "," + request.getTenTinh() + " | " + request.getPhuong() + " | " + request.getHuyen() + " | " + request.getTinh();
-
+        String diaChiGoc = request.getDiaChi() + " | " + request.getPhuong() + " | " + request.getHuyen() + " | " + request.getTinh();
         if (bill.getTrangThai() != HoaDonStatus.DON_MOI && bill.getTrangThai() != HoaDonStatus.TREO) {
             BillUtils.addMoney(bill.getMa(), bill.getTienShip());
             BigDecimal giaShipGoc = BillUtils.getMoney(bill.getMa());
             BillUtils.printAll();
-            boolean check = false;
-            if (giaShipGoc.compareTo(BigDecimal.ZERO) == 0) {
-                System.out.println("Vào 0");
-                check = true;
-            }
-//        BigDecimal newMoneyShip = request.getTienShip().subtract(bill.getTienShip());
             BigDecimal newMoneyShip = request.getTienShip().subtract(giaShipGoc);
             System.out.println("Giá ship goc : " + giaShipGoc);
             System.out.println("Chênh lệnh : " + newMoneyShip);
-
-            if (newMoneyShip.compareTo(BigDecimal.ZERO) > 0) {
-                System.out.println("Vào 1");
-                Optional<HoaDonHinhThucThanhToan> optionalTraSau = hoaDonHinhThucThanhToanRepository.findByHoaDonIdAndLoaiThanhToan(bill.getId(), 1);
-                Optional<HoaDonHinhThucThanhToan> optionalTraTruoc = hoaDonHinhThucThanhToanRepository.findByHoaDonIdAndLoaiThanhToan(bill.getId(), 0);
-                HinhThucThanhToan payment = hinhThucThanhToanRepository.findById(1L).get();
+            Optional<HoaDonHinhThucThanhToan> optionalTraSau = hoaDonHinhThucThanhToanRepository.findByHoaDonIdAndLoaiThanhToan(bill.getId(), 1);
+            Optional<HoaDonHinhThucThanhToan> optionalTraTruoc = hoaDonHinhThucThanhToanRepository.findByHoaDonIdAndLoaiThanhToan(bill.getId(), 0);
+            HinhThucThanhToan payment = hinhThucThanhToanRepository.findById(1L).get();
+            if (newMoneyShip.compareTo(BigDecimal.ZERO) > 0 && request.getTienShip().compareTo(bill.getTienShip()) != 0) {
+                System.out.println("Lớn hơn tiền ship gốc");
                 if (optionalTraSau.isPresent()) {
-                    System.out.println("Vào 2");
                     HoaDonHinhThucThanhToan hinhThucThanhToan = optionalTraSau.get();
-                    hinhThucThanhToan.setSoTien(hinhThucThanhToan.getSoTien().add(request.getTienShip()).subtract(giaShipGoc));
-                    hinhThucThanhToan.setTienNhan(hinhThucThanhToan.getTienNhan().add(request.getTienShip()).subtract(giaShipGoc));
+                    hinhThucThanhToan.setSoTien(hinhThucThanhToan.getSoTien());
+                    hinhThucThanhToan.setTienNhan(hinhThucThanhToan.getTienNhan().add(newMoneyShip));
                     hinhThucThanhToan.setTrangThai(1);
                     hinhThucThanhToan.setLoaiThanhToan(1);
                     hinhThucThanhToan.setHinhThucThanhToan(payment);
                     hoaDonHinhThucThanhToanRepository.save(hinhThucThanhToan);
                 } else {
-                    System.out.println("Vào 3");
+//                    Ko có trả sau
+                    System.out.println("Ko có trả sau cần tạo mới");
+                    // thêm tiền chênh
                     HoaDonHinhThucThanhToan hinhThucThanhToan = new HoaDonHinhThucThanhToan();
-                    hinhThucThanhToan.setSoTien(newMoneyShip);
+                    hinhThucThanhToan.setSoTien(optionalTraTruoc.get().getSoTien());
+                    hinhThucThanhToan.setTienNhan(newMoneyShip);
                     hinhThucThanhToan.setHoaDon(bill);
-                    hinhThucThanhToan.setTienNhan((newMoneyShip));
-                    hinhThucThanhToan.setLoaiThanhToan(1);
                     hinhThucThanhToan.setTrangThai(1);
+                    hinhThucThanhToan.setLoaiThanhToan(1);
                     hinhThucThanhToan.setHinhThucThanhToan(payment);
                     hoaDonHinhThucThanhToanRepository.save(hinhThucThanhToan);
+
+                }
+            } else {
+                System.out.println("KO lớn hơn phí ship gốc");
+                if (optionalTraSau.isPresent()) {
+                    if (bill.getTienShip().compareTo(BillUtils.getMoney(bill.getMa())) > 0) {
+                        System.out.println("Tiền ship tại bill lớn hơn ship góc");
+                        System.out.println("KO lớn hơn phí ship gốc | có trả sau");
+                        BigDecimal result = optionalTraSau.get().getTienNhan()
+                                .subtract(bill.getTienShip())
+                                .add(request.getTienShip());
+
+                        if (result.compareTo(BigDecimal.ZERO) <= 0) {
+                            System.out.println("Xóa trả sau");
+                            hoaDonHinhThucThanhToanRepository.delete(optionalTraSau.get());
+                        }else{
+                            System.out.println("Ko vào xóa");
+                            HoaDonHinhThucThanhToan hinhThucThanhToan = optionalTraSau.get();
+                            hinhThucThanhToan.setSoTien(optionalTraSau.get().getSoTien());
+//                        hinhThucThanhToan.setTienNhan(optionalTraSau.get().getTienNhan().add(newMoneyShip));
+                            hinhThucThanhToan.setTienNhan(
+                                    optionalTraSau.get().getTienNhan()
+                                            .subtract(bill.getTienShip())
+                                            .add(request.getTienShip()));
+                            hinhThucThanhToan.setTrangThai(1);
+                            hinhThucThanhToan.setLoaiThanhToan(1);
+                            hinhThucThanhToan.setHinhThucThanhToan(payment);
+                            hoaDonHinhThucThanhToanRepository.save(hinhThucThanhToan);
+                        }
+                    } else {
+                        System.out.println("Ko vào 2");
+                    }
+
                 }
             }
         }
-
-
-        bill.setDiaChi(diaChi);
+        if(!diaChiGoc.equalsIgnoreCase(bill.getDiaChi())){
+            bill.setDiaChi(diaChi);
+        }
         bill.setTienShip(request.getTienShip());
         bill.setTenKhachHang(request.getTen());
         bill.setGhiChu(request.getGhiChu());
@@ -926,7 +930,8 @@ public class HoaDonServiceImpl implements HoaDonService {
             bill.setTrangThai(HoaDonStatus.CHO_XAC_NHAN);
             HoaDonHinhThucThanhToan paymentHistory = new HoaDonHinhThucThanhToan();
             paymentHistory.setSoTien(request.getTongTienPhaiTra());
-            paymentHistory.setTienNhan(BigDecimal.ZERO);
+            // 12/08 chỉnh
+            paymentHistory.setTienNhan(request.getTongTienPhaiTra());
             paymentHistory.setHoaDon(bill);
             paymentHistory.setTrangThai(1);
             paymentHistory.setLoaiThanhToan(request.getThanhToanSau());
@@ -1070,8 +1075,6 @@ public class HoaDonServiceImpl implements HoaDonService {
             paymentHistory.setSoTien(request.getTongTienPhaiTra());
             paymentHistory.setTienNhan(request.getTongTienPhaiTra());
             paymentHistory.setHoaDon(bill);
-//            paymentHistory.setNguoiTao("Nguyễn Tiến Mạnh");
-//            paymentHistory.setNguoiSua("Nguyễn Tiến Mạnh");
             paymentHistory.setLoaiThanhToan(request.getThanhToanSau());
             paymentHistory.setTrangThai(1);
             paymentHistory.setHinhThucThanhToan(payment);
@@ -1103,7 +1106,6 @@ public class HoaDonServiceImpl implements HoaDonService {
             }
             if (optional.get().getTrangThai() == 0) {
                 throw new RuntimeException("Sản phẩm " + optional.get().getSanPham().getTen() + " ngừng bán");
-
             }
             List<SerialNumber> listSerialNumber = serialNumberRepository.findBySanPhamChiTietIdAndTrangThaiWithLimit(cartDetailRequest.getIdSPCT(), cartDetailRequest.getSoLuong());
 
@@ -1111,7 +1113,12 @@ public class HoaDonServiceImpl implements HoaDonService {
                 throw new RuntimeException("Sản phẩm " + optional.get().getSanPham().getTen() + " không đủ . Sản phẩm tồn kho : " + listSerialNumber.size());
             }
             for (SerialNumber serialNumber : listSerialNumber) {
-                SerialNumberDaBan serialNumberDaBanSold = SerialNumberDaBan.builder().serialNumber(serialNumber).hoaDon(bill).giaBan(cartDetailRequest.getGia()).build();
+                SerialNumberDaBan serialNumberDaBanSold = SerialNumberDaBan
+                        .builder()
+                        .serialNumber(serialNumber)
+                        .hoaDon(bill)
+                        .giaBan(cartDetailRequest.getGia())
+                        .build();
                 serialNumberDaBanRepository.save(serialNumberDaBanSold);
 //                serialNumber.setTrangThai(1);
                 serialNumberRepository.save(serialNumber);
@@ -1166,8 +1173,8 @@ public class HoaDonServiceImpl implements HoaDonService {
             paymentHistory11.setSoTien(request.getTongTienPhaiTra());
             paymentHistory11.setTienNhan(threshold);
             paymentHistory11.setHoaDon(bill);
-            paymentHistory11.setNguoiTao("CK");
-            paymentHistory11.setNguoiSua("CK");
+//            paymentHistory11.setNguoiTao("CK");
+//            paymentHistory11.setNguoiSua("CK");
             paymentHistory11.setLoaiThanhToan(0);
             paymentHistory11.setTrangThai(1);
             paymentHistory11.setHinhThucThanhToan(paymentCK);
@@ -1177,8 +1184,8 @@ public class HoaDonServiceImpl implements HoaDonService {
             paymentHistory2.setSoTien(request.getTongTienPhaiTra());
             paymentHistory2.setTienNhan(soTienConNo);
             paymentHistory2.setHoaDon(bill);
-            paymentHistory2.setNguoiTao("Nợ");
-            paymentHistory2.setNguoiSua("Nợ");
+//            paymentHistory2.setNguoiTao("Nợ");
+//            paymentHistory2.setNguoiSua("Nợ");
             paymentHistory2.setLoaiThanhToan(1);
             paymentHistory11.setTrangThai(1);
             paymentHistory2.setHinhThucThanhToan(paymentTM);
@@ -1195,8 +1202,8 @@ public class HoaDonServiceImpl implements HoaDonService {
                 paymentHistory11.setSoTien(request.getTongTienPhaiTra());
                 paymentHistory11.setTienNhan(phanNguyen);
                 paymentHistory11.setHoaDon(bill);
-                paymentHistory11.setNguoiTao("CK");
-                paymentHistory11.setNguoiSua("CK");
+//                paymentHistory11.setNguoiTao("CK");
+//                paymentHistory11.setNguoiSua("CK");
                 paymentHistory11.setLoaiThanhToan(0);
                 paymentHistory11.setTrangThai(1);
                 paymentHistory11.setHinhThucThanhToan(paymentCK);
@@ -1207,8 +1214,8 @@ public class HoaDonServiceImpl implements HoaDonService {
                 paymentHistory2.setSoTien(request.getTongTienPhaiTra());
                 paymentHistory2.setTienNhan(phanThapPhan);
                 paymentHistory2.setHoaDon(bill);
-                paymentHistory2.setNguoiTao("Nợ");
-                paymentHistory2.setNguoiSua("Nợ");
+//                paymentHistory2.setNguoiTao("Nợ");
+//                paymentHistory2.setNguoiSua("Nợ");
                 paymentHistory2.setLoaiThanhToan(1);
                 paymentHistory11.setTrangThai(0);
                 paymentHistory2.setHinhThucThanhToan(paymentTM);
@@ -1220,8 +1227,8 @@ public class HoaDonServiceImpl implements HoaDonService {
                 paymentHistory11.setSoTien(request.getTongTienPhaiTra());
                 paymentHistory11.setTienNhan(request.getTongTienPhaiTra());
                 paymentHistory11.setHoaDon(bill);
-                paymentHistory11.setNguoiTao("CK");
-                paymentHistory11.setNguoiSua("CK");
+//                paymentHistory11.setNguoiTao("CK");
+//                paymentHistory11.setNguoiSua("CK");
                 paymentHistory11.setLoaiThanhToan(0);
                 paymentHistory11.setTrangThai(1);
                 HinhThucThanhToan payment11 = hinhThucThanhToanRepository.findById(2L).orElseThrow(() -> new AppException(ErrorCode.PAY_NO_FOUND));
@@ -1245,8 +1252,8 @@ public class HoaDonServiceImpl implements HoaDonService {
             paymentHistory11.setSoTien(request.getTongTienPhaiTra());
             paymentHistory11.setTienNhan(threshold);
             paymentHistory11.setHoaDon(bill);
-            paymentHistory11.setNguoiTao("CK");
-            paymentHistory11.setNguoiSua("CK");
+//            paymentHistory11.setNguoiTao("CK");
+//            paymentHistory11.setNguoiSua("CK");
             paymentHistory11.setLoaiThanhToan(0);
             paymentHistory11.setTrangThai(1);
             paymentHistory11.setHinhThucThanhToan(paymentCK);
@@ -1256,8 +1263,8 @@ public class HoaDonServiceImpl implements HoaDonService {
             paymentHistory2.setSoTien(request.getTongTienPhaiTra());
             paymentHistory2.setTienNhan(soTienConNo);
             paymentHistory2.setHoaDon(bill);
-            paymentHistory2.setNguoiTao("Nợ");
-            paymentHistory2.setNguoiSua("Nợ");
+//            paymentHistory2.setNguoiTao("Nợ");
+//            paymentHistory2.setNguoiSua("Nợ");
             paymentHistory2.setLoaiThanhToan(1);
             paymentHistory11.setTrangThai(1);
 
@@ -1275,8 +1282,8 @@ public class HoaDonServiceImpl implements HoaDonService {
                 paymentHistory11.setSoTien(request.getTongTienPhaiTra());
                 paymentHistory11.setTienNhan(phanNguyen);
                 paymentHistory11.setHoaDon(bill);
-                paymentHistory11.setNguoiTao("CK");
-                paymentHistory11.setNguoiSua("CK");
+//                paymentHistory11.setNguoiTao("CK");
+//                paymentHistory11.setNguoiSua("CK");
                 paymentHistory11.setLoaiThanhToan(0);
                 paymentHistory11.setTrangThai(1);
                 paymentHistory11.setHinhThucThanhToan(paymentCK);
@@ -1287,8 +1294,8 @@ public class HoaDonServiceImpl implements HoaDonService {
                 paymentHistory2.setSoTien(request.getTongTienPhaiTra());
                 paymentHistory2.setTienNhan(phanThapPhan);
                 paymentHistory2.setHoaDon(bill);
-                paymentHistory2.setNguoiTao("Nợ");
-                paymentHistory2.setNguoiSua("Nợ");
+//                paymentHistory2.setNguoiTao("Nợ");
+//                paymentHistory2.setNguoiSua("Nợ");
                 paymentHistory2.setLoaiThanhToan(1);
                 paymentHistory2.setHinhThucThanhToan(paymentTM);
                 hoaDonHinhThucThanhToanRepository.save(paymentHistory2);
@@ -1299,8 +1306,8 @@ public class HoaDonServiceImpl implements HoaDonService {
                 paymentHistory11.setSoTien(request.getTongTienPhaiTra());
                 paymentHistory11.setTienNhan(request.getTongTienPhaiTra());
                 paymentHistory11.setHoaDon(bill);
-                paymentHistory11.setNguoiTao("CK");
-                paymentHistory11.setNguoiSua("CK");
+//                paymentHistory11.setNguoiTao("CK");
+//                paymentHistory11.setNguoiSua("CK");
                 paymentHistory11.setLoaiThanhToan(0);
                 paymentHistory11.setTrangThai(1);
                 HinhThucThanhToan payment11 = hinhThucThanhToanRepository.findById(2L).orElseThrow(() -> new AppException(ErrorCode.PAY_NO_FOUND));
