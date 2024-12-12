@@ -50,6 +50,8 @@ public class MyConfig {
                         "/api/ram/add",
                         "/api/ram/update/**",
                         "/api/san-pham-chi-tiet/add",
+                        "/api/san-pham-chi-tiet/change-status**",
+                        "/api/san-pham-chi-tiet/update-price-image",
                         "/api/san-pham-chi-tiet/update/**",
                         "/api/san-pham/add",
                         "/api/san-pham/update/**",

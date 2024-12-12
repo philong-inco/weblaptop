@@ -200,7 +200,7 @@ public class SanPhamChiTietMapper extends GenericsMapper<SanPhamChiTiet, SanPham
 
     public List<SPCTForGemini> listEntityToClientGemini(List<SanPhamChiTiet> list){
         List<SanPhamChiTietClientDTO> clientDto = listEntityToClient(list);
-        List<SPCTForGemini> result = clientDto.stream().map(x -> SPCTForGemini.toResult(x)).collect(Collectors.toList());
+        List<SPCTForGemini> result = clientDto.stream().filter(x -> Integer.valueOf(x.getTonKhoConLai()) > 0).map(x -> SPCTForGemini.toResult(x)).collect(Collectors.toList());
         return result;
     }
 
