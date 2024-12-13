@@ -16,6 +16,9 @@ public interface DiaChi_Repository extends JpaRepository<DiaChi, Long> {
     @Query(value = "SELECT dc FROM DiaChi dc WHERE dc.id = :id")
     Optional<DiaChi> findById(@Param("id") Long id);
 
+    @Query("SELECT COUNT(dc) FROM DiaChi dc WHERE dc.khachHang.id = :khachHangId")
+    long countByKhachHangId(@Param("khachHangId") Long khachHangId);
+
     @Query(value = "UPDATE DiaChi dc SET dc.trangThai = :trangThai WHERE dc.id = :id")
     void deleteById(@Param("id") Long id);
 

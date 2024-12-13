@@ -29,6 +29,11 @@ public class DiaChi_Controller {
 
     @PostMapping("create")
     public ResponseEntity<DiaChi_Response> createDiaChi(@RequestBody CreateDiaChi createDiaChi) {
+        Long countDiaChi = diaChi_Repository.countByKhachHangId(Long.valueOf(createDiaChi.getKhach_hang_id()));
+        System.out.println(countDiaChi);
+        if (countDiaChi > 4) {
+            throw new RuntimeException("Chỉ được tạo tối đa 5 địa chỉ");
+        }
         DiaChi_Response response = diaChiService.createDiaChi(createDiaChi);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
