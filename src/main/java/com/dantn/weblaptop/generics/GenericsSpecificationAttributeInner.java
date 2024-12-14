@@ -29,7 +29,10 @@ public class GenericsSpecificationAttributeInner<T> {
                 return builder.conjunction();
             List<Predicate> predicates = new ArrayList<>();
             for (String str : keyword) {
-                predicates.add(builder.like(builder.lower(root.get(columnAttribute)), "%" + str.toLowerCase() + "%"));
+                Predicate likePredicate1 = builder.like(builder.lower(root.get(columnAttribute)), "%" + str.toLowerCase() + "%");
+                Predicate likePredicate2 = builder.like(builder.lower(root.get(columnAttribute)),  str.toLowerCase() + "%");
+                Predicate likePredicate3 = builder.like(builder.lower(root.get(columnAttribute)), "%" + str.toLowerCase() );
+                predicates.add(builder.or(likePredicate1, likePredicate2, likePredicate3));
             }
             return builder.or(predicates.toArray(new Predicate[0]));
         };

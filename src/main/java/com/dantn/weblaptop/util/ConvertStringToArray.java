@@ -17,6 +17,14 @@ public class ConvertStringToArray {
         return trimArray(array);
     }
 
+    public static String[] toArrayForSeri(String str) {
+        if (str == null || str.isBlank())
+            return null;
+        String regex = "[,\\.]";
+        String[] array = str.split(regex);
+        return trimArray(array);
+    }
+
     public static String[] toArraySplitImageUrl(String str) {
         if (str == null || str.isBlank())
             return null;
