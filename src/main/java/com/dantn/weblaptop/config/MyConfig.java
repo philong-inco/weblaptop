@@ -96,9 +96,7 @@ public class MyConfig {
                                         "/api/v1/discounts/update/**",
                                         "/api/v1/discounts/add",
                                         "/api/coupons/add/**",
-                                        "/api/coupons/update/**",
-                                        "/api/khachhang/update/**",
-                                        "/api/khachhang/update-info/**"
+                                        "/api/coupons/update/**"
                                 ).hasAnyRole("ADMIN")
 
                 .anyRequest().permitAll()
