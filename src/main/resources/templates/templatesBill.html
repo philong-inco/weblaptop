@@ -43,10 +43,19 @@
         <div class="" style="">
             <div class="" style="display: flex; justify-content: center;font-weight: bold; font-size: 40px; text-align: center;">COMNOONE</div>
             <div class="" style="margin-top: 19px; text-align: center">
-                <p>Chương trình Phổ thông Cao đẳng FPT Polytechnic, Phương Canh, Từ Liêm, Hà Nội, Việt Nam</p>
+                <p>Trường Cao đẳng FPT Polytechnic, Phương Canh, Từ Liêm, Hà Nội, Việt Nam</p>
             </div>
             <div class="" style="margin-top: 5px; text-align: center">
                 <p>SDT: 0868819924</p>
+            </div>
+            <div class=""
+                 style="border-top-style: dashed; border-width: 1px; border-color: rgb(0, 0, 0);">
+                <div class="">
+                    <div class="" >
+                        <p th:if="${bill.idNhanVien != null}" th:text="${'Mã nhân viên: ' + bill.maNhanVien}"></p>
+                        <p th:if="${bill.idNhanVien != null}" th:text="${'Nhân viên: ' + bill.tenNhanVien}"></p>
+                    </div>
+                </div>
             </div>
             <div class="" style="margin-top: 10px;" >
                 <p th:text="${'Mã hóa đơn : '+ bill.ma}"></p>

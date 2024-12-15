@@ -92,7 +92,7 @@ public enum ErrorCode {
     TONG_TIEN_PHAI_TRA_KHONG_AM(8018, "Tổng tiền phải trả không được âm"),
     SERIAL_NUMBER_DA_BAN(8019, "Serial number null"),
     TOTAL_PRODUCT_IN_BILL_MAX_10(8020, "Đơn hàng trả sau chỉ được mua tối đa 10 sản phẩm"),
-    SAN_PHAM_NGUNG_BAN(8021,"Sản phẩm tạm ngưng đã ngưng bán"),
+    SAN_PHAM_NGUNG_BAN(8021,"Sản phẩm tạm thời ngừng bán"),
     NO_UPDATE_ADDRESS(8022,"Hóa đơn ship mới được cập nhập địa chỉ");;
     ;;
 
