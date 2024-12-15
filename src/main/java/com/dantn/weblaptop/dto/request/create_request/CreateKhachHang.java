@@ -39,11 +39,11 @@ public class CreateKhachHang {
     @JsonProperty("hinhAnh")
     String hinhAnh;
     @JsonProperty("idPhuongXa")
-    Integer idPhuongXa;
+    String idPhuongXa;
     @JsonProperty("idQuanHuyen")
-    Integer idQuanHuyen;
+    String idQuanHuyen;
     @JsonProperty("idTinhThanhPho")
-    Integer idTinhThanhPho;
+    String idTinhThanhPho;
     @JsonProperty("diaChiNhanHang")
     String diaChiNhanHang;
 }

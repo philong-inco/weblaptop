@@ -25,11 +25,11 @@ public class DiaChi_Response {
 
     private String emailNguoiNhan;
 
-    private Integer idQuanHuyen;
+    private String idQuanHuyen;
 
-    private Integer idPhuongXa;
+    private String idPhuongXa;
 
-    private Integer idTinhThanhPho;
+    private String idTinhThanhPho;
 
     private String diaChiNhanHang;
 }
