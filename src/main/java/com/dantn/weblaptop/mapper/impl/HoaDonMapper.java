@@ -10,12 +10,10 @@ import com.dantn.weblaptop.util.ConvertTime;
 import com.dantn.weblaptop.util.QrCode;
 import com.google.zxing.WriterException;
 import org.hibernate.annotations.Comment;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -27,14 +25,11 @@ public class HoaDonMapper {
         KhachHang customer = hoaDon.getKhachHang();
         response.setId(hoaDon.getId());
         response.setMa(hoaDon.getMa());
-        response.setIdNhanVien(hoaDon.getNhanVien() != null ?
-                        hoaDon.getNhanVien().getId() : null
-                );
-//        response.setTenKhachHang(
-//                hoaDon.getTenKhachHang() != null ?
-//                        hoaDon.getTenKhachHang() :
-//                        (customer != null ? customer.getTen() : null)
-//        );
+        if(hoaDon.getNhanVien() !=null){
+            response.setIdNhanVien(hoaDon.getNhanVien().getId());
+            response.setTenNhanVien(hoaDon.getNhanVien().getTen());
+            response.setMaNhanVien(hoaDon.getNhanVien().getMa());
+        }
         response.setTenKhachHang(customer != null ? customer.getTen() : hoaDon.getTenKhachHang());
         response.setIdKhachHang(
                 customer !=null ? customer.getId() : null);
@@ -145,6 +140,15 @@ public class HoaDonMapper {
         billPdfResponse.setLoaiPGG(hoaDonResponse.getLoaiPGG());
         billPdfResponse.setGiaTriPhieuGiamGia(BillUtils.convertMoney(hoaDonResponse.getGiaTriPhieuGiamGia()));
         billPdfResponse.setQrCode(QrCode.generateQRCodeBase64(hoaDonResponse.getMa()));
+        if (hoaDonResponse.getIdNhanVien() != null) {
+            billPdfResponse.setIdNhanVien(hoaDonResponse.getIdNhanVien());
+            billPdfResponse.setTenNhanVien(hoaDonResponse.getTenNhanVien());
+            billPdfResponse.setMaNhanVien(hoaDonResponse.getMaNhanVien());
+        } else {
+            billPdfResponse.setIdNhanVien(null);
+            billPdfResponse.setTenNhanVien(null);
+            billPdfResponse.setMaNhanVien(null);
+        }
         return billPdfResponse;
     }
 }
