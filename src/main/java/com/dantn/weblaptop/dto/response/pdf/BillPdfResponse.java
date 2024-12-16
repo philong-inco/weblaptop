@@ -53,4 +53,6 @@ public class BillPdfResponse {
     Integer loaiPGG;
     String maPGG;
     String qrCode;
+    String tenNhanVien;
+    String maNhanVien;
 }

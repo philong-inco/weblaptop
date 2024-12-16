@@ -65,7 +65,7 @@ public class SanPhamController extends GenericsController<SanPham, Long, SanPham
                 throw new RuntimeException("Status invalid");
             if (!sanPhamService.setStatus(id, status))
                 throw new RuntimeException("Set status failed");
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+            return ResponseEntity.status(HttpStatus.OK).body(
                     new ResponseLong<>(200, "Change status successfully", true
                             , null, null, null, null)
             );

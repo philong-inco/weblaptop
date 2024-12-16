@@ -31,6 +31,7 @@ public class DiaChiService_Implement implements DiaChi_Service {
         DiaChi diaChi = diaChiMapper.CreateToEntityDiaChi(createDiaChi);
         Optional<KhachHang> khachHang = khachHangRepository.findById(Long.valueOf(createDiaChi.getKhach_hang_id()));
         diaChi.setKhachHang(khachHang.get());
+        List<DiaChi> listDiaChi = diaChiRepository.findByKhachHangId(khachHang.get().getId());
         DiaChi savedDiaChi = diaChiRepository.save(diaChi);
         return diaChiMapper.EntiyToResponse(savedDiaChi);
     }

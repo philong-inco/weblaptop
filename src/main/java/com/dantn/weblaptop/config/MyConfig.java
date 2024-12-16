@@ -50,6 +50,8 @@ public class MyConfig {
                         "/api/ram/add",
                         "/api/ram/update/**",
                         "/api/san-pham-chi-tiet/add",
+                        "/api/san-pham-chi-tiet/change-status**",
+                        "/api/san-pham-chi-tiet/update-price-image",
                         "/api/san-pham-chi-tiet/update/**",
                         "/api/san-pham/add",
                         "/api/san-pham/update/**",
@@ -87,6 +89,15 @@ public class MyConfig {
                         "/api/vga/delete/**",
                         "/api/webcam/delete/**"
                 ).hasAnyRole( "ADMIN")
+                                .requestMatchers(
+                                        "/api/nhan_vien/create",
+                                        "/api/nhan_vien/updatepassword/**",
+                                        "/api/nhan_vien/update/**",
+                                        "/api/v1/discounts/update/**",
+                                        "/api/v1/discounts/add",
+                                        "/api/coupons/add/**",
+                                        "/api/coupons/update/**"
+                                ).hasAnyRole("ADMIN")
 
                 .anyRequest().permitAll()
         )

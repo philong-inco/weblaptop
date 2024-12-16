@@ -49,11 +49,11 @@ public class DiaChi extends BaseEntity {
     @Column(name = "email_nguoi_nhan")
     String emailNguoiNhan;
     @Column(name = "id_Phuong_Xa")
-    Integer idPhuongXa;
+    String idPhuongXa;
     @Column(name = "id_Quan_Huyen")
-    Integer idQuanHuyen;
+    String idQuanHuyen;
     @Column(name = "id_Tinh_Thanh_Pho")
-    Integer idTinhThanhPho;
+    String idTinhThanhPho;
     @Column(name = "dia_chi_nhan_hang")
     String diaChiNhanHang;
     @ManyToOne(cascade = {CascadeType.DETACH, CascadeType.PERSIST,

@@ -25,15 +25,15 @@ public class UpdateDiaChi {
     private String emailNguoiNhan;
     @JsonProperty("idQuanHuyen")
     @NotNull(message = "idQuanHuyen cannot be null")
-    private Integer idQuanHuyen;
+    private String idQuanHuyen;
 
     @JsonProperty("idPhuongXa")
     @NotNull(message = "idPhuongXa cannot be null")
-    private Integer idPhuongXa;
+    private String idPhuongXa;
 
     @JsonProperty("idTinhThanhPho")
     @NotNull(message = "idTinhThanhPho cannot be null")
-    private Integer idTinhThanhPho;
+    private String idTinhThanhPho;
 
     @JsonProperty("diaChiNhanHang")
     @NotNull(message = "diaChiNhanHang cannot be null")

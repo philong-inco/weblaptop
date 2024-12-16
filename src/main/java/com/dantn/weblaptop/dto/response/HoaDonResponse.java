@@ -19,6 +19,8 @@ public class HoaDonResponse {
 
     Long id;
     Long idNhanVien;
+    String tenNhanVien;
+    String maNhanVien;
     Long idKhachHang;
     String tenKhachHang;
     String ma;

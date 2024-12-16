@@ -100,12 +100,16 @@ public class KhachHangController {
     }
 
     @PutMapping("/update/{id}")
-    public ResponseEntity<?> updateKhachHang(@Valid @RequestBody UpdateKhachHang updateKhachHangRequest, BindingResult result, @PathVariable("id") Long id) {
+    public ResponseEntity<ApiResponse> updateKhachHang(@Valid @RequestBody UpdateKhachHang updateKhachHangRequest, BindingResult result, @PathVariable("id") Long id) {
         if (result.hasErrors()) {
             List<ObjectError> list = result.getAllErrors();
-            return ResponseEntity.ok(list);
+            return ResponseEntity.ok((ApiResponse) list);
         }
-        return ResponseEntity.ok(khachHangService.update(updateKhachHangRequest, id));
+        khachHangService.update(updateKhachHangRequest, id);
+        ApiResponse apiResponse = new ApiResponse<>();
+        apiResponse.setStatusCode(HttpStatus.OK.value());
+        apiResponse.setMessage("Update thông tin cho khách hàng.");
+        return ResponseEntity.ok(apiResponse);
     }
 
 

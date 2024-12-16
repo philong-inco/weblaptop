@@ -112,7 +112,7 @@ public class SanPhamChiTietServiceImpl implements SanPhamChiTietService {
 
 
     private void afterAdd(SanPhamChiTietCreate create, SanPhamChiTiet entity) {
-        String[] serinumberList = ConvertStringToArray.toArray(create.getListSerialNumber());
+        String[] serinumberList = ConvertStringToArray.toArrayForSeri(create.getListSerialNumber());
         String[] anhSanPhamList = ConvertStringToArray.toArraySplitImageUrl(create.getListUrlAnhSanPham());
         if (serinumberList != null && serinumberList.length > 0) {
             for (int i = 0; i < serinumberList.length; i++) {
