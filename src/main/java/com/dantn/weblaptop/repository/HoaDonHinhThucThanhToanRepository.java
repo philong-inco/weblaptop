@@ -6,19 +6,29 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
 @Repository
 public interface HoaDonHinhThucThanhToanRepository extends JpaRepository<HoaDonHinhThucThanhToan, Long> {
     List<HoaDonHinhThucThanhToan> findAllByHoaDonMa(String billCode);
-    List<HoaDonHinhThucThanhToan> findAllByHoaDonIdAndLoaiThanhToan(Long billId ,Integer loaiThanhToan );
+
+    List<HoaDonHinhThucThanhToan> findAllByHoaDonIdAndLoaiThanhToan(Long billId, Integer loaiThanhToan);
 
     Optional<HoaDonHinhThucThanhToan> findByHoaDonMa(String billCode);
+
     @Query(value = "SELECT * FROM hoa_don_httc WHERE hoa_don_id = :billId AND loai_thanh_toan = :loaiThanhToan ORDER BY id DESC LIMIT 1", nativeQuery = true)
-    Optional<HoaDonHinhThucThanhToan> findByHoaDonIdAndLoaiThanhToan(@Param("billId") Long billId,@Param("loaiThanhToan") Integer loaiThanhToan);
+    Optional<HoaDonHinhThucThanhToan> findByHoaDonIdAndLoaiThanhToan(@Param("billId") Long billId, @Param("loaiThanhToan") Integer loaiThanhToan);
 
     @Query(value = "SELECT * FROM hoa_don_httc WHERE hoa_don_id = :billId AND trang_thai = :trangThai and hinh_thuc_thanh_toan_id = :pttt ORDER BY id DESC LIMIT 1", nativeQuery = true)
-    Optional<HoaDonHinhThucThanhToan> findByHoaDonIdAndTrangThaiVsPTTT(@Param("billId") Long billId,@Param("trangThai") Integer trangThai, @Param("pttt") Long  pttt);
+    Optional<HoaDonHinhThucThanhToan> findByHoaDonIdAndTrangThaiVsPTTT(@Param("billId") Long billId, @Param("trangThai") Integer trangThai, @Param("pttt") Long pttt);
 
+    @Query(value = "select sum(hdhtt.tien_nhan) from hoa_don_httc as hdhtt " +
+            "where hoa_don_id = :billId " +
+            "and trang_thai = 0 " +
+            "and loai_thanh_toan =0\n", nativeQuery = true)
+    BigDecimal getTongTienDaThanhToan(@Param("billId") Long billId);
+
+    void deleteAllByHoaDonId(Long hoaDonId);
 }

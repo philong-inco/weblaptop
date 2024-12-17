@@ -397,8 +397,8 @@ public class SerialNumberDaBanServiceImpl implements SerialNumberDaBanService {
             // Tính tổng số tiền phải trả cộng với tiền ship
             BigDecimal tongTienPhaiTraVaShip = existingBill.getTongTienPhaiTra().add(existingBill.getTienShip());
             // Lấy số tiền đã thanh toán
-//            BigDecimal soTienDaThanhToan = optionalTraTruoc.get().getSoTien();
-            BigDecimal soTienDaThanhToan = optionalTraTruoc.get().getTienNhan();
+//            BigDecimal soTienDaThanhToan = optionalTraTruoc.get().getTienNhan();
+            BigDecimal soTienDaThanhToan = hoaDonHinhThucThanhToanRepository.getTongTienDaThanhToan(existingBill.getId());
 
             // Tính số tiền chênh lệch
             BigDecimal soTienChenhLech = tongTienPhaiTraVaShip.subtract(soTienDaThanhToan);
@@ -424,10 +424,8 @@ public class SerialNumberDaBanServiceImpl implements SerialNumberDaBanService {
             hoaDonHinhThucThanhToan.setSoTien(existingBill.getTongTienPhaiTra().add(existingBill.getTienShip()));
             hoaDonHinhThucThanhToan.setTienNhan(existingBill.getTongTienPhaiTra().add(existingBill.getTienShip()));
             hoaDonHinhThucThanhToan.setLoaiThanhToan(1);
-//
             hoaDonHinhThucThanhToan.setTrangThai(1);
             hoaDonHinhThucThanhToan.setHinhThucThanhToan(hinhThucThanhToan);
-//
             hoaDonHinhThucThanhToan.setHoaDon(existingBill);
             hoaDonHinhThucThanhToanRepository.save(hoaDonHinhThucThanhToan);
         }

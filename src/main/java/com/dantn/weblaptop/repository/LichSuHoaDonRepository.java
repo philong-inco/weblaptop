@@ -24,4 +24,6 @@ public interface LichSuHoaDonRepository extends JpaRepository<LichSuHoaDon, Long
             "WHERE hoa_don_id = :billId",
             nativeQuery = true)
     List<LichSuHoaDon> getAllByBillId(@Param("billId") Long billId);
+
+    void  deleteAllByHoaDonId(Long billId);
 }
