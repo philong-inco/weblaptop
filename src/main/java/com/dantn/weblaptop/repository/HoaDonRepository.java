@@ -118,5 +118,8 @@ public interface HoaDonRepository extends JpaRepository<HoaDon, Long>, JpaSpecif
             nativeQuery = true)
     List<Object[]> totalCalculateBillPercentageByDate(@Param("startDateTime") Long startDateTime,
                                                       @Param("endDateTime") Long endDateTime);
+
+    @Query(value = "select * from hoa_don as hd where hd.trang_thai in (0,11)", nativeQuery = true)
+    List<HoaDon> listBillClear();
 }
 

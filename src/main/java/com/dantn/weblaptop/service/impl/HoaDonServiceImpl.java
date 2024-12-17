@@ -95,6 +95,7 @@ public class HoaDonServiceImpl implements HoaDonService {
     private final HoaDonRepository hoaDonRepository;
     HinhThucThanhToanService hinhThucThanhToanService;
     private final SerialNumberService serialNumberService;
+    SanPhamChiTietServiceImpl sanPhamChiTietService;
 
     @Override
     public ResultPaginationResponse getBillPage(Optional<String> page, Optional<String> size) {
@@ -754,7 +755,7 @@ public class HoaDonServiceImpl implements HoaDonService {
                         if (result.compareTo(BigDecimal.ZERO) <= 0) {
                             System.out.println("Xóa trả sau");
                             hoaDonHinhThucThanhToanRepository.delete(optionalTraSau.get());
-                        }else{
+                        } else {
                             System.out.println("Ko vào xóa");
                             HoaDonHinhThucThanhToan hinhThucThanhToan = optionalTraSau.get();
                             hinhThucThanhToan.setSoTien(optionalTraSau.get().getSoTien());
@@ -775,7 +776,7 @@ public class HoaDonServiceImpl implements HoaDonService {
                 }
             }
         }
-        if(!diaChiGoc.equalsIgnoreCase(bill.getDiaChi())){
+        if (!diaChiGoc.equalsIgnoreCase(bill.getDiaChi())) {
             bill.setDiaChi(diaChi);
         }
         bill.setTienShip(request.getTienShip());
@@ -836,7 +837,8 @@ public class HoaDonServiceImpl implements HoaDonService {
         List<SerialNumberDaBanPdfResponse> serialsPdf = serials.stream().map(SerialNumberSoldMapper::toSerialNumberDaBanPdfResponse).toList();
         List<HoaDonHinhThucThanhToan> paymentHistory0 = hoaDonHinhThucThanhToanRepository.findAllByHoaDonIdAndLoaiThanhToan(bill.getId(), 0);
         List<HoaDonHinhThucThanhToanPdfReponse> paymentHistoryPdf0 = paymentHistory0.stream().map(HoaDonHinhThucThanhToanMapper::toHoaDonHinhThucThanhToanPdfReponse).toList();
-        BigDecimal khachDaThanhToan = paymentHistory0.stream().map(HoaDonHinhThucThanhToan::getSoTien).filter(t -> t != null).max(BigDecimal::compareTo).orElse(BigDecimal.ZERO);
+//        BigDecimal khachDaThanhToan = paymentHistory0.stream().map(HoaDonHinhThucThanhToan::getSoTien).filter(t -> t != null).max(BigDecimal::compareTo).orElse(BigDecimal.ZERO);
+        BigDecimal khachDaThanhToan = hoaDonHinhThucThanhToanRepository.getTongTienDaThanhToan(bill.getId());
         // max + min
         List<HoaDonHinhThucThanhToan> paymentHistory = hoaDonHinhThucThanhToanRepository.findAllByHoaDonIdAndLoaiThanhToan(bill.getId(), 1);
         List<HoaDonHinhThucThanhToanPdfReponse> paymentHistoryPdf = paymentHistory.stream().map(HoaDonHinhThucThanhToanMapper::toHoaDonHinhThucThanhToanPdfReponse).toList();
@@ -850,15 +852,6 @@ public class HoaDonServiceImpl implements HoaDonService {
         System.out.println("Processing template with invoice: " + billCode);
 
         String processedHtml = templateEngine.process("templatesBill", context);
-//        OutputStream outputStream = new ByteArrayOutputStream();
-//        ITextRenderer renderer = new ITextRenderer();
-////        String fontPath = getClass().getResource("/fonts/Roboto-Regular.ttf").getPath();
-////        renderer.getFontResolver().addFont(fontPath, BaseFont.IDENTITY_H, BaseFont.EMBEDDED);
-//        renderer.setDocumentFromString(processedHtml);
-//        renderer.layout();
-//        renderer.createPDF(outputStream);
-
-//        return ((ByteArrayOutputStream) outputStream).toByteArray();
         return htmlToPdf(processedHtml, billCode);
     }
 
@@ -964,15 +957,21 @@ public class HoaDonServiceImpl implements HoaDonService {
             }
             if (optional.get().getTrangThai() == 0) {
                 throw new RuntimeException("Sản phẩm " + optional.get().getSanPham().getTen() + " ngừng bán");
-
             }
+            //
+            checkPrice(optional.get(), cartDetailRequest.getGia());
+            //
             List<SerialNumber> listSerialNumber = serialNumberRepository.findBySanPhamChiTietIdAndTrangThaiWithLimit(cartDetailRequest.getIdSPCT(), cartDetailRequest.getSoLuong());
 
             if (listSerialNumber.size() < cartDetailRequest.getSoLuong()) {
                 throw new RuntimeException("Sản phẩm " + optional.get().getSanPham().getTen() + " không đủ . Sản phẩm tồn kho : " + listSerialNumber.size());
             }
             for (SerialNumber serialNumber : listSerialNumber) {
-                SerialNumberDaBan serialNumberDaBanSold = SerialNumberDaBan.builder().serialNumber(serialNumber).hoaDon(bill).giaBan(cartDetailRequest.getGia()).build();
+                SerialNumberDaBan serialNumberDaBanSold = SerialNumberDaBan
+                        .builder()
+                        .serialNumber(serialNumber)
+                        .hoaDon(bill)
+                        .giaBan(cartDetailRequest.getGia()).build();
                 serialNumberDaBanRepository.save(serialNumberDaBanSold);
 //                serialNumber.setTrangThai(1);
                 serialNumberRepository.save(serialNumber);
@@ -1107,6 +1106,9 @@ public class HoaDonServiceImpl implements HoaDonService {
             if (optional.get().getTrangThai() == 0) {
                 throw new RuntimeException("Sản phẩm " + optional.get().getSanPham().getTen() + " ngừng bán");
             }
+            //
+            checkPrice(optional.get(), cartDetailRequest.getGia());
+            //
             List<SerialNumber> listSerialNumber = serialNumberRepository.findBySanPhamChiTietIdAndTrangThaiWithLimit(cartDetailRequest.getIdSPCT(), cartDetailRequest.getSoLuong());
 
             if (listSerialNumber.size() < cartDetailRequest.getSoLuong()) {
@@ -1438,11 +1440,14 @@ public class HoaDonServiceImpl implements HoaDonService {
     }
 
     @Override
-    public void updateCoupons(PhieuGiamGia phieuGiamGia, HoaDon bill) {
+    public void updateCoupons(PhieuGiamGia phieuGiamGia, HoaDon bill) throws AppException {
         if (bill.getPhieuGiamGia() != null) {
             Optional<PhieuGiamGia> couponOptional = couponRepository.findById(bill.getPhieuGiamGia().getId());
             if (couponOptional.isPresent()) {
                 PhieuGiamGia coupon = couponOptional.get();
+                if (coupon.getTrangThai() != 1) {
+                    throw new AppException(ErrorCode.PHIEU_GIAM_GIA_HET_HAN);
+                }
                 Integer quantity = coupon.getSoLuong() - 1;
                 coupon.setSoLuong(quantity);
                 PhieuGiamGia exitingCoupon = couponRepository.save(coupon);
@@ -1456,6 +1461,21 @@ public class HoaDonServiceImpl implements HoaDonService {
                     khachHangPhieuGiamGiaRepository.save(optional.get());
                 }
             }
+        }
+    }
+
+    @Override
+    public void clearCoupons(String billCode) throws AppException {
+        HoaDon bill = hoaDonRepository.findHoaDonByMa(billCode).orElseThrow(() -> new AppException(ErrorCode.BILL_NOT_FOUND));
+        if (bill.getPhieuGiamGia() != null) {
+            PhieuGiamGia phieuGiamGia = couponRepository.findById(bill.getPhieuGiamGia().getId()).get();
+            BigDecimal discount = phieuGiamGia.calculateDiscount();
+            BigDecimal amount = bill.getTongTienPhaiTra().add(discount);
+            bill.setPhieuGiamGia(null);
+            bill.setTongTienPhaiTra(amount);
+            hoaDonRepository.save(bill);
+        }else{
+            throw new AppException(ErrorCode.HOA_DON_KO_PGG);
         }
     }
 
@@ -1512,5 +1532,29 @@ public class HoaDonServiceImpl implements HoaDonService {
         serialNumberRepository.saveAll(serialNumbers);
     }
 
+    private void checkPrice(SanPhamChiTiet sanPhamChiTiet, BigDecimal priceInCart) {
+        FindSanPhamChiTietByFilter filter = new FindSanPhamChiTietByFilter();
+        filter.setMaSanPhamChiTiet(sanPhamChiTiet.getMa());
+        List<SanPhamChiTietClientDTO> sanPhamChiTietClientDTOS = sanPhamChiTietService.findByFilter(filter);
+        BigDecimal giaBan = BigDecimal.ZERO;
+        if (!sanPhamChiTietClientDTOS.isEmpty()) {
+            SanPhamChiTietClientDTO sanPhamChiTietDTO = sanPhamChiTietClientDTOS.get(0);
+            String giaBanStr = sanPhamChiTietDTO.getGiaSauKhuyenMai();
+            if (giaBanStr != null) {
+                try {
+                    giaBan = new BigDecimal(giaBanStr);
+                } catch (NumberFormatException e) {
+                    giaBan = new BigDecimal(sanPhamChiTietDTO.getGiaBan());
+                }
+            } else {
+                giaBan = new BigDecimal(sanPhamChiTietDTO.getGiaBan());
+            }
+        }
+        BigDecimal finalGiaBan = giaBan;
+        if (finalGiaBan.compareTo(priceInCart) != 0) {
+            System.out.println("Giá bán không khớp với giá yêu cầu!");
+            throw new RuntimeException("Sản phẩm " + sanPhamChiTiet.getSanPham().getTen() + " đã có thay đổi về giá xin vui lòng chọn lại sản phẩm");
+        }
+    }
 
 }

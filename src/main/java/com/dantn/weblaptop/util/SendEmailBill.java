@@ -172,7 +172,7 @@ public class SendEmailBill {
         List<HoaDonHinhThucThanhToanResponse> hinhThucThanhToanResponses = hoaDonHinhThucThanhToanSerive.getAllByBillCode(response.getMa());
         String headerHtml = "<div style='text-align: center;'>" +
                 "<h1 style='color: #800080;'>COMNOONE</h1>" +
-                "<p>Chương trình Phổ thông Cao đẳng FPT Polytechnic, Phương Canh, Từ Liêm, Hà Nội, Việt Nam</p>" +
+                "<p>Trường Cao đẳng FPT Polytechnic, Phương Canh, Từ Liêm, Hà Nội, Việt Nam</p>" +
                 "<p>SDT: 0338957590</p>" +
                 "<p>Mã hóa đơn: " + response.getMa() + " | " + response.getNgayTao() + "</p>" +
                 "<img src='[QR_CODE_SRC]' alt='QR Code' style='width: 50px; height: 50px;' />" +
@@ -216,10 +216,10 @@ public class SendEmailBill {
         tableBuilder.append("<td style='border: 1px solid #ccc; padding: 8px; text-align: right;'>" + formatCurrencyVND(response.getTongTienBanDau()) + " </td>");
         tableBuilder.append("</tr>");
 
-        tableBuilder.append("<tr>");
-        tableBuilder.append("<td colspan='4' style='border: 1px solid #ccc; padding: 8px; text-align: right;'>Phiếu giảm giá:</td>");
-        tableBuilder.append("<td style='border: 1px solid #ccc; padding: 8px; text-align: right;'>" + response.getMaPGG() != null ? response.getMaPGG() : "" + " </td>");
-        tableBuilder.append("</tr>");
+//        tableBuilder.append("<tr>");
+//        tableBuilder.append("<td colspan='4' style='border: 1px solid #ccc; padding: 8px; text-align: right;'>Phiếu giảm giá:</td>");
+//        tableBuilder.append("<td style='border: 1px solid #ccc; padding: 8px; text-align: right;'>" + response.getMaPGG() != null ? response.getMaPGG() : "" + " </td>");
+//        tableBuilder.append("</tr>");
 
         tableBuilder.append("<tr>");
         tableBuilder.append("<td colspan='4' style='border: 1px solid #ccc; padding: 8px; text-align: right;'>Giảm giá:</td>");

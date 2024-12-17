@@ -15,6 +15,7 @@ import java.math.BigDecimal;
 @Setter
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class UpdateDiaChiHoaDonRequest {
+    @Size(min = 5,max = 50,message = "ADDRESS_MIN_5_MAX_50")
     String diaChi;
     @NotBlank(message = "PROVINCIAL_CITY_NOT_BLANK")
     String tinh;

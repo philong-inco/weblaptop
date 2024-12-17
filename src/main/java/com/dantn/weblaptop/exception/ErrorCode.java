@@ -93,10 +93,11 @@ public enum ErrorCode {
     SERIAL_NUMBER_DA_BAN(8019, "Serial number null"),
     TOTAL_PRODUCT_IN_BILL_MAX_10(8020, "Đơn hàng trả sau chỉ được mua tối đa 10 sản phẩm"),
     SAN_PHAM_NGUNG_BAN(8021,"Sản phẩm tạm thời ngừng bán"),
-    NO_UPDATE_ADDRESS(8022,"Hóa đơn ship mới được cập nhập địa chỉ");;
+    NO_UPDATE_ADDRESS(8022,"Hóa đơn ship mới được cập nhập địa chỉ"),
+    ADDRESS_MIN_5_MAX_50(8823,"Địa chỉ nhận hàng từ 5 đến 50 ký tự"),
+    PHIEU_GIAM_GIA_HET_HAN(8824,"Phiếu giảm giá đã hết hạn vui lòng thay đổi phiếu khác hoặc hủy phiếu"),
+    HOA_DON_KO_PGG(8825,"Hóa đơn không có phiếu giảm giá");;
     ;;
-
-
     private Integer code;
     private String message;
 
