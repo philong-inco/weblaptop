@@ -479,5 +479,17 @@ public class HoaDonController {
                 .statusCode(HttpStatus.OK.value())
                 .build());
     }
+
+    @PostMapping("clear-coupons/{billCode}")
+    public ResponseEntity<ApiResponse> clearCoupons(@PathVariable String billCode) throws AppException {
+        hoaDonService.clearCoupons(billCode);
+        return ResponseEntity.ok(
+                ApiResponse.builder()
+                        .statusCode(HttpStatus.OK.value())
+                        .message("Hủy phiếu giảm giá thành công")
+                        .error("Hủy phiếu giảm giá thành công")
+                        .build()
+        );
+    }
 }
 

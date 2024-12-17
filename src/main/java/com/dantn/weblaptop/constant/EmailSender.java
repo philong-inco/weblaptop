@@ -45,7 +45,7 @@ public class EmailSender {
                         "</head>" +
                         "<body>" +
                         "<div class='header'>" +
-                        "<img src='https://res.cloudinary.com/daljc2ktr/image/upload/v1723625914/af7ad9ee-03a4-4080-b809-572700a19da6.png' alt='Cửa hàng Laptop ComNoOne' />" +
+                        "<img src='https://res.cloudinary.com/daljc2ktr/image/upload/v1734317049/dfgmoiemxisqogbgtzem.png' alt='Cửa hàng Laptop ComNoOne' />" +
                         "<h1>Chào mừng bạn đến với Cửa hàng Laptop ComNoOne!</h1>" +
                         "</div>" +
                         "<div class='content'>" +
@@ -102,7 +102,7 @@ public class EmailSender {
                 "</head>" +
                 "<body>" +
                 "<div class='header'>" +
-                "<img src='https://res.cloudinary.com/daljc2ktr/image/upload/v1723625914/af7ad9ee-03a4-4080-b809-572700a19da6.png' alt='Cửa hàng Laptop ComNoOne' />" +
+                "<img src='https://res.cloudinary.com/daljc2ktr/image/upload/v1734317049/dfgmoiemxisqogbgtzem.png' alt='Cửa hàng Laptop ComNoOne' />" +
                 "<h1>Chào mừng bạn gia nhập đội ngũ!</h1>" +
                 "</div>" +
                 "<div class='content'>" +
@@ -154,7 +154,7 @@ public class EmailSender {
                             "</head>" +
                             "<body>" +
                             "<div class='header'>" +
-                            "<img src='https://res.cloudinary.com/daljc2ktr/image/upload/v1723625914/af7ad9ee-03a4-4080-b809-572700a19da6.png' alt='Cửa hàng Laptop ComNoOne' />" +
+                            "<img src='https://res.cloudinary.com/daljc2ktr/image/upload/v1734317049/dfgmoiemxisqogbgtzem.png' alt='Cửa hàng Laptop ComNoOne' />" +
                             "<h1>Thông báo thay đổi mật khẩu</h1>" +
                             "</div>" +
                             "<div class='content'>" +
@@ -208,7 +208,7 @@ public class EmailSender {
                             "</head>" +
                             "<body>" +
                             "<div class='header'>" +
-                            "<img src='https://res.cloudinary.com/daljc2ktr/image/upload/v1723625914/af7ad9ee-03a4-4080-b809-572700a19da6.png' alt='Cửa hàng Laptop ComNoOne' />" +
+                            "<img src='https://res.cloudinary.com/daljc2ktr/image/upload/v1734317049/dfgmoiemxisqogbgtzem.png' alt='Cửa hàng Laptop ComNoOne' />" +
                             "<h1>Thông báo thay đổi mật khẩu</h1>" +
                             "</div>" +
                             "<div class='content'>" +
@@ -271,7 +271,7 @@ public class EmailSender {
                 "</head>" +
                 "<body>" +
                 "<div class='header'>" +
-                "<img src='https://res.cloudinary.com/daljc2ktr/image/upload/v1723625914/af7ad9ee-03a4-4080-b809-572700a19da6.png' alt='Cửa hàng Laptop ComNoOne' />" +
+                "<img src='https://res.cloudinary.com/daljc2ktr/image/upload/v1734317049/dfgmoiemxisqogbgtzem.png' alt='Cửa hàng Laptop ComNoOne' />" +
                 "<h1>Nhận mã khuyến mãi từ Laptop ComNoOne!</h1>" +
                 "</div>" +
                 "<div class='content'>" +
@@ -328,7 +328,7 @@ public class EmailSender {
                         "</head>" +
                         "<body>" +
                         "<div class='header'>" +
-                        "<img src='https://res.cloudinary.com/daljc2ktr/image/upload/v1723625914/af7ad9ee-03a4-4080-b809-572700a19da6.png' alt='Cửa hàng Laptop ComNoOne' />" +
+                        "<img src='https://res.cloudinary.com/daljc2ktr/image/upload/v1734317049/dfgmoiemxisqogbgtzem.png' alt='Cửa hàng Laptop ComNoOne' />" +
                         "<h1>Chào mừng bạn đến với Laptop ComNoOne!</h1>" +
                         "</div>" +
                         "<div class='content'>" +

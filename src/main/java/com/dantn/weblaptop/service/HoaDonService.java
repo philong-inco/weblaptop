@@ -96,5 +96,7 @@ public interface HoaDonService {
 
     List<TrangThaiHoaDon_Dto> CalculateBillPercentage (LocalDateTime startDate, LocalDateTime endDate) throws AppException;
 
-    void updateCoupons (PhieuGiamGia phieuGiamGia , HoaDon hoaDon);
+    void updateCoupons (PhieuGiamGia phieuGiamGia , HoaDon hoaDon) throws AppException;
+
+    void clearCoupons (String billId) throws AppException;
 }

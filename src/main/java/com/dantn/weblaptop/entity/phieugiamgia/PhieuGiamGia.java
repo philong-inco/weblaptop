@@ -16,6 +16,7 @@ import lombok.ToString;
 import lombok.experimental.FieldDefaults;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Set;
@@ -69,4 +70,21 @@ public class  PhieuGiamGia extends BaseEntity {
                     CascadeType.MERGE, CascadeType.REFRESH},
             fetch = FetchType.LAZY)
     Set<KhachHangPhieuGiamGia> khachHangPhieuGiamGias;
+
+    public   BigDecimal calculateDiscount() {
+        BigDecimal moneyReduced = BigDecimal.ZERO;
+        // 1 % : 2 VND
+        if (this.getLoaiGiamGia() == 2) {
+            moneyReduced = this.getGiaTriGiamGia();
+        } else {
+            // Tính % của phiếu giảm rồi trừ đi
+            moneyReduced = this.getGiamToiDa()
+                    .multiply(this.getGiaTriGiamGia())
+                    .divide(BigDecimal.valueOf(100), RoundingMode.HALF_UP);
+        }
+        if (this.getGiamToiDa().compareTo(moneyReduced) < 0) {
+            moneyReduced = this.getGiamToiDa();
+        }
+        return moneyReduced;
+    }
 }

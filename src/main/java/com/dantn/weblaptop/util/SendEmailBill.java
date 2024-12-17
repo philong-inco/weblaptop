@@ -7,6 +7,7 @@ import com.dantn.weblaptop.dto.response.SerialNumberDaBanResponse;
 import com.dantn.weblaptop.entity.hoadon.HoaDon;
 import com.dantn.weblaptop.entity.sanpham.SerialNumber;
 import com.dantn.weblaptop.exception.AppException;
+import com.dantn.weblaptop.repository.HoaDonHinhThucThanhToanRepository;
 import com.dantn.weblaptop.service.HinhThucThanhToanService;
 import com.dantn.weblaptop.service.HoaDonHinhThucThanhToanSerive;
 import com.dantn.weblaptop.service.HoaDonService;
@@ -28,6 +29,7 @@ import java.text.DecimalFormatSymbols;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -36,6 +38,7 @@ public class SendEmailBill {
     JavaMailSender javaMailSender;
     SerialNumberDaBanService serialNumberDaBanService;
     HoaDonHinhThucThanhToanSerive hoaDonHinhThucThanhToanSerive;
+    private final HoaDonHinhThucThanhToanRepository hoaDonHinhThucThanhToanRepository;
 
     @Async
     public void sendEmailDaThanhToan(HoaDon hoaDon, String subject) throws AppException {
@@ -169,13 +172,15 @@ public class SendEmailBill {
         MimeMessage message = javaMailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(message, "utf-8");
         List<SerialNumberDaBanResponse> serialNumbers = serialNumberDaBanService.getSerialNumberDaBanPage(response.getMa());
-        List<HoaDonHinhThucThanhToanResponse> hinhThucThanhToanResponses = hoaDonHinhThucThanhToanSerive.getAllByBillCode(response.getMa());
+//        List<HoaDonHinhThucThanhToanResponse> hinhThucThanhToanResponses = hoaDonHinhThucThanhToanSerive.getAllByBillCode(response.getMa());
+        BigDecimal khachHangThanhToan = Optional.ofNullable(hoaDonHinhThucThanhToanRepository.getTongTienDaThanhToan(response.getId()))
+                .orElse(BigDecimal.ZERO);
         String headerHtml = "<div style='text-align: center;'>" +
                 "<h1 style='color: #800080;'>COMNOONE</h1>" +
-                "<p>Chương trình Phổ thông Cao đẳng FPT Polytechnic, Phương Canh, Từ Liêm, Hà Nội, Việt Nam</p>" +
+                "<p>Trường Cao đẳng FPT Polytechnic, Phương Canh, Từ Liêm, Hà Nội, Việt Nam</p>" +
                 "<p>SDT: 0338957590</p>" +
                 "<p>Mã hóa đơn: " + response.getMa() + " | " + response.getNgayTao() + "</p>" +
-                "<img src='[QR_CODE_SRC]' alt='QR Code' style='width: 50px; height: 50px;' />" +
+//                "<img src='[QR_CODE_SRC]' alt='QR Code' style='width: 50px; height: 50px;' />" +
                 "<hr style='border: 1px dashed #000; margin: 20px 0;' />" +
                 "<p>Khách hàng: " + ((response.getIdKhachHang() == null && response.getTenKhachHang() == null) ? "Khách lẻ" : response.getTenKhachHang()) + "</p>" +
                 "<p>Số điện thoại: " + response.getSdt() + "</p>" +
@@ -216,10 +221,10 @@ public class SendEmailBill {
         tableBuilder.append("<td style='border: 1px solid #ccc; padding: 8px; text-align: right;'>" + formatCurrencyVND(response.getTongTienBanDau()) + " </td>");
         tableBuilder.append("</tr>");
 
-        tableBuilder.append("<tr>");
-        tableBuilder.append("<td colspan='4' style='border: 1px solid #ccc; padding: 8px; text-align: right;'>Phiếu giảm giá:</td>");
-        tableBuilder.append("<td style='border: 1px solid #ccc; padding: 8px; text-align: right;'>" + response.getMaPGG() != null ? response.getMaPGG() : "" + " </td>");
-        tableBuilder.append("</tr>");
+//        tableBuilder.append("<tr>");
+//        tableBuilder.append("<td colspan='4' style='border: 1px solid #ccc; padding: 8px; text-align: right;'>Phiếu giảm giá:</td>");
+//        tableBuilder.append("<td style='border: 1px solid #ccc; padding: 8px; text-align: right;'>" + response.getMaPGG() != null ? response.getMaPGG() : "" + " </td>");
+//        tableBuilder.append("</tr>");
 
         tableBuilder.append("<tr>");
         tableBuilder.append("<td colspan='4' style='border: 1px solid #ccc; padding: 8px; text-align: right;'>Giảm giá:</td>");
@@ -248,41 +253,41 @@ public class SendEmailBill {
         tableBuilder.append("</table>");
 
 
-        StringBuilder tableBuilderHistory = new StringBuilder();
-        tableBuilderHistory.append("<table style='border-collapse: collapse; width: 100%; margin-top: 20px;'>");
-        tableBuilderHistory.append("<thead>");
-        tableBuilderHistory.append("<tr>");
-//        tableBuilderHistory.append("<th style='border: 1px solid #ccc; padding: 8px; text-align: left;'>Số tiền</th>");
-        tableBuilderHistory.append("<th style='border: 1px solid #ccc; padding: 8px; text-align: left;'>Tiền nhận</th>");
-        tableBuilderHistory.append("<th style='border: 1px solid #ccc; padding: 8px; text-align: left;'>Loại thanh toán</th>");
-        tableBuilderHistory.append("<th style='border: 1px solid #ccc; padding: 8px; text-align: left;'>Ngày tạo</th>");
-        tableBuilderHistory.append("<th style='border: 1px solid #ccc; padding: 8px; text-align: left;'>Ngày sửa</th>");
-        tableBuilderHistory.append("<th style='border: 1px solid #ccc; padding: 8px; text-align: left;'>Người tạo</th>");
-        tableBuilderHistory.append("</tr>");
-        tableBuilderHistory.append("</thead>");
-        tableBuilderHistory.append("<tbody>");
-
-        for (HoaDonHinhThucThanhToanResponse payment : hinhThucThanhToanResponses) {
-            BigDecimal amount;
-            if (payment.getLoaiThanhToan() == 0) {
-                amount = payment.getTienNhan() != null ? payment.getTienNhan() : BigDecimal.ZERO;
-            } else {
-                amount = payment.getSoTien() != null ? payment.getSoTien() : BigDecimal.ZERO;
-            }
-            tableBuilderHistory.append("<tr>");
-//            tableBuilderHistory.append("<td style='border: 1px solid #ccc; padding: 8px; text-align: right;'>" + formatCurrencyVND(payment.getSoTien() != null ? payment.getSoTien() : BigDecimal.ZERO) + "</td>");
-            tableBuilderHistory.append("<td style='border: 1px solid #ccc; padding: 8px; text-align: right;'>")
-                    .append(formatCurrencyVND(amount))
-                    .append("</td>");
-            tableBuilderHistory.append("<td style='border: 1px solid #ccc; padding: 8px; text-align: center;'>" + (payment.getLoaiThanhToan() == 0 ? "Đã thanh toán" : "Trả sau") + "</td>");
-            tableBuilderHistory.append("<td style='border: 1px solid #ccc; padding: 8px; text-align: center;'>" + payment.getNgayTao() + "</td>");
-            tableBuilderHistory.append("<td style='border: 1px solid #ccc; padding: 8px; text-align: center;'>" + payment.getNgaySua() + "</td>");
-            tableBuilderHistory.append("<td style='border: 1px solid #ccc; padding: 8px; text-align: center;'>" + payment.getNguoiTao() + "</td>");
-            tableBuilderHistory.append("</tr>");
-        }
-
-        tableBuilder.append("</tbody>");
-        tableBuilder.append("</table>");
+//        StringBuilder tableBuilderHistory = new StringBuilder();
+//        tableBuilderHistory.append("<table style='border-collapse: collapse; width: 100%; margin-top: 20px;'>");
+//        tableBuilderHistory.append("<thead>");
+//        tableBuilderHistory.append("<tr>");
+////        tableBuilderHistory.append("<th style='border: 1px solid #ccc; padding: 8px; text-align: left;'>Số tiền</th>");
+//        tableBuilderHistory.append("<th style='border: 1px solid #ccc; padding: 8px; text-align: left;'>Tiền nhận</th>");
+//        tableBuilderHistory.append("<th style='border: 1px solid #ccc; padding: 8px; text-align: left;'>Loại thanh toán</th>");
+//        tableBuilderHistory.append("<th style='border: 1px solid #ccc; padding: 8px; text-align: left;'>Ngày tạo</th>");
+//        tableBuilderHistory.append("<th style='border: 1px solid #ccc; padding: 8px; text-align: left;'>Ngày sửa</th>");
+//        tableBuilderHistory.append("<th style='border: 1px solid #ccc; padding: 8px; text-align: left;'>Người tạo</th>");
+//        tableBuilderHistory.append("</tr>");
+//        tableBuilderHistory.append("</thead>");
+//        tableBuilderHistory.append("<tbody>");
+//
+//        for (HoaDonHinhThucThanhToanResponse payment : hinhThucThanhToanResponses) {
+//            BigDecimal amount;
+//            if (payment.getLoaiThanhToan() == 0) {
+//                amount = payment.getTienNhan() != null ? payment.getTienNhan() : BigDecimal.ZERO;
+//            } else {
+//                amount = payment.getSoTien() != null ? payment.getSoTien() : BigDecimal.ZERO;
+//            }
+//            tableBuilderHistory.append("<tr>");
+////            tableBuilderHistory.append("<td style='border: 1px solid #ccc; padding: 8px; text-align: right;'>" + formatCurrencyVND(payment.getSoTien() != null ? payment.getSoTien() : BigDecimal.ZERO) + "</td>");
+//            tableBuilderHistory.append("<td style='border: 1px solid #ccc; padding: 8px; text-align: right;'>")
+//                    .append(formatCurrencyVND(amount))
+//                    .append("</td>");
+//            tableBuilderHistory.append("<td style='border: 1px solid #ccc; padding: 8px; text-align: center;'>" + (payment.getLoaiThanhToan() == 0 ? "Đã thanh toán" : "Trả sau") + "</td>");
+//            tableBuilderHistory.append("<td style='border: 1px solid #ccc; padding: 8px; text-align: center;'>" + payment.getNgayTao() + "</td>");
+//            tableBuilderHistory.append("<td style='border: 1px solid #ccc; padding: 8px; text-align: center;'>" + payment.getNgaySua() + "</td>");
+//            tableBuilderHistory.append("<td style='border: 1px solid #ccc; padding: 8px; text-align: center;'>" + payment.getNguoiTao() + "</td>");
+//            tableBuilderHistory.append("</tr>");
+//        }
+//
+//        tableBuilder.append("</tbody>");
+//        tableBuilder.append("</table>");
 
         // Tạo nội dung email
         String htmlBody = "<html>"
@@ -297,8 +302,10 @@ public class SendEmailBill {
                 + "<div class='container'>"
                 + headerHtml
                 + tableBuilder.toString()
-                + "<h2>Lịch sử thanh toán</h2>"  // Thêm tiêu đề nếu cần
-                + tableBuilderHistory.toString()
+                + "<h3>Số tiền khách thanh toán : </h3>"  // Thêm tiêu đề nếu cần
+//                + tableBuilderHistory.toString()
+                + "<h4>"+formatCurrencyVND(khachHangThanhToan)+"</h4>"
+
                 + "</div>"
                 + "</body>"
                 + "</html>";

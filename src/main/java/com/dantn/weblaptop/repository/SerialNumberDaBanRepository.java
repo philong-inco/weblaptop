@@ -79,4 +79,5 @@ public interface SerialNumberDaBanRepository extends JpaRepository<SerialNumberD
             " LIMIT 5")
     List<Object[]> findSerialNumberDaBanTopSold(@Param("startDate") Long startDate, @Param("endDate") Long endDate);
 
+    void deleteAllByHoaDonId(Long hoaDonId);
 }
