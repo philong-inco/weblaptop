@@ -398,8 +398,8 @@ public class SerialNumberDaBanServiceImpl implements SerialNumberDaBanService {
             BigDecimal tongTienPhaiTraVaShip = existingBill.getTongTienPhaiTra().add(existingBill.getTienShip());
             // Lấy số tiền đã thanh toán
 //            BigDecimal soTienDaThanhToan = optionalTraTruoc.get().getTienNhan();
-            BigDecimal soTienDaThanhToan = hoaDonHinhThucThanhToanRepository.getTongTienDaThanhToan(existingBill.getId());
-
+            BigDecimal soTienDaThanhToan = Optional.ofNullable(hoaDonHinhThucThanhToanRepository.getTongTienDaThanhToan(existingBill.getId()))
+                    .orElse(BigDecimal.ZERO);
             // Tính số tiền chênh lệch
             BigDecimal soTienChenhLech = tongTienPhaiTraVaShip.subtract(soTienDaThanhToan);
 

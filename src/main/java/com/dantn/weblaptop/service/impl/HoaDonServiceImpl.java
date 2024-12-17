@@ -838,7 +838,8 @@ public class HoaDonServiceImpl implements HoaDonService {
         List<HoaDonHinhThucThanhToan> paymentHistory0 = hoaDonHinhThucThanhToanRepository.findAllByHoaDonIdAndLoaiThanhToan(bill.getId(), 0);
         List<HoaDonHinhThucThanhToanPdfReponse> paymentHistoryPdf0 = paymentHistory0.stream().map(HoaDonHinhThucThanhToanMapper::toHoaDonHinhThucThanhToanPdfReponse).toList();
 //        BigDecimal khachDaThanhToan = paymentHistory0.stream().map(HoaDonHinhThucThanhToan::getSoTien).filter(t -> t != null).max(BigDecimal::compareTo).orElse(BigDecimal.ZERO);
-        BigDecimal khachDaThanhToan = hoaDonHinhThucThanhToanRepository.getTongTienDaThanhToan(bill.getId());
+        BigDecimal khachDaThanhToan = Optional.ofNullable(hoaDonHinhThucThanhToanRepository.getTongTienDaThanhToan(bill.getId()))
+                .orElse(BigDecimal.ZERO);
         // max + min
         List<HoaDonHinhThucThanhToan> paymentHistory = hoaDonHinhThucThanhToanRepository.findAllByHoaDonIdAndLoaiThanhToan(bill.getId(), 1);
         List<HoaDonHinhThucThanhToanPdfReponse> paymentHistoryPdf = paymentHistory.stream().map(HoaDonHinhThucThanhToanMapper::toHoaDonHinhThucThanhToanPdfReponse).toList();
