@@ -2,7 +2,6 @@ package com.dantn.weblaptop.service.impl;
 
 import com.dantn.weblaptop.config.JwtUtil;
 import com.dantn.weblaptop.constant.HoaDonStatus;
-import com.dantn.weblaptop.constant.RankCustomer;
 import com.dantn.weblaptop.dto.HoaDonDashboard_Dto;
 import com.dantn.weblaptop.dto.TrangThaiHoaDon_Dto;
 import com.dantn.weblaptop.dto.request.create_request.*;
@@ -815,15 +814,15 @@ public class HoaDonServiceImpl implements HoaDonService {
             Optional<BigDecimal> totalSpentOpt = billRepository.tongTienDaChiCuaKhachHang(idKhachHang);
             if (totalSpentOpt.isPresent()) {
                 BigDecimal totalSpent = totalSpentOpt.get();
-                Integer rank = RankCustomer.getRankByValue(totalSpent);
-                if (rank != -1) {
-                    Optional<KhachHang> khachHang = customerRepository.findById(idKhachHang);
-                    if (khachHang.isPresent()) {
-                        khachHang.get().setHangKhachHang(rank);
-                        customerRepository.save(khachHang.get());
-                    }
-
-                }
+//                Integer rank = RankCustomer.getRankByValue(totalSpent);
+//                if (rank != -1) {
+//                    Optional<KhachHang> khachHang = customerRepository.findById(idKhachHang);
+//                    if (khachHang.isPresent()) {
+//                        khachHang.get().setHangKhachHang(rank);
+//                        customerRepository.save(khachHang.get());
+//                    }
+//
+//                }
             }
         }
     }
@@ -1509,8 +1508,8 @@ public class HoaDonServiceImpl implements HoaDonService {
         }
         //
         if (existingBill.getKhachHang() != null) {
-            BigDecimal rank = RankCustomer.getValueByRank(existingBill.getKhachHang().getHangKhachHang());
-            existingBill.setTienGiamHangKhachHang(rank);
+            BigDecimal rank = BigDecimal.ZERO;
+            existingBill.setTienGiamHangKhachHang(BigDecimal.ZERO);
             BigDecimal newTongTienPhaiTra = existingBill.getTongTienPhaiTra().subtract(rank);
             if (newTongTienPhaiTra.compareTo(BigDecimal.ZERO) < 0) {
                 newTongTienPhaiTra = BigDecimal.ZERO;
