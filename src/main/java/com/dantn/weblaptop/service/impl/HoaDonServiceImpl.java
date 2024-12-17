@@ -909,6 +909,10 @@ public class HoaDonServiceImpl implements HoaDonService {
         if (request.getMaPGG() != null && !request.getMaPGG().isEmpty()) {
             Optional<PhieuGiamGia> optional = couponRepository.findByMa(request.getMaPGG().trim());
             if (optional.isPresent()) {
+                //
+                if (optional.get().getTrangThai() != 1) {
+                    throw new AppException(ErrorCode.PHIEU_GIAM_GIA_HET_HAN);
+                }
                 bill.setPhieuGiamGia(optional.get());
                 updateCoupons(optional.get(), bill);
             } else {
@@ -1048,6 +1052,9 @@ public class HoaDonServiceImpl implements HoaDonService {
         if (request.getMaPGG() != null && !request.getMaPGG().isEmpty()) {
             Optional<PhieuGiamGia> optional = couponRepository.findByMa(request.getMaPGG().trim());
             if (optional.isPresent()) {
+                if (optional.get().getTrangThai() != 1) {
+                    throw new AppException(ErrorCode.PHIEU_GIAM_GIA_HET_HAN);
+                }
                 bill.setPhieuGiamGia(optional.get());
             } else {
                 throw new AppException(ErrorCode.COUPONS_NOT_FOUND);
@@ -1285,8 +1292,6 @@ public class HoaDonServiceImpl implements HoaDonService {
                 paymentHistory11.setSoTien(request.getTongTienPhaiTra());
                 paymentHistory11.setTienNhan(phanNguyen);
                 paymentHistory11.setHoaDon(bill);
-//                paymentHistory11.setNguoiTao("CK");
-//                paymentHistory11.setNguoiSua("CK");
                 paymentHistory11.setLoaiThanhToan(0);
                 paymentHistory11.setTrangThai(1);
                 paymentHistory11.setHinhThucThanhToan(paymentCK);
