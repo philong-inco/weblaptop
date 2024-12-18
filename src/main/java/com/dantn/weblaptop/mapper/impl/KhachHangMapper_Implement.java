@@ -1,6 +1,5 @@
 package com.dantn.weblaptop.mapper.impl;
 
-import com.dantn.weblaptop.constant.RankCustomer;
 import com.dantn.weblaptop.dto.request.create_request.CreateKhachHang;
 import com.dantn.weblaptop.dto.request.update_request.UpdateKhachHang;
 import com.dantn.weblaptop.dto.response.KhachHangResponse;
@@ -9,6 +8,7 @@ import com.dantn.weblaptop.mapper.KhachHang_Mapper;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -67,7 +67,7 @@ public class KhachHangMapper_Implement implements KhachHang_Mapper {
                 .hinhAnh(khachHang.getHinhAnh())
                 .hangKhachHang(khachHang.getHangKhachHang())
                 .sessionId(khachHang.getSessionId())
-                .tienGiamHang(RankCustomer.getValueByRank(khachHang.getHangKhachHang()))
+                .tienGiamHang(BigDecimal.ZERO)
                 .build();
     }
 

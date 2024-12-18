@@ -2,7 +2,6 @@ package com.dantn.weblaptop.service.impl;
 
 import com.dantn.weblaptop.config.JwtUtil;
 import com.dantn.weblaptop.constant.HoaDonStatus;
-import com.dantn.weblaptop.constant.RankCustomer;
 import com.dantn.weblaptop.dto.HoaDonDashboard_Dto;
 import com.dantn.weblaptop.dto.TrangThaiHoaDon_Dto;
 import com.dantn.weblaptop.dto.request.create_request.*;
@@ -815,15 +814,15 @@ public class HoaDonServiceImpl implements HoaDonService {
             Optional<BigDecimal> totalSpentOpt = billRepository.tongTienDaChiCuaKhachHang(idKhachHang);
             if (totalSpentOpt.isPresent()) {
                 BigDecimal totalSpent = totalSpentOpt.get();
-                Integer rank = RankCustomer.getRankByValue(totalSpent);
-                if (rank != -1) {
-                    Optional<KhachHang> khachHang = customerRepository.findById(idKhachHang);
-                    if (khachHang.isPresent()) {
-                        khachHang.get().setHangKhachHang(rank);
-                        customerRepository.save(khachHang.get());
-                    }
-
-                }
+//                Integer rank = RankCustomer.getRankByValue(totalSpent);
+//                if (rank != -1) {
+//                    Optional<KhachHang> khachHang = customerRepository.findById(idKhachHang);
+//                    if (khachHang.isPresent()) {
+//                        khachHang.get().setHangKhachHang(rank);
+//                        customerRepository.save(khachHang.get());
+//                    }
+//
+//                }
             }
         }
     }
@@ -909,6 +908,10 @@ public class HoaDonServiceImpl implements HoaDonService {
         if (request.getMaPGG() != null && !request.getMaPGG().isEmpty()) {
             Optional<PhieuGiamGia> optional = couponRepository.findByMa(request.getMaPGG().trim());
             if (optional.isPresent()) {
+                //
+                if (optional.get().getTrangThai() != 1) {
+                    throw new AppException(ErrorCode.PHIEU_GIAM_GIA_HET_HAN);
+                }
                 bill.setPhieuGiamGia(optional.get());
                 updateCoupons(optional.get(), bill);
             } else {
@@ -1048,6 +1051,9 @@ public class HoaDonServiceImpl implements HoaDonService {
         if (request.getMaPGG() != null && !request.getMaPGG().isEmpty()) {
             Optional<PhieuGiamGia> optional = couponRepository.findByMa(request.getMaPGG().trim());
             if (optional.isPresent()) {
+                if (optional.get().getTrangThai() != 1) {
+                    throw new AppException(ErrorCode.PHIEU_GIAM_GIA_HET_HAN);
+                }
                 bill.setPhieuGiamGia(optional.get());
             } else {
                 throw new AppException(ErrorCode.COUPONS_NOT_FOUND);
@@ -1285,8 +1291,6 @@ public class HoaDonServiceImpl implements HoaDonService {
                 paymentHistory11.setSoTien(request.getTongTienPhaiTra());
                 paymentHistory11.setTienNhan(phanNguyen);
                 paymentHistory11.setHoaDon(bill);
-//                paymentHistory11.setNguoiTao("CK");
-//                paymentHistory11.setNguoiSua("CK");
                 paymentHistory11.setLoaiThanhToan(0);
                 paymentHistory11.setTrangThai(1);
                 paymentHistory11.setHinhThucThanhToan(paymentCK);
@@ -1504,8 +1508,8 @@ public class HoaDonServiceImpl implements HoaDonService {
         }
         //
         if (existingBill.getKhachHang() != null) {
-            BigDecimal rank = RankCustomer.getValueByRank(existingBill.getKhachHang().getHangKhachHang());
-            existingBill.setTienGiamHangKhachHang(rank);
+            BigDecimal rank = BigDecimal.ZERO;
+            existingBill.setTienGiamHangKhachHang(BigDecimal.ZERO);
             BigDecimal newTongTienPhaiTra = existingBill.getTongTienPhaiTra().subtract(rank);
             if (newTongTienPhaiTra.compareTo(BigDecimal.ZERO) < 0) {
                 newTongTienPhaiTra = BigDecimal.ZERO;

@@ -1,7 +1,6 @@
 package com.dantn.weblaptop.service.impl;
 
 import com.dantn.weblaptop.constant.HoaDonStatus;
-import com.dantn.weblaptop.constant.RankCustomer;
 import com.dantn.weblaptop.dto.SerialNumberDaBan_Dto;
 import com.dantn.weblaptop.dto.request.create_request.CreateLichSuHoaDonRequest;
 import com.dantn.weblaptop.dto.request.create_request.CreateSerialNumberCodeDaBanRequest;
