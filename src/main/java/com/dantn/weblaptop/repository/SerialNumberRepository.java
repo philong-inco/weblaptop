@@ -146,4 +146,9 @@ public interface SerialNumberRepository extends JpaRepository<SerialNumber, Long
             "join serial_number_da_ban as srdb on sr.id = srdb.serial_number_id\n" +
             "where srdb.hoa_don_id = :billId", nativeQuery = true)
     List<SerialNumber>  getListSerialInBill (@Param("billId") Long billId);
+
+    @Query(value = "SELECT sr.* FROM serial_number as sr \n" +
+            "join serial_number_da_ban as srdb on sr.id =srdb.serial_number_id\n" +
+            "where srdb.hoa_don_id = :billId and sr.trang_thai =0", nativeQuery = true)
+    List<SerialNumber> getListSerialInBillStatusIs0(@Param("billId") Long billId);
 }

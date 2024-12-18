@@ -2,13 +2,10 @@ package com.dantn.weblaptop.service.impl;
 
 import com.dantn.weblaptop.constant.HoaDonStatus;
 import com.dantn.weblaptop.dto.SerialNumberDaBan_Dto;
-import com.dantn.weblaptop.dto.request.create_request.CreateLichSuHoaDonRequest;
 import com.dantn.weblaptop.dto.request.create_request.CreateSerialNumberCodeDaBanRequest;
 import com.dantn.weblaptop.dto.request.create_request.CreateSerialNumberDaBanRequest;
 import com.dantn.weblaptop.dto.request.create_request.FindSanPhamChiTietByFilter;
 import com.dantn.weblaptop.dto.request.update_request.SerialNumberSoldDelete;
-import com.dantn.weblaptop.dto.response.LichSuHoaDonResponse;
-import com.dantn.weblaptop.dto.response.PhieuGiamGiaResponse;
 import com.dantn.weblaptop.dto.response.SanPhamChiTietClientDTO;
 import com.dantn.weblaptop.dto.response.SerialNumberDaBanResponse;
 import com.dantn.weblaptop.entity.hoadon.*;
@@ -29,8 +26,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.*;
@@ -125,8 +120,8 @@ public class SerialNumberDaBanServiceImpl implements SerialNumberDaBanService {
             serialNumberDaBanRepository.deleteAll(serialNumberDaBansToDelete);
         }
         if (existingBill.getTrangThai().name().equals("DON_MOI") || existingBill.getTrangThai().name().equals("TREO") || existingBill.getTrangThai().name().equals("CHO_XAC_NHAN")) {
-            System.out.println("Serial đã được bán");
-            serialNumberService.getSerialSoldInBillByProductId(1, existingBill.getId(),request.getProductId());
+            System.out.println("Serial đã được bán 2");
+            serialNumberService.getSerialSoldInBillByProductId(1, existingBill.getId(), request.getProductId());
 //            serialNumberService.getSerialSoldInBill(1,existingBill.getId());
         }
 
@@ -181,7 +176,7 @@ public class SerialNumberDaBanServiceImpl implements SerialNumberDaBanService {
 
 //            existingBill.setTongSanPham(existingBill.getTongSanPham() + idsToCreate.size());
             // cập nhập trạng thái đã bán
-            if (!existingBill.getTrangThai().name().equals("DON_MOI") && !existingBill.getTrangThai().name().equals("TREO" )&& !existingBill.getTrangThai().name().equals("CHO_XAC_NHAN")) {
+            if (!existingBill.getTrangThai().name().equals("DON_MOI") && !existingBill.getTrangThai().name().equals("TREO") && !existingBill.getTrangThai().name().equals("CHO_XAC_NHAN")) {
                 System.out.println("Thêm serial có cập nhập trạng thái");
                 serialNumberRepository.updateStatusByIdsNative(1, idsToCreate);
 //                if(existingBill.getTrangThai().name().equals("CHO_XAC_NHAN")) {
@@ -192,10 +187,57 @@ public class SerialNumberDaBanServiceImpl implements SerialNumberDaBanService {
             }
             serialNumberDaBanRepository.saveAll(newSerialNumberDaBans);
         }
+        // thử
+        // Lấy danh sách SerialNumber có trạng thái 0 liên quan đến bill
+        List<SerialNumber> serialNumberListInStatusIs0 = serialNumberRepository.getListSerialInBillStatusIs0(existingBill.getId());
+
+// Lấy danh sách SerialNumberDaBan trong bill hiện tại
+        List<SerialNumberDaBan> serialNumberDaBanList = serialNumberDaBanRepository.getSerialNumberInBillId2(existingBill.getId());
+
+// Duyệt qua từng SerialNumber
+        for (SerialNumber serialNumber : serialNumberListInStatusIs0) {
+            System.out.println("Giá 2");
+
+            // Lấy thông tin sản phẩm chi tiết liên quan đến SerialNumber
+            SanPhamChiTiet sanPhamChiTie2 = sanPhamChiTietRepository.findById(serialNumber.getSanPhamChiTiet().getId())
+                    .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_DETAIL_NOT_FOUND));
+
+            // Áp dụng bộ lọc để tìm thông tin sản phẩm chi tiết từ service
+            FindSanPhamChiTietByFilter filter2 = new FindSanPhamChiTietByFilter();
+            filter.setMaSanPhamChiTiet(sanPhamChiTie2.getMa());
+            List<SanPhamChiTietClientDTO> sanPhamChiTietClientDTOS2 = sanPhamChiTietServiceImpl.findByFilter(filter2);
+
+            // Tính giá bán
+            BigDecimal giaBan2 = BigDecimal.ZERO;
+            if (!sanPhamChiTietClientDTOS2.isEmpty()) {
+                SanPhamChiTietClientDTO sanPhamChiTietDTO2 = sanPhamChiTietClientDTOS.get(0);
+                try {
+                    giaBan2 = new BigDecimal(
+                            sanPhamChiTietDTO2.getGiaSauKhuyenMai() != null
+                                    ? sanPhamChiTietDTO2.getGiaSauKhuyenMai()
+                                    : sanPhamChiTietDTO2.getGiaBan()
+                    );
+                } catch (NumberFormatException e) {
+                    giaBan2 = new BigDecimal(sanPhamChiTietDTO2.getGiaBan());
+                }
+            }
+
+            // Cập nhật giá bán cho các SerialNumberDaBan có mã trùng
+            for (SerialNumberDaBan serialNumberDaBan : serialNumberDaBanList) {
+                if (serialNumberDaBan.getSerialNumber().getMa().trim().equalsIgnoreCase(serialNumber.getMa().trim())) {
+                    serialNumberDaBan.setGiaBan(giaBan2);
+                    System.out.println("Cập nhật giá bán: " + giaBan2);
+                }
+            }
+        }
+
+// Lưu toàn bộ danh sách SerialNumberDaBan sau khi cập nhật
+        serialNumberDaBanRepository.saveAll(serialNumberDaBanList);
+//-----
         // tính tiền
         Optional<BigDecimal> totalMoney = serialNumberDaBanRepository.sumGiaBanByHoaDonId(existingBill.getId());
         List<Long> serialNumberInBillLast = serialNumberDaBanRepository.getAllSerialNumberInBillByBillId(existingBill.getId());
-        existingBill.setTongSanPham(serialNumberInBillLast.isEmpty()? 0 : serialNumberInBillLast.size());
+        existingBill.setTongSanPham(serialNumberInBillLast.isEmpty() ? 0 : serialNumberInBillLast.size());
         existingBill.setTongTienBanDau(totalMoney.orElse(BigDecimal.ZERO));
         System.out.println("0 Tỏng tiền : " + totalMoney.orElse(BigDecimal.ZERO));
         // check đổi khách hàng
@@ -429,7 +471,6 @@ public class SerialNumberDaBanServiceImpl implements SerialNumberDaBanService {
             hoaDonHinhThucThanhToanRepository.save(hoaDonHinhThucThanhToan);
         }
     }
-
 
 
 }
